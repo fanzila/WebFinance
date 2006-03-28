@@ -1,0 +1,25 @@
+tr.onglets td { 
+ padding: 0px;
+ background: url('/imgs/onglet-left.gif') left top no-repeat #858585;
+ padding: 3px;
+ padding-right: 8px;
+ padding-left: 18px;
+ font-size: 12px;
+ color: #bbb;
+ font-weight: bold;
+}
+
+tr.onglets td.focus { 
+ padding: 0px;
+ background: url('/imgs/onglet-left-bleu.gif') left top no-repeat #3692d3;
+ padding-left: 18px;
+ padding-right: 8px;
+ font-weight: bold;
+ color: white;
+ font-size: 12px;
+}
+
+td.onglet_holder {
+border: solid 1px #afafaf;
+height: 550px;
+}

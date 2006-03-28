@@ -1,0 +1,7 @@
+apt-get install php-fpdf
+
+insert the SQL dump
+
+copy the files to your DocumentRoot
+
+login as admin/admin

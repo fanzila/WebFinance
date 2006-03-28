@@ -1,0 +1,2 @@
+ErrorDocument 404 /404.php
+php_value error_reporting 2037
