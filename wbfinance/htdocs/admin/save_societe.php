@@ -55,6 +55,7 @@ foreach ($_POST as $n=>$v) {
     $rib->compte = $_POST['compte_'.$num];
     $rib->clef = $_POST['clef_'.$num];
     $rib->iban = $_POST['iban_'.$num];
+    $rib->swift = $_POST['swift_'.$num];
 
     if ($rib->compte != "") {
       $rib = base64_encode(serialize($rib));
@@ -72,6 +73,7 @@ if ($_POST['banque_new'] != "") {
   $rib->compte = $_POST['compte_new'];
   $rib->clef = $_POST['clef_new'];
   $rib->iban = $_POST['iban_new'];
+  $rib->swift = $_POST['swift_new'];
 
   $rib = base64_encode(serialize($rib));
   mysql_query("INSERT INTO pref (type_pref, value) VALUES('rib', '$rib')") or die(mysql_error());
