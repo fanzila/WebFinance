@@ -1,10 +1,10 @@
-<?php 
-// 
+<?php
+//
 // This file is part of « Backoffice NBI »
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
-// 
+//
 // You can use and redistribute this file under the term of the GNU LGPL v2.0
 //
 ?>
@@ -78,6 +78,7 @@ Changer le logo <input type="file" name="logo" /> <b>(ONLY PNG)</b>
   <td>Code guichet</td>
   <td>n° Compte</td>
   <td>Clef</td>
+  <td>Iban</td>
 </tr>
 <?php
 $result = mysql_query("SELECT id_pref,value FROM pref WHERE type_pref='rib' AND owner=-1");
@@ -92,6 +93,7 @@ while (list($id_pref,$value) = mysql_fetch_array($result)) {
   <td><input style="width: 50px; text-align: center;" type="text" name="code_guichet_$count" value="$compte->code_guichet" /></td>
   <td><input style="width: 70px; text-align: center;" type="text" name="compte_$count" value="$compte->compte" /></td>
   <td><input style="width: 20px; text-align: center;" type="text" name="clef_$count" value="$compte->clef" /></td>
+  <td><input style="width: 20px; text-align: center;" type="text" name="iban_$count" value="$compte->iban" /></td>
 </tr>
 EOF;
   $count++;
@@ -104,6 +106,7 @@ EOF;
   <td><input style="width: 50px; text-align: center;" type="text" name="code_guichet_new" value="" /></td>
   <td><input style="width: 70px; text-align: center;" type="text" name="compte_new" value="" /></td>
   <td><input style="width: 20px; text-align: center;" type="text" name="clef_new" value="" /></td>
+  <td><input style="width: 20px; text-align: center;" type="text" name="iban_new" value="" /></td>
 </tr>
 </table>
 <i>Nota : pour supprimer un compte banquaire, positionner le numéro de compte à vide</i><br/>

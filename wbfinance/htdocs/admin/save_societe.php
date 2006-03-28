@@ -1,10 +1,10 @@
-<?php 
-// 
+<?php
+//
 // This file is part of « Backoffice NBI »
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
-// 
+//
 // You can use and redistribute this file under the term of the GNU LGPL v2.0
 //
 ?>
@@ -54,6 +54,7 @@ foreach ($_POST as $n=>$v) {
     $rib->code_guichet = $_POST['code_guichet_'.$num];
     $rib->compte = $_POST['compte_'.$num];
     $rib->clef = $_POST['clef_'.$num];
+    $rib->iban = $_POST['iban_'.$num];
 
     if ($rib->compte != "") {
       $rib = base64_encode(serialize($rib));
@@ -70,6 +71,7 @@ if ($_POST['banque_new'] != "") {
   $rib->code_guichet = $_POST['code_guichet_new'];
   $rib->compte = $_POST['compte_new'];
   $rib->clef = $_POST['clef_new'];
+  $rib->iban = $_POST['iban_new'];
 
   $rib = base64_encode(serialize($rib));
   mysql_query("INSERT INTO pref (type_pref, value) VALUES('rib', '$rib')") or die(mysql_error());
