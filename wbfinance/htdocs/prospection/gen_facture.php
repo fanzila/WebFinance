@@ -1,10 +1,10 @@
-<?php 
-// 
+<?php
+//
 // This file is part of Â« Backoffice NBI Â»
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
-// 
+//
 // You can use and redistribute this file under the term of the GNU LGPL v2.0
 //
 ?>
@@ -32,7 +32,7 @@ if (is_numeric($_GET['id'])) {
 //    print $facture->extra_bottom."<br/>";
 //    $facture->extra_bottom = preg_replace("/\xE2\x82\xAC/", "EUROSYMBOL", $facture->extra_bottom );
 //    print $facture->extra_bottom."<br/>";
-  
+
   foreach ($facture as $n=>$v) {
     $facture->$n = preg_replace("/\xE2\x82\xAC/", "EUROSYMBOL", $facture->$n );
     $facture->$n = utf8_decode($facture->$n); // FPDF ne support pas l'UTF-8
@@ -56,7 +56,7 @@ $pdf->SetLineWidth(0.3);
 $pdf->SetXY(10,17);
 $pdf->Cell(190, 5, "Téléphone 0872 49 38 27 - Fax 01 46 87 21 99 - http://www.nbi.fr/ - contact@nbi.fr", "B", 0, "C");
 
-// Adresse 
+// Adresse
 $pdf->SetFont('Arial','B',11);
 $pdf->SetXY(115, 50);
 $pdf->Cell(80,5, $facture->raison_sociale, 0, 0 );
@@ -64,9 +64,9 @@ $pdf->SetFont('Arial','',11);
 $y = 54;
 for ($i=0 ; $i<3 ; $i++) {
   $n = sprintf("addr%d", $i+1);
-  if ($facture->$n != "") { 
+  if ($facture->$n != "") {
     $pdf->SetXY(115, $y);
-    $pdf->Cell(80,5, $facture->$n, 0, 0 ); 
+    $pdf->Cell(80,5, $facture->$n, 0, 0 );
     $y += 5;
   }
 }
@@ -103,9 +103,9 @@ $total_ht = 0;
 
 $result = mysql_query("SELECT * FROM facture_ligne WHERE id_facture=".$facture->id_facture." ORDER BY ordre");
 while ($ligne = mysql_fetch_object($result)) {
-  foreach( $ligne as $n=>$v) { 
+  foreach( $ligne as $n=>$v) {
     $ligne->$n = preg_replace("/\xE2\x82\xAC/", "EUROSYMBOL", $ligne->$n );
-    $ligne->$n = utf8_decode($ligne->$n); 
+    $ligne->$n = utf8_decode($ligne->$n);
     $ligne->$n = preg_replace("/EUROSYMBOL/", chr(128), $ligne->$n );
   }
 
@@ -182,29 +182,33 @@ $result = mysql_query("SELECT value FROM pref WHERE id_pref=".$facture->id_compt
 list($cpt) = mysql_fetch_array($result);
 mysql_free_result($result);
 $cpt = unserialize(base64_decode($cpt));
-foreach ($cpt as $n=>$v) { 
-  $cpt->$n = utf8_decode($cpt->$n); 
+foreach ($cpt as $n=>$v) {
+  $cpt->$n = utf8_decode($cpt->$n);
 }
 
 $pdf->SetFont('Arial', 'B', '10');
-$pdf->SetXY(10, 255);
-$pdf->Cell(70, 6, "Référence Bancaires ", "LTR", 0, "C");
+$pdf->SetXY(10, 250);
+$pdf->Cell(145, 6, "Référence Bancaires ", "LTR", 0, "C");
 $pdf->Ln();
+
 $pdf->SetFont('Arial', '', '10');
-$pdf->Cell(40, 6, "Banque : ", "L");
-$pdf->Cell(30, 6, $cpt->banque, "R");
+$pdf->Cell(35, 6, "Banque : ", "L");
+$pdf->Cell(110, 6, $cpt->banque, "R");
 $pdf->Ln();
-$pdf->Cell(40, 6, "Code banque : ", "L");
-$pdf->Cell(30, 6, $cpt->code_banque, "R");
+$pdf->Cell(35, 6, "Code banque : ", "L");
+$pdf->Cell(30, 6, $cpt->code_banque, "");
+$pdf->Cell(15, 6, "Clef RIB : ", "");
+$pdf->Cell(65, 6, $cpt->clef, "R");
 $pdf->Ln();
-$pdf->Cell(40, 6, "Code guichet : ", "L");
-$pdf->Cell(30, 6, $cpt->code_guichet, "R");
+$pdf->Cell(35, 6, "Code guichet : ", "L");
+$pdf->Cell(30, 6, $cpt->code_guichet, "");
+$pdf->Cell(15, 6, "IBAN : ", "");
+$pdf->Cell(65, 6, $cpt->iban, "R");
 $pdf->Ln();
-$pdf->Cell(40, 6, "Numéro de compte : ", "L");
-$pdf->Cell(30, 6, $cpt->compte, "R");
-$pdf->Ln();
-$pdf->Cell(40, 6, "Clef RIB", "LB");
-$pdf->Cell(30, 6, $cpt->clef, "RB");
+$pdf->Cell(35, 6, "Numéro de compte : ", "LB");
+$pdf->Cell(30, 6, $cpt->compte, "B");
+$pdf->Cell(15, 6, "BIC : ", "B");
+$pdf->Cell(65, 6, $cpt->swift, "BR");
 $pdf->Ln();
 
 $pdf->SetAuthor("NBI SARL");
