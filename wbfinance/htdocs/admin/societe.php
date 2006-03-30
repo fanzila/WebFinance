@@ -76,10 +76,10 @@ Changer le logo <input type="file" name="logo" /> <b>(ONLY PNG)</b>
   <td>Domiciliation</td>
   <td>Code banque</td>
   <td>Code guichet</td>
-  <td>n° Compte</td>
+  <td>N° compte</td>
   <td>Clef</td>
-  <td>Iban</td>
-  <td>Swift</td>
+  <td>IBAN</td>
+  <td>SWIFT/BIC</td>
 </tr>
 <?php
 $result = mysql_query("SELECT id_pref,value FROM pref WHERE type_pref='rib' AND owner=-1");
