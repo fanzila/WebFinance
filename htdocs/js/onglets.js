@@ -17,7 +17,9 @@ function focusOnglet(id) {
     tab.className = 'focus';
 
     f = document.getElementById('main_form');
-    f.focused_onglet.value = id;
+    if (f) {
+      f.focused_onglet.value = id;
+    }
 
     onglet_shown = id;
   }

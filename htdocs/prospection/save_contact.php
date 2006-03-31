@@ -35,6 +35,6 @@ if ($_POST['action'] == "create") {
 popup = window.parent.document.getElementById('inpage_popup');
 popup.style.display = 'none';
 // Reload parent window to update contacts
-page = window.parent.location + '&onglet=contacts&foobar='+100*Math.random(); // Random to force reload 
+page = 'fiche_prospect.php?id=<?= $_POST['client'] ?>&onglet=contacts&foobar='+100*Math.random(); // Random to force reload 
 window.parent.location = page;
 </script>
