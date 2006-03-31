@@ -87,7 +87,7 @@ var onglet_shown='<?= $shown_tab ?>';
 
 <form onchange="formChanged();" id="main_form" action="save_client.php" method="post">
 
-<input type="hidden" name="focused_onglet" value="facturation" />
+<input type="hidden" name="focused_onglet" value="<?= $_GET['focused_onglet'] ?>" />
 <input type="hidden" name="id_client" value="<?= $Client->id ?>" />
 
 <table width="740" border="0" cellspacing="5" cellpadding="0" class="fiche_prospect">

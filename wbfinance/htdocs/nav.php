@@ -15,6 +15,7 @@
 
 $elements = array('Accueil' => '/', 
                   'Entreprises' => '/prospection/?q=client',
+                  'Trésorerie'  => '/webcash',
                   'Mon Compte' => '/moncompte/',
                   'Admin BO' => '/admin/',
                   'Déconnexion' => '/logout.php',

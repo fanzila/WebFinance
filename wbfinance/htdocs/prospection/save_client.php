@@ -28,7 +28,6 @@ $q = sprintf("UPDATE client SET nom='%s',addr1='%s',addr2='%s',addr3='%s',cp='%s
              $id_client );
 
 mysql_query($q) or die(mysql_error());
-
-header("Location: fiche_prospect.php?id=$id_client");
+header("Location: fiche_prospect.php?id=$id_client&onglet=".$focused_onglet);
 
 ?>
