@@ -60,6 +60,9 @@ EOF;
     TODO
     <div style="height: 250px; overflow: auto;">
     <ul>
+      <li>Migrer cette TODO dans <a href="http://ovh.isvtec.com/mantis/">Mantis</a></li>
+      <li>Supprimer les références à facture.num_facture et utiliser facture.id_facture à la place</li>
+      <li>afficher "123,45 € HT" au lieu de "123,45€HT"</li>
       <li>Plein de bugfixes à faire sur IE
       <li>W3C compliance (someday)
       <li>Implémenter "calculer TVA encaissée"
