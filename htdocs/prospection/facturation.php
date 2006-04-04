@@ -97,8 +97,8 @@ EOF;
 <tr>
   <td>Total CA</td>
   <td>
-    <b><?= number_format($total_ca_ht, 2, ',', ' ') ?>&euro;HT</b> / 
-    <b><?= number_format(1.196*$total_ca_ht, 2, ',', ' ') ?>&euro;TTC</b>
+    <b><?= number_format($total_ca_ht, 2, ',', ' ') ?>&euro; HT</b> / 
+    <b><?= number_format(1.196*$total_ca_ht, 2, ',', ' ') ?>&euro; TTC</b>
   </td>
 </tr>
 <tr>

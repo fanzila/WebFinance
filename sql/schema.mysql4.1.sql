@@ -92,6 +92,7 @@ CREATE TABLE `facture` (
   `id_type_presta` int(11) default '1',
   `id_compte` int(11) NOT NULL default '34',
   `is_envoye` tinyint(4) default '0',
+  UNIQUE KEY (`num_facture`),
   PRIMARY KEY  (`id_facture`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

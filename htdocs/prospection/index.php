@@ -52,7 +52,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w+\\&*+/", "", $GLOBA
 <tr class="row_header" style="text-align: center;"> 
   <td><a href="?sort=du&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>">&euro</a></td>
   <td width="200"><a href="?sort=nom&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>">Raison sociale</a></td>
-  <td><a href="?sort=ca_total_ht&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>">CA &euro;HT</a></td>
+  <td><a href="?sort=ca_total_ht&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>">CA &euro; HT</a></td>
   <td><a href="?sort=ca_total_ht_year&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>">CA 1 an</a></td>
   <td><a href="?sort=total_du_ht&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>">Encours</a></td>
 </tr>
@@ -79,9 +79,9 @@ while ($client = mysql_fetch_object($result)) {
   $grand_total_ca_ht_year += $client->ca_total_ht_year;
   $total_dehors += $client->total_du_ht;
 
-  $client->total_du_ht = ($client->total_du_ht==0)?"-&nbsp;&nbsp;":number_format($client->total_du_ht, 0, ',', ' ')."&euro;HT";
-  $client->ca_total_ht = ($client->ca_total_ht==0)?"-&nbsp;&nbsp;":number_format($client->ca_total_ht, 0, ',', ' ')."&euro;HT";
-  $client->ca_total_ht_year = ($client->ca_total_ht_year==0)?"-&nbsp;&nbsp;":number_format($client->ca_total_ht_year, 0, ',', ' ')."&euro;HT";
+  $client->total_du_ht = ($client->total_du_ht==0)?"-&nbsp;&nbsp;":number_format($client->total_du_ht, 0, ',', ' ')."&euro; HT";
+  $client->ca_total_ht = ($client->ca_total_ht==0)?"-&nbsp;&nbsp;":number_format($client->ca_total_ht, 0, ',', ' ')."&euro; HT";
+  $client->ca_total_ht_year = ($client->ca_total_ht_year==0)?"-&nbsp;&nbsp;":number_format($client->ca_total_ht_year, 0, ',', ' ')."&euro; HT";
 
   print "<tr align=center class=row_".(($count%2 == 0)?"even":"odd").">\n"
        ."  <td><img src=\"/imgs/icons/".(($client->has_unpaid)?"not_paid":(($client->has_devis)?"paid_orange":"paid")).".gif\" /></td>\n"
@@ -128,19 +128,19 @@ mysql_free_result($result);
 <table border=0 cellspacing=0 cellpadding=3 style="border: solid 1px black; float: left; margin: 10px; width: 300px;">
 <tr>
   <td><b>CA Total <?= strftime("%Y", time()); ?></b></td>
-  <td><?= number_format($ca_total_ht_annee_encours, 0, ',', ' ') ?>&euro;HT / <?= number_format($ca_total_ht_annee_encours*1.196, 0, ',', ' ') ?>&euro;TTC </td>
+  <td><?= number_format($ca_total_ht_annee_encours, 0, ',', ' ') ?>&euro; HT / <?= number_format($ca_total_ht_annee_encours*1.196, 0, ',', ' ') ?>&euro; TTC </td>
 </tr>
 <tr>
   <td><b>CA Total <?= strftime("%Y", time())-1; ?></b></td>
-  <td><?= number_format($ca_total_ht_annee_precedente, 0, ',', ' ') ?>&euro;HT / <?= number_format($ca_total_ht_annee_precedente*1.196, 0, ',', ' ') ?>&euro;TTC </td>
+  <td><?= number_format($ca_total_ht_annee_precedente, 0, ',', ' ') ?>&euro; HT / <?= number_format($ca_total_ht_annee_precedente*1.196, 0, ',', ' ') ?>&euro; TTC </td>
 </tr>
 <tr>
   <td><b>CA 12 mois flottants</b></td>
-  <td><?= number_format($grand_total_ca_ht_year, 0, ',', ' ') ?>&euro;HT / <?= number_format($grand_total_ca_ht_year*1.196, 0, ',', ' ') ?>&euro;TTC </td>
+  <td><?= number_format($grand_total_ca_ht_year, 0, ',', ' ') ?>&euro; HT / <?= number_format($grand_total_ca_ht_year*1.196, 0, ',', ' ') ?>&euro; TTC </td>
 </tr>
 <tr>
   <td><b>En attente de paiement</b></td>
-  <td><a href="facturation.php?type=unpaid"><?= number_format($total_dehors, 0, ',', ' ') ?>&euro;HT / <?= number_format($total_dehors*1.196, 0, ',', ' ') ?>&euro;TTC</a></td>
+  <td><a href="facturation.php?type=unpaid"><?= number_format($total_dehors, 0, ',', ' ') ?>&euro; HT / <?= number_format($total_dehors*1.196, 0, ',', ' ') ?>&euro; TTC</a></td>
 </tr>
 <tr>
   <td><b>Ne montrer que </b></td><td><form action="index.php" method="get">
