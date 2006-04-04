@@ -13,9 +13,9 @@
 // $Id$
 // Génère un PDF pour une facture NBI
 
-include("../inc/backoffice.php");
-include("../inc/dbconnect.php");
-include("/usr/share/fpdf/fpdf.php");
+require("../inc/backoffice.php");
+require("../inc/dbconnect.php");
+require("/usr/share/fpdf/fpdf.php");
 
 define('EURO',chr(128));
 
@@ -76,7 +76,7 @@ $pdf->Cell(80, 4, $facture->cp." ".$facture->ville, 0, 0 );
 // Donnees factures
 $pdf->SetXY(10, 27);
 $pdf->SetFont('Arial','B',14);
-$pdf->Cell(60, 4, "Facture n°".$facture->num_facture);
+$pdf->Cell(60, 4, "Facture n° ".$facture->id_facture);
 $pdf->SetFont('Arial','',9);
 $pdf->SetXY(10, 40);
 $pdf->Cell(60, 4, "Villejuif le ".strftime("%d/%m/%Y", $facture->ts_date_facture));
@@ -213,9 +213,9 @@ $pdf->Ln();
 
 $pdf->SetAuthor("NBI SARL");
 $pdf->SetCreator("Backoffice NBI $Id$ Using FPDF");
-$pdf->SetSubject("Facture n°".$facture->num_facture." pour ".$facture->raison_sociale);
-$pdf->SetTitle("Facture n°".$facture->num_facture);
-$pdf->Output("Facture_".$facture->num_facture."_".preg_replace("/[ ]/", "_", $facture->raison_sociale).".pdf", "D");
+$pdf->SetSubject("Facture n° ".$facture->id_facture." pour ".$facture->raison_sociale);
+$pdf->SetTitle("Facture n° ".$facture->id_facture);
+$pdf->Output("Facture_".$facture->id_facture."_".preg_replace("/[ ]/", "_", $facture->raison_sociale).".pdf", "D");
 
 // vim: fileencoding=latin1
 
