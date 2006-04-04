@@ -76,7 +76,7 @@ $pdf->Cell(80, 4, $facture->cp." ".$facture->ville, 0, 0 );
 // Donnees factures
 $pdf->SetXY(10, 27);
 $pdf->SetFont('Arial','B',14);
-$pdf->Cell(60, 4, "Facture n° ".$facture->id_facture);
+$pdf->Cell(60, 4, "Facture n° ".$facture->num_facture);
 $pdf->SetFont('Arial','',9);
 $pdf->SetXY(10, 40);
 $pdf->Cell(60, 4, "Villejuif le ".strftime("%d/%m/%Y", $facture->ts_date_facture));
@@ -182,6 +182,7 @@ $result = mysql_query("SELECT value FROM pref WHERE id_pref=".$facture->id_compt
 list($cpt) = mysql_fetch_array($result);
 mysql_free_result($result);
 $cpt = unserialize(base64_decode($cpt));
+if (!is_object($cpt)) { die("Impossible de generer la facture. Vous devez saisir au moins un compte bancaire dans les options pour emettre des factures"); }
 foreach ($cpt as $n=>$v) {
   $cpt->$n = utf8_decode($cpt->$n);
 }
@@ -213,8 +214,8 @@ $pdf->Ln();
 
 $pdf->SetAuthor("NBI SARL");
 $pdf->SetCreator("Backoffice NBI $Id$ Using FPDF");
-$pdf->SetSubject("Facture n° ".$facture->id_facture." pour ".$facture->raison_sociale);
-$pdf->SetTitle("Facture n° ".$facture->id_facture);
+$pdf->SetSubject("Facture n° ".$facture->num_facture." pour ".$facture->raison_sociale);
+$pdf->SetTitle("Facture n° ".$facture->num_facture);
 $pdf->Output("Facture_".$facture->id_facture."_".preg_replace("/[ ]/", "_", $facture->raison_sociale).".pdf", "D");
 
 // vim: fileencoding=latin1
