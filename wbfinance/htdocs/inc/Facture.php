@@ -41,7 +41,7 @@ class Facture {
                                   date_format(f.date_created,'%d/%m/%Y') as nice_date_created, 
                                   date_format(f.date_paiement, '%d/%m/%Y') as nice_date_paiement,  
                                   date_format(f.date_facture, '%d/%m/%Y') as nice_date_facture,  
-                                  date_format(f.date_facture, '%s') as timestamp_date_facture,  
+                                  unix_timestamp(f.date_facture) as timestamp_date_facture,  
                                   date_format(f.date_facture, '%Y%m') as mois_facture,
                                   date_sent<now() as is_sent, 
                                   f.type_paiement, f.is_paye, f.ref_contrat, f.extra_top, f.extra_bottom, f.num_facture, f.*

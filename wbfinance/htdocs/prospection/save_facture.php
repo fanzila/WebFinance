@@ -101,9 +101,19 @@ if ($action == "save_facture") {
   preg_match("/([0-9]{2})\/([0-9]{2})\/([0-9]{4})/", $date_facture, $matches);
   $date_facture = $matches[3]."-".$matches[2]."-".$matches[1];
 
-  $q = sprintf("UPDATE facture SET type_paiement='%s',is_paye=%d,%s ref_contrat='%s', extra_top='%s', extra_bottom='%s', accompte='%s', date_facture='%s', type_doc='%s', commentaire='%s', id_type_presta=%d, id_compte=%d, is_envoye=%d
+  if (($facture->is_envoye == 0) && ($is_envoye == "on")) {
+    $result = mysql_query("SELECT count(*) FROM facture WHERE num_facture!='' AND id_facture!=".$facture->id_facture ." AND year(date_facture)=year('".$facture->date_facture."')") or die(mysql_error());
+    list($nb) = mysql_fetch_array($result);
+    mysql_free_result($result);
+
+    $nb++;
+    $nb = sprintf("%04d", $nb);
+    $num_facture = strftime("%y-$nb", $facture->timestamp_date_facture);
+  }
+
+  $q = sprintf("UPDATE facture SET type_paiement='%s',is_paye=%d,%s ref_contrat='%s', extra_top='%s', extra_bottom='%s', accompte='%s', date_facture='%s', type_doc='%s', commentaire='%s', id_type_presta=%d, id_compte=%d, is_envoye=%d, num_facture='%s'
                 WHERE id_facture='%d'", 
-               $type_paiement, ($is_paye == "on")?1:0, ($is_paye == "on")?"date_paiement=now(),":"", $ref_contrat, $extra_top, $extra_bottom, $accompte, $date_facture, $type_doc, $commentaire, $id_type_presta, $id_compte, ($is_envoye=="on")?1:0,
+               $type_paiement, ($is_paye == "on")?1:0, ($is_paye == "on")?"date_paiement=now(),":"", $ref_contrat, $extra_top, $extra_bottom, $accompte, $date_facture, $type_doc, $commentaire, $id_type_presta, $id_compte, ($is_envoye=="on")?1:0, $num_facture,
                $id_facture);
   mysql_query($q) or die(mysql_error());
   logmessage("Enregistrement de la facture fa:".$_POST['id_facture']);

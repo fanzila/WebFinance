@@ -61,8 +61,6 @@ EOF;
     <div style="height: 250px; overflow: auto;">
     <ul>
       <li>Migrer cette TODO dans <a href="http://ovh.isvtec.com/mantis/">Mantis</a></li>
-      <li>Supprimer les références à facture.num_facture et utiliser facture.id_facture à la place</li>
-      <li>afficher "123,45 € HT" au lieu de "123,45€HT"</li>
       <li>Plein de bugfixes à faire sur IE
       <li>W3C compliance (someday)
       <li>Implémenter "calculer TVA encaissée"
@@ -73,6 +71,8 @@ EOF;
       <li>Gestion DNS sites clients par backoffice
       <li>Moteur de recherche backoffice (cherche dans les contacts et factures entre autres)
       <li>Pannier global (contient entreprises et personnes...) + vue composite d'un pannier
+      <li><strike>Supprimer les références à facture.num_facture et utiliser facture.id_facture à la place</strike></li>
+      <li><strike>afficher "123,45 € HT" au lieu de "123,45€HT"</strike></li>
       <li><strike>Carnet d'adresse backoffice consultable en LDAP</strike></li>
       <li><strike>Implémenter "type de prestation facturée" pour graph CA par type d'activité</strike></li>
       <li><strike>Devis accepté = devis payé et "disparait"</strike></li>

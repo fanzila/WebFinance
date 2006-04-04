@@ -153,7 +153,7 @@ var onglet_shown='<?= $shown_tab ?>';
                                GROUP BY YEAR(date_facture)
                                ORDER BY 1 DESC") or die(mysql_error());
         while ($year = mysql_fetch_object($result)) {
-          printf('<tr><td style="border-bottom: solid 1px #777;" colspan="5"><b style="font-size: 16px;">%s</b> - <b><i>Encours %s&euro;HT</i></b> - <i>%s&euro;HT</i></td></tr>', $year->annee, number_format($year->du_ht_total, 2, ',', ' '), number_format($year->ca_ht_total, 2, ',', ' '));
+          printf('<tr><td style="border-bottom: solid 1px #777;" colspan="5"><b style="font-size: 16px;">%s</b> - <b><i>Encours %s&euro; HT</i></b> - <i>%s&euro; HT</i></td></tr>', $year->annee, number_format($year->du_ht_total, 2, ',', ' '), number_format($year->ca_ht_total, 2, ',', ' '));
           $q = "SELECT f.*,f.id_facture,date_format(f.date_created, '%d/%m/%Y') as date,
                        f.is_paye,SUM(fl.qtt*fl.prix_ht) as total,f.type_doc,
                        unix_timestamp(date_facture) as ts_date_facture,
@@ -193,8 +193,8 @@ var onglet_shown='<?= $shown_tab ?>';
              printf('<tr class="facture_line" onmouseover="return escape(\'%s\');" valign=middle>
                        <td nowrap>%s</td>
                        <td>%s%s</td>
-                       <td class="euro" nowrap>%s &euro;HT</td>
-                       <td class="euro" nowrap>%s &euro;TTC</td>
+                       <td class="euro" nowrap>%s &euro; HT</td>
+                       <td class="euro" nowrap>%s &euro; TTC</td>
                        <td width="100%%" style="text-align: right;" nowrap><img src="/imgs/icons/%s" alt=""><a href="edit_facture.php?id_facture=%d"><img src="/imgs/icons/edit.png" border="0"></a>%s</td>
                      </tr>', 
                      $description, 
