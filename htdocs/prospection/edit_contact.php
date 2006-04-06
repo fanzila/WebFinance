@@ -1,10 +1,10 @@
-<?php 
-// 
+<?php
+//
 // This file is part of « Backoffice NBI »
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
-// 
+//
 // You can use and redistribute this file under the term of the GNU LGPL v2.0
 //
 ?>
@@ -33,7 +33,7 @@ if ((isset($_GET['id_client'])) && (!preg_match("/^[0-9]+$/", $_GET['id_client']
 if (isset($_GET['id_personne'])) {
   $action = "save";
 
-  $result = mysql_query("SELECT id_personne,nom,prenom,email,tel,mobile,client,fonction,note FROM personne WHERE id_personne=".$_GET['id_personne']) or nbi_mysqldie();
+  $result = mysql_query("SELECT id_personne,nom,prenom,email,tel,mobile,client,fonction,note FROM webcash_personne WHERE id_personne=".$_GET['id_personne']) or nbi_mysqldie();
   $personne = mysql_fetch_object($result);
   mysql_free_result($result);
 
@@ -89,7 +89,7 @@ function checkTel(input) {
   function test_func() {
     alert('in test func');
   }
-  
+
   input.value = input.value.replace(/[^0-9]/g, "");
   if (input.value.length < 10) {
     alert('Les numéros de téléphone s\'écrivent sur 10 chiffres !');
@@ -97,7 +97,7 @@ function checkTel(input) {
     input.focus();
     return false;
   }
-  
+
   input.value = input.value.substring(0,2)+' '+input.value.substring(2,4)+' '+input.value.substring(4,6)+' '+input.value.substring(6,8)+' '+input.value.substring(8,10);
 
   return true;

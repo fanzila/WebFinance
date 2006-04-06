@@ -1,10 +1,10 @@
-<?php 
-// 
+<?php
+//
 // This file is part of « Backoffice NBI »
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
-// 
+//
 // You can use and redistribute this file under the term of the GNU LGPL v2.0
 //
 ?>
@@ -13,7 +13,7 @@
   <?php
   global $Client;
   // Liste les personnes contacts pour ce client
-  $result = mysql_query("SELECT * FROM personne WHERE client=".$_GET['id']." ORDER BY nom") or die(mysql_error());
+  $result = mysql_query("SELECT * FROM webcash_personne WHERE client=".$_GET['id']." ORDER BY nom") or die(mysql_error());
   $count = 1;
   while ($contact = mysql_fetch_object($result)) {
     $class = ($count%2 == 0)?"odd":"even";

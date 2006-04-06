@@ -1,10 +1,10 @@
-<?php 
-// 
+<?php
+//
 // This file is part of « Backoffice NBI »
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
-// 
+//
 // You can use and redistribute this file under the term of the GNU LGPL v2.0
 //
 ?>
@@ -17,7 +17,7 @@ class Client {
   var $data = null;
 
   function _setInfos() {
-    $result = mysql_query("SELECT * FROM client WHERE id_client=".$this->id) or die("Client:_setInfos ".mysql_error());
+    $result = mysql_query("SELECT * FROM webcash_clients WHERE id_client=".$this->id) or die("Client:_setInfos ".mysql_error());
     $this->data = mysql_fetch_object($result);
     mysql_free_result($result);
   }
@@ -28,7 +28,7 @@ class Client {
       $this->_setInfos();
     }
   }
-  
+
   function setId($id) {
     if (is_numeric($id)) {
       $this->id = $id;

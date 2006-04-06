@@ -1,10 +1,10 @@
-<?php 
-// 
+<?php
+//
 // This file is part of « Backoffice NBI »
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
-// 
+//
 // You can use and redistribute this file under the term of the GNU LGPL v2.0
 //
 ?>
@@ -13,8 +13,8 @@ include("../inc/backoffice.php");
 
 if (!is_numeric($_GET['id_facture'])) {
   // Création de facture
-  mysql_query("INSERT INTO facture (date_created,date_facture,id_client) values(now(), now(), ".$_GET['id_client'].")") or die(mysql_error());
-  $result = mysql_query("SELECT id_facture FROM facture WHERE id_client=".$_GET['id_client']." AND date_sub(now(), INTERVAL 1 SECOND)<=date_created");
+  mysql_query("INSERT INTO webcash_invoices (date_created,date_facture,id_client) values(now(), now(), ".$_GET['id_client'].")") or die(mysql_error());
+  $result = mysql_query("SELECT id_facture FROM webcash_invoices WHERE id_client=".$_GET['id_client']." AND date_sub(now(), INTERVAL 1 SECOND)<=date_created");
   list($id_facture) = mysql_fetch_array($result);
   header("Location: edit_facture.php?id_facture=".$id_facture);
   die();
@@ -37,7 +37,7 @@ print $lignes;
 
 ?>
 function changedData(f) {
-  <?php if ($facture->immuable) { 
+  <?php if ($facture->immuable) {
   // Le devis est validé ou la facture est payée => pas possible de modifier ce doc
   ?>
   alert('Ce document ne peut être modifié');
@@ -55,7 +55,7 @@ function changedData(f) {
 }
 
 function submitForm(f) {
-  <?php if ($facture->immuable) { 
+  <?php if ($facture->immuable) {
   // Le devis est validé ou la facture est payée => pas possible de modifier ce doc
   ?>
   alert('Ce document ne peut être modifié');
@@ -70,7 +70,7 @@ function number_format(v, precision, thousands, coma) {
   var flotante = Math.floor(100*(v-Math.floor(v)));
 
   j = 10;
-  for (i=0 ; i<=thousands ; i++) 
+  for (i=0 ; i<=thousands ; i++)
     j = j*10;
 
   // if (flotante == 0) { flotante = '00'; }
@@ -90,7 +90,7 @@ function updateTotal() {
     id = id_lignes[i];
 
     pu = document.getElementById('prix_ht_'+id);
-    
+
     pu.value = pu.value.replace(/,/, '.');
     val = parseFloat(pu.value);
     if (val == pu.value) {
@@ -217,7 +217,7 @@ function del_ligne() {
       <td>
         <select name="id_type_presta" style="width: 100px;">
         <?php
-        $result = mysql_query("SELECT id_type_presta, nom FROM type_presta ORDER BY nom");
+        $result = mysql_query("SELECT id_type_presta, nom FROM webcash_type_presta ORDER BY nom");
         while (list($id, $type) = mysql_fetch_array($result)) {
           printf('<option value="%d"%s>%s</option>', $id, ($id==$facture->id_type_presta)?"selected":"", $type );
         }
@@ -230,7 +230,7 @@ function del_ligne() {
       <td>
         <select name="id_compte" style="width: 100px;">
         <?php
-        $result = mysql_query("SELECT id_pref,value FROM pref WHERE type_pref='rib'") or die(mysql_error());
+        $result = mysql_query("SELECT id_pref,value FROM webcash_pref WHERE type_pref='rib'") or die(mysql_error());
         while ($cpt = mysql_fetch_object($result)) {
           $data = unserialize(base64_decode($cpt->value));
           printf('<option value="%d"%s>%s</option>', $cpt->id_pref, ($cpt->id_pref==$facture->id_compte)?" selected":"", $data->banque );
@@ -244,7 +244,7 @@ function del_ligne() {
       <?php
       if ($facture->type_doc == "devis") { // CAS DEVIS  ?>
       <td colspan="2">
-        <input type="checkbox" name="is_paye" <?= $facture->is_paye?"checked":"" ?> />&nbsp;Devis Accepté 
+        <input type="checkbox" name="is_paye" <?= $facture->is_paye?"checked":"" ?> />&nbsp;Devis Accepté
         <?= ($facture->date_paiement!="")?"le ".$facture->nice_date_paiement:"" ?>
       </td>
       <?php } elseif ($facture->type_doc == "facture") { // CAS FACTURE ?>
@@ -274,7 +274,7 @@ function del_ligne() {
       <a href="save_facture.php?id=<?= $facture->id_facture ?>&action=duplicate">Dupliquer <?= $facture->type_doc ?></a><br/>
       <?php
         printf('<a href="gen_facture.php?id=%d">PDF</a><br/>', $facture->id_facture);
-        if (! $facture->immuable) 
+        if (! $facture->immuable)
           printf('<a href="save_facture.php?id_facture=%d&action=delete_facture">Supprimer</a><br/>', $facture->id_facture);
       ?>
       </td>

@@ -1,10 +1,10 @@
-<?php 
-// 
+<?php
+//
 // This file is part of « Backoffice NBI »
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
-// 
+//
 // You can use and redistribute this file under the term of the GNU LGPL v2.0
 //
 ?>
@@ -15,7 +15,7 @@ include("../top.php");
 include("nav.php");
 
 if ((isset($_GET['id_client'])) && (preg_match("/^[0-9]+$/", $_GET['id_client']))) {
-  $result = mysql_query("SELECT * FROM client WHERE id_client=".$_GET['id_client']) or nbi_mysqldie("Fetching client information");
+  $result = mysql_query("SELECT * FROM webcash_clients WHERE id_client=".$_GET['id_client']) or nbi_mysqldie("Fetching client information");
   $client = mysql_fetch_object($result);
   mysql_free_result($result);
 
