@@ -1,10 +1,10 @@
-<?php 
-// 
+<?php
+//
 // This file is part of « Backoffice NBI »
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
-// 
+//
 // You can use and redistribute this file under the term of the GNU LGPL v2.0
 //
 ?>
@@ -23,7 +23,7 @@ if ($_GET['id_client']!="") {
   $where_clause .= " AND id_client=".$_GET['id_client'];
 }
 if ($_GET['mois'] != "") {
-  $where_clause .= " AND date_format(date_facture, '%Y%m')='".$_GET['mois']."'"; 
+  $where_clause .= " AND date_format(date_facture, '%Y%m')='".$_GET['mois']."'";
 }
 if ($_GET['type']!="") {
   switch ($_GET['type']) {
@@ -38,7 +38,7 @@ if ($_GET['type']!="") {
 <tr valign="top"><td>
 
 <table border=0 cellspacing=0 cellpadding=3 style="border: solid 1px black;">
-<tr align=center class=row_header> 
+<tr align=center class=row_header>
   <td></td>
   <td>Date</td>
   <td colspan="2">Numéro</td>
@@ -49,7 +49,7 @@ if ($_GET['type']!="") {
 </tr>
 <?php
 $total_ca_ht = 0;
-$result = mysql_query("SELECT id_facture FROM facture WHERE type_doc='facture' AND num_facture!='' AND date_facture<=now() AND ".$where_clause." ORDER BY date_facture DESC") or die(mysql_error());
+$result = mysql_query("SELECT id_facture FROM webcash_invoices WHERE type_doc='facture' AND num_facture!='' AND date_facture<=now() AND ".$where_clause." ORDER BY date_facture DESC") or die(mysql_error());
 $mois = array();
 while (list($id_facture) = mysql_fetch_array($result)) {
   $count++;
@@ -60,7 +60,7 @@ while (list($id_facture) = mysql_fetch_array($result)) {
   $mois[$fa->mois_facture]++;
 
    $description = "";
-   $result2 = mysql_query("SELECT description FROM facture_ligne WHERE id_facture=".$fa->id_facture);
+   $result2 = mysql_query("SELECT description FROM webcash_invoice_rows WHERE id_facture=".$fa->id_facture);
    while (list($desc) = mysql_fetch_array($result2)) {
      $desc = preg_replace("/\r\n/", " ", $desc);
      $desc = preg_replace("/\"/", "", $desc);
@@ -91,13 +91,13 @@ EOF;
 
 <form action="facturation.php" method="get">
 <table border="0" cellspacing="0" cellpadding="3" style="border: solid 1px black;">
-<tr align="center" class="row_header"> 
+<tr align="center" class="row_header">
   <td colspan="2">Filtre simple</td>
 </tr>
 <tr>
   <td>Total CA</td>
   <td>
-    <b><?= number_format($total_ca_ht, 2, ',', ' ') ?>&euro; HT</b> / 
+    <b><?= number_format($total_ca_ht, 2, ',', ' ') ?>&euro; HT</b> /
     <b><?= number_format(1.196*$total_ca_ht, 2, ',', ' ') ?>&euro; TTC</b>
   </td>
 </tr>
@@ -107,8 +107,8 @@ EOF;
     <select style="width: 200px;" name="id_client" onchange="this.form.submit();" >
       <option value="">Tous</option>
       <?php
-      $result = mysql_query("SELECT c.id_client,c.nom 
-                             FROM client as c, facture as f
+      $result = mysql_query("SELECT c.id_client,c.nom
+                             FROM webcash_clients as c, webcash_invoices as f
                              WHERE f.id_client=c.id_client
                              GROUP BY c.id_client
                              ORDER BY nom");

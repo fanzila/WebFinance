@@ -1,10 +1,10 @@
-<?php 
-// 
+<?php
+//
 // This file is part of « Backoffice NBI »
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
-// 
+//
 // You can use and redistribute this file under the term of the GNU LGPL v2.0
 //
 ?>
@@ -20,8 +20,8 @@ if (! ($_SESSION['id_user'] > 0)) {
   die();
 }
 
-$result = mysql_query("SELECT facture_file FROM facture WHERE id_facture=".$_GET['id']);
-list($file) = mysql_fetch_array($result); 
+$result = mysql_query("SELECT facture_file FROM webcash_invoices WHERE id_facture=".$_GET['id']);
+list($file) = mysql_fetch_array($result);
 
 if (file_exists($file)) {
   header("Content-Type: application/pdf");

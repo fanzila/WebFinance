@@ -23,7 +23,7 @@ if (is_numeric($_GET['id'])) {
   $result = mysql_query("SELECT f.*, c.nom as raison_sociale,
                                 c.addr1,c.addr2,c.addr3,c.cp,c.ville, c.vat_number,
                                 unix_timestamp(f.date_facture) as ts_date_facture
-                         FROM facture as f,client as c
+                         FROM webcash_invoices as f,webcash_clients as c
                          WHERE f.id_facture=".$_GET['id']."
                          AND f.id_client=c.id_client") or die(mysql_error());
   $facture = mysql_fetch_object($result);
@@ -101,7 +101,7 @@ $pdf->Ln();
 
 $total_ht = 0;
 
-$result = mysql_query("SELECT * FROM facture_ligne WHERE id_facture=".$facture->id_facture." ORDER BY ordre");
+$result = mysql_query("SELECT * FROM webcash_invoice_rows WHERE id_facture=".$facture->id_facture." ORDER BY ordre");
 while ($ligne = mysql_fetch_object($result)) {
   foreach( $ligne as $n=>$v) {
     $ligne->$n = preg_replace("/\xE2\x82\xAC/", "EUROSYMBOL", $ligne->$n );
@@ -178,7 +178,7 @@ $pdf->SetXY(10, 210);
 $pdf->MultiCell(120, 6, $facture->extra_bottom, 0);
 
 // RIB
-$result = mysql_query("SELECT value FROM pref WHERE id_pref=".$facture->id_compte) or die(mysql_error());
+$result = mysql_query("SELECT value FROM webcash_pref WHERE id_pref=".$facture->id_compte) or die(mysql_error());
 list($cpt) = mysql_fetch_array($result);
 mysql_free_result($result);
 $cpt = unserialize(base64_decode($cpt));

@@ -15,7 +15,7 @@ include("../inc/backoffice.php");
 include("../top.php");
 include("nav.php");
 
-$result = mysql_query("SELECT value FROM pref WHERE type_pref='societe' AND owner=-1");
+$result = mysql_query("SELECT value FROM webcash_pref WHERE type_pref='societe' AND owner=-1");
 list($value) = mysql_fetch_array($result);
 mysql_free_result($result);
 
@@ -58,7 +58,7 @@ $societe = unserialize(base64_decode($value));
 
 <?php
 
-$result = mysql_query("SELECT * FROM pref WHERE owner=-1 AND type_pref='logo'");
+$result = mysql_query("SELECT * FROM webcash_pref WHERE owner=-1 AND type_pref='logo'");
 $logo = mysql_fetch_object($result);
 mysql_free_result($result);
 
@@ -82,7 +82,7 @@ Changer le logo <input type="file" name="logo" /> <b>(ONLY PNG)</b>
   <td>SWIFT/BIC</td>
 </tr>
 <?php
-$result = mysql_query("SELECT id_pref,value FROM pref WHERE type_pref='rib' AND owner=-1");
+$result = mysql_query("SELECT id_pref,value FROM webcash_pref WHERE type_pref='rib' AND owner=-1");
 $count = 1;
 while (list($id_pref,$value) = mysql_fetch_array($result)) {
   $compte = unserialize(base64_decode($value));

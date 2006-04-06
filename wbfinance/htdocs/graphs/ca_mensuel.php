@@ -1,10 +1,10 @@
-<?php 
-// 
+<?php
+//
 // This file is part of « Backoffice NBI »
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
-// 
+//
 // You can use and redistribute this file under the term of the GNU LGPL v2.0
 //
 ?>
@@ -29,7 +29,7 @@ class barGraph {
   var $barlabels = Array();
   var $max = 0;
   var $font_size = 12;
-  var $step = 40; # Bar width in pixel 
+  var $step = 40; # Bar width in pixel
   var $margin = 5;
   var $C_bar, $C_barframe, $C_text, $C_average;
   var $nb_shades = 50;
@@ -65,7 +65,7 @@ class barGraph {
   }
 
   function addValue($value, $label="", $barlabel="") {
-    if ($value > $this->max) 
+    if ($value > $this->max)
       $this->max = $value;
 
     array_push($this->data, $value);
@@ -75,15 +75,15 @@ class barGraph {
 
   /* Chage les couleurs des barres */
   // function setBarColor($html_color) { $this->C_bar = $this->_htmlColorToGd($html_color); }
-  function setBarColor($red, $green, $blue) { 
-    $this->RVB_bar = array($red, $green, $blue); 
+  function setBarColor($red, $green, $blue) {
+    $this->RVB_bar = array($red, $green, $blue);
     $this->shadecolors = array();
     for ($a=0 ; $a<$this->nb_shades ; $a++) {
-      $this->shadecolors[$a] = ImageColorAllocate($this->im, $this->RVB_bar[0]-($this->nb_shades-$a*4), $this->RVB_bar[1]-($this->nb_shades-$a*4), $this->RVB_bar[2]-($this->nb_shades-$a*4)); 
+      $this->shadecolors[$a] = ImageColorAllocate($this->im, $this->RVB_bar[0]-($this->nb_shades-$a*4), $this->RVB_bar[1]-($this->nb_shades-$a*4), $this->RVB_bar[2]-($this->nb_shades-$a*4));
     }
-    $this->C_bar = ImageColorAllocate($this->im, $red, $green, $blue); 
+    $this->C_bar = ImageColorAllocate($this->im, $red, $green, $blue);
   }
-  
+
   function setBarFrameColor($html_color) { $this->C_barframe = $this->_htmlColorToGd($html_color); }
   function setTextColor($html_color) { $this->C_text = $this->_htmlColorToGd($html_color); }
 
@@ -124,7 +124,7 @@ class barGraph {
       $dummy = imagecreate(10, 10);
       $bounding_box = imagettftext($dummy, $this->font_size, 90, $i*$this->step+15, $this->height-$bar_height+20, $this->C_text, "../client_data/ttf/arialnb.ttf", $this->barlabels[$i]);
       imagedestroy($dummy);
-      
+
       $text_height = $bounding_box[0] - $bounding_box[4];
       $text_width  = $bounding_box[1] - $bounding_box[5];
       if ($bar_height-20 > $text_width) {
@@ -145,19 +145,19 @@ class barGraph {
   }
 }
 
-if (is_numeric($_GET['width'])) 
+if (is_numeric($_GET['width']))
   $width = $_GET['width'];
-else 
+else
   $width = 700;
 
-if (is_numeric($_GET['height'])) 
+if (is_numeric($_GET['height']))
   $height = $_GET['height'];
-else 
+else
   $height = 300;
 
-if (is_numeric($_GET['nb_months'])) 
+if (is_numeric($_GET['nb_months']))
   $nb_months = $_GET['nb_months'];
-else 
+else
   $nb_months = 12;
 
 $bar = new barGraph($width, $height);
@@ -167,11 +167,11 @@ for ($i=$nb_months-1 ; $i>=0; $i--) {
   list($mois_shown, $mois) = mysql_fetch_array($result);
   mysql_free_result($result);
 
-  $result = mysql_query("SELECT sum(fl.prix_ht*fl.qtt) as total, count(f.id_facture) as nb_factures, 
-                                 date_format(f.date_facture, '%Y%m') as groupme, date_format(f.date_facture, '%m/%y') as mois 
-                         FROM facture as f, facture_ligne as fl 
+  $result = mysql_query("SELECT sum(fl.prix_ht*fl.qtt) as total, count(f.id_facture) as nb_factures,
+                                 date_format(f.date_facture, '%Y%m') as groupme, date_format(f.date_facture, '%m/%y') as mois
+                         FROM webcash_invoices as f, webcash_invoice_rows as fl
                          WHERE fl.id_facture=f.id_facture
-                         AND f.type_doc = 'facture' 
+                         AND f.type_doc = 'facture'
                          AND date_format(f.date_facture,'%Y%m') = '$mois' GROUP BY groupme") or die(mysql_error());
   $billed = mysql_fetch_object($result);
   $billed->total = sprintf("%d", $billed->total);

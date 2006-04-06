@@ -1,10 +1,10 @@
-<?php 
-// 
+<?php
+//
 // This file is part of « Backoffice NBI »
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
-// 
+//
 // You can use and redistribute this file under the term of the GNU LGPL v2.0
 //
 ?>
@@ -29,7 +29,7 @@ class barGraph {
   var $barlabels = Array();
   var $max = 0;
   var $font_size = 12;
-  var $step = 40; # Bar width in pixel 
+  var $step = 40; # Bar width in pixel
   var $margin = 5;
   var $C_bar, $C_barframe, $C_text;
 
@@ -62,7 +62,7 @@ class barGraph {
   }
 
   function addValue($value, $label="", $barlabel="") {
-    if ($value > $this->max) 
+    if ($value > $this->max)
       $this->max = $value;
 
     array_push($this->data, $value);
@@ -93,7 +93,7 @@ class barGraph {
       $dummy = imagecreate(10, 10);
       $bounding_box = imagettftext($dummy, $this->font_size, 90, $i*$this->step+15, $this->height-$bar_height+20, $this->C_text, "../client_data/ttf/arialnb.ttf", $this->barlabels[$i]);
       imagedestroy($dummy);
-      
+
       $text_height = $bounding_box[0] - $bounding_box[4];
       $text_width  = $bounding_box[1] - $bounding_box[5];
       if ($bar_height-15 > $text_width) {
@@ -112,23 +112,23 @@ class barGraph {
   }
 }
 
-if (is_numeric($_GET['width'])) 
+if (is_numeric($_GET['width']))
   $width = $_GET['width'];
-else 
+else
   $width = 700;
 
-if (is_numeric($_GET['height'])) 
+if (is_numeric($_GET['height']))
   $height = $_GET['height'];
-else 
+else
   $height = 300;
 
 $bar = new barGraph($width, $height);
-$result = mysql_query("SELECT sum(fl.prix_ht*fl.qtt) as total, count(f.id_facture) as nb_factures, 
-                               date_format(f.date_facture, '%Y%m') as groupme, date_format(f.date_facture, '%m/%y') as mois 
-                       FROM facture as f, facture_ligne as fl 
+$result = mysql_query("SELECT sum(fl.prix_ht*fl.qtt) as total, count(f.id_facture) as nb_factures,
+                               date_format(f.date_facture, '%Y%m') as groupme, date_format(f.date_facture, '%m/%y') as mois
+                       FROM webcash_invoices as f, webcash_invoice_rows as fl
                        WHERE fl.id_facture=f.id_facture
                        AND f.is_paye=0
-                       AND f.type_doc = 'facture' 
+                       AND f.type_doc = 'facture'
                        GROUP BY groupme") or die(mysql_error());
 $bar->setBarColor("ff6060"); # NBI blue
 while ($billed = mysql_fetch_object($result)) {

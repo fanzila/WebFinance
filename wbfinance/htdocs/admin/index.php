@@ -1,10 +1,10 @@
-<?php 
-// 
+<?php
+//
 // This file is part of « Backoffice NBI »
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
-// 
+//
 // You can use and redistribute this file under the term of the GNU LGPL v2.0
 //
 ?>
@@ -29,7 +29,7 @@ function confirmDelete(id) {
 <div style="background: #ffcece"><?= $_SESSION['message']; $_SESSION['message'] = ""; ?></div>
 
 <table border="0" cellspacing="0" cellpadding="5" style="border: solid 1px black;">
-<tr align=center class=row_header> 
+<tr align=center class=row_header>
   <td>Login</td>
   <td>Nom</td>
   <td>Mail</td>
@@ -38,7 +38,7 @@ function confirmDelete(id) {
 </tr>
 <?php
 $result = mysql_query("SELECT *,date_format(last_login,'%d/%m/%Y') as nice_last_login
-                       FROM user ORDER by last_login DESC");
+                       FROM webcash_users ORDER by last_login DESC");
 $count=1;
 while ($user = mysql_fetch_object($result)) {
   $rowclass = ($count%2)==0?"odd":"even";
