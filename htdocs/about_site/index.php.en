@@ -1,0 +1,114 @@
+<?php
+
+// $Id$
+//
+
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel=stylesheet type=text/css href=webfinance.css />
+  <title>Webfinance</title>
+</head>
+
+<body>
+<img src="logo.gif" style="float: right;" />
+<h1>Webfinance</h1>
+
+<h2>What is webfinance ?</h2>
+
+<p>Originaly developped by <a href="http://www.nbi.fr">NBI SARL</a>
+<i>Webfinance</i> is a web application based on PHP/MySQL to allow the creation
+of bills, tracking of clients and contacts with them. 
+
+<p><i>Webfinance</i> was used solely by NBI until febuary 2006 when it was
+decided to open-source this little application. We hope to get help from
+developpers who are in need of similar functionnalities and could help us inprove
+them.</p>
+
+<h2>Download</h2>
+
+While still in very early stages, you can download the latest sources here :
+
+<ul class="releases">
+<?php
+$releases = glob("webfinance_*.tar.gz");
+foreach ($releases as $r) {
+  printf('<li><a href="%s">%s</a></li>'."\n", $r, $r);
+}
+?>
+</ul>
+
+<h2>Installation</h2>
+
+<ul>
+<li>Install pre-requisites (debian-centric)
+<pre class="shell">
+apt-get install php-fpdf apache php4 mysql-server-4.1
+</pre></li>
+
+<li>Create a database, and load the default schema</li>
+<pre class="shell">
+echo "CREATE DATABASE webfinance" | mysql -u root --password=verysecret
+echo "GRANT ALL ON webfinance.* TO 'webfinance'@'localhost'" | mysql -u root --password=verysecret
+mysql -u root --password=verysecret &lt; /path/to/webfinance/bin/schema.mysql4.1.sql
+</pre>
+
+<li>Add the virtual host to Apache configuration and make sure the name resolves :
+<pre class="shell">
+cat /etc/apache/conf.d/webfinance.conf &lt;&lt;EOF
+&lt;VirtualHost *&gt;
+    ServerName webfinance
+    DocumentRoot /path/to/webfinance/htdocs
+    ScriptAlias /cgi-bin /path/to/webfinance/cgi-bin
+    Options ExecCGI
+    AddDefaultCharset off
+&lt;/VirtualHost&gt;
+EOF
+apachectl graceful
+echo '127.0.0.1 webfinance' &gt;&gt; /etc/hosts
+</li>
+
+<li>Adapt the connections params for the application</li>
+<pre class="shell">
+cd /path/to/webfinance/htdocs/inc
+cp dbconnect.php.skel dbconnect.php
+modify dbconnect.php
+</pre>
+
+<li>Go to <a href="http://webfinance/">http://webfinance/</a> and login as administrator 
+  : login = admin, password = admin<br/><br/>
+  
+  You probably want to start by adding some users and configure your data</li>
+</ul>
+
+<h2>Community</h2>
+
+<ul>
+  <li>Report a bug through <a href="http://ovh.isvtec.com">Mantis</a>
+  <li>Send us a mail : <a href="mailto:webfinance@nbi.fr">webfinance@nbi.fr</a>
+</ul>
+
+<h2>Roadmap</h2>
+
+<ul>
+  <li>RELEASE_0.1 : First open source</li>
+  <li>RELEASE_0.2 : Blend webcash and backoffice fully, numerous bugfixes needed, promote to other small companies (may 2006 ?)</li>
+  <li>???</li>
+</ul>
+
+<h2>Contributors</h2>
+
+<ul>
+  <li>Nicolas Bouthors &lt;nbouthors@nbi.fr&gt;</li>
+</ul>
+
+<i>$Id$</i>
+</body>
+
+</html>
+<?php
+// vim: filetype=php
+?>

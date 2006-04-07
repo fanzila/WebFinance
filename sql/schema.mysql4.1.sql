@@ -46,6 +46,7 @@ CREATE TABLE `webfinance_categories` (
   `name` varchar(255) NOT NULL,
   `comment` text,
   `class` varchar(32) default NULL,
+  `re` varchar(255), -- as in regexp
   PRIMARY KEY  (`id`),
   KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=12 ;
