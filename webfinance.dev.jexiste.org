@@ -1,0 +1,10 @@
+# -*- mode: apache -*-
+
+<VirtualHost *>
+		ScriptAlias /cgi-bin  /home/thierry/workspace/webfinance/cgi-bin
+		DocumentRoot /home/thierry/workspace/webfinance/htdocs
+		Options ExecCGI
+		ServerName webfinance.dev.jexiste.org
+		ServerAlias www.webfinance.dev.jexiste.org
+		AddDefaultCharset off
+</VirtualHost>
