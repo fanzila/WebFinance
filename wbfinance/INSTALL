@@ -1,7 +1,16 @@
-apt-get install php-fpdf
+- apt-get install php-fpdf
 
-insert the SQL dump
+- create a database
+- insert the SQL dump
 
-copy the files to your DocumentRoot
+- $sudo cp webfinance.dev.jexiste.org /etc/apache/conf.d/
+- modify 'webfinance.dev.jexiste.org' file
+- add 'webfinance.dev.jexiste.org' in /etc/hosts
+- restart apache
 
-login as admin/admin
+- cd webfinance/htdocs/inc
+- cp dbconnect.php.skel dbconnect.php
+- modify dbconnect.php
+
+- at http://webfinance.dev.jexiste.org
+  login as admin/admin
