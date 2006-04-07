@@ -13,8 +13,8 @@ include("../inc/backoffice.php");
 
 if (!is_numeric($_GET['id_facture'])) {
   // Création de facture
-  mysql_query("INSERT INTO webcash_invoices (date_created,date_facture,id_client) values(now(), now(), ".$_GET['id_client'].")") or die(mysql_error());
-  $result = mysql_query("SELECT id_facture FROM webcash_invoices WHERE id_client=".$_GET['id_client']." AND date_sub(now(), INTERVAL 1 SECOND)<=date_created");
+  mysql_query("INSERT INTO webfinance_invoices (date_created,date_facture,id_client) values(now(), now(), ".$_GET['id_client'].")") or die(mysql_error());
+  $result = mysql_query("SELECT id_facture FROM webfinance_invoices WHERE id_client=".$_GET['id_client']." AND date_sub(now(), INTERVAL 1 SECOND)<=date_created");
   list($id_facture) = mysql_fetch_array($result);
   header("Location: edit_facture.php?id_facture=".$id_facture);
   die();
@@ -217,7 +217,7 @@ function del_ligne() {
       <td>
         <select name="id_type_presta" style="width: 100px;">
         <?php
-        $result = mysql_query("SELECT id_type_presta, nom FROM webcash_type_presta ORDER BY nom");
+        $result = mysql_query("SELECT id_type_presta, nom FROM webfinance_type_presta ORDER BY nom");
         while (list($id, $type) = mysql_fetch_array($result)) {
           printf('<option value="%d"%s>%s</option>', $id, ($id==$facture->id_type_presta)?"selected":"", $type );
         }
@@ -230,7 +230,7 @@ function del_ligne() {
       <td>
         <select name="id_compte" style="width: 100px;">
         <?php
-        $result = mysql_query("SELECT id_pref,value FROM webcash_pref WHERE type_pref='rib'") or die(mysql_error());
+        $result = mysql_query("SELECT id_pref,value FROM webfinance_pref WHERE type_pref='rib'") or die(mysql_error());
         while ($cpt = mysql_fetch_object($result)) {
           $data = unserialize(base64_decode($cpt->value));
           printf('<option value="%d"%s>%s</option>', $cpt->id_pref, ($cpt->id_pref==$facture->id_compte)?" selected":"", $data->banque );

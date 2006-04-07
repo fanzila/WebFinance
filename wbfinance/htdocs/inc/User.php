@@ -20,7 +20,7 @@ class User {
     }
     $result = mysql_query("SELECT *,date_format(creation_date,'%d/%m/%Y') as nice_creation_date,
                                   date_format(modification_date,'%d/%m/%Y') as nice_modification_date
-                           FROM webcash_users WHERE id_user=$id_user") or nbi_mysqldie();
+                           FROM webfinance_users WHERE id_user=$id_user") or nbi_mysqldie();
 
 
     $user = mysql_fetch_object($result);
@@ -38,16 +38,16 @@ class User {
   // nbi_login
   function login($data) {
     if ((preg_match("/^[a-zA-Z0-9]+$/", $data['login'])) && (preg_match("/^[a-zA-Z0-9]+$/", $data['password']))) {
-      $result = mysql_query("SELECT count(id_user) FROM webcash_users WHERE login='".$data['login']."' AND md5('".$data['password']."')=password AND disabled=0");
+      $result = mysql_query("SELECT count(id_user) FROM webfinance_users WHERE login='".$data['login']."' AND md5('".$data['password']."')=password AND disabled=0");
       list($exists) = mysql_fetch_array($result);
       mysql_free_result($result);
       if ($exists) {
-        $result = mysql_query("SELECT id_user FROM webcash_users WHERE login='".$data['login']."' AND md5('".$data['password']."')=password");
+        $result = mysql_query("SELECT id_user FROM webfinance_users WHERE login='".$data['login']."' AND md5('".$data['password']."')=password");
         list($id_user) = mysql_fetch_array($result);
         mysql_free_result($result);
         $_SESSION['id_user'] = $id_user;
 
-        $result = mysql_query("UPDATE webcash_users SET last_login=now() WHERE id_user=$id_user");
+        $result = mysql_query("UPDATE webfinance_users SET last_login=now() WHERE id_user=$id_user");
         logmessage("Connexion");
         return $id_user;
       }
@@ -83,7 +83,7 @@ class User {
   }
 
   function isAdmin($id_user) {
-    $result = mysql_query("SELECT admin=1 FROM webcash_users WHERE id_user=$id_user");
+    $result = mysql_query("SELECT admin=1 FROM webfinance_users WHERE id_user=$id_user");
     list($is_admin) = mysql_fetch_array($result);
     mysql_free_result($result);
 
@@ -100,7 +100,7 @@ class User {
     }
     extract($data);
 
-    $q = sprintf("UPDATE webcash_users SET first_name='%s', last_name='%s', login='%s', email='%s', disabled=%d, admin=%d,
+    $q = sprintf("UPDATE webfinance_users SET first_name='%s', last_name='%s', login='%s', email='%s', disabled=%d, admin=%d,
                          modification_date=now()
                   WHERE id_user=%d",
 
@@ -118,11 +118,11 @@ class User {
     }
     extract($data);
 
-    $q = sprintf("INSERT INTO webcash_users (login, first_name, last_name, password, email, disabled, admin, modification_date, creation_date)
+    $q = sprintf("INSERT INTO webfinance_users (login, first_name, last_name, password, email, disabled, admin, modification_date, creation_date)
                   VALUES('%s', '%s', '%s', md5('%s'), '%s', %d, %d, now(), now() )",
                   $login, $first_name, $last_name, $this->randomPass(), $email, ($disabled == "on")?1:0, ($admin == "on")?1:0 );
     mysql_query($q) or die(mysql_error());
-    $result = mysql_query("SELECT id_user FROM webcash_users WHERE creation_date>date_sub(now(), INTERVAL 1 SECOND)");
+    $result = mysql_query("SELECT id_user FROM webfinance_users WHERE creation_date>date_sub(now(), INTERVAL 1 SECOND)");
     list($new_id_user) = mysql_fetch_array($result);
     mysql_free_result($result);
 
@@ -137,11 +137,11 @@ class User {
       $_SESSION['message'] = "Vous n'êtes pas administrateur";
       return false;
     }
-    $result = mysql_query("SELECT login,first_name,last_name FROM webcash_users WHERE id_user=$id_user");
+    $result = mysql_query("SELECT login,first_name,last_name FROM webfinance_users WHERE id_user=$id_user");
     list($login, $prenom, $nom) = mysql_fetch_array($result);
     mysql_free_result($result);
     logmessage("Suppression de l'utilisateur $login ($prenom $nom)");
-    mysql_query("DELETE FROM webcash_users WHERE id_user=$id_user");
+    mysql_query("DELETE FROM webfinance_users WHERE id_user=$id_user");
   }
 
   function randomPass() {
@@ -158,12 +158,12 @@ class User {
   }
 
   function changePass($id_user, $old_pass, $new_pass) {
-    $result = mysql_query("SELECT count(*) FROM webcash_users WHERE id_user=$id_user AND password=md5('$old_pass')");
+    $result = mysql_query("SELECT count(*) FROM webfinance_users WHERE id_user=$id_user AND password=md5('$old_pass')");
     list($ok) = mysql_fetch_array($result);
     mysql_free_result($result);
 
     if ($ok) {
-      mysql_query("UPDATE webcash_users SET password=md5('$new_pass') WHERE id_user=$id_user");
+      mysql_query("UPDATE webfinance_users SET password=md5('$new_pass') WHERE id_user=$id_user");
       logmessage("Mot de passe pour user:$id_user changé");
       $_SESSION['message'] = "Mot de passe modifié";
     } else {
@@ -175,20 +175,20 @@ class User {
   // Expects an object
   function setPrefs($prefs) {
     $data = base64_encode(serialize($prefs));
-    $result = mysql_query("SELECT count(*) FROM webcash_pref WHERE owner=".$_SESSION['id_user']." AND type_pref='user_pref'") or die(mysql_error());
+    $result = mysql_query("SELECT count(*) FROM webfinance_pref WHERE owner=".$_SESSION['id_user']." AND type_pref='user_pref'") or die(mysql_error());
     list($has_pref) = mysql_fetch_array($result);
     mysql_free_result($result);
     if ($has_pref) {
-      mysql_query("UPDATE webcash_pref SET value='$data' WHERE owner=".$_SESSION['id_user']." AND type_pref='user_pref'") or die(mysql_error());
+      mysql_query("UPDATE webfinance_pref SET value='$data' WHERE owner=".$_SESSION['id_user']." AND type_pref='user_pref'") or die(mysql_error());
     } else {
-      mysql_query("INSERT INTO webcash_pref (value,owner,type_pref) VALUES('$data', ".$_SESSION['id_user'].",'user_pref')") or die(mysql_error());
+      mysql_query("INSERT INTO webfinance_pref (value,owner,type_pref) VALUES('$data', ".$_SESSION['id_user'].",'user_pref')") or die(mysql_error());
     }
     $_SESSION['message'] = "Vos préférences sont enregistrées";
   }
 
   // Expects an object
   function getPrefs() {
-    $result = mysql_query("SELECT value FROM webcash_pref WHERE owner=".$_SESSION['id_user']." AND type_pref='user_pref'") or die(mysql_error());
+    $result = mysql_query("SELECT value FROM webfinance_pref WHERE owner=".$_SESSION['id_user']." AND type_pref='user_pref'") or die(mysql_error());
     list($data) = mysql_fetch_array($result);
     $this->prefs = unserialize(base64_decode($data));
   }

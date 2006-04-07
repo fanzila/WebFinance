@@ -20,7 +20,7 @@ if (! ($_SESSION['id_user'] > 0)) {
   die();
 }
 
-$result = mysql_query("SELECT facture_file FROM webcash_invoices WHERE id_facture=".$_GET['id']);
+$result = mysql_query("SELECT facture_file FROM webfinance_invoices WHERE id_facture=".$_GET['id']);
 list($file) = mysql_fetch_array($result);
 
 if (file_exists($file)) {

@@ -21,7 +21,7 @@ if ($GLOBALS['HTTP_SERVER_VARS']['REQUEST_METHOD'] != "POST") {
 $user = nbi_get_user_info();
 
 if ($_POST['action'] == "create") {
-  $q = sprintf("INSERT INTO webcash_suivi (type_suivi,id_objet,message,date_added,added_by,rappel) VALUES(%d, %d, '%s', now(), %d, %s)",
+  $q = sprintf("INSERT INTO webfinance_suivi (type_suivi,id_objet,message,date_added,added_by,rappel) VALUES(%d, %d, '%s', now(), %d, %s)",
                $_POST['type_suivi'], $_POST['id_client'], $_POST['message'], $user->id_user,
                ($_POST['deltadays']!=0)?"date_add(now(), INTERVAL ".$_POST['deltadays']." DAY)":"NULL");
 

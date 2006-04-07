@@ -16,17 +16,17 @@ class Facture {
   }
 
   function _markForRebuild($id) {
-    mysql_query("UPDATE webcash_invoices SET date_generated=NULL,pdf_file='' WHERE id_facture=$id");
+    mysql_query("UPDATE webfinance_invoices SET date_generated=NULL,pdf_file='' WHERE id_facture=$id");
   }
 
   function addLigne($id_facture, $desc, $pu_ht, $qtt) {
     $desc = preg_replace("/\'/", "\\'", $desc);
-    $result = mysql_query("INSERT INTO webcash_invoice_rows (date_creation, id_facture, description, pu_ht, qtt) VALUES(now(), $id_facture, '$desc', '$pu_ht', $qtt)") or die(mysql_error());
+    $result = mysql_query("INSERT INTO webfinance_invoice_rows (date_creation, id_facture, description, pu_ht, qtt) VALUES(now(), $id_facture, '$desc', '$pu_ht', $qtt)") or die(mysql_error());
     $this->_markForRebuild($id_facture);
   }
 
   function getTotal($id_facture) {
-    $result = mysql_query("SELECT sum(qtt*pu_ht) FROM webcash_invoice_rows WHERE id_facture=$id_facture") or die(mysql_error());
+    $result = mysql_query("SELECT sum(qtt*pu_ht) FROM webfinance_invoice_rows WHERE id_facture=$id_facture") or die(mysql_error());
     list($total) = mysql_fetch_array($result);
     mysql_free_result($result);
 
@@ -45,12 +45,12 @@ class Facture {
                                   date_format(f.date_facture, '%Y%m') as mois_facture,
                                   date_sent<now() as is_sent,
                                   f.type_paiement, f.is_paye, f.ref_contrat, f.extra_top, f.extra_bottom, f.num_facture, f.*
-                           FROM webcash_clients as c, webcash_invoices as f
+                           FROM webfinance_clients as c, webfinance_invoices as f
                            WHERE f.id_client=c.id_client
                            AND f.id_facture=$id_facture") or die(mysql_error());
     $facture = mysql_fetch_object($result);
 
-    $result = mysql_query("SELECT id_facture_ligne,prix_ht,qtt,description FROM webcash_invoice_rows WHERE id_facture=$id_facture ORDER BY ordre");
+    $result = mysql_query("SELECT id_facture_ligne,prix_ht,qtt,description FROM webfinance_invoice_rows WHERE id_facture=$id_facture ORDER BY ordre");
     $facture->lignes = Array();
     $total = 0;
     $count = 0;
@@ -67,7 +67,7 @@ class Facture {
     $facture->nice_total_ttc = sprintf("%.2f", $facture->total_ttc);
     $facture->immuable = $facture->is_paye || $facture->is_sent;
 
-    $result = mysql_query("SELECT nom FROM webcash_clients WHERE id_client=".$facture->id_client);
+    $result = mysql_query("SELECT nom FROM webfinance_clients WHERE id_client=".$facture->id_client);
     list($facture->nom_client) = mysql_fetch_array($result);
     mysql_free_result($result);
 
@@ -79,14 +79,14 @@ class Facture {
    */
   function setPaid($id_facture) {
     // Marque toutes les lignes comme "payées"
-    mysql_query("UPDATE webcash_invoices SET date_paiement=now(),is_payee=1 WHERE id_facture=$id_facture") or die(mysql_error());
+    mysql_query("UPDATE webfinance_invoices SET date_paiement=now(),is_payee=1 WHERE id_facture=$id_facture") or die(mysql_error());
   }
 
 
   /** Renvoie vrai si la facture est générée au format PDF
     */
   function hasPdf($id) {
-    $result = mysql_query("SELECT pdf_file FROM webcash_invoices WHERE id_facture=$id");
+    $result = mysql_query("SELECT pdf_file FROM webfinance_invoices WHERE id_facture=$id");
     list($file) = mysql_fetch_array($result);
     mysql_free_result($result);
 

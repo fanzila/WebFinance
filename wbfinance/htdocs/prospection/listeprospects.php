@@ -16,7 +16,7 @@
 </tr>
 <?php
 
-$result = mysql_query("SELECT id_client,nom,tel,fax FROM webcash_clients WHERE state='prospect' ORDER BY nom") or nbi_mysqldie();
+$result = mysql_query("SELECT id_client,nom,tel,fax FROM webfinance_clients WHERE state='prospect' ORDER BY nom") or nbi_mysqldie();
 while ($client = mysql_fetch_object($result)) {
   $count++;
   print "<tr align=center class=row_".(($count%2 == 0)?"even":"odd").">\n"
