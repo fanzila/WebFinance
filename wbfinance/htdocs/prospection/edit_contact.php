@@ -1,18 +1,18 @@
 <?php
 //
-// This file is part of « Backoffice NBI »
+// This file is part of « Webfinance »
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
 //
-// You can use and redistribute this file under the term of the GNU LGPL v2.0
+// You can use and redistribute this file under the term of the GNU GPL v2.0
 //
 ?>
 <?php
 // $Id$
 // This is a indocPopup : see inpage_popup.js
 ?>
-<?include "../inc/backoffice.php" ?>
+<?include "../inc/main.php" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 

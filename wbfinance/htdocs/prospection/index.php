@@ -1,17 +1,17 @@
 <?php
 //
-// This file is part of « Backoffice NBI »
+// This file is part of « Webfinance »
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
 //
-// You can use and redistribute this file under the term of the GNU LGPL v2.0
+// You can use and redistribute this file under the term of the GNU GPL v2.0
 //
 ?>
 <?php
 // $Id$
 
-include("../inc/backoffice.php");
+include("../inc/main.php");
 include("../top.php");
 include("nav.php");
 
@@ -35,12 +35,12 @@ while (list($id_client) = mysql_fetch_array($result)) {
 
 // Filtres et tris
 $where_clause = "1";
-if (isset($_GET['q']) && ($_GET['q']!=0)) { $where_clause = "te.id_type_entreprise=".$_GET['q']; }
+if (isset($_GET['q']) && ($_GET['q']!=0)) { $where_clause = "te.id_company_type=".$_GET['q']; }
 
 if (preg_match("/[a-zA-Z ]+/", $_GET['namelike'])) {
   $where_clause .= " AND c.nom LIKE '%".$_GET['namelike']."%'";
 }
-$where_clause .= " AND c.id_type_entreprise=te.id_type_entreprise ";
+$where_clause .= " AND c.id_company_type=te.id_company_type ";
 
 $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w+\\&*+/", "", $GLOBALS['_SERVER']['QUERY_STRING']);
 
@@ -147,9 +147,9 @@ mysql_free_result($result);
   <input type="hidden" name="sort" value="<?= $_GET['sort'] ?>" />
   <input type="hidden" name="namelike" value="<?= $_GET['namelike'] ?>" />
   <select style="width: 150px;" onchange="this.form.submit();" name="q"><option value="0">Tous<?php
-  $result = mysql_query("SELECT te.id_type_entreprise,te.nom,count(*) as nb FROM webfinance_company_types te, webfinance_clients c WHERE te.id_type_entreprise=c.id_type_entreprise group by te.id_type_entreprise");
+  $result = mysql_query("SELECT te.id_company_type,te.nom,count(*) as nb FROM webfinance_company_types te, webfinance_clients c WHERE te.id_company_type=c.id_company_type group by te.id_company_type");
   while ($s = mysql_fetch_object($result)) {
-    printf('<option value="%s"%s>%s (%d fiches)</option>', $s->id_type_entreprise, ($s->id_type_entreprise==$_GET['q'])?" selected":"", $s->nom, $s->nb );
+    printf('<option value="%s"%s>%s (%d fiches)</option>', $s->id_company_type, ($s->id_company_type==$_GET['q'])?" selected":"", $s->nom, $s->nb );
   }
   ?></select></form></td>
 </tr>
