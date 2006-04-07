@@ -23,11 +23,11 @@ include("nav.php");
  <td>Qui</td>
 </tr>
 <?php
-$result = mysql_query("SELECT *,date_format(date,'%d/%m/%Y %k:%i') as nice_date FROM webcash_userlog ORDER BY date DESC");
+$result = mysql_query("SELECT *,date_format(date,'%d/%m/%Y %k:%i') as nice_date FROM webfinance_userlog ORDER BY date DESC");
 $count=1;
 while ($log = mysql_fetch_object($result)) {
   $class = ($count%2)==0?"odd":"even";
-  $result2 = mysql_query("SELECT login FROM webcash_users WHERE id_user=".$log->id_user);
+  $result2 = mysql_query("SELECT login FROM webfinance_users WHERE id_user=".$log->id_user);
   list($login) = mysql_fetch_array($result2);
   mysql_free_result($result2);
 

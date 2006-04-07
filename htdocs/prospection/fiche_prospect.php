@@ -16,8 +16,8 @@
 include("../inc/backoffice.php");
 
 if ($_GET['action'] == '_new') {
-  mysql_query("INSERT INTO webcash_clients (nom,date_created) VALUES('Nouvelle Entreprise', now())");
-  $result = mysql_query("SELECT id_client FROM webcash_clients WHERE date_sub(now(), INTERVAL 1 SECOND)<=date_created");
+  mysql_query("INSERT INTO webfinance_clients (nom,date_created) VALUES('Nouvelle Entreprise', now())");
+  $result = mysql_query("SELECT id_client FROM webfinance_clients WHERE date_sub(now(), INTERVAL 1 SECOND)<=date_created");
   list($_GET['id']) = mysql_fetch_array($result);
 }
 
@@ -147,7 +147,7 @@ var onglet_shown='<?= $shown_tab ?>';
         $result = mysql_query("SELECT YEAR(f.date_facture) as annee,
                                  SUM( IF(f.type_doc='facture', fl.qtt*fl.prix_ht, 0)) as ca_ht_total,
                                  SUM( IF(f.type_doc='facture', IF(f.is_paye=0, fl.qtt*fl.prix_ht, 0), 0)) as du_ht_total
-                               FROM webcash_invoices f, webcash_invoice_rows fl
+                               FROM webfinance_invoices f, webfinance_invoice_rows fl
                                WHERE f.id_client=".$Client->id."
                                AND f.id_facture=fl.id_facture
                                GROUP BY YEAR(date_facture)
@@ -158,7 +158,7 @@ var onglet_shown='<?= $shown_tab ?>';
                        f.is_paye,SUM(fl.qtt*fl.prix_ht) as total,f.type_doc,
                        unix_timestamp(date_facture) as ts_date_facture,
                        UPPER(LEFT(f.type_doc, 2)) AS code_type_doc
-                FROM webcash_invoices as f, webcash_invoice_rows as fl
+                FROM webfinance_invoices as f, webfinance_invoice_rows as fl
                 WHERE fl.id_facture=f.id_facture AND f.id_client=".$Client->id."
                 AND year(f.date_facture) = '".$year->annee."'
                 GROUP BY f.id_facture
@@ -170,7 +170,7 @@ var onglet_shown='<?= $shown_tab ?>';
              // Récupération du texte des lignes facturées pour afficher en infobulle.
              $facture->nice_date_facture = strftime("%d %B %Y", $facture->ts_date_facture);
              $description = "<b>".$facture->nice_date_facture."</b><br/>";
-             $result3 = mysql_query("SELECT description FROM webcash_invoice_rows WHERE id_facture=".$facture->id_facture);
+             $result3 = mysql_query("SELECT description FROM webfinance_invoice_rows WHERE id_facture=".$facture->id_facture);
              while (list($desc) = mysql_fetch_array($result3)) {
                $desc = preg_replace("/\r\n/", " ", $desc);
                $desc = preg_replace("/\"/", "", $desc);
@@ -228,7 +228,7 @@ var onglet_shown='<?= $shown_tab ?>';
 
 // Ajout d'un élément de suivi
 $ts_select = '<select name="new_suivi_type">';
-$result = mysql_query("SELECT id_type_suivi,name FROM webcash_type_suivi ORDER BY name");
+$result = mysql_query("SELECT id_type_suivi,name FROM webfinance_type_suivi ORDER BY name");
 while (list($id,$ts) = mysql_fetch_array($result)) {
   $ts_select .= sprintf('<option value="%d">%s</option>', $id, $ts);
 }
@@ -247,7 +247,7 @@ EOF;
 // Affichage de l'existant
 $q = "SELECT *, ts.name as type_suivi,
              UNIX_TIMESTAMP(s.date_added) as ts_date_added
-      FROM webcash_suivi s, webcash_type_suivi ts
+      FROM webfinance_suivi s, webfinance_type_suivi ts
       WHERE ts.id_type_suivi=s.type_suivi
       AND s.id_objet=".$Client->id."
       ORDER BY s.date_added DESC";

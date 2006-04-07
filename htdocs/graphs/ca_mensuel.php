@@ -169,7 +169,7 @@ for ($i=$nb_months-1 ; $i>=0; $i--) {
 
   $result = mysql_query("SELECT sum(fl.prix_ht*fl.qtt) as total, count(f.id_facture) as nb_factures,
                                  date_format(f.date_facture, '%Y%m') as groupme, date_format(f.date_facture, '%m/%y') as mois
-                         FROM webcash_invoices as f, webcash_invoice_rows as fl
+                         FROM webfinance_invoices as f, webfinance_invoice_rows as fl
                          WHERE fl.id_facture=f.id_facture
                          AND f.type_doc = 'facture'
                          AND date_format(f.date_facture,'%Y%m') = '$mois' GROUP BY groupme") or die(mysql_error());

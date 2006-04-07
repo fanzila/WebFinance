@@ -31,7 +31,7 @@ Afficher :
 <?php
 
 // On récupère la date de création de la société et on calcule son age en mois.
-$result = mysql_query("SELECT value FROM webcash_pref WHERE owner=-1 AND type_pref='societe'");
+$result = mysql_query("SELECT value FROM webfinance_pref WHERE owner=-1 AND type_pref='societe'");
 list($data) = mysql_fetch_array($result);
 mysql_free_result();
 $data = unserialize(base64_decode($data));

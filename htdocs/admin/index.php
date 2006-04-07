@@ -38,7 +38,7 @@ function confirmDelete(id) {
 </tr>
 <?php
 $result = mysql_query("SELECT *,date_format(last_login,'%d/%m/%Y') as nice_last_login
-                       FROM webcash_users ORDER by last_login DESC");
+                       FROM webfinance_users ORDER by last_login DESC");
 $count=1;
 while ($user = mysql_fetch_object($result)) {
   $rowclass = ($count%2)==0?"odd":"even";

@@ -17,7 +17,7 @@ class Client {
   var $data = null;
 
   function _setInfos() {
-    $result = mysql_query("SELECT * FROM webcash_clients WHERE id_client=".$this->id) or die("Client:_setInfos ".mysql_error());
+    $result = mysql_query("SELECT * FROM webfinance_clients WHERE id_client=".$this->id) or die("Client:_setInfos ".mysql_error());
     $this->data = mysql_fetch_object($result);
     mysql_free_result($result);
   }

@@ -16,18 +16,18 @@ include("../inc/backoffice.php");
 
 // Enregistrement du logo if provided
 if (file_exists($_FILES['logo']['tmp_name'])) {
-  mysql_query("DELETE FROM webcash_pref WHERE type_pref='logo'");
+  mysql_query("DELETE FROM webfinance_pref WHERE type_pref='logo'");
   $fp = fopen($_FILES['logo']['tmp_name'], "r");
   while (!feof($fp)) {
     $read = fread($fp, 4096);
     $data .= $read;
   }
   $data = base64_encode($data);
-  mysql_query("INSERT INTO webcash_pref (owner,value,type_pref) values(-1, '$data', 'logo')");
+  mysql_query("INSERT INTO webfinance_pref (owner,value,type_pref) values(-1, '$data', 'logo')");
 }
 
 // Enregistrement adresse et raison sociale
-mysql_query("DELETE FROM webcash_pref WHERE type_pref='societe'");
+mysql_query("DELETE FROM webfinance_pref WHERE type_pref='societe'");
 
 $data = new stdClass();
 $data->raison_sociale = $_POST['raison_sociale'];
@@ -39,10 +39,10 @@ $data->addr3 = $_POST['addr3'];
 $data->date_creation = $_POST['date_creation'];
 
 $data = base64_encode(serialize($data));
-mysql_query("INSERT INTO webcash_pref (type_pref, value) VALUES('societe', '$data');") or die(mysql_error());
+mysql_query("INSERT INTO webfinance_pref (type_pref, value) VALUES('societe', '$data');") or die(mysql_error());
 
 // Enregistrement compte(s) banquaire(s)
-mysql_query("DELETE FROM webcash_pref WHERE type_pref='rib'");
+mysql_query("DELETE FROM webfinance_pref WHERE type_pref='rib'");
 foreach ($_POST as $n=>$v) {
   if (preg_match("/^banque_([0-9]+)$/", $n, $matches)) {
     $num = $matches[1];
@@ -59,7 +59,7 @@ foreach ($_POST as $n=>$v) {
 
     if ($rib->compte != "") {
       $rib = base64_encode(serialize($rib));
-      mysql_query("INSERT INTO webcash_pref (type_pref, value) VALUES('rib', '$rib')") or die(mysql_error());
+      mysql_query("INSERT INTO webfinance_pref (type_pref, value) VALUES('rib', '$rib')") or die(mysql_error());
     }
   }
 }
@@ -76,7 +76,7 @@ if ($_POST['banque_new'] != "") {
   $rib->swift = $_POST['swift_new'];
 
   $rib = base64_encode(serialize($rib));
-  mysql_query("INSERT INTO webcash_pref (type_pref, value) VALUES('rib', '$rib')") or die(mysql_error());
+  mysql_query("INSERT INTO webfinance_pref (type_pref, value) VALUES('rib', '$rib')") or die(mysql_error());
 }
 
 header("Location: societe.php");

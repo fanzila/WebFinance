@@ -49,7 +49,7 @@ if ($_GET['type']!="") {
 </tr>
 <?php
 $total_ca_ht = 0;
-$result = mysql_query("SELECT id_facture FROM webcash_invoices WHERE type_doc='facture' AND num_facture!='' AND date_facture<=now() AND ".$where_clause." ORDER BY date_facture DESC") or die(mysql_error());
+$result = mysql_query("SELECT id_facture FROM webfinance_invoices WHERE type_doc='facture' AND num_facture!='' AND date_facture<=now() AND ".$where_clause." ORDER BY date_facture DESC") or die(mysql_error());
 $mois = array();
 while (list($id_facture) = mysql_fetch_array($result)) {
   $count++;
@@ -60,7 +60,7 @@ while (list($id_facture) = mysql_fetch_array($result)) {
   $mois[$fa->mois_facture]++;
 
    $description = "";
-   $result2 = mysql_query("SELECT description FROM webcash_invoice_rows WHERE id_facture=".$fa->id_facture);
+   $result2 = mysql_query("SELECT description FROM webfinance_invoice_rows WHERE id_facture=".$fa->id_facture);
    while (list($desc) = mysql_fetch_array($result2)) {
      $desc = preg_replace("/\r\n/", " ", $desc);
      $desc = preg_replace("/\"/", "", $desc);
@@ -108,7 +108,7 @@ EOF;
       <option value="">Tous</option>
       <?php
       $result = mysql_query("SELECT c.id_client,c.nom
-                             FROM webcash_clients as c, webcash_invoices as f
+                             FROM webfinance_clients as c, webfinance_invoices as f
                              WHERE f.id_client=c.id_client
                              GROUP BY c.id_client
                              ORDER BY nom");

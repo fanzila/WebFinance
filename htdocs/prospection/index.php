@@ -17,20 +17,20 @@ include("nav.php");
 
 // House keeping : lister les factures inpayées et marquer les clients qui en ont.
 // FIXME : should go in save_facture.php
-mysql_query("UPDATE webcash_clients SET has_unpaid=false,has_devis=false");
+mysql_query("UPDATE webfinance_clients SET has_unpaid=false,has_devis=false");
 $result = mysql_query("select c.id_client,count(*) as has_unpaid
-                       FROM webcash_invoices as f,webcash_clients as c
+                       FROM webfinance_invoices as f,webfinance_clients as c
                        WHERE f.is_paye=0
                        AND f.type_doc='facture'
                        AND f.date_facture<=now()
                        AND f.id_client=c.id_client
                        group by c.id_client") or die(mysql_error());
 while (list($id_client) = mysql_fetch_array($result)) {
-  mysql_query("UPDATE webcash_clients SET has_unpaid=true WHERE id_client=$id_client");
+  mysql_query("UPDATE webfinance_clients SET has_unpaid=true WHERE id_client=$id_client");
 }
-$result = mysql_query("SELECT c.id_client,count(*) as has_unpaid from webcash_invoices as f,webcash_clients as c WHERE f.is_paye=0 AND f.type_doc='devis' AND f.id_client=c.id_client group by c.id_client");
+$result = mysql_query("SELECT c.id_client,count(*) as has_unpaid from webfinance_invoices as f,webfinance_clients as c WHERE f.is_paye=0 AND f.type_doc='devis' AND f.id_client=c.id_client group by c.id_client");
 while (list($id_client) = mysql_fetch_array($result)) {
-  mysql_query("UPDATE webcash_clients SET has_devis=true WHERE id_client=$id_client");
+  mysql_query("UPDATE webfinance_clients SET has_devis=true WHERE id_client=$id_client");
 }
 
 // Filtres et tris
@@ -71,7 +71,7 @@ switch ($_GET['sort']) {
 }
 
 $total_dehors = 0;
-$result = mysql_query("SELECT *,c.nom as nom FROM webcash_clients c,webcash_company_types te WHERE $where_clause ORDER BY $critere") or die(mysql_error());
+$result = mysql_query("SELECT *,c.nom as nom FROM webfinance_clients c,webfinance_company_types te WHERE $where_clause ORDER BY $critere") or die(mysql_error());
 while ($client = mysql_fetch_object($result)) {
   $count++;
 
@@ -95,7 +95,7 @@ mysql_free_result($result);
 
 // CA total sur l'année N-2
 $result = mysql_query("SELECT sum(fl.qtt*prix_ht)
-                       FROM webcash_invoice_rows fl, webcash_invoices f
+                       FROM webfinance_invoice_rows fl, webfinance_invoices f
                        WHERE f.id_facture=fl.id_facture
                        AND f.type_doc='facture'
                        AND year(f.date_facture) = year(now()) - 2") or die(mysql_error());
@@ -104,7 +104,7 @@ mysql_free_result($result);
 
 // CA total sur l'année N-1
 $result = mysql_query("SELECT sum(fl.qtt*prix_ht)
-                       FROM webcash_invoice_rows fl, webcash_invoices f
+                       FROM webfinance_invoice_rows fl, webfinance_invoices f
                        WHERE f.id_facture=fl.id_facture
                        AND f.type_doc='facture'
                        AND year(f.date_facture) = year(now()) - 1") or die(mysql_error());
@@ -113,7 +113,7 @@ mysql_free_result($result);
 
 // CA Total sur année en cours
 $result = mysql_query("SELECT sum(fl.qtt*prix_ht)
-                       FROM webcash_invoice_rows fl, webcash_invoices f
+                       FROM webfinance_invoice_rows fl, webfinance_invoices f
                        WHERE f.id_facture=fl.id_facture
                        AND f.type_doc='facture'
                        AND year(f.date_facture) = year(now())") or die(mysql_error());
@@ -147,7 +147,7 @@ mysql_free_result($result);
   <input type="hidden" name="sort" value="<?= $_GET['sort'] ?>" />
   <input type="hidden" name="namelike" value="<?= $_GET['namelike'] ?>" />
   <select style="width: 150px;" onchange="this.form.submit();" name="q"><option value="0">Tous<?php
-  $result = mysql_query("SELECT te.id_type_entreprise,te.nom,count(*) as nb FROM webcash_company_types te, webcash_clients c WHERE te.id_type_entreprise=c.id_type_entreprise group by te.id_type_entreprise");
+  $result = mysql_query("SELECT te.id_type_entreprise,te.nom,count(*) as nb FROM webfinance_company_types te, webfinance_clients c WHERE te.id_type_entreprise=c.id_type_entreprise group by te.id_type_entreprise");
   while ($s = mysql_fetch_object($result)) {
     printf('<option value="%s"%s>%s (%d fiches)</option>', $s->id_type_entreprise, ($s->id_type_entreprise==$_GET['q'])?" selected":"", $s->nom, $s->nb );
   }
