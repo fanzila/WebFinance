@@ -1,0 +1,17 @@
+/* $Id$ */
+body {
+  font-family: trebuchet ms, sans serif;
+  font-size: 13px;
+}
+h2 {
+  font-style: italic;
+}
+
+a { color: #6060ff; }
+a:hover { color: #6060ff; background: #ffff30; }
+
+pre.shell { 
+border: dashed 1px blue;
+background: #ffffce;
+color: green;
+}
