@@ -1,16 +1,16 @@
 <?php
 //
-// This file is part of Â« Backoffice NBI Â»
+// This file is part of Â« Webfinance Â»
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
 //
-// You can use and redistribute this file under the term of the GNU LGPL v2.0
+// You can use and redistribute this file under the term of the GNU GPL v2.0
 //
 ?>
 <?php
 
-include_once("../inc/backoffice.php");
+include_once("../inc/main.php");
 include("../top.php");
 include("nav.php");
 

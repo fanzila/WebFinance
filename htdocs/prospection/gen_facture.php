@@ -1,11 +1,11 @@
 <?php
 //
-// This file is part of Â« Backoffice NBI Â»
+// This file is part of Â« Webfinance Â»
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
 //
-// You can use and redistribute this file under the term of the GNU LGPL v2.0
+// You can use and redistribute this file under the term of the GNU GPL v2.0
 //
 ?>
 <?php
@@ -13,7 +13,7 @@
 // $Id$
 // Génère un PDF pour une facture NBI
 
-require("../inc/backoffice.php");
+require("../inc/main.php");
 require("../inc/dbconnect.php");
 require("/usr/share/fpdf/fpdf.php");
 
@@ -213,7 +213,7 @@ $pdf->Cell(55, 6, $cpt->swift, "BR");
 $pdf->Ln();
 
 $pdf->SetAuthor("NBI SARL");
-$pdf->SetCreator("Backoffice NBI $Id$ Using FPDF");
+$pdf->SetCreator("Webfinance $Id$ Using FPDF");
 $pdf->SetSubject("Facture n° ".$facture->num_facture." pour ".$facture->raison_sociale);
 $pdf->SetTitle("Facture n° ".$facture->num_facture);
 $pdf->Output("Facture_".$facture->id_facture."_".preg_replace("/[ ]/", "_", $facture->raison_sociale).".pdf", "D");
