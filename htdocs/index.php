@@ -13,8 +13,6 @@
 
 include("inc/main.php");
 include("top.php");
-$language='fr_FR';
-require('inc/gettext.php');
 ?>
 
 <table border="0" cellspacing="5" cellpadding="0" class="mosaique">

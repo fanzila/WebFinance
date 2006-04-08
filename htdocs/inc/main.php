@@ -13,11 +13,14 @@
 // $Id$
 
 session_start();
+
+$language='fr_FR';
+
+require($GLOBALS['_SERVER']['DOCUMENT_ROOT'].'/inc/gettext.php');
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/dbconnect.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/User.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/Facture.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/Client.php");
-setlocale(LC_ALL, "fr_FR.UTF-8");
 
 function parselogline($str) {
   if (preg_match("/(user|fa|client):([0-9]+)/", $str)) {
