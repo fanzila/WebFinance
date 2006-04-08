@@ -18,5 +18,5 @@ msgstr ""
 "X-Poedit-SearchPath-0: www\n"
 "X-Poedit-SearchPath-1: smarty\n"
 
-msgid "Hello"
-msgstr "Bonjour"
+msgid "show all"
+msgstr "voir tous"
