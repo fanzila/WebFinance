@@ -34,7 +34,6 @@ $User->getInfos();
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <link rel=stylesheet type=text/css href=/css/main.css />
-  <?include "extra_css.php" ?>
   <title>Webfinance<?= ($title=="")?"":" - $title" ?></title>
   <script type="text/javascript" language="javascript" src="/js/preloader.js.php"></script>
   <?include "extra_js.php" ?>

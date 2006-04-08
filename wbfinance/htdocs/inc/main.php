@@ -78,7 +78,6 @@ header("Content-Type: text/html; charset=utf-8");
 
 // This array starts empty here and is filled by pages
 $_SESSION['preload_images'] = array();
-$extra_css = array();
 $extra_js = array();
 
 

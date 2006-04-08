@@ -29,8 +29,6 @@ if (!preg_match("/^[0-9]+$/", $_GET['id'])) {
 $Client = new Client($_GET['id']);
 $title = $Client->data->nom;
 
-array_push($extra_css, "/css/onglets.css");
-array_push($extra_css, "/css/fiche_prospect.css");
 array_push($extra_js, "/js/onglets.js");
 
 $User = new User;

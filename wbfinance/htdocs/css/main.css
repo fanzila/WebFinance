@@ -1,3 +1,6 @@
+@import url('onglets.css');
+@import url('fiche_prospect.css');
+
 body {
 font-family: arial, helvetica;
 font-size: 10px;
