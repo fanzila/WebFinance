@@ -1,4 +1,3 @@
-# translation of oshosting.po to
 # Cyril Bouthors <cyril@bouthors.org>, 2006.
 msgid ""
 msgstr ""
@@ -20,3 +19,84 @@ msgstr ""
 
 msgid "show all"
 msgstr "voir tous"
+
+msgid "Financial graphics"
+msgstr "Graphiques financiers"
+
+msgid "Home"
+msgstr "Accueil"
+
+msgid "Companies"
+msgstr "Entreprises"
+
+msgid "Cashflow"
+msgstr "Trésorerie"
+
+msgid "My account"
+msgstr "Mon compte"
+
+msgid "Administration"
+msgstr "Administration"
+
+msgid "Logout"
+msgstr "Déconnexion"
+
+msgid "Outgo & Income from %s to %s"
+msgstr "Dépences & Recettes du %s au %s"
+
+msgid "Cash flow from %s to %s"
+msgstr "Trésorerie du %s au %s"
+
+msgid "Cash flow : %s-%s"
+msgstr "Trésorerie : %s-%s"
+
+msgid "Outgo & Income : %s-%s"
+msgstr "Dépenses & Recettes : %s-%s"
+
+msgid "Day"
+msgstr "Jour"
+
+msgid "Amount"
+msgstr "Montant"
+
+msgid "Amount (Euro)"
+msgstr "Montant (Euro)"
+
+msgid "Nothing"
+msgstr "Rien"
+
+msgid "All accounts"
+msgstr "Tous les comptes"
+
+msgid "-- All accounts --"
+msgstr "-- Tous les comptes --"
+
+msgid "Income by category\n%s\nfrom %s to %s"
+msgstr "Recettes par catégorie\n%s\ndu %s au %s"
+
+msgid "Outgo by category / all history"
+msgstr "Dépenses par catégorie / tout"
+
+msgid "Income & Outgo / all history"
+msgstr "Recettes & Dépenses / tout"
+
+msgid "Outgo"
+msgstr "Dépenses"
+
+msgid "Income"
+msgstr "Recettes"
+
+msgid "Outgo by category\n%s\nfrom %s to %s"
+msgstr "Dépenses par catégorie\n%s\ndu %s au %s"
+
+msgid "Cash flow / all history"
+msgstr "Trésorerie / tout"
+
+msgid "real" 
+msgstr "Réel"
+
+msgid "prev"
+msgstr "Prévisionnel"
+
+msgid "unknown"
+msgstr "Inconnu"

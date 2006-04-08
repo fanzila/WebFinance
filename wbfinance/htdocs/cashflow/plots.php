@@ -3,7 +3,7 @@ require("../inc/main.php");
 require_once("/usr/share/phplot/phplot.php");
 
 extract($_GET);
-if (!isset($width)) { $width = 400; }
+if (!isset($width)) { $width = 500; }
 if (!isset($height)) { $height = 400; }
 // if (!isset($nb_months)) { $nb_months = 24; }
 
@@ -111,7 +111,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 	    }
 	    $graph2->SetXLabelAngle(90);
 	    //Set titles
-	    $title="Outgo & Income: ".$start_date." to ".$end_date;
+	    $title=sprintf(_("Outgo & Income from %s to %s"), $start_date, $end_date);
 	    $graph2->SetYTickIncrement( round($max/10,-3) );
 
 	  }else{
@@ -150,27 +150,27 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 		}
 
 		//Set titles
-		$title="Outgo & Income : ".$year."-".$month;
+		$title=sprintf(utf8_decode(_("Outgo & Income : %s-%s")), $year, $month);
 		$graph2->SetDrawXGrid(true);
 
 	   }
 
 
 		$graph2->SetTitle($title);
-		$graph2->SetXTitle('Day');
-		$graph2->SetYTitle('Amount');
+		$graph2->SetXTitle(_('Day'));
+		$graph2->SetYTitle(_('Amount'));
 
 
 		# Make a legend for the 2 functions:
-		$graph2->SetLegend(array('Outgo', 'Income'));
+		$graph2->SetLegend(array(utf8_decode(_('Outgo')), utf8_decode(_('Income'))));
 
-		$graph2->SetDataColors(array('orange', 'green'));
+		$graph2->SetDataColors(array('#ff7f7f', '#7fff7f'));
 
 		$graph2->SetDataType("text-data");
 
 		$graph2->SetDataValues($data);
 
-		$graph2->SetPlotType("lines");
+		$graph2->SetPlotType("area");
 
 		//Draw it
 		$graph2->DrawGraph();
@@ -259,7 +259,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 	    }
 	    $graph2->SetXLabelAngle(90);
 	    //Set titles
-	    $title=_("Cash flow : ").$start_date._(" to ").$end_date;
+	    $title=sprintf(_("Cash flow from %s to %s"),$start_date, $end_date);
 
 
 	  }else{
@@ -302,8 +302,8 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 	      $data[]=$tmp;
 	    }
 	    //Set titles
-	    $title="Cash flow : ".$year."-".$month;
-	    $graph2->SetXTitle('Day');
+	    $title=sprintf(utf8_decode(_("Cash flow : %s-%s")),$year, $month);
+	    $graph2->SetXTitle(_('Day'));
 
 	  }
 
@@ -324,7 +324,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 //		$graph2->SetLineWidths(array('3','2'));
 
 		# Make a legend for the 2 functions:
-		$graph2->SetLegend(array('prev', 'real' ));
+		$graph2->SetLegend(array(utf8_decode(_('prev')), utf8_decode(_('real')) ));
 
 		$graph2->SetDataColors(array('green', 'red'));
 
@@ -358,7 +358,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 					$name.=$account['account_name'];
 				}
 			}else
-			  $name.="All accounts";
+			  $name.=_("All accounts");
 
 			$query_categories=mysql_query("SELECT id FROM webfinance_categories") or die(mysql_error());
 
@@ -377,7 +377,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 					or die(mysql_error());
 			$res=mysql_fetch_assoc($query_sum_category);
 			if($res['sum']!=0)
-				$tmp_categ[1][]=array('unknown',$res['sum'],'peru');
+				$tmp_categ[1][]=array(_('unknown'),$res['sum'],'peru');
 
 			$query_sum_category=mysql_query("SELECT SUM(amount) as sum ".
 							"FROM webfinance_transactions ".
@@ -387,7 +387,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 					or die(mysql_error());
 			$res=mysql_fetch_assoc($query_sum_category);
 			if($res['sum']!=0)
-				$tmp_categ[0][]=array('unknown',$res['sum'],'peru');
+				$tmp_categ[0][]=array(_('unknown'),$res['sum'],'peru');
 
 			while($category=mysql_fetch_assoc($query_categories)){
 				$query_sum_category=mysql_query("SELECT SUM(amount) as sum , webfinance_categories.name as name, webfinance_categories.color as color ".
@@ -396,13 +396,13 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 								"WHERE id_category=".$category['id']." ".
 								"AND date BETWEEN '$start_date' ".
 								"AND '$end_date' ".$query_account." ".
-								"GROUP BY webfinance_transactions.id_category ")
+								"GROUP BY webfinance_transactions.id_category")
 				  or die(mysql_error());
 				$res=mysql_fetch_assoc($query_sum_category);
 				if(!empty($res['sum']) AND $res['sum']<0){
-					$tmp_categ[0][]=array($res['name'],$res['sum'],$res['color']);
+					$tmp_categ[0][]=array(utf8_decode($res['name']),$res['sum'],$res['color']);
 				}else if($res['sum']>0){
-					$tmp_categ[1][]=array($res['name'],$res['sum'],$res['color']);
+					$tmp_categ[1][]=array(utf8_decode($res['name']),$res['sum'],$res['color']);
 				}
 			}
 //			echo "<pre/>";
@@ -460,7 +460,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 
 				if(isset($_GET['sign']) AND $_GET['sign']=="negative"){
 					$plot->SetDataValues($data_negative);
-					$plot->SetTitle("Outgo by category/".$name."/".$start_date." to ".$end_date);
+					$plot->SetTitle(utf8_decode(sprintf(_("Outgo by category\n%s\nfrom %s to %s"), $name, $start_date, $end_date)));
 					foreach ($data_negative as $row){
 							$sum=array_sum($row);
 							$legends[]=$row[0]." : ".sprintf("%01.2f", $sum);
@@ -470,7 +470,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 						$colors[]=$row[2];
 				}else{
 					$plot->SetDataValues($data_positive);
-					$plot->SetTitle("Income by category/".$name."/".$start_date." to ".$end_date);
+					$plot->SetTitle(utf8_decode(sprintf(_("Income by category\n%s\nfrom %s to %s"),$name, $start_date, $end_date)));
 
 					foreach ($data_positive as $row){
 							$sum=array_sum($row);
@@ -488,7 +488,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 				$data=array(array('',100));
 				$plot->SetDataValues($data);
 				$plot->SetDataColors(array('white'));
-				$plot->SetLegend	(array('nothing'));
+				$plot->SetLegend	(array(_('Nothing')));
 			}
 
 			$plot->DrawGraph();
@@ -581,7 +581,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 
 			if(isset($_GET['sign']) AND $_GET['sign']=="negative"){
 				$plot->SetDataValues($data_negative);
-				$plot->SetTitle("Outgo by category / all history");
+				$plot->SetTitle(utf8_decode(_("Outgo by category / all history")));
 				$legend=array();
 				foreach ($data_negative as $row){
 						$sum=array_sum($row);
@@ -688,12 +688,12 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 		$graph2=& new PHPlot($width,$height);
 
 		//Set titles
-		$title="Cash flow / all history";
+		$title=utf8_decode(_("Cash flow / all history"));
 
 		$graph2->SetTitle($title);
 		$graph2->SetXTitle('');
 		//$graph2->SetNumXTicks($nb_day/40);
-		$graph2->SetYTitle('Amount (Euro)');
+		$graph2->SetYTitle(_('Amount (Euro)')); 
 
 		if($max>10000)
 			$graph2->SetYTickIncrement( round($max/10,-3) );
@@ -709,7 +709,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 
 		$graph2->SetLineStyles(array('solid','solid'));
 
-		$graph2->SetLegend(array('prev', 'real' ));
+		$graph2->SetLegend(array(utf8_decode(_('prev')), utf8_decode(_('real')) ));
 
 		$graph2->SetDataColors(array( 'green' ,'red'));
 
@@ -809,13 +809,13 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 		$graph2=& new PHPlot($width,$height);
 
 		//Set titles
-		$title="Income & Outgo / all history";
+		$title=utf8_decode(_("Income & Outgo / all history"));
 
 		$graph2->SetTitle($title);
 		$graph2->SetXTitle('');
 		$graph2->SetNumXTicks($nb_day);
 
-		$graph2->SetYTitle('Amount (Euro)');
+		$graph2->SetYTitle(_('Amount (Euro)'));
 
 		if($max>10000)
 			$graph2->SetYTickIncrement( round($max/10,-3) );
@@ -823,7 +823,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 		$graph2->SetXLabelAngle(90);
 
 		# Make a legend for the 2 functions:
-		$graph2->SetLegend(array('Outgo', 'Income'));
+		$graph2->SetLegend(array(utf8_decode(_('Outgo')), utf8_decode(_('Income'))));
 
 		$graph2->SetDataColors(array('orange', 'green'));
 
@@ -844,5 +844,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 
 
 }
+
+// vim: sw=6
 
 ?>
