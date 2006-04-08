@@ -48,6 +48,7 @@ CREATE TABLE `webfinance_categories` (
   `class` varchar(32) default NULL,
   `re` varchar(255), -- as in regexp
   `plan_comptable` varchar(100),
+  `color` varchar(7) default '#cefce',
   PRIMARY KEY  (`id`),
   KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=12 ;
