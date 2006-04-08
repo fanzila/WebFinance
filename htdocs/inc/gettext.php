@@ -1,9 +1,13 @@
 <?
 
-$User = new User();
-$User->getPrefs();
+if ($_SESSION['id_user']) {
+  $User = new User();
+  $User->getPrefs();
+  $language = $User->prefs->lang;
+} else {
+  $language = 'en_US';
+}
 
-$language = 'fr_FR';
 
 if (isset($language) and $language!='en_US') {
   $gettext_dictionnary_filename=$_SERVER['DOCUMENT_ROOT'] . '/../lang/' . substr($language,0,2) . '/LC_MESSAGES/webfinance';
