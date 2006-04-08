@@ -13,6 +13,8 @@
 
 include("inc/main.php");
 include("top.php");
+$language='fr_FR';
+require('inc/gettext.php');
 ?>
 
 <table border="0" cellspacing="5" cellpadding="0" class="mosaique">
@@ -28,7 +30,7 @@ include("top.php");
 </tr>
 <tr valign="top">
   <td width="350">
-    100 derniers évènements (<a href="/admin/events.php">voir tous</a>)
+    100 derniers évènements (<a href="/admin/events.php"><?=_('show all')?></a>)
     <div style="overflow: auto; height: 250px;">
     <table width="100%" border="0" cellspacing="0" cellpadding="5">
     <?php
