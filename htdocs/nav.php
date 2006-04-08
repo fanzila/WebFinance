@@ -13,12 +13,12 @@
 
 //$Id$
 
-$elements = array('Accueil' => '/', 
-                  'Entreprises' => '/prospection/?q=client',
-                  'Trésorerie'  => '/tresorerie/',
-                  'Mon Compte' => '/moncompte/',
-                  'Administration' => '/admin/',
-                  'Déconnexion' => '/logout.php',
+$elements = array(_('Home') => '/', 
+                  _('Companies') => '/prospection/?q=client',
+                  _('Cashflow') => '/tresorerie/',
+                  _('My account') => '/moncompte/',
+                  _('Administration') => '/admin/',
+                  _('Logout') => '/logout.php',
                  );
 
 foreach ($elements as $elname=>$url) {
