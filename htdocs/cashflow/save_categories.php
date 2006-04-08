@@ -18,4 +18,16 @@ if ($_GET['action'] == "delete") {
   header("Location: categories.php");
 }
 
+foreach ($_POST['cat'] as $id=>$data) {
+  $q = "UPDATE webfinance_categories SET ";
+  foreach ($data as $n=>$v) {
+    $q .= sprintf("%s='%s',", $n, $v);
+  }
+  $q = preg_replace("!,$!", "WHERE id=$id", $q);
+  mysql_query($q) or die(mysql_error());
+}
+
+header("Location: categories.php");
+
+
 ?>

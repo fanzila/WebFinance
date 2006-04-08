@@ -5,7 +5,6 @@
 require_once("../inc/main.php");
 
 // TEMP :
-mysql_query("DELETE FROM webfinance_transactions");
 
 extract($_FILES['csv']);
 
@@ -177,5 +176,7 @@ foreach ($operations as $op) {
 
   print "</div>";
 }
+
+print count($operations)." opérations trouvées dans le fichier";
 
 ?>

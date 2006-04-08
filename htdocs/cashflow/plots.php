@@ -2,6 +2,10 @@
 require("../inc/main.php");
 require_once("/usr/share/phplot/phplot.php");
 
+extract($_GET);
+if (!isset($width)) { $width = 400; }
+if (!isset($height)) { $height = 400; }
+// if (!isset($nb_months)) { $nb_months = 24; }
 
 /*
  * return positive if $start_date < $end_date
@@ -64,7 +68,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 	   $date_last_real=mysql_result($query_date_last_real, 0);
 
 	  //Define the object
-	  $graph2=& new PHPlot(800,400);
+	  $graph2=& new PHPlot($width,$height);
 
 	  $data=array();
 
@@ -207,7 +211,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 	   $date_last_real=mysql_result($query_date_last_real, 0);
 
 	  //Define the object
-	  $graph2=& new PHPlot(800,400);
+	  $graph2=& new PHPlot($width,$height);
 
 	  $data=array();
 
@@ -407,7 +411,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 			$colors=array();
 			$legends=array();
 
-			$plot =& new PHPlot(900,450);
+			$plot =& new PHPlot($width,$height);
 			//$plot->SetImageBorderType('plain');
 			$plot->SetDataType('text-data');
 			$plot->SetPlotType('pie');
@@ -681,7 +685,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 //		print_r($data);
 
 		//Define the object
-		$graph2=& new PHPlot(900,400);
+		$graph2=& new PHPlot($width,$height);
 
 		//Set titles
 		$title="Cash flow / all history";
@@ -802,7 +806,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 
 
 		//Define the object
-		$graph2=& new PHPlot(900,400);
+		$graph2=& new PHPlot($width,$height);
 
 		//Set titles
 		$title="Income & Outgo / all history";
