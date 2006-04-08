@@ -17,7 +17,7 @@ $elements = array('Accueil' => '/',
                   'Entreprises' => '/prospection/?q=client',
                   'Trésorerie'  => '/tresorerie/',
                   'Mon Compte' => '/moncompte/',
-                  'Admin BO' => '/admin/',
+                  'Administration' => '/admin/',
                   'Déconnexion' => '/logout.php',
                  );
 
