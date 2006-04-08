@@ -29,7 +29,7 @@ function confirmDelete(id) {
 }
 </script>
 
-<form id="main_form" method="post">
+<form action="save_categories.php" id="main_form" method="post">
 
 <table border="0" cellspacing="0" cellpadding="3" class="framed">
 <tr style="text-align: center;" class="row_header">
@@ -39,20 +39,26 @@ function confirmDelete(id) {
   <td>Commentaire</td>
   <td>PCG <img class="help_icon" src="/imgs/icons/help.gif" onmouseover="return escape('<?= $help_pcg ?>');" /></td>
   <td></td>
+  <td></td>
 </tr>
 <?php
-$result = mysql_query("SELECT id,name,comment,class,re,plan_comptable
+$result = mysql_query("SELECT id,name,comment,class,re,plan_comptable,color
                        FROM webfinance_categories
                        ORDER BY name") or die(mysql_error());
 while ($c = mysql_fetch_assoc($result)) {
   extract($c);
+
+    $color_picker = sprintf('<input type="hidden" name="cat[%d][color]" id="color_%d" value="%s"><div id="couleur_%d" onclick="inpagePopup(event, this, 260, 240, \'/inc/color_picker.php?sample=couleur_%d&input=color_%d\');" onmouseover="return escape(\'Cliquez pour modifier la couleur\');" style="width: 40px; height: 16px; background: %s"></div>',
+                            $id, $id, $color, $id, $id, $id, $color );
+
   print <<<EOF
 <tr>
-  <td><input type="text" name="name_$id" value="$name" style="width: 80px;" /></td>
-  <td><input type="text" name="class_$id" value="$class" style="width: 50px;" /></td>
-  <td><input type="text" name="re_$id" value="$re" style="width: 200px;" /></td>
-  <td><input type="text" name="comment_$id" value="$comment" style="width: 200px;" /></td>
-  <td><input type="text" name="plan_comptable_$id" value="$plan_comptable" style="text-align: center; width: 40px;" /></td>
+  <td><input type="text" name="cat[$id][name]" value="$name" style="width: 80px;" /></td>
+  <td><input type="text" name="cat[$id][class]" value="$class" style="width: 50px;" /></td>
+  <td><input type="text" name="cat[$id][re]" value="$re" style="width: 200px;" /></td>
+  <td><input type="text" name="cat[$id][comment]" value="$comment" style="width: 200px;" /></td>
+  <td><input type="text" name="cat[$id][plan_comptable]" value="$plan_comptable" style="text-align: center; width: 40px;" /></td>
+  <td>$color_picker</td>
   <td><a href="javascript:confirmDelete($id);"><img src="/imgs/icons/delete.gif" /></a></td>
 </tr>
 EOF;

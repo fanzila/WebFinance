@@ -127,8 +127,13 @@ function inpagePopup(event, trigger, width, height, url) {
   this.x  = mouseX(event) - (width/2);
   this.y = mouseY(event) - (height/2);
 
-  this.iframe.style.left = (mouseX(event) - (width/2)) + 'px';
-  this.iframe.style.top =  (mouseY(event)-height/2)+'px';
+  x_position = (mouseX(event) - (width/2));
+  y_position = (mouseY(event)-height/2);
+
+  if (x_position < 0) { x_position = 0; }
+  if (y_position < 0) { y_position = 0; }
+  this.iframe.style.left = x_position+'px';
+  this.iframe.style.top =  y_position+'px';
 
   /* Hook callbacks for move close and validate */
   this.iframe.onclick = inpagePopupClicked;

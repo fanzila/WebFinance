@@ -15,6 +15,7 @@
 
 $elements = array(
                   'Opérations' => 'index.php',
+                  'Graphs' => 'graphs.php',
                   'Catégories' => 'categories.php',
                   'Import' => 'import.php',
                  );
