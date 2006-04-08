@@ -9,39 +9,49 @@
 //
 // $Id$
 //
-// Wrapper : should contain interface. Importing is done in import_*.php
-
-if (preg_match("!\.!", $_POST['filtre'])) { die("Wrong filter"); } // file traversal
-
-if (file_exists($_FILES['csv']['tmp_name'])) {
-  // Do import
-
-  extract($_FILES['csv']);
-
-  require($_POST['format']);
-
-  die();
-  header("Location: /tresorerie/");
-}
-
+// Real importing is done in do_import.php + import_*.php
 
 require("../inc/main.php");
 require("../top.php");
 require("nav.php");
 
 ?>
-<form id="main_forma" method="post" enctype="multipart/form-data">
-CSV : <input type="file" name="csv" /><br/>
-Format : <select name="format">
-<option value="about:blank">-- Choisissez --</option><?php
-foreach (glob("import_*.php") as $filtre) {
-  preg_match("/import_(.*).php$/", $filtre, $matches);
+<script type="text/javascript">
+function checkForm(f) {
+  if (f.csv.value == '') {
+    alert('Veuillez choisir le fichier à importer');
+    return false;
+  }
+  if (f.format.options[f.format.selectedIndex].value == 'import_none.php') {
+    alert('Veuillez choisir le format du fichier fourni');
+    return false;
+  }
 
-  printf('<option value="%s">%s</option>', $filtre, $matches[1]);
+  return true;
 }
-?>
-</select>
-<input type="submit" value="Importer">
+</script>
+<form onsubmit="return checkForm(this);" id="main_form" action="do_import.php" method="post" enctype="multipart/form-data">
+
+<table class="bordered" border="0" cellspacing="0" cellpadding="3">
+<tr>
+  <td>Fichier CSV</td><td><input type="file" name="csv" /></td>
+</tr>
+<tr>
+  <td>Format du fichier</td><td><select name="format"><option value="import_none.php">-- Choisissez --</option><?php
+    foreach (glob("import_*.php") as $filtre) {
+      preg_match("/import_(.*).php$/", $filtre, $matches);
+
+      printf('<option value="%s">%s</option>', $filtre, $matches[1]);
+    }
+    ?></select>
+  </td>
+</tr>
+<tr>
+<td style="text-align: center;" colspan="2">
+  <input type="submit" value="Importer">
+</td>
+</tr>
+</table>
 </form>
 
 <?php

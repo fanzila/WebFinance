@@ -47,6 +47,7 @@ CREATE TABLE `webfinance_categories` (
   `comment` text,
   `class` varchar(32) default NULL,
   `re` varchar(255), -- as in regexp
+  `plan_comptable` varchar(100),
   PRIMARY KEY  (`id`),
   KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=12 ;
@@ -268,11 +269,6 @@ CREATE TABLE `webfinance_type_presta` (
   PRIMARY KEY  (`id_type_presta`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
 
-INSERT INTO `webfinance_type_presta` (`id_type_presta`, `nom`) VALUES (1, 'Formation'),
-(2, 'Web'),
-(3, 'Dev'),
-(4, 'Support');
-
 DROP TABLE IF EXISTS `webfinance_type_suivi`;
 CREATE TABLE `webfinance_type_suivi` (
   `id_type_suivi` int(11) NOT NULL auto_increment,
@@ -281,13 +277,6 @@ CREATE TABLE `webfinance_type_suivi` (
   PRIMARY KEY  (`id_type_suivi`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
 
-INSERT INTO `webfinance_type_suivi` (`id_type_suivi`, `name`, `selectable`) VALUES (1, 'CrÃ©ation entreprise', 0),
-(2, 'Contact Téléphonique', 1),
-(3, 'Courier envoyé', 1),
-(4, 'Courier reçu', 1),
-(5, 'Rendez-vous', 1),
-(6, 'Presta', 1);
-
 DROP TABLE IF EXISTS `webfinance_type_tva`;
 CREATE TABLE `webfinance_type_tva` (
   `id_type_tva` int(11) NOT NULL auto_increment,
@@ -295,9 +284,6 @@ CREATE TABLE `webfinance_type_tva` (
   `taux` decimal(5,3) default NULL,
   PRIMARY KEY  (`id_type_tva`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
-
-INSERT INTO `webfinance_type_tva` (`id_type_tva`, `nom`, `taux`) VALUES (1, 'Taux normal 19,6%', 19.600),
-(2, 'Pas de tva facturée (export...)', 0.000);
 
 DROP TABLE IF EXISTS `webfinance_userlog`;
 CREATE TABLE `webfinance_userlog` (
@@ -331,14 +317,23 @@ CREATE TABLE `webfinance_users` (
 -- DEFAULT DATA INSERT 
 --
 
+INSERT INTO `webfinance_type_tva` (`id_type_tva`, `nom`, `taux`) VALUES (1, 'Taux normal 19,6%', 19.600),
+(2, 'Pas de tva facturée (export...)', 0.000);
+
+INSERT INTO `webfinance_type_presta` (`id_type_presta`, `nom`) VALUES (1, 'Formation'),
+(2, 'Web'),
+(3, 'Dev'),
+(4, 'Support');
+
+INSERT INTO `webfinance_type_suivi` (`id_type_suivi`, `name`, `selectable`) VALUES 
+(1, 'Création entreprise', 0),
+(2, 'Contact Téléphonique', 1),
+(3, 'Courier envoyé', 1),
+(4, 'Courier reçu', 1),
+(5, 'Rendez-vous', 1),
+(6, 'Presta', 1);
+
 INSERT INTO `webfinance_users` (`id_user`, `last_name`, `first_name`, `login`, `password`, `email`, `disabled`, `last_login`, `creation_date`, `admin`, `role`, `modification_date`, `prefs`) VALUES (1, NULL, NULL, 'admin', '21232f297a57a5a743894a0e4a801fc3', NULL, 0, '2006-04-06 16:34:51', NULL, 1, NULL, NULL, '');
-INSERT INTO `webfinance_type_suivi` VALUES 
-(NULL,'Création entreprise',0),
-(NULL,'Contact Téléphonique',1),
-(NULL,'Courier envoyé',1),
-(NULL,'Courier reçu',1),
-(NULL,'Rendez-vous',1),
-(NULL,'Intervention sur site',1);
 
 INSERT INTO `webfinance_type_tva` VALUES
 (NULL,'Taux normal 19,6%', 19.6),
@@ -350,16 +345,21 @@ INSERT INTO `webfinance_company_types` (nom) VALUES
 INSERT INTO `webfinance_banks` (`id`, `name`, `short_name`, `phone`, `mail`, `comment`) VALUES 
 (1, 'My bank', 'mybank', '', '', '');
 
-INSERT INTO `webfinance_categories` (`id`, `name`, `class`) VALUES 
-(NULL, 'Salaire', 'salaires'),
-(NULL, 'Loyer', 'loyer'),
-(NULL, 'Téléphone mobile', 'telecom'),
-(NULL, 'FT', 'telecom'),
-(NULL, 'Internet', 'telecom'),
-(NULL, 'Matériel', 'fournitures'),
-(NULL, 'Serveur', 'fourniteures'),
-(NULL, 'Impots - IS', 'impots'),
-(NULL, 'Impots - TVA', 'impots');
+-- Voir http://www.plancomptable.com/pc99/titre-IV/liste_des_comptes_sb.htm
+INSERT INTO `webfinance_categories` (`id`, `name`, `class`, `re`, `plan_comptable`) VALUES 
+(NULL, 'Salaire', 'salaires', 'salaire',''),
+(NULL, 'Loyer', 'loyer', 'loyer',''),
+(NULL, 'Frais bancaires', 'frais', '(cotisation signature pro|facturation progeliance net|net arrete au [0-9]{2} [0-9]{2} [0-9]{2})','627'),
+(NULL, 'Téléphone mobile', 'telecom', ' prelevement sfr ','626'),
+(NULL, 'FT', 'telecom', '(france telecom|TIP.*fr telecom)','626'),
+(NULL, 'Timbres', 'telecom', ' la poste ','626'),
+(NULL, 'Internet', 'telecom', 'Free Telecom Free HautDebit',''),
+(NULL, 'Matériel', 'fournitures', '',''),
+(NULL, 'Fournitures bureau', 'fournitures', 'jpg commerce electronique',''),
+(NULL, 'Serveur', 'fourniteures', '',''),
+(NULL, 'Transports', 'transports', ' (websncf|sncf|esso|totalfinaelf) ',''),
+(NULL, 'Impots - IS', 'impots', '',''),
+(NULL, 'Impots - TVA', 'impots', '', '');
 
 -- INSERT INTO `webfinance_clients` (`id_client`, `nom`, `date_created`, `tel`, `fax`, `addr1`, `cp`, `ville`, `addr2`, `addr3`, `pays`, `vat_number`, `has_unpaid`, `state`, `ca_total_ht`, `ca_total_ht_year`, `has_devis`, `email`, `siren`, `total_du_ht`, `id_company_type`) VALUES (1, 'Entreprise X', '2006-04-06 10:57:27', '313131', '', 'Antananarivo', '', '', '', '', 'France', '', 1, 'Madagascar', 42.0000, 42.0000, 0, '', '', 42.0000, 1);
 
