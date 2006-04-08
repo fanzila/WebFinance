@@ -10,8 +10,7 @@ function navigation($account,$start_date_ex,$end_date_ex){
   $last_date_end=date("Y-m-d" , mktime(0, 0, 0, $start_date_ex[1]-1, date("t",mktime(0, 0, 0, $start_date_ex[1]-1 , 1, $start_date_ex[0] )) , $start_date_ex[0]) );
   $next_date_end=date("Y-m-d" , mktime(0, 0, 0, $start_date_ex[1]+1, date("t",mktime(0, 0, 0, $start_date_ex[1]+1 , 1, $start_date_ex[0] )) , $start_date_ex[0]) );
   ?>
-    <a href="?start_date=<?=$last_date_start?>&end_date=<?=$last_date_end?>&account=<?=$account?>"><<</a>
-       <font face=\"arial\" size=\"3\">
+    <a href="?start_date=<?=$last_date_start?>&end_date=<?=$last_date_end?>&account=<?=$account?>">&lt;&lt;</a>
        <big style='font-weight: bold;'>
         <?=date("d F Y",mktime(0,0,0,$start_date_ex[1],$start_date_ex[2],$start_date_ex[0]))?>
        </big>
@@ -19,8 +18,7 @@ function navigation($account,$start_date_ex,$end_date_ex){
        <big style='font-weight: bold;'>
         <?=date("d F Y",mktime(0,0,0,$end_date_ex[1],$end_date_ex[2],$end_date_ex[0]))?>
        </big>
-       </font>
-       <a href="?start_date=<?=$next_date_start?>&end_date=<?=$next_date_end?>&account=<?=$account?>">>></a>
+       <a href="?start_date=<?=$next_date_start?>&end_date=<?=$next_date_end?>&account=<?=$account?>">&gt;&gt;</a>
   <?
 }
 
@@ -32,8 +30,6 @@ function navigation($account,$start_date_ex,$end_date_ex){
 <?
 require("../top.php");
 require("nav.php");
-
-echo "<hr/>";
 
 //start date
 $start_date=date("Y-m-d", mktime(0, 0, 0, date("m"), 1, date("Y")) );
@@ -73,31 +69,26 @@ if(isset($_GET['account']) AND !empty($_GET['account']))
 ?>
 
  <?
- $result_accounts=mysql_query("SELECT id, account_name FROM webcash_accounts");
+ $result_accounts=mysql_query("SELECT id_pref,value FROM webfinance_pref WHERE owner=-1 AND type_pref='rib'") or die(mysql_error());
  $nb_accounts=mysql_num_rows($result_accounts);
  ?>
-  <form>
-  	<table border="1">
+  <form id="main_form" method="get" onchange="this.submit();" >
+  	<table border="0">
   		<tr>
   			<td>
   				Account
   			</td>
   			<td>
 		      	<select name="account">
-		      		<?
-		      			if($nb_accounts>1){
-		      		?>
-		      			<option value="" <?if(empty($account)) echo "selected"; ?>>All</option>
-		      		<?
-		      			}
-		      		?>
+              <option value="0">-- All accounts --</option>
 					<?
 		      		while ($acc=mysql_fetch_assoc($result_accounts)) {
-					?>
-				    	<option value="<?=$acc['id']?>" <? if(!empty($account) AND $account==$acc['id']) { echo "selected"; } ?>><?=$acc['account_name']?></option>
-					<?
-					}
-		      		?>
+                $cpt = unserialize(base64_decode($acc['value']));
+                printf('<option value="%d"%s>Compte %s n°%s</option>', 
+                       $acc['id_pref'], ($acc['id_pref']==$account)?" selected":"",
+                       $cpt->banque, $cpt->compte );
+              }
+            ?>
 				</select>
   			</td>
   			<td>
@@ -110,23 +101,16 @@ if(isset($_GET['account']) AND !empty($_GET['account']))
   			<td>
   				<input type="text" name="end_date" value="<?=$end_date?>" size="9" maxlength="10"/>
   			</td>
-  			<td>
-  				<input type="submit" value="Change"/>
-  			</td>
   		</tr>
   	</table>
   </form>
 
   <!-- Affichage des graphes -->
-  <table border="1" width="100%">
-   <tr>
-    <td colspan='2' align="center">
+  <div>
 	<?
    	 navigation($account,$start_date_ex,$end_date_ex);
 	?>
-    </td>
-   </tr>
-</table>
+  </div>
 				  <img src="plots.php?type=expense_amount&start_date=<?=$start_date?>&end_date=<?=$end_date?>&account=<?=$account?>"/>
 				  <img src="plots.php?type=expense&start_date=<?=$start_date?>&end_date=<?=$end_date?>&account=<?=$account?>"/>
 
