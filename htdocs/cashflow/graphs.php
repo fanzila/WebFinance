@@ -23,11 +23,7 @@ function navigation($account,$start_date_ex,$end_date_ex){
 }
 
 
-?>
-<html>
-<head>
-  <title>Webcash -- graphs</title>
-<?
+$title = _("Financial graphics");
 require("../top.php");
 require("nav.php");
 
@@ -80,7 +76,7 @@ if(isset($_GET['account']) AND !empty($_GET['account']))
   			</td>
   			<td>
 		      	<select name="account">
-              <option value="0">-- All accounts --</option>
+              <option value="0"><?= _('-- All accounts --') ?></option>
 					<?
 		      		while ($acc=mysql_fetch_assoc($result_accounts)) {
                 $cpt = unserialize(base64_decode($acc['value']));
@@ -111,11 +107,13 @@ if(isset($_GET['account']) AND !empty($_GET['account']))
    	 navigation($account,$start_date_ex,$end_date_ex);
 	?>
   </div>
-				  <img src="plots.php?type=expense_amount&start_date=<?=$start_date?>&end_date=<?=$end_date?>&account=<?=$account?>"/>
-				  <img src="plots.php?type=expense&start_date=<?=$start_date?>&end_date=<?=$end_date?>&account=<?=$account?>"/>
+				  <img src="plots.php?width=600&height=300&type=expense_amount&start_date=<?=$start_date?>&end_date=<?=$end_date?>&account=<?=$account?>"/>
+				  <img src="plots.php?width=600&height=300&type=expense&start_date=<?=$start_date?>&end_date=<?=$end_date?>&account=<?=$account?>"/>
 
-				  <img src="plots.php?type=category&start_date=<?=$start_date?>&end_date=<?=$end_date?>&account=<?=$account?>&sign=positive"/>
-				  <img src="plots.php?type=category&start_date=<?=$start_date?>&end_date=<?=$end_date?>&account=<?=$account?>&sign=negative"/>
+          <br/>
+
+				  <img src="plots.php?width=400&height=400&type=category&start_date=<?=$start_date?>&end_date=<?=$end_date?>&account=<?=$account?>&sign=positive"/>
+				  <img src="plots.php?width=400&height=400&type=category&start_date=<?=$start_date?>&end_date=<?=$end_date?>&account=<?=$account?>&sign=negative"/>
 
 				  <!--<img src="plots_all_history.php?type=category&sign=positive&plot=piecharts"/> -->
 				  <!--<img src="plots_all_history.php?type=category&sign=negative&plot=piecharts"/> -->

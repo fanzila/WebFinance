@@ -1,6 +1,12 @@
 <?
+
+$User = new User();
+$User->getPrefs();
+
+$language = 'fr_FR';
+
 if (isset($language) and $language!='en_US') {
-  $gettext_dictionnary_filename=$_SERVER['DOCUMENT_ROOT'] . '../lang/' . substr($language,0,2) . '/LC_MESSAGES/webfinance';
+  $gettext_dictionnary_filename=$_SERVER['DOCUMENT_ROOT'] . '/../lang/' . substr($language,0,2) . '/LC_MESSAGES/webfinance';
 
   if (!file_exists("$gettext_dictionnary_filename.mo") or
       filemtime("$gettext_dictionnary_filename.po") > filemtime("$gettext_dictionnary_filename.mo")) {
@@ -10,7 +16,7 @@ if (isset($language) and $language!='en_US') {
   setlocale(LC_ALL, $language.".UTF-8")
     or die("local LC_ALL language failed $language");
 
-  bindtextdomain('webfinance', $_SERVER['DOCUMENT_ROOT'] . '../lang')
+  bindtextdomain('webfinance', $_SERVER['DOCUMENT_ROOT'] . '/../lang')
     or die("Set gettext bindtextdomain language failed");
 
   textdomain('webfinance')

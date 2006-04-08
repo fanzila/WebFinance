@@ -9,6 +9,7 @@
 //
 ?>
 <?php
+3B
 include("../inc/main.php");
 
 if ($GLOBALS['HTTP_SERVER_VARS']['REQUEST_METHOD'] != "POST") {

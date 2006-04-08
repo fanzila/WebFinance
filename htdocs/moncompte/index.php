@@ -19,7 +19,7 @@ if ($GLOBALS['_SERVER']['REQUEST_METHOD'] == "POST") {
   extract($_POST);
   if ($action == "changepass") {
     if ($new_pass1 != $new_pass2) {
-      $_SESSION['message'] = "Les deux nouveaux mot de passe ne concordent pas";
+      $_SESSION['message'] = _("The passwords don't match");
       header("Location: index.php");
       die();
     }
@@ -82,6 +82,18 @@ function checkForm(f) {
 <input type="hidden" name="action" value="userprefs" />
 <table border="0" cellspacing="0" cellpadding="5">
 <tr>
+  <td><?= _("Language") ?></td>
+  <td>
+    <select name="pref_lang">
+    <?php
+      $choices = array("Français" => "fr_FR",
+                       "English" => "en_US");
+      foreach ($choices as $n=>$v) {
+        printf('<option value="%s"%s>%s</option>', $v, ($v==$User->prefs->lang)?" selected":"", $n );
+      }
+    ?>
+    </select>
+  </td>
   <td>Thème graphique</td>
   <td>
     <select name="pref_theme">
