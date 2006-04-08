@@ -34,6 +34,8 @@ if ($GLOBALS['_SERVER']['REQUEST_METHOD'] == "POST") {
     }
     $data = base64_encode(serialize($Prefs));
     $User->setPrefs($Prefs);
+    header("Location: index.php");
+    die();
   }
 }
 
@@ -53,7 +55,7 @@ function checkForm(f) {
 
 <div style="background: #ffcece;"><?= $_SESSION['message']; $_SESSION['message'] = ""; ?></div>
 
-<form name="change_pass" action="index.php" method="post">
+<form id="main_form" name="change_pass" action="index.php" method="post">
 <input type="hidden" name="action" value="changepass" />
 <table border="0" cellspacing="7" cellpadding="0">
 <tr>
@@ -70,7 +72,7 @@ function checkForm(f) {
 </tr>
 <tr>
   <td colspan="2" style="text-align: center;">
-    <img onclick="checkForm(document.forms['change_pass']);" src="<?= '/imgs/boutons/'.urlencode(base64_encode("Enregistrer:off")).'.png' ?>" onmouseover="this.src='<?= '/imgs/boutons/'.urlencode(base64_encode("Enregistrer:on")).'.png' ?>';" onmouseout="this.src='<?= '/imgs/boutons/'.urlencode(base64_encode("Enregistrer:off")).'.png' ?>';" />
+    <input type="submit" value="<?= _("Save") ?>" />
   </td>
 </tr>
 </table>
@@ -78,7 +80,7 @@ function checkForm(f) {
 
 <h2>Options personnelles</h2>
 
-<form name="user_prefs" action="index.php" method="post">
+<form id="main_form" name="user_prefs" action="index.php" method="post">
 <input type="hidden" name="action" value="userprefs" />
 <table border="0" cellspacing="0" cellpadding="5">
 <tr>
@@ -140,7 +142,7 @@ function checkForm(f) {
 </tr>
 <tr>
   <td colspan="2" style="text-align: center;">
-    <input type="image" src="<?= '/imgs/boutons/'.urlencode(base64_encode("Enregistrer:off")).'.png' ?>" onmouseover="this.src='<?= '/imgs/boutons/'.urlencode(base64_encode("Enregistrer:on")).'.png' ?>';" onmouseout="this.src='<?= '/imgs/boutons/'.urlencode(base64_encode("Enregistrer:off")).'.png' ?>';" />
+    <input type="submit" value="<?= _('Save') ?>" />
   </td>
 </tr>
 </table>

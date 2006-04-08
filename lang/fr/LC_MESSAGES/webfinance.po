@@ -100,3 +100,21 @@ msgstr "Prévisionnel"
 
 msgid "unknown"
 msgstr "Inconnu"
+
+msgid "Save"
+msgstr "Enregistrer"
+
+msgid "Language"
+msgstr "Langue"
+
+msgid "Login screen" 
+msgstr "Identification"
+
+msgid "Login"
+msgstr "Identifiant"
+
+msgid "Password"
+msgstr "Mot de passe"
+
+msgid "Connect"
+msgstr "Connexion"
