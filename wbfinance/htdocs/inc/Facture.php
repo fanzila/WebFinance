@@ -67,7 +67,10 @@ class Facture {
     $facture->nice_total_ttc = sprintf("%.2f", $facture->total_ttc);
     $facture->immuable = $facture->is_paye || $facture->is_sent;
 
-    $result = mysql_query("SELECT nom FROM webfinance_clients WHERE id_client=".$facture->id_client);
+//     print "<pre>";
+//     print_r($facture);
+
+    $result = mysql_query("SELECT nom FROM webfinance_clients WHERE id_client=".$facture->id_client) or die(mysql_error());
     list($facture->nom_client) = mysql_fetch_array($result);
     mysql_free_result($result);
 
