@@ -13,9 +13,9 @@
 
 //$Id$
 
-$elements = array('Users' => 'index.php',
-                  'Événements' => 'events.php',
-                  'Société' => 'societe.php',
+$elements = array(_('Users') => 'index.php',
+                  _('Events') => 'events.php',
+                  _('My company') => 'societe.php',
                  );
 
 foreach ($elements as $elname=>$url) {

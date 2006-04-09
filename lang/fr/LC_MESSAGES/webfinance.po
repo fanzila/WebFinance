@@ -168,3 +168,31 @@ msgstr "Ne montrer que"
 
 msgid "Name contains"
 msgstr "Le nom contient"
+
+msgid "Sort companies by"
+msgstr "Trier les entreprises par"
+
+msgid "Transactions"
+msgstr "Opérations"
+
+msgid "Graphics"
+msgstr "Graphiques"
+
+msgid "Categories"
+msgstr "Catégories"
+
+msgid "Import"
+msgstr "Import"
+
+
+msgid "Up to date / has unpaid"
+msgstr "A jour / impayés"
+
+msgid "Users"
+msgstr "Utilisateurs"
+
+msgid "Events"
+msgstr "Évènements"
+
+msgid "My company"
+msgstr "Mon entreprise"

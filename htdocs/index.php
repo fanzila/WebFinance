@@ -12,6 +12,7 @@
 // $Id$
 
 include("inc/main.php");
+$title = _("Home");
 include("top.php");
 ?>
 

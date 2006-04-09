@@ -44,7 +44,7 @@ foreach ($compte as $n=>$v) {
 // s'il existe. Sinon on l'y ajoute !
 
 $result = mysql_query("SELECT id_pref,value FROM webfinance_pref WHERE owner=-1 AND type_pref='rib'");
-$id_compte = 0;
+$id_account = 0;
 while (list($id, $value) = mysql_fetch_array($result)) {
   $thisaccount = unserialize(base64_decode($value));
 
@@ -54,11 +54,11 @@ while (list($id, $value) = mysql_fetch_array($result)) {
       (strtoupper($thisaccount->compte) == strtoupper($compte->compte))
      ) {
     printf("<b>Cet import correspond au compte %s n°%s</b><br/>\n", $thisaccount->banque, $thisaccount->compte);
-    $id_compte = $id;
+    $id_account = $id;
   }
 }
 mysql_free_result($result);
-if ($id_compte == 0) { // Compte innexistant dans webfinancne, on le crée
+if ($id_account == 0) { // Compte innexistant dans webfinancne, on le crée
   printf("Le compte %s n°%s n'existe pas dans les préférences webfinance... Création<br/>",
          $compte->banque, $compte->numero );
 
@@ -67,7 +67,7 @@ if ($id_compte == 0) { // Compte innexistant dans webfinancne, on le crée
   mysql_query($q) or die(mysql_error());
 
   $result = mysql_query("SELECT id_pref FROM webfinance_pref WHERE owner=-1 AND type_pref='rib' AND date_modified>=DATE_SUB(NOW(), INTERVAL 2 SECOND)");
-  list($id_compte) = mysql_fetch_array($result);
+  list($id_account) = mysql_fetch_array($result);
 }
 
 $l = fgets($fp); // Empty line

@@ -12,7 +12,7 @@
 // $Id$
 
 include("../inc/main.php");
-array_push($_SESSION['preload_images'], "/imgs/boz.gif");
+$title = _("Administration");
 include("../top.php");
 include("nav.php");
 ?>
