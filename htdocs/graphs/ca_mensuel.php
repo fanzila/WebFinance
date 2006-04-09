@@ -28,11 +28,12 @@ class barGraph {
   var $labels = Array();
   var $barlabels = Array();
   var $max = 0;
-  var $font_size = 12;
+  var $font_size = 10;
   var $step = 40; # Bar width in pixel
   var $margin = 5;
   var $C_bar, $C_barframe, $C_text, $C_average;
   var $nb_shades = 50;
+  var $sans_bold_ttf = "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf";
 
   function _htmlColorToGD($html) {
     $html = preg_replace("/^0x/", "", $html);
@@ -48,7 +49,7 @@ class barGraph {
     $this->C_barframe = $this->_htmlColorToGd("000000");
     $this->C_barshadow = $this->_htmlColorToGd("7f7f7f");
     $this->C_text = $this->_htmlColorToGd("000000");
-    $this->C_average = ImageColorAllocateAlpha($this->im, 64, 255, 64, 50 );
+    $this->C_average = ImageColorAllocateAlpha($this->im, 64, 192, 64, 50 );
   }
 
   /* Constructeur */
@@ -122,7 +123,7 @@ class barGraph {
       imagestring($this->im, 1, $i*$this->step+($this->step-strlen($this->labels[$i])*imagefontwidth(1))/2, $this->height-10, $this->labels[$i], $this->C_text);
 
       $dummy = imagecreate(10, 10);
-      $bounding_box = imagettftext($dummy, $this->font_size, 90, $i*$this->step+15, $this->height-$bar_height+20, $this->C_text, "../client_data/ttf/arialnb.ttf", $this->barlabels[$i]);
+      $bounding_box = imagettftext($dummy, $this->font_size, 90, $i*$this->step+15, $this->height-$bar_height+20, $this->C_text, $this->sans_bold_ttf, $this->barlabels[$i]);
       imagedestroy($dummy);
 
       $text_height = $bounding_box[0] - $bounding_box[4];
@@ -133,12 +134,12 @@ class barGraph {
         $text_y = $this->height-$bar_height-5;
       }
       $text_x = $i*$this->step + $text_height + ($this->step - $this->margin*2 - $text_height)/2;
-      $bounding_box = imagettftext($this->im, $this->font_size, 90, $text_x, $text_y, $this->C_text, "../client_data/ttf/arialnb.ttf", $this->barlabels[$i]);
+      $bounding_box = imagettftext($this->im, $this->font_size, 90, $text_x, $text_y, $this->C_text, $this->sans_bold_ttf, $this->barlabels[$i]);
       $i++;
     }
 
     imagerectangle($this->im, 0, $y_average, $this->width, $y_average, $this->C_average );
-    imagettftext($this->im, 9, 0, 1, $y_average-2, $this->C_average, "../client_data/ttf/arialbd.ttf", sprintf("Moyenne : %.1fK\xe2\x82\xacHT", $average/1000) );
+    imagettftext($this->im, 9, 0, 1, $y_average-2, $this->C_average, $this->sans_bold_ttf, sprintf("Moyenne : %.1fK\xe2\x82\xacHT", $average/1000) );
     // imagestring ($this->im, 1, 5, 5,  "A Simple Text String", $text_color);
     imagepng ($this->im);
     imagedestroy($this->im);

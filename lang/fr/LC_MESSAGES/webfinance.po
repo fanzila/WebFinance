@@ -118,3 +118,16 @@ msgstr "Mot de passe"
 
 msgid "Connect"
 msgstr "Connexion"
+
+# Nav prospection
+msgid "Clients"
+msgstr "Clients"
+
+msgid "Targets"
+msgstr "Prospects"
+
+msgid "Add company"
+msgstr "Ajout entreprise"
+
+msgid "Billing"
+msgstr "Facturation"

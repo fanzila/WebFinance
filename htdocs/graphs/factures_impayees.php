@@ -28,10 +28,11 @@ class barGraph {
   var $labels = Array();
   var $barlabels = Array();
   var $max = 0;
-  var $font_size = 12;
+  var $font_size = 10;
   var $step = 40; # Bar width in pixel
   var $margin = 5;
   var $C_bar, $C_barframe, $C_text;
+  var $sans_bold_ttf = "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf";
 
   function _htmlColorToGD($html) {
     $html = preg_replace("/^0x/", "", $html);
@@ -91,7 +92,7 @@ class barGraph {
       imagestring($this->im, 1, $i*$this->step+($this->step-strlen($this->labels[$i])*imagefontwidth(1))/2, $this->height-10, $this->labels[$i], $this->C_text);
 
       $dummy = imagecreate(10, 10);
-      $bounding_box = imagettftext($dummy, $this->font_size, 90, $i*$this->step+15, $this->height-$bar_height+20, $this->C_text, "../client_data/ttf/arialnb.ttf", $this->barlabels[$i]);
+      $bounding_box = imagettftext($dummy, $this->font_size, 90, $i*$this->step+15, $this->height-$bar_height+20, $this->C_text, $this->sans_bold_ttf, $this->barlabels[$i]);
       imagedestroy($dummy);
 
       $text_height = $bounding_box[0] - $bounding_box[4];
@@ -102,7 +103,7 @@ class barGraph {
         $text_y = $this->height-$bar_height-5;
       }
       $text_x = $i*$this->step + $text_height + ($this->step - $this->margin - $text_height)/2;
-      $bounding_box = imagettftext($this->im, $this->font_size, 90, $text_x, $text_y, $this->C_text, "../client_data/ttf/arialnb.ttf", $this->barlabels[$i]);
+      $bounding_box = imagettftext($this->im, $this->font_size, 90, $text_x, $text_y, $this->C_text, $this->sans_bold_ttf, $this->barlabels[$i]);
       $i++;
     }
 
