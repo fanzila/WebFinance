@@ -1,0 +1,17 @@
+Des notes à gogo, des choses qui démangent :
+
+-----------------------------------------------------------------------------------
+La requète suivante crée les entrées prévisionnelles dans
+webfinance_transactions à partir des factures existantes non encore payées,
+ayant un numéro de facture et pas dans le futur. Status : works for me :)
+
+insert into webfinance_transactions (id_category, text, type, id_account, date,
+amount) select 25 as id_category, concat('Paiement facture ',f.num_facture) as
+text, 'prev' as type, 40 as id_account,  date_add(f.date_facture, INTERVAL 60
+DAY) as date_paiement, sum(fl.qtt*fl.prix_ht)*1.196 from
+webfinance_invoice_rows fl, webfinance_invoices f where
+fl.id_facture=f.id_facture and f.is_paye=0 and f.num_facture is not null and
+f.num_facture!='' and f.date_paiement is null and f.type_doc='facture' and
+f.date_facture<=now() group by f.id_facture having date_paiement>=now() order
+by f.date_facture
+-----------------------------------------------------------------------------------
