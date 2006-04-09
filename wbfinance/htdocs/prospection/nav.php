@@ -13,10 +13,10 @@
 
 //$Id$
 
-$elements = array( 'Clients' => 'index.php?q=1',
-                   'Prospects' => 'index.php?q=2',
-                  'Ajout Entreprise' => 'fiche_prospect.php?action=_new',
-                  'Facturation' => 'facturation.php',
+$elements = array( _('Clients') => 'index.php?q=1',
+                   _('Targets') => 'index.php?q=2',
+                  _('Add company') => 'fiche_prospect.php?action=_new',
+                  _('Billing') => 'facturation.php',
                  );
 
 foreach ($elements as $elname=>$url) {
