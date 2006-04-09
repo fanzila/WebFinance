@@ -63,9 +63,17 @@ while ($c = mysql_fetch_assoc($result)) {
 </tr>
 EOF;
 }
+
 ?>
-
-
+<tr style="background: #ceffce;">
+  <td><input type="text" name="cat[new][name]" value="" style="width: 80px;" /></td>
+  <td><input type="text" name="cat[new][class]" value="" style="width: 50px;" /></td>
+  <td><input type="text" name="cat[new][re]" value="" style="width: 200px;" /></td>
+  <td><input type="text" name="cat[new][comment]" value="" style="width: 200px;" /></td>
+  <td><input type="text" name="cat[new][plan_comptable]" value="" style="text-align: center; width: 40px;" /></td>
+  <td></td>
+  <td></td>
+</tr>
 <tr>
   <td style="text-align: center;" colspan="5"><input type="submit" value="Enregistrer" /></td>
 </table>
