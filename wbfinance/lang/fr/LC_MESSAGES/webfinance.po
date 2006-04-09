@@ -68,6 +68,9 @@ msgstr "Rien"
 msgid "All accounts"
 msgstr "Tous les comptes"
 
+msgid "-- Choose --"
+msgstr "-- Choisissez --"
+
 msgid "-- All accounts --"
 msgstr "-- Tous les comptes --"
 
@@ -131,3 +134,37 @@ msgstr "Ajout entreprise"
 
 msgid "Billing"
 msgstr "Facturation"
+
+# Fiche prospection
+msgid "Company name"
+msgstr "Raison sociale"
+
+msgid "Total Income"
+msgstr "CA Total"
+
+msgid "Year Income"
+msgstr "CA Année"
+
+msgid "Owed"
+msgstr "Encours"
+
+msgid "Total income %Y"
+msgstr "CA Total %Y"
+
+msgid "Income 12 months"
+msgstr "CA 12 mois flottants"
+
+msgid "Billed and unpaid"
+msgstr "Total encours"
+
+msgid "Cash (real)"
+msgstr "Trésorerie (réelle)"
+
+msgid "Cash (forecast)"
+msgstr "Trésorerie (prévision)"
+
+msgid "Only show"
+msgstr "Ne montrer que"
+
+msgid "Name contains"
+msgstr "Le nom contient"

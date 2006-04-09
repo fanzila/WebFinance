@@ -161,7 +161,7 @@ foreach ($operations as $op) {
   $erreur = 0;
   $q = sprintf("INSERT INTO webfinance_transactions (text,id_account,amount,type,date, id_category)
                 VALUES('%s', %d, '%s', 'real', STR_TO_DATE('%s', '%%d/%%m/%%Y'), %d)",
-                $op->desc, $id_account, preg_replace("/,/", ".", $op->montant), $op->date, $id_categorie );
+                $op->desc, $id_account, preg_replace("/,/", ".", preg_replace("/ +/", "", $op->montant)), $op->date, $id_categorie );
   mysql_query($q) or $erreur=1;
   if ($erreur) {
     $errstr = mysql_error();
