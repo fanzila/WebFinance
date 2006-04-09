@@ -51,10 +51,10 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w+\\&*+/", "", $GLOBA
 <table border="0" width="500" cellspacing=0 cellpadding=3 style="border: solid 1px black; float: left; margin: 10px;">
 <tr class="row_header" style="text-align: center;">
   <td><a href="?sort=du&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>">&euro</a></td>
-  <td width="200"><a href="?sort=nom&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>">Raison sociale</a></td>
-  <td><a href="?sort=ca_total_ht&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>">CA &euro; HT</a></td>
-  <td><a href="?sort=ca_total_ht_year&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>">CA 1 an</a></td>
-  <td><a href="?sort=total_du_ht&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>">Encours</a></td>
+  <td width="200"><a href="?sort=nom&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Company name') ?></a></td>
+  <td><a href="?sort=ca_total_ht&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Total Income') ?></a></td>
+  <td><a href="?sort=ca_total_ht_year&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Year Income') ?></a></td>
+  <td><a href="?sort=total_du_ht&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Owed') ?></a></td>
 </tr>
 <?php
 
@@ -120,6 +120,16 @@ $result = mysql_query("SELECT sum(fl.qtt*prix_ht)
 list($ca_total_ht_annee_encours) = mysql_fetch_array($result);
 mysql_free_result($result);
 
+// Trésorerie : total des transactions effectives 
+$result = mysql_query("SELECT sum(amount) FROM webfinance_transactions WHERE type='real'") or die(mysql_error());
+list($tresorerie_real) = mysql_fetch_array($result);
+mysql_free_result($result);
+
+// Même chose en prévisionnel
+$result = mysql_query("SELECT sum(amount) FROM webfinance_transactions") or die(mysql_error());
+list($tresorerie_prev) = mysql_fetch_array($result);
+mysql_free_result($result);
+
 ?>
 </table>
 
@@ -127,23 +137,31 @@ mysql_free_result($result);
 
 <table border=0 cellspacing=0 cellpadding=3 style="border: solid 1px black; float: left; margin: 10px; width: 300px;">
 <tr>
-  <td><b>CA Total <?= strftime("%Y", time()); ?></b></td>
+  <td><b><?= strftime("Total income %Y", time()); ?></b></td>
   <td><?= number_format($ca_total_ht_annee_encours, 0, ',', ' ') ?>&euro; HT / <?= number_format($ca_total_ht_annee_encours*1.196, 0, ',', ' ') ?>&euro; TTC </td>
 </tr>
 <tr>
-  <td><b>CA Total <?= strftime("%Y", time())-1; ?></b></td>
+  <td><b><?= strftime("Total income %Y", time()-365*86400); ?></b></td>
   <td><?= number_format($ca_total_ht_annee_precedente, 0, ',', ' ') ?>&euro; HT / <?= number_format($ca_total_ht_annee_precedente*1.196, 0, ',', ' ') ?>&euro; TTC </td>
 </tr>
 <tr>
-  <td><b>CA 12 mois flottants</b></td>
+  <td><b><?= _("Income 12 months") ?></b></td>
   <td><?= number_format($grand_total_ca_ht_year, 0, ',', ' ') ?>&euro; HT / <?= number_format($grand_total_ca_ht_year*1.196, 0, ',', ' ') ?>&euro; TTC </td>
 </tr>
 <tr>
-  <td><b>En attente de paiement</b></td>
+  <td><b><?= _("Billed and unpaid") ?></b></td>
   <td><a href="facturation.php?type=unpaid"><?= number_format($total_dehors, 0, ',', ' ') ?>&euro; HT / <?= number_format($total_dehors*1.196, 0, ',', ' ') ?>&euro; TTC</a></td>
 </tr>
 <tr>
-  <td><b>Ne montrer que </b></td><td><form action="index.php" method="get">
+  <td><b><?= _('Cash (real)') ?></b></td>
+  <td><a href="/tresorerie/"><?= number_format($tresorerie_real, 0, ',', ' ') ?>&euro;</a></td>
+</tr>
+<tr>
+  <td><b><?= _('Cash (forecast)') ?></b></td>
+  <td><a href="/tresorerie/"><?= number_format($tresorerie_prev, 0, ',', ' ') ?>&euro;</a></td>
+</tr>
+<tr>
+  <td><b><?= _("Only show") ?></b></td><td><form action="index.php" method="get">
   <input type="hidden" name="sort" value="<?= $_GET['sort'] ?>" />
   <input type="hidden" name="namelike" value="<?= $_GET['namelike'] ?>" />
   <select style="width: 150px;" onchange="this.form.submit();" name="q"><option value="0">Tous<?php
@@ -154,7 +172,7 @@ mysql_free_result($result);
   ?></select></form></td>
 </tr>
 <tr>
-  <td><b>Nom contentant</b></td>
+  <td><b><?= _("Name contains") ?></b></td>
   <td>
     <form action="index.php" method="get">
     <input type="hidden" name="sort" value="<?= $_GET['sort'] ?>" />

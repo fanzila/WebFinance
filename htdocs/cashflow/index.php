@@ -472,7 +472,7 @@ if(isset($_GET['action']) AND $_GET['action']=='edit' AND !isset($_GET['chk']) )
 				if(mysql_num_rows($result_categories)>0){
 				?>
 						<select class="form" name="id_category">
-							<option value="0" <? if(empty($_GET['id_category'])) { echo "selected"; } ?>>Choose</option>
+							<option value="0" <? if(empty($_GET['id_category'])) { echo "selected"; } ?>><?= _("-- Choose --") ?></option>
 				<?
 						while ($categorie=mysql_fetch_assoc($result_categories)) {
 				?>
@@ -611,7 +611,7 @@ if(isset($_GET['action']) AND $_GET['action']=='edit' AND !isset($_GET['chk']) )
 				if(mysql_num_rows($result_accounts)>0){
 				?>
 						<select name="id_account" class="form">
-							<option value="" <? if(empty($_GET['id_account'])) { echo "selected"; } ?>>Choose</option>
+							<option value="" <? if(empty($_GET['id_account'])) { echo "selected"; } ?>><?= _("-- Choose --") ?></option>
 				<?
 						while ($account=mysql_fetch_assoc($result_accounts)) {
 				?>
@@ -636,7 +636,7 @@ if(isset($_GET['action']) AND $_GET['action']=='edit' AND !isset($_GET['chk']) )
 				if(mysql_num_rows($result_categories)>0){
 				?>
 						<select name="id_category" class="form">
-							<option value="0" <? if(empty($_GET['id_category'])) { echo "selected"; } ?>>Choose</option>
+							<option value="0" <? if(empty($_GET['id_category'])) { echo "selected"; } ?>><?= _("-- Choose --") ?></option>
 				<?
 						while ($categorie=mysql_fetch_assoc($result_categories)) {
 				?>
@@ -962,7 +962,7 @@ $nb_categories=mysql_num_rows($query_categories);
 		?>
 			<?=$vars['id_category']?> :
 						<select class="form" name="search[id_category]">
-							<option value='-1' <? if(!$have_categorie) echo "selected"; ?>>Choose</option>
+							<option value='-1' <? if(!$have_categorie) echo "selected"; ?>><?= _("-- Choose --") ?></option>
 							<?
 							if($nb_categories>1){
 							?>
@@ -1193,7 +1193,7 @@ if($max>0){
 </center>
 
 
-<form>
+<form id="main_form">
 	<!--Filter params-->
 	<input type="hidden" name="search[text]" value="<?=$text?>"/>
 	<input type="hidden" name="search[comment]" value="<?=$comment?>"/>
@@ -1220,7 +1220,7 @@ if($max>0){
 		$accounts[]=$account;
 ?>
 
-	  <table class="text" bgcolor="#E6E2E6" border="0" cellpadding="2" cellspacing="4" width="100%">
+	  <table class="text" border="0" cellpadding="3" cellspacing="0" width="100%">
 	     <tr bgcolor="#ffffff">
 	     <td colspan="8" align="left">
 	     <?
@@ -1246,7 +1246,7 @@ if($max>0){
 				<input type="submit" class="form" name="action" value="delete" onclick="return ask_confirmation('Do you really want to delete the selected transaction(s)?');"/>
 			</td>
 		</tr>
-		<tr bgcolor="#ffffff">
+		<tr class="row_header">
 			<th>&nbsp;</th>
 			<th>
 					<a href='?sort[field]=date&sort[order]=<?=$order?>
@@ -1413,7 +1413,7 @@ if($max>0){
 			</td>
 			<td>
 				<select class="form" name="cat[]">
-					<option value="" <? if(mysql_num_rows($query_categorie)<1) echo "selected"; ?>>Choose</option>
+					<option value="" <? if(mysql_num_rows($query_categorie)<1) echo "selected"; ?>><?= _("-- Choose --") ?></option>
 			<?
 				foreach($categories as $categorie){
 			?>
