@@ -14,10 +14,10 @@
 //$Id$
 
 $elements = array(
-                  'Opérations' => 'index.php',
-                  'Graphs' => 'graphs.php',
-                  'Catégories' => 'categories.php',
-                  'Import' => 'import.php',
+                  _('Transactions') => 'index.php',
+                  _('Graphics') => 'graphs.php',
+                  _('Categories') => 'categories.php',
+                  _('Import') => 'import.php',
                  );
 
 foreach ($elements as $elname=>$url) {

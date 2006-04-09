@@ -1,7 +1,7 @@
 <?php
 require("../inc/main.php");
 
-$title="transactions";
+$title=_("Transactions");
 
 if(1){ // FIXME
 

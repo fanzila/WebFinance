@@ -112,14 +112,14 @@ function checkForm(f) {
   </td>
 </tr>
 <tr>
-  <td>Tri des entreprise</td>
+  <td><?= _('Sort companies by') ?></td>
   <td><select name="pref_tri_entreprise">
   <?php
-  foreach (array('ca_total_ht' => 'CA total',
-                 'ca_total_ht_year' => 'CA année',
-                 'du' => 'A jour / Impayés',
-                 'total_du_ht' => 'Encours',
-                 'nom' => 'Raison sociale') as $v=>$n) {
+  foreach (array('ca_total_ht' => _('Total Income'),
+                 'ca_total_ht_year' => _('Year Income'),
+                 'du' => _('Up to date / has unpaid'),
+                 'total_du_ht' => _('Owed'),
+                 'nom' => _('Company name')) as $v=>$n) {
     printf('<option value="%s"%s>%s</option>', $v, ($v==$User->prefs->tri_entreprise)?" selected":"", $n);
   }
   ?>

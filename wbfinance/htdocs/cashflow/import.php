@@ -11,6 +11,7 @@
 //
 // Real importing is done in do_import.php + import_*.php
 
+$title = _("Import");
 require("../inc/main.php");
 require("../top.php");
 require("nav.php");

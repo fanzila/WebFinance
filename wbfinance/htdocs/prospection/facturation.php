@@ -12,6 +12,7 @@
 // $Id$
 
 include("../inc/main.php");
+$title = _("Billing");
 include("../top.php");
 include("nav.php");
 

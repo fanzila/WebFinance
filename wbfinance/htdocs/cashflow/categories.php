@@ -12,6 +12,7 @@
 
 // $Id$
 
+$title = _("Categories");
 require("../inc/main.php");
 require("../top.php");
 require("nav.php");
