@@ -45,7 +45,15 @@ function confirmDelete(id) {
 <?php
 
 $order_clause = "color";
-if (isset($_GET['sort'])) { $order_clause = $_GET['sort']; }
+if (isset($_GET['sort'])) { 
+  switch ($_GET['sort']) {
+    case 'color' : 
+      // Sort by color is complicated since we store HTML colors like #ff0000 
+      $order_clause = "HEX(MID(color, 1,2)),HEX(MID(color,3,2)),HEX(MID(color,5,2))";
+      break;
+    default: $order_clause = $_GET['sort']; 
+  }
+}
 
 $result = mysql_query("SELECT id,name,comment,class,re,plan_comptable,color
                        FROM webfinance_categories
