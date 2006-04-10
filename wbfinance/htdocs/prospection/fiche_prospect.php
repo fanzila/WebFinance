@@ -92,19 +92,19 @@ var onglet_shown='<?= $shown_tab ?>';
 <tr>
   <td width="100%"><input type="text" name="nom" value="<?= preg_replace('/"/', '\\"', $Client->data->nom) ?>" style="font-size: 18px; font-weight: bold; width: 510px; border-top: none; border-left: none; border-right: none;" /><br/></td>
   <td nowrap>
-    <input style="width: 75px; background: #eee; color: #7f7f7f; border: solid 1px #aaa;" id="submit_button" onclick="submitForm(this.form);" type="button" value="Enregistrer" />
-    <input style="width: 75px; background: #eee; color: #7f7f7f; border: solid 1px #aaa;" id="cancel_button" type="button" onclick="window.location='fiche_prospect.php?id=<?= $facture->id_client ?>';" value="Annuler" />
-    <input style="width: 75px; background: #eee; color: #7f7f7f; border: solid 1px #aaa;" id="delete_button" type="button" onclick="confirmDelete(<?= $Client->id ?>);" value="Supprimer" />
+    <input style="width: 75px; background: #eee; color: #7f7f7f; border: solid 1px #aaa;" id="submit_button" onclick="submitForm(this.form);" type="button" value="<?= _('Save') ?>" />
+    <input style="width: 75px; background: #eee; color: #7f7f7f; border: solid 1px #aaa;" id="cancel_button" type="button" onclick="window.location='fiche_prospect.php?id=<?= $facture->id_client ?>';" value="<?= _('Cancel') ?>" />
+    <input style="width: 75px; background: #eee; color: #7f7f7f; border: solid 1px #aaa;" id="delete_button" type="button" onclick="confirmDelete(<?= $Client->id ?>);" value="<?= _('Delete') ?>" />
   </td>
 </tr>
 </table>
 
 <table width="740" border="0" cellspacing="0" cellpadding="0" class="fiche_prospect">
 <tr class="onglets">
-  <td id="handle_contacts" onclick="focusOnglet('contacts');">Coordonnées</td>
-  <td id="handle_facturation" onclick="focusOnglet('facturation');">Facturation</td>
-  <td id="handle_log" onclick="focusOnglet('log');">Suivi</td>
-  <td id="handle_other" onclick="focusOnglet('other');">Divers</td>
+  <td id="handle_contacts" onclick="focusOnglet('contacts');"><?= _('Contacts') ?></td>
+  <td id="handle_facturation" onclick="focusOnglet('facturation');"><?= _('Billing') ?></td>
+  <td id="handle_log" onclick="focusOnglet('log');"><?= _('Flollow&nbsp;up') ?></td>
+  <td id="handle_other" onclick="focusOnglet('other');"><?= _('Miscelaneous') ?></td>
   <td style="background: none;" width="100%"></td>
 </tr>
 <tr style="vertical-align: top;">
@@ -113,22 +113,22 @@ var onglet_shown='<?= $shown_tab ?>';
 <div id="tab_contacts" style="display: none;">
 
   <table border="0" width="100%"><tr valign="top"><td>
-  <b>Adresse :</b><br/>
+  <b><?= _('Address :') ?></b><br/>
   <input type="text" name="addr1" value="<?= preg_replace('/"/', '\\"', $Client->data->addr1) ?>" style="color: #666; width: 200px" /><br/>
   <input type="text" name="addr2" value="<?= preg_replace('/"/', '\\"', $Client->data->addr2) ?>" style="color: #666; width: 200px" /><br/>
   <input type="text" name="addr3" value="<?= preg_replace('/"/', '\\"', $Client->data->addr3) ?>" style="color: #666; width: 200px" /><br/>
   <input type="text" name="cp" value="<?= preg_replace('/"/', '\\"', $Client->data->cp) ?>" style="text-align: center; color: #666; width: 48px" /><input type="text" name="ville" value="<?= $Client->data->ville ?>" style="color: #666; width: 148px" /><br/>
   <input type="text" name="pays" value="<?= preg_replace('/"/', '\\"', $Client->data->pays) ?>" style="color: #666; width: 80px; text-align: center;" /><br/>
-  <b>Coordonnées :</b><br/>
+  <b><?= _('Phone and URL :') ?></b><br/>
   <input type="text" name="tel" value="<?= addslashes($Client->data->tel) ?>" class="tel" /><input type="text" name="fax" value="<?= $Client->data->fax ?>" class="fax" /><br/>
   <input type="text" name="email" value="<?= addslashes($Client->data->email) ?>" class="email" /><br>
   <input type="text" name="web" value="<?= addslashes($Client->data->web) ?>" class="web" /><br>
   </td><td width="100%">
   <?// Contacts ?>
 
-  <b>Contacts : </b><br>
+  <b><?= _('Contacts :') ?></b><br>
   <?include "contact_entreprise.php" ?>
-  <div style="text-align: center;"><a href="#" onclick="inpagePopup(event, this, 240, 250, 'edit_contact.php?id=_new&id_client=<?= $Client->id ?>');">Ajouter un nouveau contact</a></div>
+  <div style="text-align: center;"><a href="#" onclick="inpagePopup(event, this, 240, 250, 'edit_contact.php?id=_new&id_client=<?= $Client->id ?>');"><?= _('Add a new contact') ?></a></div>
   </td>
 
   </table>
