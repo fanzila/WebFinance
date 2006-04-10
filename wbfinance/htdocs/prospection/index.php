@@ -138,11 +138,11 @@ mysql_free_result($result);
 
 <table border=0 cellspacing=0 cellpadding=3 class="bordered" style="margin-left: 10px; margin-bottom: 10px; width: 300px;">
 <tr>
-  <td><b><?= strftime("Total income %Y", time()); ?></b></td>
+  <td><b><?= strftime(_("Total income %Y"), time()); ?></b></td>
   <td><?= number_format($ca_total_ht_annee_encours, 0, ',', ' ') ?>&euro; HT / <?= number_format($ca_total_ht_annee_encours*1.196, 0, ',', ' ') ?>&euro; TTC </td>
 </tr>
 <tr>
-  <td><b><?= strftime("Total income %Y", time()-365*86400); ?></b></td>
+  <td><b><?= strftime(_("Total income %Y"), time()-365*86400); ?></b></td>
   <td><?= number_format($ca_total_ht_annee_precedente, 0, ',', ' ') ?>&euro; HT / <?= number_format($ca_total_ht_annee_precedente*1.196, 0, ',', ' ') ?>&euro; TTC </td>
 </tr>
 <tr>
