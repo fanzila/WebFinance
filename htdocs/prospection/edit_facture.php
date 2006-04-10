@@ -177,7 +177,7 @@ function del_ligne() {
 <tr>
   <td width="300">
     <table width="300" border="0" cellspacing="0" cellpadding="2">
-    <tr><td width="100"><?= ucfirst($facture->type_doc) ?> n°</td><td><input type="text" style="width:55px; text-align: center;" name="num_facture" value="<?= $facture->num_facture ?>" /><img src="/imgs/icons/help.gif" onmouseover="return escape('Le numéro de facture est généré automatiquement lorsqu\'on marque la facture comme envoyée.<br/><br/>On peut forcer ce numéro arbitrairement mais souvenez-vous que la loi française oblige les numéros de facture à être séquenciels (pas de trous ni de YYYYMMDD');" /></td></tr>
+    <tr><td width="100"><?= ucfirst($facture->type_doc) ?> n°</td><td><input type="text" style="width:55px; text-align: center;" name="num_facture" value="<?= $facture->num_facture ?>" /><img src="/imgs/icons/help.png" onmouseover="return escape('Le numéro de facture est généré automatiquement lorsqu\'on marque la facture comme envoyée.<br/><br/>On peut forcer ce numéro arbitrairement mais souvenez-vous que la loi française oblige les numéros de facture à être séquenciels (pas de trous ni de YYYYMMDD');" /></td></tr>
     <tr><td>Date <?= $facture->type_doc ?></td><td><input style="text-align: center; width: 80px;" type="text" name="date_facture" value="<?= $facture->nice_date_facture ?>" /></td></tr>
     <tr><td>Code TVA Client</td><td><input style="width: 110px;" type="text" name="vat_number" value="<?= $facture->vat_number ?>" /></td></tr>
     <tr><td>Ref Contrat</td><td><input style="width: 200px;" type="text" name="ref_contrat" value="<?= $facture->ref_contrat ?>" /></td></tr>

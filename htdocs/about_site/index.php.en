@@ -102,7 +102,8 @@ modify dbconnect.php
 <h2>Contributors</h2>
 
 <ul>
-  <li>Nicolas Bouthors &lt;nbouthors@nbi.fr&gt;</li>
+  <li>Nicolas Bouthors &lt;nbouthors@nbi.fr&gt; <i>Lots of code</i></li>
+  <li>Cedric Ravier &lt;cravier@nbi.fr&gt;<i>Some icons, logo, and other graphical stuff</i></li>
 </ul>
 
 <i>$Id$</i>
