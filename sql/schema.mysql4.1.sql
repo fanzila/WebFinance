@@ -68,7 +68,6 @@ CREATE TABLE `webfinance_clients` (
   `pays` varchar(50) default 'France',
   `vat_number` varchar(40) default NULL,
   `has_unpaid` tinyint(1) default NULL,
-  `state` enum('client','prospect','archive','fournisseur') default NULL,
   `ca_total_ht` decimal(20,4) default NULL,
   `ca_total_ht_year` decimal(20,4) default NULL,
   `has_devis` tinyint(4) NOT NULL default '0',

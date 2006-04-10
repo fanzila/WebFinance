@@ -149,7 +149,7 @@ var onglet_shown='<?= $shown_tab ?>';
                                WHERE f.id_client=".$Client->id."
                                AND f.id_facture=fl.id_facture
                                GROUP BY YEAR(date_facture)
-                               ORDER BY 1 DESC") or die(mysql_error());
+                               ORDER BY f.date_facture DESC") or die(mysql_error());
         while ($year = mysql_fetch_object($result)) {
           printf('<tr><td style="border-bottom: solid 1px #777;" colspan="5"><b style="font-size: 16px;">%s</b> - <b><i>Encours %s&euro; HT</i></b> - <i>%s&euro; HT</i></td></tr>', $year->annee, number_format($year->du_ht_total, 2, ',', ' '), number_format($year->ca_ht_total, 2, ',', ' '));
           $q = "SELECT f.*,f.id_facture,date_format(f.date_created, '%d/%m/%Y') as date,

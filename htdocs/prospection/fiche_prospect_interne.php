@@ -13,10 +13,10 @@
   <input type="text" class="siren" name="siren" value="<?= $Client->data->siren ?>" class="siren" /><br>
   <?// Interne  ?>
   <b>Interne : </b><br/>
-  <select style="font-size: 10px; width: 200px;" name="state"><?php
-  $choices = array('client', 'prospect', 'archive', 'fournisseur');
-  foreach ($choices as $c) {
-    printf('<option value="%s" %s>%s</option>'."\n", $c, ($Client->data->state == $c)?"selected":"", ucfirst($c));
+  <select style="font-size: 10px; width: 200px;" name="id_company_type"><?php
+  $result = mysql_query("SELECT id_company_type,nom FROM webfinance_company_types ORDER BY nom");
+  while ($t = mysql_fetch_object($result)) {
+    printf('<option value="%s" %s>%s</option>'."\n", $t->id_company_type, ($Client->data->id_company_type == $t->id_company_type)?"selected":"", ucfirst($t->nom));
   }
   ?>
   </select><br/>
