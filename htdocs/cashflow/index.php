@@ -147,6 +147,9 @@ if ($ts_start_date > $ts_end_date) {
            HAVING $where_clause
            ORDER BY t.date";
 //[ ]      print "<pre>$q</pre>";
+
+     $filter_base = sprintf("filter[start_date]=%s&filter[end_date]=%s&filter[textsearch]=%s&filter[amount]=%s", 
+                            $filter[start_date], $filter[end_date], $filter[textsearch], $filter[amount] );
      $result = mysql_query($q) or die(mysql_error());
      $total_shown = 0;
      while ($tr = mysql_fetch_object($result)) {
@@ -165,7 +168,7 @@ if ($ts_start_date > $ts_end_date) {
 <tr>
   <td><img src="/imgs/icons/edit.gif" onmouseover="return escape('$help_edit');" onclick="inpagePopup(event, this, 350, 350, 'fiche_transaction.php?id=$tr->id');" /></td>
   <td>$fmt_date</td>
-  <td style="background: $tr->color; text-align: center;" nowrap>$tr->name</td>
+  <td style="background: $tr->color; text-align: center;" nowrap><a href="?$filter_base&filter[shown_cat][$tr->id_category]='on'">$tr->name</a></td>
   <td style="text-align: center;">$tr->type</td>
   <td width="100%" style="font-size: 9px;">$tr->text<br/><i>$tr->comment</i></td>
   <td style="text-align: right; font-weight: bold; background: $amount_color" nowrap>$fmt_amount &euro;</td>

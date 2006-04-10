@@ -249,6 +249,9 @@ msgstr "Saisir un nombre pour une recherche aproximée à 10% près, saisir un 1
 msgid "Text contains :"
 msgstr "Le libellé contient :"
 
+msgid "Account :"
+msgstr "Compte :"
+
 msgid "Start date :"
 msgstr "Date début :"
 
@@ -260,3 +263,9 @@ msgstr "Montrer les catégories :"
 
 msgid "View all"
 msgstr "Montrer tout"
+
+msgid "Filter"
+msgstr "Filtre"
+
+msgid "Category"
+msgstr "Catégorie"
