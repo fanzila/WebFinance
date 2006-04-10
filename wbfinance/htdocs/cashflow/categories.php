@@ -36,9 +36,9 @@ function confirmDelete(id) {
 <tr style="text-align: center;" class="row_header">
   <td><a href="?sort=name"><?= _('Name') ?></a></td>
   <td><a href="?sort=class"><?= _('Class') ?></a></td>
-  <td><a href="?sort=re"><?= _('Regexp') ?> <img class="help_icon" src="/imgs/icons/help.gif" onmouseover="return escape('<?= $help_regexp ?>');" /></a></td>
+  <td><a href="?sort=re"><?= _('Regexp') ?> <img class="help_icon" src="/imgs/icons/help.png" onmouseover="return escape('<?= $help_regexp ?>');" /></a></td>
   <td><a href="?sort=comment"><?= _('Comment') ?></a></td>
-  <td>PCG <img class="help_icon" src="/imgs/icons/help.gif" onmouseover="return escape('<?= $help_pcg ?>');" /></td>
+  <td>PCG <img class="help_icon" src="/imgs/icons/help.png" onmouseover="return escape('<?= $help_pcg ?>');" /></td>
   <td><a href="?sort=color"><?= _('Color') ?></a></td>
   <td></td>
 </tr>
