@@ -48,8 +48,15 @@ while ($row=mysql_fetch_assoc($req)) {
   $balance_yesterday+=$row['amount'];
 }
 
+// ---------------------------------------------------------------------------------------------------------------------
 // Check filter data coherence :
 if (!preg_match("!^[0-9.-]+$!", $filter['amount'])) { $filter['amount'] = ""; }  // Search by amount must be numeric
+
+if (preg_match("!^([0-9.,]+)-([0-9.,]+)$!", $filter['amount'], $foo)) {
+  if ($foo[1] > $foo[2]) {
+    $filter['amount'] = $foo[2]."-".$foo[1]; // Special blondes check, invert amount range
+  }
+}
 
 // If no date range is specified use "current month"
 $days_in_month = array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
@@ -76,6 +83,9 @@ if ($ts_start_date > $ts_end_date) {
   $ts_start_date = $ts_end_date;
   $ts_end_date = $foo;
 }
+
+// End check filter data coherence
+// ---------------------------------------------------------------------------------------------------------------------
 
 ?>
 
@@ -180,7 +190,7 @@ EOF;
       <td colspan="2" style="text-align: center"><?= _('Filter') ?></td>
     </tr>
     <tr>
-      <td><b><?= _('Account') ?></b></td>
+      <td><b><?= _('Account :') ?></b></td>
       <td><select name="filter[id_account]" style="width: 150px;">
         <option value="0"><?= _('-- All accounts --') ?></option>
       <?php
