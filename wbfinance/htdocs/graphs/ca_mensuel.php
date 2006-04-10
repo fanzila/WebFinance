@@ -10,11 +10,11 @@
 ?>
 <?php
 
-header("Content-type: image/png");
-header("Pragma: no-cache");
 #header("Content-type: text/plain");
 include("inc/dbconnect.php");
 include("inc/main.php");
+header("Content-type: image/png");
+header("Pragma: no-cache");
 
 // $Id$
 
