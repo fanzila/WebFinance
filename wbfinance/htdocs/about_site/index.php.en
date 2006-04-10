@@ -46,7 +46,7 @@ foreach ($releases as $r) {
 <ul>
 <li>Install pre-requisites (debian-centric)
 <pre class="shell">
-apt-get install php-fpdf apache php4 mysql-server-4.1 ttf-freefont
+apt-get install php-fpdf apache php4 mysql-server-4.1 ttf-freefont gettext libphp-phpplot perlmagick
 </pre></li>
 
 <li>Create a database, and load the default schema</li>
