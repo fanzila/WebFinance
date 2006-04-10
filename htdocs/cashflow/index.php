@@ -225,9 +225,9 @@ EOF;
 </table>
 
 <?php
-print "<pre>";
-print_r($filter);
-print "</pre>";
+// print "<pre>";
+// print_r($filter);
+// print "</pre>";
 $Revision = '$Revision$';
 require("../bottom.php");
 ?>
