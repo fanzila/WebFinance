@@ -27,8 +27,6 @@ mysql_free_result($result);
 
 
 // Setup the default filter if none is given
-$current_month = strftime("%m", time());
-
 extract($_GET);
 
 if ((!count($filter['shown_cat'])) || ($filter['shown_cat']['check_all'] == "on")) {
@@ -50,7 +48,9 @@ while ($row=mysql_fetch_assoc($req)) {
   $balance_yesterday+=$row['amount'];
 }
 
-// Check filter data cohérence :
+// Check filter data coherence :
+if (!preg_match("!^[0-9.-]+$!", $filter['amount'])) { $filter['amount'] = ""; }  // Search by amount must be numeric
+
 // If no date range is specified use "current month"
 $days_in_month = array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
 if ((strftime("%Y") % 4 == 0) && (strftime("%Y") % 100 != 0)) { // Leap year
@@ -119,6 +119,19 @@ if ($ts_start_date > $ts_end_date) {
        $where_clause .= " AND (text LIKE '%".$filter['textsearch']."%' OR comment LIKE '%".$filter['textsearch']."%')";
      }
 
+     // Filter on amount
+     if ($filter['amount'] != "") {
+       $filter['amount'] = preg_replace("!,!", ".", $filter['amount']); // Decimal dot can be coma for european users
+
+       if (preg_match("!([0-9.]+)-([0-9.]+)!", $filter['amount'], $matches)) {
+         // Interval
+         $where_clause .= " AND (abs(amount) >= ".$matches[1]." AND abs(amount) <= ".$matches[2].") ";
+       } else {
+         // One amount
+         $where_clause .= " AND (abs(amount*1.10) >= ".$filter['amount']." AND abs(amount*0.9) <= ".$filter['amount'].") ";
+       }
+     }
+
      $q = "SELECT t.id,t.amount,t.date,UNIX_TIMESTAMP(t.date) as ts_date,c.name,t.type,t.text,t.comment,c.color,t.id_category,t.id_account
            FROM webfinance_transactions AS t LEFT JOIN webfinance_categories AS c ON t.id_category=c.id
            HAVING $where_clause
@@ -181,11 +194,11 @@ EOF;
     </tr>
     <tr>
       <td nowrap><b><?= _('Amount') ?> <img class="help_icon" src="/imgs/icons/help.gif" onmouseover="return escape('<?= _('Enter a number for 10% aproximated search, enter 100-200 to search transactions fromm 100&euro; to 200&euro; included') ?>');" /></b></td>
-      <td><input style="text-align: center; width: 150px;" type="text" name="filter[amount]" value="<?= $filter['amount'] ?>" /></td>
+      <td><input style="text-align: center; width: 130px;" type="text" id="amount_criteria" name="filter[amount]" value="<?= $filter['amount'] ?>" /><img src="/imgs/icons/delete.gif" onmouseover="return escape('<?= _('Click to suppress this filter criteria') ?>');" onclick="fld = document.getElementById('amount_criteria'); fld.value = ''; fld.form.submit();" /></td>
     </tr>
     <tr>
       <td nowrap><b><?= _('Text contains :') ?></b></td>
-      <td><input style="text-align: center; width: 150px;" type="text" name="filter[textsearch]" value="<?= $filter['textsearch'] ?>" /></td>
+      <td><input style="text-align: center; width: 130px;" id="text_criteria" type="text" name="filter[textsearch]" value="<?= $filter['textsearch'] ?>" /><img src="/imgs/icons/delete.gif" onmouseover="return escape('<?= _('Click to suppress this filter criteria') ?>');" onclick="fld = document.getElementById('text_criteria'); fld.value = ''; fld.form.submit();" /></td>
     </tr>
     <tr>
       <td nowrap><b><?= _('Start date :') ?></b></td>
