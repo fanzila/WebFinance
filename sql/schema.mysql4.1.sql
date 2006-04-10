@@ -244,7 +244,7 @@ DROP TABLE IF EXISTS `webfinance_transactions`;
 CREATE TABLE `webfinance_transactions` (
   `id` int(11) NOT NULL auto_increment,
   `id_account` int(11) NOT NULL,
-  `id_category` int(11) NOT NULL,
+  `id_category` int(11) NOT NULL DEFAULT 1,
   `text` varchar(255) NOT NULL,
   `amount` decimal(14,2) NOT NULL default '0.00',
   `type` enum('real','prevision','asap') default NULL,
@@ -348,6 +348,7 @@ INSERT INTO `webfinance_banks` (`id`, `name`, `short_name`, `phone`, `mail`, `co
 
 -- Voir http://www.plancomptable.com/pc99/titre-IV/liste_des_comptes_sb.htm
 INSERT INTO `webfinance_categories` (`id`, `name`, `class`, `re`, `plan_comptable`) VALUES 
+(1   , 'Unknown', '', '', ''),
 (NULL, 'Salaire', 'salaires', 'salaire',''),
 (NULL, 'Loyer', 'loyer', 'loyer',''),
 (NULL, 'Frais bancaires', 'frais', '(cotisation signature pro|facturation progeliance net|net arrete au [0-9]{2} [0-9]{2} [0-9]{2})','627'),
