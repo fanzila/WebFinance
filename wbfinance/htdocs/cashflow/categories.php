@@ -24,7 +24,7 @@ $help_pcg = addslashes("Numéro de référence dans le plan comptable général.
 
 <script type="text/javascript">
 function confirmDelete(id) {
-  if (confirm('Voulez-vous vraiment supprimer cette catégorie ?\n')) {
+  if (confirm('<?= _('Voulez-vous vraiment supprimer cette catégorie ?') ?>')) {
     window.location = 'save_categories.php?action=delete&id='+id;
   }
 }
@@ -34,23 +34,27 @@ function confirmDelete(id) {
 
 <table border="0" cellspacing="0" cellpadding="3" class="framed">
 <tr style="text-align: center;" class="row_header">
-  <td>Nom</td>
-  <td>Classe</td>
-  <td>Regexp <img class="help_icon" src="/imgs/icons/help.gif" onmouseover="return escape('<?= $help_regexp ?>');" /></td>
-  <td>Commentaire</td>
+  <td><a href="?sort=name"><?= _('Name') ?></a></td>
+  <td><a href="?sort=class"><?= _('Class') ?></a></td>
+  <td><a href="?sort=re"><?= _('Regexp') ?> <img class="help_icon" src="/imgs/icons/help.gif" onmouseover="return escape('<?= $help_regexp ?>');" /></a></td>
+  <td><a href="?sort=comment"><?= _('Comment') ?></a></td>
   <td>PCG <img class="help_icon" src="/imgs/icons/help.gif" onmouseover="return escape('<?= $help_pcg ?>');" /></td>
-  <td></td>
+  <td><a href="?sort=color"><?= _('Color') ?></a></td>
   <td></td>
 </tr>
 <?php
+
+$order_clause = "color";
+if (isset($_GET['sort'])) { $order_clause = $_GET['sort']; }
+
 $result = mysql_query("SELECT id,name,comment,class,re,plan_comptable,color
                        FROM webfinance_categories
-                       ORDER BY name") or die(mysql_error());
+                       ORDER BY $order_clause") or die(mysql_error());
 while ($c = mysql_fetch_assoc($result)) {
   extract($c);
 
-    $color_picker = sprintf('<input type="hidden" name="cat[%d][color]" id="color_%d" value="%s"><div id="couleur_%d" onclick="inpagePopup(event, this, 260, 240, \'/inc/color_picker.php?sample=couleur_%d&input=color_%d\');" onmouseover="return escape(\'Cliquez pour modifier la couleur\');" style="width: 40px; height: 16px; background: %s"></div>',
-                            $id, $id, $color, $id, $id, $id, $color );
+    $color_picker = sprintf('<input type="hidden" name="cat[%d][color]" id="color_%d" value="%s"><div id="couleur_%d" onclick="inpagePopup(event, this, 260, 240, \'/inc/color_picker.php?sample=couleur_%d&input=color_%d\');" onmouseover="return escape(\'Cliquez pour modifier la couleur.<br/>Actuellement : %s\');" style="width: 40px; height: 16px; background: %s"></div>',
+                            $id, $id, $color, $id, $id, $id, $color, $color );
 
   print <<<EOF
 <tr>
@@ -60,7 +64,7 @@ while ($c = mysql_fetch_assoc($result)) {
   <td><input type="text" name="cat[$id][comment]" value="$comment" style="width: 200px;" /></td>
   <td><input type="text" name="cat[$id][plan_comptable]" value="$plan_comptable" style="text-align: center; width: 40px;" /></td>
   <td>$color_picker</td>
-  <td><a href="javascript:confirmDelete($id);"><img src="/imgs/icons/delete.gif" /></a></td>
+  <td><a href="javascript:confirmDelete($id);"><img src="/imgs/icons/delete.gif" /></a> <a href="index.php?filter[shown_cat][$id]='on'"><img src="/imgs/icons/zoom.gif" /></a></td>
 </tr>
 EOF;
 }

@@ -564,7 +564,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 				$sum_negative=$row[1]+$sum_negative;
 			}
 
-			$plot =& new PHPlot(600,450);
+			$plot =& new PHPlot($width,$height);
 			//$plot->SetImageBorderType('plain');
 			//$plot->SetShading(0);
 
