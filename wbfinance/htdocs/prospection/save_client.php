@@ -21,10 +21,10 @@ if ($_GET['action'] == "delete") {
 
 extract($_POST);
 $q = sprintf("UPDATE webfinance_clients SET nom='%s',addr1='%s',addr2='%s',addr3='%s',cp='%s',ville='%s',pays='%s',
-                                tel='%s',fax='%s',email='%s',vat_number='%s',siren='%s', state='%s'
+                                tel='%s',fax='%s',email='%s',vat_number='%s',siren='%s', id_company_type='%d'
               WHERE id_client=%d",
 
-             $nom, $addr1, $addr2, $addr3, $cp, $ville, $pays, $tel, $fax, $email, $vat_number, $siren, $state,
+             $nom, $addr1, $addr2, $addr3, $cp, $ville, $pays, $tel, $fax, $email, $vat_number, $siren, $id_company_type,
              $id_client );
 
 mysql_query($q) or die(mysql_error());
