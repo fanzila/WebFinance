@@ -14,7 +14,7 @@
 //$Id$
 
 $elements = array(_('Home') => '/', 
-                  _('Companies') => '/prospection/?q=client',
+                  _('Companies') => '/prospection/?q=1',
                   _('Cashflow') => '/tresorerie/',
                   _('My account') => '/moncompte/',
                   _('Administration') => '/admin/',

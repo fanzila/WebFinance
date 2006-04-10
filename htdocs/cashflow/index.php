@@ -12,8 +12,8 @@
 
 // $Id$
 
-$title = _('Transactions');
 require("../inc/main.php");
+$title = _('Cashflow');
 require("../top.php");
 require("nav.php");
 
@@ -188,15 +188,15 @@ EOF;
       <td><input style="text-align: center; width: 150px;" type="text" name="filter[textsearch]" value="<?= $filter['textsearch'] ?>" /></td>
     </tr>
     <tr>
-      <td nowrap><b><?= _('Start date') ?></b></td>
+      <td nowrap><b><?= _('Start date :') ?></b></td>
       <td><input style="text-align: center; width: 150px;" type="text" name="filter[start_date]" value="<?= $filter['start_date'] ?>" /></td>
     </tr>
     <tr>
-      <td nowrap><b><?= _('End date') ?></b></td>
+      <td nowrap><b><?= _('End date :') ?></b></td>
       <td><input style="text-align: center; width: 150px;" type="text" name="filter[end_date]" value="<?= $filter['end_date'] ?>" /></td>
     </tr>
     <tr>
-      <td><b><?= _('Shown categories :') ?></b></td>
+      <td nowrap><b><?= _('Shown categories :') ?></b></td>
       <td><input type="checkbox" name="filter[shown_cat][check_all]" /><b><?= _('View all') ?></b></td>
     </tr>
     <tr>

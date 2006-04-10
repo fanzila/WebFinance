@@ -49,7 +49,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w+\\&*+/", "", $GLOBA
 <table border="0" cellspacing="0" cellpadding="0">
 <tr valign="top"><td rowspan="2">
 
-<table border="0" width="500" cellspacing=0 cellpadding=3 style="border: solid 1px black; float: left; margin: 10px;">
+<table border="0" width="500" cellspacing=0 cellpadding=3 class="framed">
 <tr class="row_header" style="text-align: center;">
   <td><a href="?sort=du&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>">&euro</a></td>
   <td width="200"><a href="?sort=nom&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Company name') ?></a></td>
@@ -134,9 +134,9 @@ mysql_free_result($result);
 ?>
 </table>
 
-</td><td height="100">
+</td><td style="vertical-align: top" height="100">
 
-<table border=0 cellspacing=0 cellpadding=3 style="border: solid 1px black; float: left; margin: 10px; width: 300px;">
+<table border=0 cellspacing=0 cellpadding=3 class="bordered" style="margin-left: 10px; margin-bottom: 10px; width: 300px;">
 <tr>
   <td><b><?= strftime("Total income %Y", time()); ?></b></td>
   <td><?= number_format($ca_total_ht_annee_encours, 0, ',', ' ') ?>&euro; HT / <?= number_format($ca_total_ht_annee_encours*1.196, 0, ',', ' ') ?>&euro; TTC </td>
