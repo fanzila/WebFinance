@@ -39,7 +39,10 @@ foreach ($_POST['cat'] as $id=>$data) {
     }
     $q = preg_replace("!,$!", "WHERE id=$id", $q);
   }
-  mysql_query($q) or die(mysql_error());
+  if ($id != 0) {
+    // Category #0 is "Unknown" and should always be so if we update with id=0 it dupplicates the Unknown category
+    mysql_query($q) or die(mysql_error());
+  }
 }
 
 header("Location: categories.php");
