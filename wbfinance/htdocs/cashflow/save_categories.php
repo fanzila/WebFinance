@@ -19,25 +19,25 @@ if ($_GET['action'] == "delete") {
 }
 
 foreach ($_POST['cat'] as $id=>$data) {
-  if (($data['name'] != "") && ($id == "new")) {
-    $q = "INSERT INTO webfinance_categories ";
-    $f = "(";
-    $values = "VALUES(";
-    foreach ($data as $n=>$v) {
-      $f .= sprintf("%s,", $n);
-      $values .= sprintf("'%s',", $v);
+  if ($id == "new") {
+    if ($data['name'] != "") {
+      $q = "INSERT INTO webfinance_categories ";
+      $f = "(";
+      $values = "VALUES(";
+      foreach ($data as $n=>$v) {
+        $f .= sprintf("%s,", $n);
+        $values .= sprintf("'%s',", $v);
+      }
+      $f = preg_replace("!,$!", ") ", $f);
+      $values = preg_replace("!,$!", ") ", $values);
+      $q .= $f.$values;
     }
-    $f = preg_replace("!,$!", ") ", $f);
-    $values = preg_replace("!,$!", ") ", $values);
-    $q .= $f.$values;
   } else {
     $q = "UPDATE webfinance_categories SET ";
     foreach ($data as $n=>$v) {
       $q .= sprintf("%s='%s',", $n, $v);
     }
     $q = preg_replace("!,$!", " WHERE id=$id", $q);
-
-    if ($id == 0) { $q = ""; }
   }
   mysql_query($q) or die(mysql_error());
 }
