@@ -16,7 +16,6 @@ $l = fgets($fp); // En-têtes de colonnes
 
 // Now parse the real entries format is :
 $transactions = array();
-//echo "<pre/>";
 
 while(!feof($fp)) {
   $tmp = fgets($fp);
@@ -28,7 +27,10 @@ while(!feof($fp)) {
       $op = new stdClass();
       $op->date = $l[0];
       $op->desc = $l[1];
+      $op->ref = $l[2];
+      $op->date_valeur = $l[3];
       $op->montant = $l[4]; // Débit ou crédit
+      $op->comment = $l[5];
       if($op){
 	$op->desc = preg_replace("! +!", " ", $op->desc); // trim superfluous spaces
 	array_push($transactions, $op);
@@ -37,8 +39,6 @@ while(!feof($fp)) {
   }
  }
 
-//print_r($transactions);
-//exit;
 
 // Toutes les opérations sont dans $transactions, essayons maintenant de faire
 // quelque chose d'intelligen avec :
@@ -104,9 +104,9 @@ foreach ($transactions as $op) {
 
   // Insertion de la transaction
   $erreur = 0;
-  $q = sprintf("INSERT INTO webfinance_transactions (text,id_account,amount,type,date, id_category)
-                VALUES('%s', %d, '%s', 'real', STR_TO_DATE('%s', '%%d/%%m/%%Y'), %d)",
-                $op->desc, $id_account, preg_replace("/,/", ".", preg_replace("/ +/", "", $op->montant)), $op->date, $id_categorie );
+  $q = sprintf("INSERT INTO webfinance_transactions (text,id_account,amount,type,date, id_category, comment)
+                VALUES('%s', %d, '%s', 'real', STR_TO_DATE('%s', '%%d/%%m/%%Y'), %d, '%s')",
+	       $op->desc, $id_account, preg_replace("/,/", ".", preg_replace("/ +/", "", $op->montant)), $op->date, $id_categorie ,"ref: ".$op->ref." ".$op->comment );
   mysql_query($q) or $erreur=1;
   if ($erreur) {
     $errstr = mysql_error();
