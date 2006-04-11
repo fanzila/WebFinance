@@ -12,7 +12,7 @@
 require("../inc/main.php");
 require("../top_popup.php");
 
-$result = mysql_query("SELECT id, id_category, text, amount, type, date, comment, file_name FROM webfinance_transactions WHERE id=".$_GET['id'])
+$result = mysql_query("SELECT id, id_category, id_account, text, amount, type, date, comment, file_name FROM webfinance_transactions WHERE id=".$_GET['id'])
   or die(mysql_error());
 
 if(mysql_num_rows($result)>0){
@@ -22,6 +22,7 @@ if(mysql_num_rows($result)>0){
   $transaction = new stdClass();
   $transaction->id=-1;
   $transaction->id_category=0;
+  $transaction->id_account=0;
   $transaction->text="";
   $transaction->amount=0;
   $transaction->type="real";
@@ -34,7 +35,20 @@ if(mysql_num_rows($result)>0){
 <form id="main_form" method="post" action="save_transaction.php" enctype="multipart/form-data">
 <input type="hidden" name="id_transaction" value="<?= $transaction->id ?>" />
 <table>
-
+<tr>
+  <td><?=_('Account')?></td>
+  <td><select name="id_account" style="width: 150px;">
+        <option value="0"><?= _('-- Select an account --') ?></option>
+      <?php
+      $result = mysql_query("SELECT id_pref,value FROM webfinance_pref WHERE owner=-1 AND type_pref='rib'");
+      while (list($id_cpt,$cpt) = mysql_fetch_array($result)) {
+        $cpt = unserialize(base64_decode($cpt));
+        printf(_('<option value="%d"%s>%s #%s</option>')."\n", $id_cpt, ($transaction->id_account==$id_cpt)?" selected":"", $cpt->banque, $cpt->compte );
+      }
+      mysql_free_result($result);
+      ?>
+  </td>
+</tr>
 <tr>
   <td>Date</td>
   <td><input type="text" name="date" value="<?=$transaction->date ?>" size="9" /></td>

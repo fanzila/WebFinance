@@ -28,23 +28,25 @@ if($id_transaction>0){
   $q = sprintf("UPDATE webfinance_transactions SET ".
 	       "%s".
 	       "id_category=%d, ".
+	       "id_account=%d, ".
 	       "text='%s', ".
 	       "amount=%s, ".
 	       "type='%s', ".
 	       "date='%s', ".
 	       "comment='%s' ".
 	       "WHERE id=%d",
-	       $fq, $id_category, $text, $amount, $type, $date, $comment, $id_transaction);
+	       $fq, $id_category, $id_account, $text, $amount, $type, $date, $comment, $id_transaction);
  }else{
   $q = sprintf("INSERT INTO webfinance_transactions SET ".
 	       "%s".
 	       "id_category=%d, ".
+	       "id_account=%d, ".
 	       "text='%s', ".
 	       "amount=%s, ".
 	       "type='%s', ".
 	       "date='%s', ".
 	       "comment='%s' ",
-	       $fq, $id_category, $text, $amount, $type, $date, $comment);
+	       $fq, $id_category, $id_account, $text, $amount, $type, $date, $comment);
  }
 
 mysql_query($q) or die(mysql_error());
