@@ -1,10 +1,10 @@
-<?php 
-// 
+<?php
+//
 // This file is part of « Webfinance »
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
-// 
+//
 // You can use and redistribute this file under the term of the GNU GPL v2.0
 //
 ?>
@@ -17,7 +17,7 @@ $title = _('Cashflow');
 require("../top.php");
 require("nav.php");
 
-// Find the categories names and colors 
+// Find the categories names and colors
 $categories = array();
 $result = mysql_query("SELECT id,name,color FROM webfinance_categories ORDER BY id");
 while ($cat = mysql_fetch_assoc($result)) {
@@ -67,9 +67,9 @@ if ((strftime("%Y") % 4 == 0) && (strftime("%Y") % 100 != 0)) { // Leap year
 if ($filter['start_date'] == "") { $filter['start_date'] = strftime("01/%m/%Y"); }
 if ($filter['end_date'] == "") { $filter['end_date'] = strftime($days_in_month[strftime("%m")-1]."/%m/%Y"); }
 
-preg_match( "!([0-9]{2})/([0-9]{2})/([0-9]{4})!", $filter['start_date'],$foo); 
+preg_match( "!([0-9]{2})/([0-9]{2})/([0-9]{4})!", $filter['start_date'],$foo);
 $ts_start_date = mktime( 0,0,0, $foo['2'], $foo['1'], $foo['3']);
-preg_match( "!([0-9]{2})/([0-9]{2})/([0-9]{4})!", $filter['end_date'],$foo); 
+preg_match( "!([0-9]{2})/([0-9]{2})/([0-9]{4})!", $filter['end_date'],$foo);
 $ts_end_date = mktime( 0,0,0, $foo['2'], $foo['1'], $foo['3']);
 
 // end date must be after begin date. If not reverse them
@@ -113,7 +113,7 @@ if ($ts_start_date > $ts_end_date) {
        }
        $where_clause = preg_replace("/ OR $/", ")", $where_clause);
      }
-     
+
      // Filter on dates
      if (($ts_start_date != 0) && ($ts_end_date != 0)) {
        $where_clause .= " AND (unix_timestamp(date)>=$ts_start_date AND unix_timestamp(date)<=$ts_end_date) ";
@@ -148,7 +148,7 @@ if ($ts_start_date > $ts_end_date) {
            ORDER BY t.date";
 //[ ]      print "<pre>$q</pre>";
 
-     $filter_base = sprintf("filter[start_date]=%s&filter[end_date]=%s&filter[textsearch]=%s&filter[amount]=%s", 
+     $filter_base = sprintf("filter[start_date]=%s&filter[end_date]=%s&filter[textsearch]=%s&filter[amount]=%s",
                             $filter[start_date], $filter[end_date], $filter[textsearch], $filter[amount] );
      $result = mysql_query($q) or die(mysql_error());
      $total_shown = 0;
@@ -162,7 +162,7 @@ if ($ts_start_date > $ts_end_date) {
        $balance = $balance_lines[$tr->id];
        $balance_color = ($balance > 0)?"#e0ffe0":"#ffe0e0";
        $fmt_balance = number_format($balance, 2, ',', ' '); // Formated balance
-      
+
        $help_edit = addslashes(_('Click to modify this transaction'));
        print <<<EOF
 <tr>
@@ -184,6 +184,7 @@ EOF;
        <td></td>
      </tr>
     </table>
+       <a href="" onClick="inpagePopup(event, this, 350, 350, 'fiche_transaction.php?id=-1');return false"><?= _('Add a Transaction') ?></a>
   </td>
   <td>
     <?php // Filter ?>
