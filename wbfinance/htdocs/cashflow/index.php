@@ -64,6 +64,21 @@ if ((strftime("%Y") % 4 == 0) && (strftime("%Y") % 100 != 0)) { // Leap year
   $days_in_month[1] = 29;
 }
 
+if (($filter['start_date'] != "") && ($filter['end_date'] == "")) {
+  // If start_date is given and NOT end_date then we show transaction between
+  // start_date and current date.
+  $filter['end_date'] = strftime("%d/%m/%Y");
+}
+if (($filter['start_date'] == "") && ($filter['end_date'] != "")) {
+  // If end_date is given and NOT start_date then we show transaction from the
+  // start of the company to end_date
+  $result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='societe' AND owner=-1");
+  list($value) = mysql_fetch_array($result);
+  mysql_free_result($result);
+  $company = unserialize(base64_decode($value));
+
+  $filter['start_date'] = $company->date_creation;
+}
 if ($filter['start_date'] == "") { $filter['start_date'] = strftime("01/%m/%Y"); }
 if ($filter['end_date'] == "") { $filter['end_date'] = strftime($days_in_month[strftime("%m")-1]."/%m/%Y"); }
 
@@ -239,11 +254,11 @@ EOF;
     </tr>
     <tr>
       <td nowrap><b><?= _('Start date :') ?></b></td>
-      <td><input style="text-align: center; width: 150px;" type="text" name="filter[start_date]" value="<?= $filter['start_date'] ?>" /></td>
+      <td><input id="start_date_criteria" style="text-align: center; width: 130px;" type="text" name="filter[start_date]" value="<?= $filter['start_date'] ?>" /><img src="/imgs/icons/delete.gif" onmouseover="return escape('<?= _('Click to suppress this filter criteria') ?>');" onclick="fld = document.getElementById('start_date_criteria'); fld.value = ''; fld.form.submit();" /></td>
     </tr>
     <tr>
       <td nowrap><b><?= _('End date :') ?></b></td>
-      <td><input style="text-align: center; width: 150px;" type="text" name="filter[end_date]" value="<?= $filter['end_date'] ?>" /></td>
+      <td><input id="end_date_criteria" style="text-align: center; width: 130px;" type="text" name="filter[end_date]" value="<?= $filter['end_date'] ?>" /><img src="/imgs/icons/delete.gif" onmouseover="return escape('<?= _('Click to suppress this filter criteria') ?>');" onclick="fld = document.getElementById('end_date_criteria'); fld.value = ''; fld.form.submit();" /></td>
     </tr>
     <tr>
       <td nowrap><b><?= _('Shown categories :') ?></b></td>
