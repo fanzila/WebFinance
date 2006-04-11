@@ -14,8 +14,21 @@ require("../top_popup.php");
 
 $result = mysql_query("SELECT id, id_category, text, amount, type, date, comment, file_name FROM webfinance_transactions WHERE id=".$_GET['id'])
   or die(mysql_error());
-$transaction = mysql_fetch_object($result);
-mysql_free_result($result);
+
+if(mysql_num_rows($result)>0){
+  $transaction = mysql_fetch_object($result);
+  mysql_free_result($result);
+ }else{
+  $transaction = new stdClass();
+  $transaction->id=-1;
+  $transaction->id_category=0;
+  $transaction->text="";
+  $transaction->amount=0;
+  $transaction->type="real";
+  $transaction->date=date("Y-m-d");
+  $transaction->comment="no comment";
+  $transaction->file_name="";
+ }
 
 ?>
 <form id="main_form" method="post" action="save_transaction.php" enctype="multipart/form-data">
@@ -75,11 +88,10 @@ mysql_free_result($result);
 </tr>
 <tr>
 <td colspan="2">
-<input type="submit" value="Enregistrer" />
+<input type="submit" value="<?=_('Save') ?>" />
 </td>
 </tr>
 </table>
-
 
 
 <?php

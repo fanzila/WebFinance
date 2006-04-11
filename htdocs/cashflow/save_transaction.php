@@ -24,17 +24,29 @@ if (isset($_FILES['file']) && is_uploaded_file($_FILES['file']['tmp_name'])) {
  }else if(!isset($file_del) OR $file_del!=1)
   $fq=sprintf("file='' , file_name='' , file_type='' , ");
 
+if($id_transaction>0){
+  $q = sprintf("UPDATE webfinance_transactions SET ".
+	       "%s".
+	       "id_category=%d, ".
+	       "text='%s', ".
+	       "amount=%s, ".
+	       "type='%s', ".
+	       "date='%s', ".
+	       "comment='%s' ".
+	       "WHERE id=%d",
+	       $fq, $id_category, $text, $amount, $type, $date, $comment, $id_transaction);
+ }else{
+  $q = sprintf("INSERT INTO webfinance_transactions SET ".
+	       "%s".
+	       "id_category=%d, ".
+	       "text='%s', ".
+	       "amount=%s, ".
+	       "type='%s', ".
+	       "date='%s', ".
+	       "comment='%s' ",
+	       $fq, $id_category, $text, $amount, $type, $date, $comment);
+ }
 
-$q = sprintf("UPDATE webfinance_transactions SET ".
-	     "%s".
-	     "id_category=%d, ".
-	     "text='%s', ".
-	     "amount=%s, ".
-	     "type='%s', ".
-	     "date='%s', ".
-	     "comment='%s' ".
-	     "WHERE id=%d",
-             $fq, $id_category, $text, $amount, $type, $date, $comment, $id_transaction);
 mysql_query($q) or die(mysql_error());
 
 ?>
