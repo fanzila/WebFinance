@@ -87,6 +87,10 @@ if ($ts_start_date > $ts_end_date) {
 // End check filter data coherence
 // ---------------------------------------------------------------------------------------------------------------------
 
+$GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBALS['_SERVER']['QUERY_STRING']);
+
+// print "-".$GLOBALS['_SERVER']['QUERY_STRING']."--";
+
 ?>
 
 <table border="0" cellspacing="5" cellpadding="0" width="100%">
@@ -96,15 +100,17 @@ if ($ts_start_date > $ts_end_date) {
     <table border="0" cellspacing="0" width="800" cellpadding="3" class="framed">
       <tr style="text-align: center;" class="row_header">
         <td></td>
-        <td><?= _('Date') ?></td>
-        <td><?= _('Category') ?></td>
-        <td><?= _('Type') ?></td>
-        <td><?= _('Description') ?></td>
-        <td><?= _('Amount') ?></td>
+        <td><a href="?sort=date&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Date') ?></a></td>
+        <td><a href="?sort=category&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Category') ?></a>/<a href="?sort=color&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Color') ?></a></td>
+        <td><a href="?sort=type&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Type') ?></a></td>
+        <td><a href="?sort=desc&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Description') ?></a></td>
+        <td><a href="?sort=amount&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Amount') ?></a></td>
         <td><?= _('Balance') ?></td>
       </tr>
      <?php
 
+     // -------------------------------------------------------------------------------------------------------------
+     // Begin where clause
      // Filter on type of transaction
      if (count($filter['shown_cat'])) {
        $where_clause .= " (";
@@ -141,15 +147,31 @@ if ($ts_start_date > $ts_end_date) {
          $where_clause .= " AND (abs(amount*1.10) >= ".$filter['amount']." AND abs(amount*0.9) <= ".$filter['amount'].") ";
        }
      }
+     // End where clause
+     // -------------------------------------------------------------------------------------------------------------
+
+     // -------------------------------------------------------------------------------------------------------------
+     // BEGIN order clause
+     switch ($_GET['sort']) {
+       case "category" : $order_clause = "c.name, t.date DESC"; break;
+       case "color" : $order_clause = "HEX(MID(c.color, 1,2)),HEX(MID(c.color,3,2)),HEX(MID(c.color,5,2))"; break;
+       case "amount" : $order_clause = "abs(t.amount) DESC"; break;
+       case "type" : $order_clause = "t.type,t.date DESC "; break;
+       case "desc" : $order_clause = "t.text,t.comment "; break;
+       case "date" : 
+       default : $order_clause = "t.date DESC";
+     }
+     // END order clause
+     // -------------------------------------------------------------------------------------------------------------
 
      $q = "SELECT t.id,t.amount,t.date,UNIX_TIMESTAMP(t.date) as ts_date,c.name,t.type,t.text,t.comment,c.color,t.id_category,t.id_account
            FROM webfinance_transactions AS t LEFT JOIN webfinance_categories AS c ON t.id_category=c.id
            HAVING $where_clause
-           ORDER BY t.date";
+           ORDER BY $order_clause";
 //[ ]      print "<pre>$q</pre>";
 
-     $filter_base = sprintf("filter[start_date]=%s&filter[end_date]=%s&filter[textsearch]=%s&filter[amount]=%s",
-                            $filter[start_date], $filter[end_date], $filter[textsearch], $filter[amount] );
+     $filter_base = sprintf("sort=%d&filter[start_date]=%s&filter[end_date]=%s&filter[textsearch]=%s&filter[amount]=%s", 
+                            $_GET['sort'], $filter[start_date], $filter[end_date], $filter[textsearch], $filter[amount] );
      $result = mysql_query($q) or die(mysql_error());
      $total_shown = 0;
      while ($tr = mysql_fetch_object($result)) {
@@ -189,6 +211,7 @@ EOF;
   <td>
     <?php // Filter ?>
     <form id="main_form" onchange="this.submit();" method="get">
+    <input type="hidden" name="sort" value="<?= $_GET['sort'] ?>" />
     <table border="0" cellspacing="0" cellpadding="3" class="framed">
     <tr class="row_header">
       <td colspan="2" style="text-align: center"><?= _('Filter') ?></td>
