@@ -13,10 +13,15 @@
 include("inc/main.php");
 $User = new User();
 if ($User->login($_POST)) {
-  header("Location: /");
+  if ($_POST['came_from'] != "") {
+    header("Location: ".$_POST['came_from']);
+  } else {
+    header("Location: /");
+  }
 }
 $on = '/imgs/boutons/'.urlencode(base64_encode(_("Connect").":on")).'.png';
 $off = '/imgs/boutons/'.urlencode(base64_encode(_("Connect").":off")).'.png';
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
@@ -27,6 +32,7 @@ $off = '/imgs/boutons/'.urlencode(base64_encode(_("Connect").":off")).'.png';
 <body>
 <div style="margin-top: 15%; width: 100%; text-align: center;">
     <form action="login.php" method="post">
+    <input type="hidden" name="came_from" value="<?= $GLOBALS['_SERVER']['HTTP_REFERER'] ?>" />
     <table border="0" cellspacing="0" cellpadding="10" style="border: solid 1px black; margin: auto auto auto auto;">
       <tr><td><?= _("Login") ?></td><td><input type="text" size="20" style="border: solid 1px #777;" name="login" id="login" value="" /></td></tr>
       <tr><td><?= _("Password") ?></td><td><input type="password" style="border: solid 1px #777;" size="20" name="password" /></td></tr>
