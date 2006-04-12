@@ -132,6 +132,7 @@ function inpagePopup(event, trigger, width, height, url) {
 
   if (x_position < 0) { x_position = 0; }
   if (y_position < 0) { y_position = 0; }
+  if (x_position + width > window.innerWidth) { x_position = window.innerWidth-width-20; }
   this.iframe.style.left = x_position+'px';
   this.iframe.style.top =  y_position+'px';
 

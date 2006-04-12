@@ -216,7 +216,7 @@ $pdf->SetAuthor("NBI SARL");
 $pdf->SetCreator("Webfinance $Id$ Using FPDF");
 $pdf->SetSubject("Facture n° ".$facture->num_facture." pour ".$facture->raison_sociale);
 $pdf->SetTitle("Facture n° ".$facture->num_facture);
-$pdf->Output("Facture_".$facture->id_facture."_".preg_replace("/[ ]/", "_", $facture->raison_sociale).".pdf", "D");
+$pdf->Output("Facture_".$facture->num_facture."_".preg_replace("/[ ]/", "_", $facture->raison_sociale).".pdf", "D");
 
 // vim: fileencoding=latin1
 

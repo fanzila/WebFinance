@@ -14,8 +14,6 @@
 
 session_start();
 
-$language='fr_FR';
-
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/dbconnect.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/User.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/Facture.php");
@@ -77,11 +75,36 @@ function logmessage($msg) {
   mysql_query("INSERT INTO webfinance_userlog (log,date,id_user) VALUES('$msg', now(), $id)") or die(mysql_error());
 }
 
+// crée un champ date avec calendrier dans un formulaire
+// Params : 
+//   $input_name => field name 
+//   $default_time => Unix timestamp of defatuls field value defaults to time()
+//   $autosubmit => if true the selection of a date will close the popup and submit the form
+//   $input_id => id of the input field defaults to input_name. You need to specify a plain string if input_name contains "[" or "]"
+//   $extra_style => CSS override 
+function makeDateField($input_name, $defaulttime=null, $autosubmit=0, $input_id=null, $extra_style="") {
+
+  if (!isset($defaulttime)) { $defaulttime = time(); }
+  if (!isset($input_id)) { $input_id = $input_name; }
+
+  if ($defaulttime == -1) {
+    $nice_date = "";
+    $date = "";
+  } else {
+    $nice_date = strftime('%d/%m/%Y', $defaulttime);
+    $date = strftime('%Y%m%d', $defaulttime);
+  }
+  printf('<input type="text" id="%s" name="%s" class="date_field" value="%s" style="%s">'
+        .'<img valign="top" src="/imgs/icons/calendrier.gif" onclick="inpagePopup(event, this, 200, 200, \'/calendar_popup.php?field=%s&jour=%s&autosubmit=%d\');" />',
+
+        $input_id, $input_name, $nice_date, $extra_style, $input_id, $date, $autosubmit );
+}
+
+
 header("Content-Type: text/html; charset=utf-8");
 
 // This array starts empty here and is filled by pages
 $_SESSION['preload_images'] = array();
 $extra_js = array();
-
 
 ?>

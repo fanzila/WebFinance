@@ -16,11 +16,12 @@
   $result = mysql_query("SELECT * FROM webfinance_personne WHERE client=".$_GET['id']." ORDER BY nom") or die(mysql_error());
   $count = 1;
   while ($contact = mysql_fetch_object($result)) {
+    $contact->note = preg_replace("!\r\n!", "<br/>", $contact->note );
     $class = ($count%2 == 0)?"odd":"even";
     if ($contact->email != "") $mail = sprintf('<a href="mailto:%s"><img class="icon" src="/imgs/icons/mail.gif" alt="%s" /></a>', $contact->email, $contact->email ); else $mail = "";
     if ($contact->tel != "") $tel = sprintf('<img style="vertical-align: middle;" src="/imgs/icons/tel.gif" alt="Tel" />&nbsp;%s<br/>', $contact->tel); else $tel = "";
     if ($contact->mobile != "") $mobile = sprintf('<img style="vertical-align: middle;" src="/imgs/icons/gsm.gif" alt="GSM" />&nbsp;%s<br/>', $contact->mobile); else $mobile = "";
-    if ($contact->note != "") $note = sprintf('<img style="vertical-align: middle;" src="/imgs/icons/notes.gif" onmouseover="return escape(\'%s\')"/>', $contact->note); else $note = "";
+    if ($contact->note != "") $note = sprintf('<img style="vertical-align: middle;" src="/imgs/icons/notes.gif" onmouseover="return escape(\'%s\')"/>', addslashes($contact->note)); else $note = "";
     print <<<EOF
       <tr onmouseover="this.className='row_over';" onmouseout="this.className='row_$class';" class="row_$class" valign="top">
         <td width="16">$mail</td>

@@ -36,7 +36,7 @@ list($data) = mysql_fetch_array($result);
 mysql_free_result();
 $data = unserialize(base64_decode($data));
 preg_match("!(..)/(..)/(....)!", $data->date_creation, $matches);
-$ts_start_company = mktime(0, 0, 0, $matches[2], $matches[1], $matches[3]);
+$ts_start_company = mktime(0, 0, 0, $matches[2], $matches[1]-1, $matches[3]);
 $max_months = round((time() - $ts_start_company) / (31*24*3600))+1;
 
 $choices = array(

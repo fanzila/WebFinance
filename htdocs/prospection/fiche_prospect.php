@@ -160,7 +160,7 @@ var onglet_shown='<?= $shown_tab ?>';
                 WHERE fl.id_facture=f.id_facture AND f.id_client=".$Client->id."
                 AND year(f.date_facture) = '".$year->annee."'
                 GROUP BY f.id_facture
-                ORDER BY f.date_created DESC";
+                ORDER BY f.date_facture DESC";
            $result2 = mysql_query($q) or die("$q: ".mysql_error());
            $count=0;
            $total_du = 0;

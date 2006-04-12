@@ -102,7 +102,9 @@ if ($action == "save_facture") {
   $date_facture = $matches[3]."-".$matches[2]."-".$matches[1];
 
   if (($facture->is_envoye == 0) && ($is_envoye == "on")) {
-    $result = mysql_query("SELECT count(*) FROM webfinance_invoices WHERE num_facture!='' AND id_facture!=".$facture->id_facture ." AND year(date_facture)=year('".$facture->date_facture."')") or die(mysql_error());
+    $result = mysql_query("SELECT count(*) FROM webfinance_invoices 
+                           WHERE num_facture!='' 
+                           AND year(date_facture)=year('".$facture->date_facture."')") or die(mysql_error());
     list($nb) = mysql_fetch_array($result);
     mysql_free_result($result);
 
