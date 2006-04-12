@@ -48,8 +48,8 @@ $User->getInfos();
     <img height="200" width="1" src="/imgs/blank.gif" /><br />
 
     <form action="/search.php" method="get">
-    <input onkeyup="findValue(event, 'personne', this);" id="searchfield" type="text" name="searchfield" style="width: 100px; margin-bottom: 5px;" class="bordered" />
-    <input type="submit" value="Rechercher" class="bordered" style="width: 102px;" /><br/>
+    <input id="searchfield" type="text" name="q" style="width: 100px; margin-bottom: 5px;" class="bordered" />
+    <input type="submit" value="<?= _('Search') ?>" class="bordered" style="width: 102px;" /><br/>
     </form>
 
     <img height="200" width="1" src="/imgs/blank.gif" /><br />

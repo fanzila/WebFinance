@@ -1,5 +1,6 @@
 @import url('onglets.css');
 @import url('fiche_prospect.css');
+@import url('calendar.css');
 
 body {
 font-family: arial, helvetica;
@@ -90,3 +91,9 @@ select { font-size: 11px; padding: 0px; }
 table.mosaique td { border: solid 1px black; }
 
 img.help_icon { vertical-align: bottom; }
+
+div#advanced_search {
+border: solid 1px #ddd;
+padding: 5px; 
+background: #eee;
+}

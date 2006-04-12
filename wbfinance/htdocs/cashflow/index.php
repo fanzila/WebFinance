@@ -112,7 +112,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
 <tr style="vertical-align: top;">
   <td rowspan="2" width="100%">
     <?php // Transaction listing ?>
-    <table border="0" cellspacing="0" width="800" cellpadding="3" class="framed">
+    <table border="0" cellspacing="0" width="750" cellpadding="3" class="framed">
       <tr style="text-align: center;" class="row_header">
         <td></td>
         <td><a href="?sort=date&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Date') ?></a></td>
@@ -189,6 +189,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
                             $_GET['sort'], $filter[start_date], $filter[end_date], $filter[textsearch], $filter[amount] );
      $result = mysql_query($q) or die(mysql_error());
      $total_shown = 0;
+     $count = 1;
      while ($tr = mysql_fetch_object($result)) {
        $total_shown += $tr->amount;
 
@@ -201,8 +202,10 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
        $fmt_balance = number_format($balance, 2, ',', ' '); // Formated balance
 
        $help_edit = addslashes(_('Click to modify this transaction'));
+
+       $class = ($count%2)?"row_odd":"row_even";
        print <<<EOF
-<tr>
+<tr class="$class">
   <td><img src="/imgs/icons/edit.gif" onmouseover="return escape('$help_edit');" onclick="inpagePopup(event, this, 350, 350, 'fiche_transaction.php?id=$tr->id');" /></td>
   <td>$fmt_date</td>
   <td style="background: $tr->color; text-align: center;" nowrap><a href="?$filter_base&filter[shown_cat][$tr->id_category]='on'">$tr->name</a></td>
@@ -212,6 +215,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
   <td style="text-align: right; background: $balance_color;" nowrap>$fmt_balance &euro;</td>
 </tr>
 EOF;
+       $count++;
      }
 
      ?>
@@ -221,7 +225,7 @@ EOF;
        <td></td>
      </tr>
     </table>
-       <a href="" onClick="inpagePopup(event, this, 350, 350, 'fiche_transaction.php?id=-1');return false"><?= _('Add a Transaction') ?></a>
+       <a href="" onClick="inpagePopup(event, this, 350, 350, 'fiche_transaction.php?id=-1');return false"><?= _('Add a transaction') ?></a>
   </td>
   <td>
     <?php // Filter ?>
@@ -254,11 +258,11 @@ EOF;
     </tr>
     <tr>
       <td nowrap><b><?= _('Start date :') ?></b></td>
-      <td><input id="start_date_criteria" style="text-align: center; width: 130px;" type="text" name="filter[start_date]" value="<?= $filter['start_date'] ?>" /><img src="/imgs/icons/delete.gif" onmouseover="return escape('<?= _('Click to suppress this filter criteria') ?>');" onclick="fld = document.getElementById('start_date_criteria'); fld.value = ''; fld.form.submit();" /></td>
+      <td><?php makeDateField("filter[start_date]", $ts_start_date, 1, 'start_date_criteria', 'width: 114px'); ?><img src="/imgs/icons/delete.gif" onmouseover="return escape('<?= _('Click to suppress this filter criteria') ?>');" onclick="fld = document.getElementById('start_date_criteria'); fld.value = ''; fld.form.submit();" /></td>
     </tr>
     <tr>
       <td nowrap><b><?= _('End date :') ?></b></td>
-      <td><input id="end_date_criteria" style="text-align: center; width: 130px;" type="text" name="filter[end_date]" value="<?= $filter['end_date'] ?>" /><img src="/imgs/icons/delete.gif" onmouseover="return escape('<?= _('Click to suppress this filter criteria') ?>');" onclick="fld = document.getElementById('end_date_criteria'); fld.value = ''; fld.form.submit();" /></td>
+      <td><?php makeDateField("filter[end_date]", $ts_end_date, 1, 'end_date_criteria', 'width: 114px'); ?><img src="/imgs/icons/delete.gif" onmouseover="return escape('<?= _('Click to suppress this filter criteria') ?>');" onclick="fld = document.getElementById('end_date_criteria'); fld.value = ''; fld.form.submit();" /></td>
     </tr>
     <tr>
       <td nowrap><b><?= _('Shown categories :') ?></b></td>

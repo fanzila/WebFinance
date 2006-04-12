@@ -39,7 +39,7 @@ function checkForm(f) {
 
 <table class="bordered" border="0" cellspacing="0" cellpadding="3">
 <tr>
-  <td><?=_('Account')?></td>
+  <td><?=_('Account :')?></td>
   <td><select name="id_account" style="width: 150px;">
         <option value="-1"><?= _('-- Select an account --') ?></option>
       <?php

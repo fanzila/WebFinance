@@ -21,16 +21,27 @@ $total_ca_ht = 0;
 
 $where_clause = "1";
 if ($_GET['id_client']!="") {
-  $where_clause .= " AND id_client=".$_GET['id_client'];
+  $where_clause .= " AND f.id_client=".$_GET['id_client'];
 }
 if ($_GET['mois'] != "") {
-  $where_clause .= " AND date_format(date_facture, '%Y%m')='".$_GET['mois']."'";
+  $where_clause .= " AND date_format(f.date_facture, '%Y%m')='".$_GET['mois']."'";
 }
 if ($_GET['type']!="") {
   switch ($_GET['type']) {
-    case "unpaid" : $where_clause .= " AND is_paye=0"; break;
-    case "paid" : $where_clause .= " AND is_paye=2"; break;
+    case "unpaid" : $where_clause .= " AND f.is_paye=0"; break;
+    case "paid" : $where_clause .= " AND f.is_paye=2"; break;
   }
+}
+
+$GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w+\\&*+/", "", $GLOBALS['_SERVER']['QUERY_STRING']);
+
+switch ($_GET['sort']) {
+  case "num" : $order_clause = "f.num_facture DESC"; break;
+  case "client" : $order_clause = "c.nom"; break;
+  case "montant_ttc" : 
+  case "montant_ht" : $order_clause = "f.id_client"; break;
+  case "date" : 
+  default : $order_clause = "f.date_facture DESC";
 }
 
 ?>
@@ -41,16 +52,23 @@ if ($_GET['type']!="") {
 <table border=0 cellspacing=0 cellpadding=3 style="border: solid 1px black;">
 <tr align=center class=row_header>
   <td></td>
-  <td>Date</td>
-  <td colspan="2">Numéro</td>
-  <td>Client</td>
-  <td>HT</td>
-  <td>TTC</td>
+  <td><a href="?sort=date&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Invoice date') ?></a></td>
+  <td colspan="2"><a href="?sort=num&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Invoice #') ?></a></td>
+  <td><a href="?sort=client&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Client') ?></a></td>
+  <td><a href="?sort=montant_ht&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('HT') ?></a></td>
+  <td><a href="?sort=montant_ttc&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('TTC') ?></a></td>
   <td></td>
 </tr>
 <?php
 $total_ca_ht = 0;
-$result = mysql_query("SELECT id_facture FROM webfinance_invoices WHERE type_doc='facture' AND num_facture!='' AND date_facture<=now() AND ".$where_clause." ORDER BY date_facture DESC") or die(mysql_error());
+$result = mysql_query("SELECT f.id_facture 
+                       FROM webfinance_invoices f , webfinance_clients as c
+                       WHERE type_doc='facture' 
+                       AND f.num_facture!='' 
+                       AND f.id_client=c.id_client
+                       AND f.date_facture<=now() 
+                       AND ".$where_clause." 
+                       ORDER BY $order_clause") or die(mysql_error());
 $mois = array();
 while (list($id_facture) = mysql_fetch_array($result)) {
   $count++;
