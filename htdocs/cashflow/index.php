@@ -16,6 +16,30 @@ require("../inc/main.php");
 $title = _('Cashflow');
 require("../top.php");
 require("nav.php");
+?>
+<script type="text/javascript">
+  function ask_confirmation(txt) {
+  resultat = confirm(txt);
+  if(resultat=="1"){
+      return true;
+  } else {
+      return false;
+  }
+  function check(){
+    if(!document.form.chk.checked){
+      alert("Choose a transaction");
+      return false;
+    }else{
+      return true;
+    }
+
+  }
+
+}
+</script>
+
+<?
+
 
 // Find the categories names and colors
 $categories = array();
@@ -102,6 +126,7 @@ if ($ts_start_date > $ts_end_date) {
 // End check filter data coherence
 // ---------------------------------------------------------------------------------------------------------------------
 
+$server_query=$GLOBALS['_SERVER']['QUERY_STRING'];
 $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBALS['_SERVER']['QUERY_STRING']);
 
 // print "-".$GLOBALS['_SERVER']['QUERY_STRING']."--";
@@ -114,7 +139,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
     <?php // Transaction listing ?>
     <table border="0" cellspacing="0" width="750" cellpadding="3" class="framed">
       <tr style="text-align: center;" class="row_header">
-        <td></td>
+        <td colspan="2"></td>
         <td><a href="?sort=date&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Date') ?></a></td>
         <td><a href="?sort=category&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Category') ?></a>/<a href="?sort=color&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Color') ?></a></td>
         <td><a href="?sort=type&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Type') ?></a></td>
@@ -173,7 +198,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
        case "amount" : $order_clause = "abs(t.amount) DESC"; break;
        case "type" : $order_clause = "t.type,t.date DESC "; break;
        case "desc" : $order_clause = "t.text,t.comment "; break;
-       case "date" : 
+       case "date" :
        default : $order_clause = "t.date DESC";
      }
      // END order clause
@@ -185,11 +210,12 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
            ORDER BY $order_clause";
 //[ ]      print "<pre>$q</pre>";
 
-     $filter_base = sprintf("sort=%d&filter[start_date]=%s&filter[end_date]=%s&filter[textsearch]=%s&filter[amount]=%s", 
+     $filter_base = sprintf("sort=%d&filter[start_date]=%s&filter[end_date]=%s&filter[textsearch]=%s&filter[amount]=%s",
                             $_GET['sort'], $filter[start_date], $filter[end_date], $filter[textsearch], $filter[amount] );
      $result = mysql_query($q) or die(mysql_error());
      $total_shown = 0;
      $count = 1;
+echo "<form action='save_transaction.php'>";
      while ($tr = mysql_fetch_object($result)) {
        $total_shown += $tr->amount;
 
@@ -206,7 +232,12 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
        $class = ($count%2)?"row_odd":"row_even";
        print <<<EOF
 <tr class="$class">
-  <td><img src="/imgs/icons/edit.gif" onmouseover="return escape('$help_edit');" onclick="inpagePopup(event, this, 350, 350, 'fiche_transaction.php?id=$tr->id');" /></td>
+  <td>
+	 <input type="checkbox" name="chk[]" value="$tr->id"/>
+  </td>
+  <td>
+	 <img src="/imgs/icons/edit.gif" onmouseover="return escape('$help_edit');" onclick="inpagePopup(event, this, 350, 350, 'fiche_transaction.php?id=$tr->id');" />
+  </td>
   <td>$fmt_date</td>
   <td style="background: $tr->color; text-align: center;" nowrap><a href="?$filter_base&filter[shown_cat][$tr->id_category]='on'">$tr->name</a></td>
   <td style="text-align: center;">$tr->type</td>
@@ -217,14 +248,18 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
 EOF;
        $count++;
      }
-
      ?>
      <tr>
-       <td colspan="5" style="text-align: right; font-weight: bold;"><?= _('Total amount of shown transactions') ?></td>
+       <td colspan="6" style="text-align: right; font-weight: bold;"><?= _('Total amount of shown transactions') ?></td>
        <td nowrap style="text-align: right; font-weight: bold;"><?= number_format($total_shown, 2, ',', ' ') ?> &euro;</td>
        <td></td>
      </tr>
     </table>
+       <input type="hidden" name="query" value="<?=$server_query ?>">
+       <input type="hidden" name="action" value="delete">
+       <input type="submit" onclick="return ask_confirmation('Do you really want to delete the selected transaction(s)?')" value="<?=_('Delete') ?>">
+   </form>
+
        <a href="" onClick="inpagePopup(event, this, 350, 350, 'fiche_transaction.php?id=-1');return false"><?= _('Add a transaction') ?></a>
   </td>
   <td>

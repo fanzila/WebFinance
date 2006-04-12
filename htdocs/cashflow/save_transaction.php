@@ -11,6 +11,17 @@
 
 require("../inc/main.php");
 
+if($_GET['action']=='delete'){
+  if(isset($_GET['chk'])){
+    foreach($_GET['chk'] as $id){
+      if(!empty($id))
+	mysql_query("DELETE FROM webfinance_transactions WHERE id=".$id) or die(mysql_error());
+    }
+  }
+  header("Location: index.php?".$_GET['query']);
+  exit;
+ }
+
 extract($_POST);
 
 $fq="";
