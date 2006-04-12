@@ -47,9 +47,9 @@ function mycal($year, $month) {
     $next_month = strftime("%m%Y", mktime(0,0,0, $month+1, 1, $year));
 
     $cal = "$table\n$tr";
-    $cal .= '<td valign="middle"><a href="?field='.$_GET['field'].'&mois='.$prev_month.'"><img src="/imgs/icons/left_24.gif" alt="" /></a></td>';
+    $cal .= '<td valign="middle"><a href="?field='.$_GET['field'].'&mois='.$prev_month.'&autosubmit='.$_GET['autosubmit'].'"><img src="/imgs/icons/left_24.gif" alt="" /></a></td>';
     $cal .= '<td align="center" colspan="5">'.ucfirst(strftime('%B %Y', mktime(0, 0, 0, $month, 1, $year))).'</td>';
-    $cal .= '<td valign="middle"><a href="?field='.$_GET['field'].'&mois='.$next_month.'"><img src="/imgs/icons/right_24.gif" alt="" /></a></td>';
+    $cal .= '<td valign="middle"><a href="?field='.$_GET['field'].'&mois='.$next_month.'&autosubmit='.$_GET['autosubmit'].'"><img src="/imgs/icons/right_24.gif" alt="" /></a></td>';
     $cal .= "$tr_\n$tr";
     for ($i = 2 - $start_day ; $i <= 8 - $start_day ; $i++)
         $cal .= '<td class="cal_header">'. ucfirst(strftime('%a', mktime(0, 0, 0, $month, $i, $year))) . '</td>';
