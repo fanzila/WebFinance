@@ -95,7 +95,7 @@ function makeDateField($input_name, $defaulttime=null, $autosubmit=0, $input_id=
     $date = strftime('%Y%m%d', $defaulttime);
   }
   printf('<input type="text" id="%s" name="%s" class="date_field" value="%s" style="%s">'
-        .'<img valign="top" src="/imgs/icons/calendrier.gif" onclick="inpagePopup(event, this, 200, 200, \'/calendar_popup.php?field=%s&jour=%s&autosubmit=%d\');" />',
+        .'<img valign="top" src="/imgs/icons/calendrier.gif" onclick="inpagePopup(event, this, 200, 230, \'/calendar_popup.php?field=%s&jour=%s&autosubmit=%d\');" />',
 
         $input_id, $input_name, $nice_date, $extra_style, $input_id, $date, $autosubmit );
 }
