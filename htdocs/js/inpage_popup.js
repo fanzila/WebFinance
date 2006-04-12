@@ -68,7 +68,7 @@ function validate() {
     this.iframe_doc = iframe.contentDocument;
   }
   f = iframe_doc.getElementById('main_form');
-  if (f) { f.submit(); }
+  if (f) { f.submit(); } else { cancel(); }
 }
 function moveHandler(e) {
   x = mouseX(e);
