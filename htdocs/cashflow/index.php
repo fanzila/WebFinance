@@ -66,7 +66,8 @@ if ((!count($filter['shown_cat'])) || ($filter['shown_cat']['check_all'] == "on"
 }
 
 // Calculate balance for each transaction
-$req=mysql_query('SELECT id, amount FROM webfinance_transactions ORDER BY date') or die(mysql_error());
+if ($filter['id_account'] != 0) { $w = "WHERE id_account=".$filter['id_account']; }
+$req=mysql_query("SELECT id, amount FROM webfinance_transactions $w ORDER BY date") or die(mysql_error());
 $balance_yesterday=0;
 $balance_lines=array();
 while ($row=mysql_fetch_assoc($req)) {
