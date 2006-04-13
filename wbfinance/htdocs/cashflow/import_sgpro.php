@@ -140,7 +140,7 @@ foreach ($operations as $op) {
 
   // Dans tous les cas on essaie de retrouver la catégorie de la transaction
   // automagiquement.
-  $id_categorie = 0;
+  $id_categorie = 1;
   $result = mysql_query("SELECT COUNT(*),id,name 
                          FROM webfinance_categories 
                          WHERE re IS NOT NULL 
