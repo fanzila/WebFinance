@@ -64,6 +64,7 @@ if (!is_array($search_in)) {
 <?php
 // Display some results
 
+// Search in invoices
 if ($search_in['invoices']) {
   $result = mysql_query("SELECT f.id_facture,id_client,sum(fl.qtt*fl.prix_ht) as total_facture,
                                 f.extra_top, f.extra_bottom, f.commentaire 
@@ -72,14 +73,15 @@ if ($search_in['invoices']) {
                          AND (
                           f.extra_top LIKE '%$q%' OR 
                           f.extra_bottom LIKE '%$q%' OR 
+                          f.num_facture LIKE '%$q%' OR 
                           f.commentaire LIKE '%$q%' 
                         ) GROUP BY f.id_facture") or die(mysql_error());
 
   if (mysql_num_rows($result)) {
     print "<h2>"._('Results found in invoices')."</h2>";
+
+    printf(_('<h3>%d invoice%s matches your search</h3>'";
     print '<ul class="search_results">';
-
-
     while ($found = mysql_fetch_object($result)) {
       $invoice = new Facture();
       $data = $invoice->getInfos($found->id_facture);

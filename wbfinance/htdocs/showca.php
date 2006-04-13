@@ -56,6 +56,7 @@ foreach ($choices as $n=>$v) {
 </select>
 largeur image : <input class="bordered" style="width: 50px; text-align: center;" type="text" name="width" value="<?= $width ?>" />
 hauteur image : <input class="bordered" style="width: 50px; text-align: center;" type="text" name="height" value="<?= $height ?>" />
+<input type="checkbox" name="grid" <?= $grid?"checked":"" ?> /> Dessiner la grille
 </form><br/>
 
-<img src="ca_mensuel.php?width=<?= $width ?>&height=<?= $height ?>&nb_months=<?= $nb_months ?>" alt="Graphique" />
+<img src="ca_mensuel.php?width=<?= $width ?>&height=<?= $height ?>&nb_months=<?= $nb_months ?>&grid=<?= $grid?1:0 ?>" alt="Graphique" />
