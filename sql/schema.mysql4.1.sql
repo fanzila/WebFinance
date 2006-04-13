@@ -255,10 +255,12 @@ CREATE TABLE `webfinance_transactions` (
   `file_type` varchar(25) default NULL,
   `file_name` varchar(50) default NULL,
   `lettrage` tinyint default 0, -- 0 si transaction "perdue" 1 si liée à une facture, commande, fournisseur ...
+  `id_invoice` int(11) default '0',
   PRIMARY KEY  (`id`),
   KEY `id_account` (`id_account`,`id_category`),
   KEY `id_category` (`id_category`),
   KEY `date` (`date`),
+  KEY `id_invoice` (`id_invoice`),
   UNIQUE `unique_transaction` (`id_account`, `amount`, `type`, `date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=52 ;
 

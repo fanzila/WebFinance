@@ -55,9 +55,11 @@ extract($_GET);
 
 if ((!count($filter['shown_cat'])) || ($filter['shown_cat']['check_all'] == "on")) {
   $result = mysql_query("SELECT id FROM webfinance_categories");
+    $filter['shown_cat'][1] = "on";
   while (list($id) = mysql_fetch_array($result)) {
     $filter['shown_cat'][$id] = "on";
   }
+
   mysql_free_result($result);
 
   unset($filter['shown_cat']['check_all'] );
