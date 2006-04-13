@@ -20,7 +20,7 @@ include("top.php");
 <tr>
   <td colspan="2">
     Chiffre d'affaire mensuel (18 derniers mois, total, incluant les impayés <a href="showca.php">plus</a>)<br/>
-    <a href="showca.php"><img src="ca_mensuel.php?width=600&height=250&nb_months=18" /></a>
+    <a href="showca.php"><img src="ca_mensuel.php?width=600&height=250&nb_months=18&grid=0" /></a>
   </td>
   <td width="250">
     Facturé mais non encore payé<br/>

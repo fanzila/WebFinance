@@ -34,6 +34,7 @@ class barGraph {
   var $C_bar, $C_barframe, $C_text, $C_average, $C_grid;
   var $nb_shades = 50;
   var $sans_bold_ttf = "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf";
+  var $draw_grid = 1;
 
   function _htmlColorToGD($html) {
     $html = preg_replace("/^0x/", "", $html);
@@ -54,9 +55,10 @@ class barGraph {
   }
 
   /* Constructeur */
-  function barGraph($width=300, $height=500) {
+  function barGraph($width=300, $height=500, $draw_grid=1) {
     $this->width = $width;
     $this->height = $height;
+    $this->draw_grid = $draw_grid;
 
     $this->im = imagecreatetruecolor($this->width, $this->height) or die("Impossible d'initialiser la bibliothèque GD");
     $pen = imagecolorallocatealpha($this->im, 255, 255, 255, 0); # Mauve transparent miam ne marche qu'avec png
@@ -106,19 +108,21 @@ class barGraph {
     $y_average = 15 + ($this->height-15) - ($average*($this->height-15)/$this->max);
 
     // Draw unit grid behind (ie before) bars
-    if ($this->max < 1000) { 
-      $step = 100;
-    } else {
-      $step = 1000;
-    }
-    $count = 1;
-    while ($count*$step < $this->max) {
-      $h = $this->height - ($step*$count)*(($this->height-15)/$this->max);
-      imagerectangle($this->im, 0, $h, $this->width, $h, $this->C_grid );
-      if ($count % 2 == 0) {
-        imagettftext($this->im, 8, 0, 1, $h-2, $this->C_grid, $this->sans_bold_ttf, sprintf("%d%s\xe2\x82\xacHT",  $step*$count, ($step==1000)?"K":"") );
+    if ($this->draw_grid) {
+      if ($this->max < 1000) { 
+        $step = 100;
+      } else {
+        $step = 1000;
       }
-      $count++;
+      $count = 1;
+      while ($count*$step < $this->max) {
+        $h = $this->height - ($step*$count)*(($this->height-15)/$this->max);
+        imagerectangle($this->im, 0, $h, $this->width, $h, $this->C_grid );
+        if ($count % 2 == 0) {
+          imagettftext($this->im, 8, 0, 1, $h-2, $this->C_grid, $this->sans_bold_ttf, sprintf("%d%s\xe2\x82\xacHT",  $step*$count, ($step==1000)?"K":"") );
+        }
+        $count++;
+      }
     }
 
     $i=0;
@@ -179,7 +183,7 @@ if (is_numeric($_GET['nb_months']))
 else
   $nb_months = 12;
 
-$bar = new barGraph($width, $height);
+$bar = new barGraph($width, $height, $_GET['grid']);
 $bar->setBarColor(103, 133, 195); # NBI blue
 for ($i=$nb_months-1 ; $i>=0; $i--) {
   $result = mysql_query("SELECT date_format(date_sub(now(), INTERVAL $i MONTH), '%m/%y') as mois_shown, date_format(date_sub(now(), INTERVAL $i MONTH), '%Y%m') as mois");
