@@ -35,15 +35,17 @@ if (isset($_FILES['file']) && is_uploaded_file($_FILES['file']['tmp_name'])) {
  }else if(!isset($file_del) OR $file_del!=1)
   $fq=sprintf("file='' , file_name='' , file_type='' , ");
 
+
+$amount = preg_replace("!,!", ".", $amount);
 if($id_transaction>0){
   $q = sprintf("UPDATE webfinance_transactions SET ".
 	       "%s".
 	       "id_category=%d, ".
 	       "id_account=%d, ".
 	       "text='%s', ".
-	       "amount=%s, ".
+	       "amount='%s', ".
 	       "type='%s', ".
-	       "date='%s', ".
+	       "date=str_to_date('%s', '%%d/%%m/%%Y'), ".
 	       "comment='%s' ".
 	       "WHERE id=%d",
 	       $fq, $id_category, $id_account, $text, $amount, $type, $date, $comment, $id_transaction);
@@ -67,4 +69,6 @@ mysql_query($q) or die(mysql_error());
 popup = window.parent.document.getElementById('inpage_popup');
 popup.style.display = 'none';
 // Reload parent window to update contacts
+filter = window.parent.document.getElementById('main_form');
+filter.submit();
 </script>

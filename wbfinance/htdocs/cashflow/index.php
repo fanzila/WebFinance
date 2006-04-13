@@ -239,7 +239,7 @@ echo "<form action='save_transaction.php'>";
 	 <input type="checkbox" name="chk[]" value="$tr->id"/>
   </td>
   <td>
-	 <img src="/imgs/icons/edit.gif" onmouseover="return escape('$help_edit');" onclick="inpagePopup(event, this, 350, 350, 'fiche_transaction.php?id=$tr->id');" />
+	 <img src="/imgs/icons/edit.gif" onmouseover="return escape('$help_edit');" onclick="inpagePopup(event, this, 440, 350, 'fiche_transaction.php?id=$tr->id');" />
   </td>
   <td>$fmt_date</td>
   <td style="background: $tr->color; text-align: center;" nowrap><a href="?$filter_base&filter[shown_cat][$tr->id_category]='on'">$tr->name</a></td>
@@ -263,7 +263,7 @@ EOF;
        <input type="submit" onclick="return ask_confirmation('Do you really want to delete the selected transaction(s)?')" value="<?=_('Delete') ?>">
    </form>
 
-       <a href="" onClick="inpagePopup(event, this, 350, 350, 'fiche_transaction.php?id=-1');return false"><?= _('Add a transaction') ?></a>
+       <a href="" onClick="inpagePopup(event, this, 440, 350, 'fiche_transaction.php?id=-1');return false"><?= _('Add a transaction') ?></a>
   </td>
   <td>
     <?php // Filter ?>
