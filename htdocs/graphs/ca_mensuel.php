@@ -31,7 +31,7 @@ class barGraph {
   var $font_size = 10;
   var $step = 40; # Bar width in pixel
   var $margin = 5;
-  var $C_bar, $C_barframe, $C_text, $C_average;
+  var $C_bar, $C_barframe, $C_text, $C_average, $C_grid;
   var $nb_shades = 50;
   var $sans_bold_ttf = "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf";
 
@@ -49,7 +49,8 @@ class barGraph {
     $this->C_barframe = $this->_htmlColorToGd("000000");
     $this->C_barshadow = $this->_htmlColorToGd("7f7f7f");
     $this->C_text = $this->_htmlColorToGd("000000");
-    $this->C_average = ImageColorAllocateAlpha($this->im, 64, 192, 64, 50 );
+    $this->C_grid = $this->_htmlColorToGd("dddddd");
+    $this->C_average = ImageColorAllocateAlpha($this->im, 64, 192, 64, 20 );
   }
 
   /* Constructeur */
@@ -94,6 +95,7 @@ class barGraph {
 
     $this->step = $this->width / sizeof($this->data);
 
+    // Calculate average value
     $i = 0 ;
     $grand_total = 0;
     foreach ($this->data as $data) {
@@ -102,6 +104,22 @@ class barGraph {
     }
     $average = $grand_total/$i;
     $y_average = 15 + ($this->height-15) - ($average*($this->height-15)/$this->max);
+
+    // Draw unit grid behind (ie before) bars
+    if ($this->max < 1000) { 
+      $step = 100;
+    } else {
+      $step = 1000;
+    }
+    $count = 1;
+    while ($count*$step < $this->max) {
+      $h = $this->height - ($step*$count)*(($this->height-15)/$this->max);
+      imagerectangle($this->im, 0, $h, $this->width, $h, $this->C_grid );
+      if ($count % 2 == 0) {
+        imagettftext($this->im, 8, 0, 1, $h-2, $this->C_grid, $this->sans_bold_ttf, sprintf("%d%s\xe2\x82\xacHT",  $step*$count, ($step==1000)?"K":"") );
+      }
+      $count++;
+    }
 
     $i=0;
     foreach ($this->data as $data) {
