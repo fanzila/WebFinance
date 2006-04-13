@@ -74,29 +74,33 @@ function update_transaction($id_invoice){
   if (is_numeric($_POST['id_facture'])){
     $facture = $Facture->getInfos($id_invoice);
 
-    $result=mysql_query("SELECT COUNT(*) FROM webfinance_transactions WHERE id_invoice=$id_invoice" )
+    $result=mysql_query("SELECT id, id_category FROM webfinance_transactions WHERE id_invoice=$id_invoice" )
       or die(mysql_error());
-    list($nb)=mysql_fetch_row($result);
+    $nb=mysql_num_rows($result);
 
     $text = "Num fact: $facture->num_facture, Ref contrat:  $facture->ref_contrat";
     $comment= "$facture->commentaire";
+    $id_category=1;
 
-    // Dans tous les cas on essaie de retrouver la catégorie de la transaction
-    // automagiquement.
-    $id_categorie = 1;
-    $result = mysql_query("SELECT COUNT(*),id,name
+    if($nb==1){
+      $tr=mysql_fetch_assoc($result);
+      $id_category=$tr['id_category'];
+
+      if($id_category<=1){
+
+	// Dans tous les cas on essaie de retrouver la catégorie de la transaction
+	// automagiquement.
+	$id_categorie = 1;
+	$result = mysql_query("SELECT COUNT(*),id,name
                          FROM webfinance_categories
                          WHERE re IS NOT NULL
                          AND '".addslashes($comment." ".$text )."' RLIKE re
                          GROUP BY id") or die(mysql_error());
-    list($nb_matches,$id, $name) = mysql_fetch_array($result);
-    if($nb_matches>0){
-      $id_category=$id;
-    }else{
-      $id_category=1;
-    }
+	list($nb_matches,$id, $name) = mysql_fetch_array($result);
+	if($nb_matches>0)
+	  $id_category=$id;
+      }
 
-    if($nb==1){
       //update
       $query = "UPDATE webfinance_transactions SET ".
 	"id_account=%d, ".
@@ -107,8 +111,9 @@ function update_transaction($id_invoice){
 	"date='%s', ".
 	"comment='%s' ".
 	"WHERE id_invoice=%d";
-      $q = sprintf($query, $facture->id_compte, $id_category, $text, $facture->nice_total_ttc,  date("Y-m-d",$facture->timestamp_date_facture), $comment, $id_invoice );
+      $q = sprintf($query, $facture->id_compte, $id_category, $text, $facture->total_ttc,  date("Y-m-d", $facture->timestamp_date_paiement) , $comment, $id_invoice );
       mysql_query($q) or die(mysql_error());
+
 
     }else if($nb<1){
       //insert
@@ -121,10 +126,9 @@ function update_transaction($id_invoice){
 	"date='%s', ".
 	"comment='%s', ".
 	"id_invoice=%d";
-      $q = sprintf($query, $facture->id_compte, $id_category, $text, $facture->nice_total_ttc, date("Y-m-d",$facture->timestamp_date_facture), $comment, $id_invoice );
+      $q = sprintf($query, $facture->id_compte, $id_category, $text, $facture->total_ttc, date("Y-m-d", $facture->timestamp_date_paiement) , $comment, $id_invoice );
       mysql_query($q) or die(mysql_error());
     }
-
   }
 }
 
@@ -174,12 +178,16 @@ if ($action == "save_facture") {
     $nb = sprintf("%04d", $nb);
     $num_facture = strftime("%y-$nb", $facture->timestamp_date_facture);
   }
+  //date prev
+  $date_prev=$facture->timestamp_date_facture+($_POST['type_prev'] * 86400 );
+  $date_prev=date("Y-m-d",$date_prev);
 
   $q = sprintf("UPDATE webfinance_invoices SET type_paiement='%s',is_paye=%d,%s ref_contrat='%s', extra_top='%s', extra_bottom='%s', accompte='%s', date_facture='%s', type_doc='%s', commentaire='%s', id_type_presta=%d, id_compte=%d, is_envoye=%d, num_facture='%s'
                 WHERE id_facture='%d'",
-               $type_paiement, ($is_paye == "on")?1:0, ($is_paye == "on")?"date_paiement=now(),":"", $ref_contrat, $extra_top, $extra_bottom, $accompte, $date_facture, $type_doc, $commentaire, $id_type_presta, $id_compte, ($is_envoye=="on")?1:0, $num_facture,
+               $type_paiement, ($is_paye == "on")?1:0, ($is_paye == "on")?"date_paiement=now(), ":"date_paiement='$date_prev' , ", $ref_contrat, $extra_top, $extra_bottom, $accompte, $date_facture, $type_doc, $commentaire, $id_type_presta, $id_compte, ($is_envoye=="on")?1:0, $num_facture,
                $id_facture);
   mysql_query($q) or die(mysql_error());
+
   logmessage("Enregistrement de la facture fa:".$_POST['id_facture']);
 
   if ((is_numeric($_POST['prix_ht_new'])) && (is_numeric($_POST['qtt_new'])) && ($_POST['prix_ht_new'] > 0) && !empty($_POST['line_new'])) {
@@ -235,7 +243,7 @@ if ($action == "save_facture") {
 
   mysql_query("DELETE FROM webfinance_invoices WHERE id_facture=".$_GET['id_facture']);
   mysql_query("DELETE FROM webfinance_invoice_rows WHERE id_facture=".$_GET['id_facture']);
-  mysql_query("DELETE FROM webfinance_transactions WHERE id_invoice=".$_GET['id_facture']);
+  mysql_query("DELETE FROM webfinance_transactions WHERE id_invoice=".$_GET['id_facture']." AND type<>'real'");
 
   update_ca();
   header("Location: fiche_prospect.php?id=$id_client");
