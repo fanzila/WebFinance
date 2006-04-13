@@ -235,6 +235,7 @@ if ($action == "save_facture") {
 
   mysql_query("DELETE FROM webfinance_invoices WHERE id_facture=".$_GET['id_facture']);
   mysql_query("DELETE FROM webfinance_invoice_rows WHERE id_facture=".$_GET['id_facture']);
+  mysql_query("DELETE FROM webfinance_transactions WHERE id_invoice=".$_GET['id_facture']);
 
   update_ca();
   header("Location: fiche_prospect.php?id=$id_client");
