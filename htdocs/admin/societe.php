@@ -119,7 +119,7 @@ while (list($id_pref,$value) = mysql_fetch_array($result)) {
     $hover_text = addslashes(_('The filled account number seems coherent with the check key'));
   } else {
     $img = "not_paid";
-    $hover_text = addslashes(_('Checksum fail on account number. Check digits entered.'));
+    $hover_text = addslashes(sprintf(_('Checksum fail on account number. Check digits entered. With this account number checksum should be %d'), $key));
   }
   $check_img = sprintf('<img src="/imgs/icons/%s.gif" onmouseover="return escape(\'%s\');" />',
                        $img, $hover_text );

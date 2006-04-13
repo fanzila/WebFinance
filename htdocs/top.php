@@ -22,7 +22,7 @@ global $title;
 $User = new User();
 
 if (! $User->isLogued()) {
-  header("Location: login.php");
+  header("Location: /login.php");
 }
 
 $User->getInfos();
