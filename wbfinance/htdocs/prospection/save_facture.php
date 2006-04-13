@@ -64,6 +64,68 @@ function update_ca() {
     $q = sprintf("UPDATE webfinance_clients SET total_du_ht='%.2f' WHERE id_client=%d", $du->total_du_ht, $du->id_client );
     mysql_query($q) or die(mysql_error());
   }
+
+
+}
+
+function update_transaction($id_invoice){
+
+  $Facture = new Facture();
+  if (is_numeric($_POST['id_facture'])){
+    $facture = $Facture->getInfos($id_invoice);
+
+    $result=mysql_query("SELECT COUNT(*) FROM webfinance_transactions WHERE id_invoice=$id_invoice" )
+      or die(mysql_error());
+    list($nb)=mysql_fetch_row($result);
+
+    $text = "Num fact: $facture->num_facture, Ref contrat:  $facture->ref_contrat";
+    $comment= "$facture->commentaire";
+
+    // Dans tous les cas on essaie de retrouver la catégorie de la transaction
+    // automagiquement.
+    $id_categorie = 1;
+    $result = mysql_query("SELECT COUNT(*),id,name
+                         FROM webfinance_categories
+                         WHERE re IS NOT NULL
+                         AND '".addslashes($comment." ".$text )."' RLIKE re
+                         GROUP BY id") or die(mysql_error());
+    list($nb_matches,$id, $name) = mysql_fetch_array($result);
+    if($nb_matches>0){
+      $id_category=$id;
+    }else{
+      $id_category=1;
+    }
+
+    if($nb==1){
+      //update
+      $query = "UPDATE webfinance_transactions SET ".
+	"id_account=%d, ".
+	"id_category=%d, ".
+	"text='%s', ".
+	"amount=%s, ".
+	"type='prevision', ".
+	"date='%s', ".
+	"comment='%s' ".
+	"WHERE id_invoice=%d";
+      $q = sprintf($query, $facture->id_compte, $id_category, $text, $facture->nice_total_ttc,  date("Y-m-d",$facture->timestamp_date_facture), $comment, $id_invoice );
+      mysql_query($q) or die(mysql_error());
+
+    }else if($nb<1){
+      //insert
+      $query = "INSERT INTO webfinance_transactions SET ".
+	"id_account=%d, ".
+	"id_category=%d, ".
+	"text='%s', ".
+	"amount=%s, ".
+	"type='prevision', ".
+	"date='%s', ".
+	"comment='%s', ".
+	"id_invoice=%d";
+      $q = sprintf($query, $facture->id_compte, $id_category, $text, $facture->nice_total_ttc, date("Y-m-d",$facture->timestamp_date_facture), $comment, $id_invoice );
+      mysql_query($q) or die(mysql_error());
+    }
+
+  }
 }
 
 function regenerate($id) {
@@ -102,8 +164,8 @@ if ($action == "save_facture") {
   $date_facture = $matches[3]."-".$matches[2]."-".$matches[1];
 
   if (($facture->is_envoye == 0) && ($is_envoye == "on")) {
-    $result = mysql_query("SELECT count(*) FROM webfinance_invoices 
-                           WHERE num_facture!='' 
+    $result = mysql_query("SELECT count(*) FROM webfinance_invoices
+                           WHERE num_facture!=''
                            AND year(date_facture)=year('".$facture->date_facture."')") or die(mysql_error());
     list($nb) = mysql_fetch_array($result);
     mysql_free_result($result);
@@ -158,6 +220,9 @@ if ($action == "save_facture") {
 
   update_ca();
   regenerate($_POST['id_facture']);
+
+  update_transaction($_POST['id_facture']);
+
   header("Location: edit_facture.php?id_facture=".$_POST['id_facture']);
 } elseif ($action == "delete_facture") {
   // delete_facture
