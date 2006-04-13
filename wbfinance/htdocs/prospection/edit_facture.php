@@ -226,6 +226,17 @@ function del_ligne() {
       </td>
     </tr>
     <tr>
+	<td>Prevision</td>
+	<td>
+	<select name="type_prev">
+	  <option value="1"><?=_('asap')?></option>
+	  <option value="7"><?= _('+ 1 week')?></option>
+	  <option value="14"><?=_('+ 2 weeks')?></option>
+	  <option value="30"><?=_('+ 1 month')?></option>
+	</select>
+	</td>
+    </tr>
+    <tr>
       <td nowrap>Compte</td>
       <td>
         <select name="id_compte" style="width: 100px;">
