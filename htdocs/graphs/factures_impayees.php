@@ -11,8 +11,8 @@
 ?>
 <?php
 
-require("inc/main.php");
-require("inc/barGraph.php");
+require("../inc/main.php");
+require("../inc/barGraph.php");
 
 if (is_numeric($_GET['width']))
   $width = $_GET['width'];

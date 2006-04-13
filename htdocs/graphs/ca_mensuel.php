@@ -12,8 +12,8 @@
 <?php
 
 #header("Content-type: text/plain");
-require("inc/main.php");
-require("inc/barGraph.php");
+require("../inc/main.php");
+require("../inc/barGraph.php");
 
 
 if (is_numeric($_GET['width']))

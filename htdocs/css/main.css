@@ -97,3 +97,7 @@ border: solid 1px #ddd;
 padding: 5px; 
 background: #eee;
 }
+
+input.amount_field {
+  text-align: right;
+}

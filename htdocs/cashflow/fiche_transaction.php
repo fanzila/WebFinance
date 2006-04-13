@@ -12,7 +12,9 @@
 require("../inc/main.php");
 require("../top_popup.php");
 
-$result = mysql_query("SELECT id, id_category, id_account, text, amount, type, date, comment, file_name FROM webfinance_transactions WHERE id=".$_GET['id'])
+$result = mysql_query("SELECT id, id_category, id_account, text, amount, type, date, comment, file_name ,
+                              unix_timestamp(date) as ts_date
+                       FROM webfinance_transactions WHERE id=".$_GET['id'])
   or die(mysql_error());
 
 if(mysql_num_rows($result)>0){
@@ -26,18 +28,18 @@ if(mysql_num_rows($result)>0){
   $transaction->text="";
   $transaction->amount=0;
   $transaction->type="real";
-  $transaction->date=date("Y-m-d");
-  $transaction->comment="no comment";
+  // $transaction->date=date("Y-m-d");
+  // $transaction->comment="no comment"; <-- YEURK
   $transaction->file_name="";
  }
 
 ?>
 <form id="main_form" method="post" action="save_transaction.php" enctype="multipart/form-data">
 <input type="hidden" name="id_transaction" value="<?= $transaction->id ?>" />
-<table>
+<table width="200" border="0" cellspacing="0" cellpadding="3">
 <tr>
   <td><?=_('Account')?></td>
-  <td><select name="id_account" style="width: 150px;">
+  <td colspan="3"><select name="id_account" style="width: 210px;">
         <option value="0"><?= _('-- Select an account --') ?></option>
       <?php
       $result = mysql_query("SELECT id_pref,value FROM webfinance_pref WHERE owner=-1 AND type_pref='rib'");
@@ -50,12 +52,12 @@ if(mysql_num_rows($result)>0){
   </td>
 </tr>
 <tr>
-  <td>Date</td>
-  <td><input type="text" name="date" value="<?=$transaction->date ?>" size="9" /></td>
+  <td><?= _('Date') ?></td>
+  <td colspan="3"><?= makeDateField('date', $transaction->ts_date); ?></td>
 </tr>
 <tr>
-  <td>Category</td>
- <td>
+  <td><?= _('Category') ?></td>
+ <td colspan="3">
   <select name="id_category"><?php
   $result = mysql_query("SELECT id,name FROM webfinance_categories ORDER BY name");
   while (list($id,$name) = mysql_fetch_array($result)) {
@@ -66,33 +68,31 @@ mysql_free_result($result);
  </td>
 </tr>
 <tr>
-  <td>Type</td>
+  <td><?= _('Description') ?></td>
+  <td colspan="3"><input type="text" style="width: 210px;" name="text" value="<?=$transaction->text ?>" /></td>
+</tr>
+<tr>
+  <td><?= _('Amount') ?> :</td>
   <td>
-  <select name="type">
-  <option value="real" <? if("real"==$transaction->type) echo "selected"; ?> >real</option>
-  <option value="prevision" <? if("prevision"==$transaction->type) echo "selected"; ?> >prevision</option>
-  <option value="asap" <? if("asap"==$transaction->type) echo "selected";  ?> >asap</option>
-  </select>
+    <input type="text" style="width: 80px;" name="amount" class="amount_field" value="<?= number_format($transaction->amount, 2, ',', ' '); ?>" />
+  </td>
+  <td width="100%">Type</td>
+  <td>
+    <select name="type">
+      <option value="real" <? if("real"==$transaction->type) echo "selected"; ?> ><?= _('Real') ?></option>
+      <option value="prevision" <? if("prevision"==$transaction->type) echo "selected"; ?> ><?= _('Prevision') ?></option>
+      <option value="asap" <? if("asap"==$transaction->type) echo "selected";  ?> ><?= _('ASAP') ?></option>
+    </select>
+  </td>
+</tr>
+<tr style="vertical-align: top">
+  <td nowrap><?= _('Comment') ?> :</td>
+  <td colspan="3">
+  <textarea style="width: 340px; height: 100px;" name="comment"><?=$transaction->comment?></textarea>
   </td>
 </tr>
 <tr>
-  <td>Description</td>
-  <td><input type="text" size="35" name="text" value="<?=$transaction->text ?>" /></td>
-</tr>
-<tr>
- <td>Montant :</td>
- <td>
-  <input type="text" name="amount" value="<?= $transaction->amount ?>" />
- </td>
-</tr>
-<tr>
-  <td>Comment</td>
-  <td>
-  <textarea rows="3" name="comment"><?=$transaction->comment?></textarea>
-  </td>
-</tr>
-<tr>
-  <td>File :<br/>
+  <td><?= _('File') ?> :<br/>
   <? if(!empty($transaction->file_name)){
   ?>
        <input checked='checked' name='file_del' value='1' type='checkbox'' />&nbsp<a href='file.php?action=file&id=<?=$transaction->id ?>'><?=$transaction->file_name ?></a><br/>
@@ -101,9 +101,10 @@ mysql_free_result($result);
  <td><input type="file" name="file" /></td>
 </tr>
 <tr>
-<td colspan="2">
-<input type="submit" value="<?=_('Save') ?>" />
-</td>
+  <td colspan="4" style="text-align: center">
+    <input id="submit_button" type="submit" value="<?=_('Save') ?>" />
+    <input id="cancel_button" type="button" value="<?=_('Cancel') ?>" />
+  </td>
 </tr>
 </table>
 
