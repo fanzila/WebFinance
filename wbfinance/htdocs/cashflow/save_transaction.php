@@ -41,6 +41,7 @@ if (isset($_FILES['file']) && is_uploaded_file($_FILES['file']['tmp_name'])) {
 
 
 $amount = preg_replace("!,!", ".", $amount);
+$amount = preg_replace("! +!", "", $amount);
 if($id_transaction>0){
   $q = sprintf("UPDATE webfinance_transactions SET ".
 	       "%s".
