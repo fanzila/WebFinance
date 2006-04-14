@@ -16,7 +16,7 @@ if (is_array($_POST['action'])) {
   foreach (explode(',', $selected_transactions) as $id_transaction) {
     $q = "";
     switch ($action['type']) {
-      case "delete": $q = "DELETE FROM webfinance_transactions WHERE id=$id_transaction"; break; 
+      case "delete": $q = "DELETE FROM webfinance_transactions WHERE id=$id_transaction"; break;
       case "change_account" : $q = "UPDATE webfinance_transactions SET id_account=".$action['id_account']." WHERE id=$id_transaction"; break;
       case "change_category" : $q = "UPDATE webfinance_transactions SET id_category=".$action['id_category']." WHERE id=$id_transaction"; break;
       default: die('Woooops, don\'t know how to '.$action['type']);
@@ -47,13 +47,14 @@ if($id_transaction>0){
 	       "%s".
 	       "id_category=%d, ".
 	       "id_account=%d, ".
+	       "id_invoice=%d, ".
 	       "text='%s', ".
 	       "amount='%s', ".
 	       "type='%s', ".
 	       "date=str_to_date('%s', '%%d/%%m/%%Y'), ".
 	       "comment='%s' ".
 	       "WHERE id=%d",
-	       $fq, $id_category, $id_account, $text, $amount, $type, $date, $comment, $id_transaction);
+	       $fq, $id_category, $id_account, $id_invoice, $text, $amount, $type, $date, $comment, $id_transaction);
  }else{
   $q = sprintf("INSERT INTO webfinance_transactions SET ".
 	       "%s".
