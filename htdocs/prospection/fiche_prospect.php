@@ -105,10 +105,11 @@ var onglet_shown='<?= $shown_tab ?>';
   <td id="handle_facturation" onclick="focusOnglet('facturation');"><?= _('Billing') ?></td>
   <td id="handle_log" onclick="focusOnglet('log');"><?= _('Flollow&nbsp;up') ?></td>
   <td id="handle_other" onclick="focusOnglet('other');"><?= _('Miscelaneous') ?></td>
+  <td id="handle_graph" onclick="focusOnglet('graph');"><?= _('Graphics') ?></td>
   <td style="background: none;" width="100%"></td>
 </tr>
 <tr style="vertical-align: top;">
-<td colspan="5" class="onglet_holder">
+<td colspan="6" class="onglet_holder">
 
 <div id="tab_contacts" style="display: none;">
 
@@ -268,6 +269,21 @@ EOF;
 }
 mysql_free_result($result);
 
+?>
+</table>
+</div>
+
+<div style="text-align: center; display: none;" id="tab_graph">
+<?php
+$result = mysql_query("SELECT count(*) FROM webfinance_invoices WHERE id_client=".$_GET['id']);
+list($has_invoices) = mysql_fetch_array($result);
+mysql_free_result($result);
+if ($has_invoices) {
+?>
+<img onmouseover="return escape('<?= ('Income by month for this client') ?>')" src="/graphs/client_income.php?nb_months=12&grid=1&width=720&height=250&id_client=<?= $_GET['id'] ?>" />
+<img onmouseover="return escape('<?= ('Income by month for this client') ?>')" src="/graphs/client_debpt.php?nb_months=12&grid=1&width=720&height=250&id_client=<?= $_GET['id'] ?>" />
+<?php
+}
 ?>
 </div>
 
