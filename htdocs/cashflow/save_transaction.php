@@ -11,21 +11,25 @@
 
 require("../inc/main.php");
 
-if($_GET['action']=='delete'){
-  if(isset($_GET['chk'])){
-    foreach($_GET['chk'] as $id){
-      if(!empty($id))
-	mysql_query("DELETE FROM webfinance_transactions WHERE id=".$id) or die(mysql_error());
-    }
-  }
-  header("Location: index.php?".$_GET['query']);
-  exit;
- }
-
 extract($_POST);
+if (is_array($_POST['action'])) {
+  foreach (explode(',', $selected_transactions) as $id_transaction) {
+    $q = "";
+    switch ($action['type']) {
+      case "delete": $q = "DELETE FROM webfinance_transactions WHERE id=$id_transaction"; break; 
+      case "change_account" : $q = "UPDATE webfinance_transactions SET id_account=".$action['id_account']." WHERE id=$id_transaction"; break;
+      case "change_category" : $q = "UPDATE webfinance_transactions SET id_category=".$action['id_category']." WHERE id=$id_transaction"; break;
+      default: die('Woooops, don\'t know how to '.$action['type']);
+    }
+    mysql_query($q) or die(mysql_error());
+  }
+  header("Location: index.php?".$query);
+  die();
+}
+
+
 
 $fq="";
-
 if (isset($_FILES['file']) && is_uploaded_file($_FILES['file']['tmp_name'])) {
   $file_type=addslashes($_FILES['file']['type']);
   $file_name=addslashes($_FILES['file']['name']);

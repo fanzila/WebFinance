@@ -106,12 +106,12 @@ function update_transaction($id_invoice){
 	"id_account=%d, ".
 	"id_category=%d, ".
 	"text='%s', ".
-	"amount=%s, ".
+	"amount='%s', ".
 	"type='prevision', ".
 	"date='%s', ".
 	"comment='%s' ".
 	"WHERE id_invoice=%d";
-      $q = sprintf($query, $facture->id_compte, $id_category, $text, $facture->total_ttc,  date("Y-m-d", $facture->timestamp_date_paiement) , $comment, $id_invoice );
+      $q = sprintf($query, $facture->id_compte, $id_category, $text, preg_replace("!,!", ".", $facture->total_ttc),  date("Y-m-d", $facture->timestamp_date_paiement) , $comment, $id_invoice );
       mysql_query($q) or die(mysql_error());
 
 
@@ -121,12 +121,12 @@ function update_transaction($id_invoice){
 	"id_account=%d, ".
 	"id_category=%d, ".
 	"text='%s', ".
-	"amount=%s, ".
+	"amount='%s', ".
 	"type='prevision', ".
 	"date='%s', ".
 	"comment='%s', ".
 	"id_invoice=%d";
-      $q = sprintf($query, $facture->id_compte, $id_category, $text, $facture->total_ttc, date("Y-m-d", $facture->timestamp_date_paiement) , $comment, $id_invoice );
+      $q = sprintf($query, $facture->id_compte, $id_category, $text, preg_replace('!,!', '.', $facture->total_ttc), date("Y-m-d", $facture->timestamp_date_paiement) , $comment, $id_invoice );
       mysql_query($q) or die(mysql_error());
     }
   }
