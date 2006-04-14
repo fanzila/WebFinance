@@ -69,8 +69,8 @@ table.facture input { border: solid 1px #cecece; }
 table.facture textarea { border: solid 1px #cecece; }
 
 .fiche_prospect td { font-size: 11px; }
-#main_form input { border: solid 1px #ddd;  margin-right: 2px; margin-bottom: 2px; font-size: 11px; }
-#main_form textarea { border: solid 1px #ddd; }
+form input { border: solid 1px #ddd;  margin-right: 2px; margin-bottom: 2px; font-size: 11px; }
+form textarea { border: solid 1px #ddd; }
 
 .liens_boutons { text-align: center; padding: 5px;}
 
