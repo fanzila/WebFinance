@@ -18,23 +18,80 @@ require("../top.php");
 require("nav.php");
 ?>
 <script type="text/javascript">
-  function ask_confirmation(txt) {
+
+function ask_confirmation(txt) {
   resultat = confirm(txt);
   if(resultat=="1"){
       return true;
   } else {
       return false;
   }
-  function check(){
-    if(!document.form.chk.checked){
-      alert("Choose a transaction");
-      return false;
-    }else{
-      return true;
-    }
+}
 
+function check(){
+  if(!document.form.chk.checked){
+    alert("Choose a transaction");
+    return false;
+  }else{
+    return true;
+  }
+}
+
+var specific_shown = null;
+
+function updateCheck(id) {
+  checkbox = document.getElementById('chk_'+id);
+  f_action = document.getElementById('action_form');
+  sel = f_action.selected_transactions.value;
+  var regexp = ','+id+','; // This produces an INTENDED double coma !
+  sel = sel.replace(regexp, '')
+  if (checkbox.checked) {
+    sel += ','+id+',';
+  }
+  f_action.selected_transactions.value = sel;
+}
+function changeAction(sel) {
+  if (specific_shown) 
+    specific_shown.style.display = 'none';
+  specific_options = document.getElementById( 'action_' + sel.options[sel.selectedIndex].value );
+  if (specific_options) {
+    specific_options.style.display = 'block';
+    specific_shown = specific_options;
+  }
+}
+
+function submitAction(f) {
+
+  f.selected_transactions.value = ''; 
+  check_form = document.getElementById('checkboxes');
+  for (i=0 ; i<check_form.elements.length ; i++) {
+    el = check_form.elements[i];
+
+    if (m = el.id.match(/chk_(.*)/)) { // is a checkbox
+      if (el.checked) { // is checked 
+        f.selected_transactions.value = f.selected_transactions.value + m[1]+',';
+      }
+    }
+  }
+  f.selected_transactions.value = f.selected_transactions.value.replace(/,$/, '');
+
+  if (f.selected_transactions.value == '') {
+    alert('<?= _('You must select at least one transaction to apply an action !!') ?>');
+    return false;
   }
 
+  f.submit();
+}
+
+function checkAll(c) {
+  for (i=0 ; i<c.form.elements.length ; i++) {
+    el = c.form.elements[i];
+
+    if (m = el.id.match(/chk_(.*)/)) {
+      // if needed, m[1] is id_transaction
+      el.checked = c.checked;
+    }
+  }
 }
 </script>
 
@@ -129,7 +186,7 @@ if ($ts_start_date > $ts_end_date) {
 // End check filter data coherence
 // ---------------------------------------------------------------------------------------------------------------------
 
-$server_query=$GLOBALS['_SERVER']['QUERY_STRING'];
+$old_query_string = $GLOBALS['_SERVER']['QUERY_STRING']; // FIXME : Better than pass the big $filter around by get we sould store it in the session. 
 $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBALS['_SERVER']['QUERY_STRING']);
 
 // print "-".$GLOBALS['_SERVER']['QUERY_STRING']."--";
@@ -138,10 +195,12 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
 
 <table border="0" cellspacing="5" cellpadding="0" width="100%">
 <tr style="vertical-align: top;">
-  <td rowspan="2" width="100%">
+  <td width="100%">
     <?php // Transaction listing ?>
+    <form id="checkboxes" name="checkboxes"> <? // This form does not submit !! It's only here to allow apearance of checkboxes ?>
     <table border="0" cellspacing="0" width="750" cellpadding="3" class="framed">
       <tr style="text-align: center;" class="row_header">
+        <td><input type="checkbox" onchange="checkAll(this);" /></td>
         <td colspan="2"></td>
         <td><a href="?sort=date&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Date') ?></a></td>
         <td><a href="?sort=category&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Category') ?></a>/<a href="?sort=color&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Color') ?></a></td>
@@ -218,7 +277,6 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
      $result = mysql_query($q) or die(mysql_error());
      $total_shown = 0;
      $count = 1;
-echo "<form action='save_transaction.php'>";
      while ($tr = mysql_fetch_object($result)) {
        $total_shown += $tr->amount;
 
@@ -236,7 +294,7 @@ echo "<form action='save_transaction.php'>";
        print <<<EOF
 <tr class="$class">
   <td>
-	 <input type="checkbox" name="chk[]" value="$tr->id"/>
+	 <input type="checkbox" id="chk_$tr->id" name="chk[]" onchange="updateCheck($tr->id);" value="$tr->id"/>
   </td>
   <td>
 	 <img src="/imgs/icons/edit.gif" onmouseover="return escape('$help_edit');" onclick="inpagePopup(event, this, 440, 350, 'fiche_transaction.php?id=$tr->id');" />
@@ -258,18 +316,15 @@ EOF;
        <td></td>
      </tr>
     </table>
-       <input type="hidden" name="query" value="<?=$server_query ?>">
-       <input type="hidden" name="action" value="delete">
-       <input type="submit" onclick="return ask_confirmation('Do you really want to delete the selected transaction(s)?')" value="<?=_('Delete') ?>">
-   </form>
-
-       <a href="" onClick="inpagePopup(event, this, 440, 350, 'fiche_transaction.php?id=-1');return false"><?= _('Add a transaction') ?></a>
+    </form> <? // End of checkboxes form ?>
+    <a href="" onClick="inpagePopup(event, this, 440, 350, 'fiche_transaction.php?id=-1');return false"><?= _('Add a transaction') ?></a>
   </td>
-  <td>
+
+  <td><?php // Begin of right column ?>
     <?php // Filter ?>
     <form id="main_form" onchange="this.submit();" method="get">
     <input type="hidden" name="sort" value="<?= $_GET['sort'] ?>" />
-    <table border="0" cellspacing="0" cellpadding="3" class="framed">
+    <table border="0" cellspacing="0" cellpadding="3" width="310" class="framed">
     <tr class="row_header">
       <td colspan="2" style="text-align: center"><?= _('Filter') ?></td>
     </tr>
@@ -284,7 +339,7 @@ EOF;
         printf(_('        <option value="%d"%s>%s #%s</option>')."\n", $id_cpt, ($filter['id_account']==$id_cpt)?" selected":"", $cpt->banque, $cpt->compte );
       }
       mysql_free_result($result);
-      ?></td>
+      ?></select></td>
     </tr>
     <tr>
       <td nowrap><b><?= _('Amount') ?> <img class="help_icon" src="/imgs/icons/help.png" onmouseover="return escape('<?= _('Enter a number for 10% aproximated search, enter 100-200 to search transactions fromm 100&euro; to 200&euro; included') ?>');" /></b></td>
@@ -321,12 +376,62 @@ EOF;
       ?>
     </tr>
     </table>
-    </form>
-  </td>
-</tr>
-<tr>
-  <td>
-  Camembert
+    </form><br/>
+
+  <?php //Actions on selected transactions ?>
+
+  <form id="action_form" action="save_transaction.php" method="post">
+  <input type="hidden" name="query" value="<?= $old_query_string ?>" />
+  <input type="hidden" name="selected_transactions" value="" />
+
+  <table border="0" cellspacing="0" cellpadding="2" width="310" class="framed">
+  <tr class="row_header">
+    <td style="text-align: center;" colspan="2"><?= _('Action on selected transactions') ?></td>
+  </tr>
+  <tr>
+    <td style="width: 90px;"><?= _('Action') ?></td>
+    <td>
+      <select onchange="changeAction(this);" name="action[type]" style="width: 200px;">
+        <option value="delete"><?= _('Delete the selected transactions') ?></option>
+        <option value="change_account"><?= _('Move to account...') ?></option>
+        <option value="change_category"><?= _('Change category...') ?></option>
+      </select>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <div id="action_change_account" style="display: none;">
+        <div style="display: block; float: left; width: 90px;"><?= _('To account ') ?></div>&nbsp;<select name="action[id_account]" style="width: 150px;">
+        <?php
+        $result = mysql_query("SELECT id_pref,value FROM webfinance_pref WHERE owner=-1 AND type_pref='rib'");
+        while (list($id_cpt,$cpt) = mysql_fetch_array($result)) {
+          $cpt = unserialize(base64_decode($cpt));
+          printf(_('        <option value="%d"%s>%s #%s</option>')."\n", $id_cpt, ($filter['id_account']==$id_cpt)?" selected":"", $cpt->banque, $cpt->compte );
+        }
+        mysql_free_result($result);
+        ?></select>
+      </div>
+      <div id="action_change_category" style="display: none;">
+        <div style="display: block; float: left; width: 90px;"><?= _('Category is') ?></div>&nbsp;<select name="action[id_category]">
+        <option value="1"><?= _('-- Choose --') ?></option>
+        <?php
+        $result = mysql_query("SELECT id,name,color FROM webfinance_categories ORDER BY name");
+        while ($cat = mysql_fetch_object($result)) {
+          printf('<option value="%d">%s</option>', $cat->id, $cat->name );
+        }
+        mysql_free_result($result);
+        ?>
+        </select>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="text-align: center"><input type="button" onclick="submitAction(this.form);" value="<?= _('Apply this action') ?>" /></td>
+  </tr>
+  </table>
+  </form>
+
+
+
   </td>
 </tr>
 </table>

@@ -53,6 +53,9 @@ msgstr "Jour"
 msgid "Amount"
 msgstr "Montant"
 
+msgid "File"
+msgstr "Fichier"
+
 msgid "Amount (Euro)"
 msgstr "Montant (Euro)"
 

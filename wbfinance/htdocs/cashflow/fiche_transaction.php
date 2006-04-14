@@ -103,7 +103,7 @@ mysql_free_result($result);
 <tr>
   <td colspan="4" style="text-align: center">
     <input id="submit_button" type="submit" value="<?=_('Save') ?>" />
-    <input id="cancel_button" type="button" value="<?=_('Cancel') ?>" />
+    <input id="cancel_button" type="button" onclick="window.parent.document.getElementById('inpage_popup').style.display='none';"  value="<?=_('Cancel') ?>" />
   </td>
 </tr>
 </table>
