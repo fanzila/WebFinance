@@ -200,7 +200,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
     <form id="checkboxes" name="checkboxes"> <? // This form does not submit !! It's only here to allow apearance of checkboxes ?>
     <table border="0" cellspacing="0" width="750" cellpadding="3" class="framed">
       <tr style="text-align: center;" class="row_header">
-        <td><input type="checkbox" onchange="checkAll(this);" /></td>
+        <td><input onmouseover="return escape('<?= _('Check and unchecks all transactions shown') ?>');" type="checkbox" onchange="checkAll(this);" /></td>
         <td colspan="2"></td>
         <td><a href="?sort=date&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Date') ?></a></td>
         <td><a href="?sort=category&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Category') ?></a>/<a href="?sort=color&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Color') ?></a></td>
