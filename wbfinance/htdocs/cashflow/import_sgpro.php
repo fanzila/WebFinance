@@ -30,7 +30,7 @@ $compte->code_guichet = $a[1];
 $compte->compte = $a[2];
 $compte->intitule = $a[3];
 
-$l = fgets($fp); // Type de contrat ?? 
+$l = fgets($fp); // Type de contrat ??
 $a = fgetcsv($fp,100,';');
 $compte->date_import = $a[1];
 $a = fgetcsv($fp,100,';');
@@ -78,9 +78,9 @@ $operations = array();
 while ($l = fgetcsv($fp,1000,';')) {
   if ($l[0] != "") {
     // This is a new line push the current in list and treat it
-    if ($op) { 
+    if ($op) {
       $op->desc = preg_replace("! +!", " ", $op->desc); // trim superfluous spaces
-      array_push($operations, $op); 
+      array_push($operations, $op);
     }
 
     $op = new stdClass();
@@ -97,7 +97,7 @@ while ($l = fgetcsv($fp,1000,';')) {
 }
 
 // Toutes les opérations sont dans $operations, essayons maintenant de faire
-// quelque chose d'intelligen avec : 
+// quelque chose d'intelligen avec :
 //   - Pour chaque opération on va essayer de la faire rentrer dans une
 //     catégorie automatiquement en appliquant les regex de celle-ci
 //   - Pour chaque opération au crédit on va essayer de retrouver la facture
@@ -109,21 +109,9 @@ foreach ($operations as $op) {
   printf("Transaction de <b>%s&euro;</b> du <b>%s</b> intitulée <i>%s</i><div style=\"font-size: 10px; border-left: solid 4px #ceceff; margin-left: 10px; padding-left: 10px;\">\n", $op->montant, $op->date, $op->desc );
 
   if ($op->montant > 0) {
-    // S'il s'agit d'un crédit, tenter de retrouver la facture correspondante
-    $result = mysql_query("SELECT f.id_facture, f.is_paye, count(*), 1.196*SUM(fl.qtt*fl.prix_ht) as total_facture
-                           FROM webfinance_invoices as f,
-                                webfinance_invoice_rows as fl
-                           WHERE fl.id_facture=f.id_facture
-                           GROUP BY f.id_facture
-                           HAVING total_facture='$op->montant'") or die(mysql_error());
-    $a = mysql_fetch_array($result);
-    if (($a[2] == 1) && ($a[2] == 0)) {
-      print "<b style=\"color: green;\">La facture correspondante à ce virement à été trouvée, elle est marquée « payée »</b><br/>";
-      // Une seule facture correspond, et elle n'est pas marquée payée, on la marque payée.
-      mysql_query("UPDATE webfinance_invoices SET is_paye=1,date_paiement=STR_TO_DATE('$op->date', '%d/%m/%Y') WHERE id_facture=".$a[0]);
-    } else {
-      print "<b style=\"color: red;\">Impossible de trouver la facture correspondante à ce virement ! Incohérence dans les factures ou paiement erroné !</b><br/>";
-    }
+    //fonction de recherche de factures correspondantes
+    compare_invoices_transaction($op);
+
   } else {
     // S'il s'agit d'un débit, le lier à un fournisseur ? à un bon de commande ?
   }
@@ -131,9 +119,9 @@ foreach ($operations as $op) {
   // Dans tous les cas on essaie de retrouver la catégorie de la transaction
   // automagiquement.
   $id_categorie = 1;
-  $result = mysql_query("SELECT COUNT(*),id,name 
-                         FROM webfinance_categories 
-                         WHERE re IS NOT NULL 
+  $result = mysql_query("SELECT COUNT(*),id,name
+                         FROM webfinance_categories
+                         WHERE re IS NOT NULL
                          AND '".addslashes($op->desc)."' RLIKE re
                          GROUP BY id") or die(mysql_error());
   list($nb_matches,$id, $name) = mysql_fetch_array($result);

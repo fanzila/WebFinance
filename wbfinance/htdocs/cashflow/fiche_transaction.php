@@ -12,7 +12,7 @@
 require("../inc/main.php");
 require("../top_popup.php");
 
-$result = mysql_query("SELECT id, id_category, id_account, text, amount, type, date, comment, file_name ,
+$result = mysql_query("SELECT id, id_category, id_account, text, amount, type, date, comment, file_name , id_invoice,
                               unix_timestamp(date) as ts_date
                        FROM webfinance_transactions WHERE id=".$_GET['id'])
   or die(mysql_error());
@@ -25,6 +25,7 @@ if(mysql_num_rows($result)>0){
   $transaction->id=-1;
   $transaction->id_category=0;
   $transaction->id_account=0;
+  $transaction->id_invoice=0;
   $transaction->text="";
   $transaction->amount=0;
   $transaction->type="real";
@@ -91,6 +92,44 @@ mysql_free_result($result);
   <textarea style="width: 340px; height: 100px;" name="comment"><?=$transaction->comment?></textarea>
   </td>
 </tr>
+  <tr>
+  <td><?= _('Invoice') ?> :</td>
+  <td colspan="3">
+ <select name="id_invoice">
+  <option value="0">-- related invoice --</option>
+<?
+  $res = mysql_query("SELECT id_facture as id, ".
+		   "num_facture as num, ".
+		     "ref_contrat as ref, ".
+		     "date_format(date_facture, '%d/%m/%Y') as nice_date_facture ".
+		     "FROM webfinance_invoices ".
+		     "ORDER BY date_facture")
+    or die(mysql_error());
+
+   while($inv=mysql_fetch_assoc($res)){
+
+     $result = mysql_query("SELECT prix_ht,qtt FROM webfinance_invoice_rows WHERE id_facture=".$inv['id'])
+       or die(mysql_error());
+
+     $lignes = array();
+     $total = 0;
+
+     while ($el = mysql_fetch_object($result)) {
+       array_push($lignes, $el);
+       $total += $el->qtt * $el->prix_ht;
+     }
+     mysql_free_result($result);
+     $total_ht = $total;
+     $total_ttc = $total*1.196;
+     $nice_total_ht = sprintf("%.2f", $total_ht);
+     $nice_total_ttc = sprintf("%.2f", $total_ttc);
+
+     printf(_(' <option value="%d"%s>%s (%sEuro %s #%s)</option>')."\n", $inv['id'], ($inv['id']==$transaction->id_invoice)?" selected":"", $inv['ref'] ,$nice_total_ttc ,$inv['nice_date_facture'], $inv['num'] );
+   }
+?>
+ </select>
+  </td>
+</tr>
 <tr>
   <td><?= _('File') ?> :<br/>
   <? if(!empty($transaction->file_name)){
@@ -98,7 +137,7 @@ mysql_free_result($result);
        <input checked='checked' name='file_del' value='1' type='checkbox'' />&nbsp<a href='file.php?action=file&id=<?=$transaction->id ?>'><?=$transaction->file_name ?></a><br/>
  <? }?>
   </td>
- <td><input type="file" name="file" /></td>
+ <td colspan="3"><input type="file" name="file" /></td>
 </tr>
 <tr>
   <td colspan="4" style="text-align: center">
