@@ -57,7 +57,7 @@ if($id_transaction>0){
 	       "text='%s', ".
 	       "amount=%s, ".
 	       "type='%s', ".
-	       "date='%s', ".
+	       "date=str_to_date('%s', '%%d/%%m/%%Y'), ".
 	       "comment='%s' ",
 	       $fq, $id_category, $id_account, $text, $amount, $type, $date, $comment);
  }
