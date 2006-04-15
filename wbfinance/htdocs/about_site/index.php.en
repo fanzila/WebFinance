@@ -37,9 +37,9 @@ similar functionnalities.</p>
 <h2>Download</h2>
 
 While still in very early stages, you can download the latest sources here. The
-HEAD version is the latest developpement release. Probably buggy. The RELEASE
-versions are (hopefully) more stable versions. <a href="#roadmap">See below</a>
-for more info.
+HEAD version is the latest developpement release. Probably buggy but more
+feature rich. The RELEASE versions are (hopefully) more stable versions. <a
+href="#roadmap">See below</a> for more info.
 
 <ul class="releases">
 <?php
