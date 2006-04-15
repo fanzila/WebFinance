@@ -165,7 +165,7 @@ $pdf->SetXY(10, 210);
 $pdf->MultiCell(120, 6, $facture->extra_bottom, 0);
 
 // RIB
-$result = mysql_query("SELECT value FROM webfinance_pref WHERE id_pref=".$facture->id_compte) or wf_mysqldie()
+$result = mysql_query("SELECT value FROM webfinance_pref WHERE id_pref=".$facture->id_compte) or wf_mysqldie();
 list($cpt) = mysql_fetch_array($result);
 mysql_free_result($result);
 $cpt = unserialize(base64_decode($cpt));

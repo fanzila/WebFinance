@@ -64,7 +64,7 @@ if ($id_account == 0) { // Compte innexistant dans webfinancne, on le crée
 
   $q = sprintf("INSERT INTO webfinance_pref (type_pref,value) VALUES('rib', '%s')",
                base64_encode(serialize($compte)) );
-  mysql_query($q) or wf_mysqldie()
+  mysql_query($q) or wf_mysqldie();
 
   $result = mysql_query("SELECT id_pref FROM webfinance_pref WHERE owner=-1 AND type_pref='rib' AND date_modified>=DATE_SUB(NOW(), INTERVAL 2 SECOND)");
   list($id_account) = mysql_fetch_array($result);
@@ -123,7 +123,7 @@ foreach ($operations as $op) {
                          FROM webfinance_categories
                          WHERE re IS NOT NULL
                          AND '".addslashes($op->desc)."' RLIKE re
-                         GROUP BY id") or wf_mysqldie()
+                         GROUP BY id") or wf_mysqldie();
   list($nb_matches,$id, $name) = mysql_fetch_array($result);
   switch ($nb_matches) {
     case 0 : print "<b style=\"color: orange;\">Aucune catégorie ne correspond, à vous de classer cette transaction</b><br/>";

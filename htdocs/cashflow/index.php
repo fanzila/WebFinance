@@ -124,7 +124,7 @@ if ((!count($filter['shown_cat'])) || ($filter['shown_cat']['check_all'] == "on"
 
 // Calculate balance for each transaction
 if ($filter['id_account'] != 0) { $w = "WHERE id_account=".$filter['id_account']; }
-$req=mysql_query("SELECT id, amount FROM webfinance_transactions $w ORDER BY date") or wf_mysqldie()
+$req=mysql_query("SELECT id, amount FROM webfinance_transactions $w ORDER BY date") or wf_mysqldie();
 $balance_yesterday=0;
 $balance_lines=array();
 while ($row=mysql_fetch_assoc($req)) {
@@ -274,7 +274,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
 
      $filter_base = sprintf("sort=%d&filter[start_date]=%s&filter[end_date]=%s&filter[textsearch]=%s&filter[amount]=%s",
                             $_GET['sort'], $filter[start_date], $filter[end_date], $filter[textsearch], $filter[amount] );
-     $result = mysql_query($q) or wf_mysqldie()
+     $result = mysql_query($q) or wf_mysqldie();
      $total_shown = 0;
      $count = 1;
      while ($tr = mysql_fetch_object($result)) {

@@ -65,7 +65,7 @@ if(isset($_GET['account']) AND !empty($_GET['account']))
 ?>
 
  <?
- $result_accounts=mysql_query("SELECT id_pref,value FROM webfinance_pref WHERE owner=-1 AND type_pref='rib'") or wf_mysqldie()
+ $result_accounts=mysql_query("SELECT id_pref,value FROM webfinance_pref WHERE owner=-1 AND type_pref='rib'") or wf_mysqldie();
  $nb_accounts=mysql_num_rows($result_accounts);
  ?>
   <form id="main_form" method="get" onchange="this.submit();" >

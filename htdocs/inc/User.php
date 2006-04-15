@@ -23,7 +23,7 @@ class User {
                                   admin, role, modification_date,
                                   date_format(creation_date,'%d/%m/%Y') as nice_creation_date,
                                   date_format(modification_date,'%d/%m/%Y') as nice_modification_date
-                           FROM webfinance_users WHERE id_user=$id_user") or wf_mysqldie();
+                           FROM webfinance_users WHERE id_user=$id_user") or wf_mysqldie();;
 
 
     $user = mysql_fetch_object($result);
@@ -109,7 +109,7 @@ class User {
 
                   $first_name, $last_name, $login, $email, ($disabled == "on")?1:0, ($admin == "on")?1:0,
                   $id_user );
-    mysql_query($q) or wf_mysqldie()
+    mysql_query($q) or wf_mysqldie();
     logmessage("Modification de l'utilisateur user:$id_user");
     $_SESSION['message'] = "Données enregistrées";
   }
@@ -124,7 +124,7 @@ class User {
     $q = sprintf("INSERT INTO webfinance_users (login, first_name, last_name, password, email, disabled, admin, modification_date, creation_date)
                   VALUES('%s', '%s', '%s', md5('%s'), '%s', %d, %d, now(), now() )",
                   $login, $first_name, $last_name, $this->randomPass(), $email, ($disabled == "on")?1:0, ($admin == "on")?1:0 );
-    mysql_query($q) or wf_mysqldie()
+    mysql_query($q) or wf_mysqldie();
     $result = mysql_query("SELECT id_user FROM webfinance_users WHERE creation_date>date_sub(now(), INTERVAL 1 SECOND)");
     list($new_id_user) = mysql_fetch_array($result);
     mysql_free_result($result);
@@ -178,20 +178,20 @@ class User {
   // Expects an object
   function setPrefs($prefs) {
     $data = base64_encode(serialize($prefs));
-    $result = mysql_query("SELECT count(*) FROM webfinance_pref WHERE owner=".$_SESSION['id_user']." AND type_pref='user_pref'") or wf_mysqldie()
+    $result = mysql_query("SELECT count(*) FROM webfinance_pref WHERE owner=".$_SESSION['id_user']." AND type_pref='user_pref'") or wf_mysqldie();
     list($has_pref) = mysql_fetch_array($result);
     mysql_free_result($result);
     if ($has_pref) {
-      mysql_query("UPDATE webfinance_pref SET value='$data' WHERE owner=".$_SESSION['id_user']." AND type_pref='user_pref'") or wf_mysqldie()
+      mysql_query("UPDATE webfinance_pref SET value='$data' WHERE owner=".$_SESSION['id_user']." AND type_pref='user_pref'") or wf_mysqldie();
     } else {
-      mysql_query("INSERT INTO webfinance_pref (value,owner,type_pref) VALUES('$data', ".$_SESSION['id_user'].",'user_pref')") or wf_mysqldie()
+      mysql_query("INSERT INTO webfinance_pref (value,owner,type_pref) VALUES('$data', ".$_SESSION['id_user'].",'user_pref')") or wf_mysqldie();
     }
     $_SESSION['message'] = "Vos préférences sont enregistrées";
   }
 
   // Expects an object
   function getPrefs() {
-    $result = mysql_query("SELECT value FROM webfinance_pref WHERE owner=".$_SESSION['id_user']." AND type_pref='user_pref'") or wf_mysqldie()
+    $result = mysql_query("SELECT value FROM webfinance_pref WHERE owner=".$_SESSION['id_user']." AND type_pref='user_pref'") or wf_mysqldie();
     list($data) = mysql_fetch_array($result);
     $this->prefs = unserialize(base64_decode($data));
   }

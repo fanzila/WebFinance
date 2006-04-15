@@ -57,7 +57,7 @@ if (isset($_GET['sort'])) {
 
 $result = mysql_query("SELECT id,name,comment,class,re,plan_comptable,color
                        FROM webfinance_categories
-                       ORDER BY $order_clause") or wf_mysqldie()
+                       ORDER BY $order_clause") or wf_mysqldie();
 while ($c = mysql_fetch_assoc($result)) {
   extract($c);
 

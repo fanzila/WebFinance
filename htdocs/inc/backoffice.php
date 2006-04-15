@@ -71,7 +71,7 @@ function logmessage($msg) {
   $id = (empty($_SESSION['id_user']))?-1:$_SESSION['id_user'];
   $msg = preg_replace("/'/", "\\'", $msg );
   $msg = preg_replace('/"/', "\\'", $msg );
-  mysql_query("INSERT INTO webfinance_userlog (log,date,id_user) VALUES('$msg', now(), $id)") or wf_mysqldie()
+  mysql_query("INSERT INTO webfinance_userlog (log,date,id_user) VALUES('$msg', now(), $id)") or wf_mysqldie();
 }
 
 header("Content-Type: text/html; charset=utf-8");

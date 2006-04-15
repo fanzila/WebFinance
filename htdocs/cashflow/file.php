@@ -11,7 +11,7 @@ function show_file($id_transaction){
 			"file_name as name ".
 			"FROM webfinance_transactions ".
 			"WHERE id=".$id_transaction)
-    or wf_mysqldie()
+    or wf_mysqldie();
   if(mysql_num_rows($result)>0){
     $afile=mysql_fetch_assoc($result);
     $file_name=$afile['name'];

@@ -21,12 +21,12 @@ class Facture {
 
   function addLigne($id_facture, $desc, $pu_ht, $qtt) {
     $desc = preg_replace("/\'/", "\\'", $desc);
-    $result = mysql_query("INSERT INTO webfinance_invoice_rows (date_creation, id_facture, description, pu_ht, qtt) VALUES(now(), $id_facture, '$desc', '$pu_ht', $qtt)") or wf_mysqldie()
+    $result = mysql_query("INSERT INTO webfinance_invoice_rows (date_creation, id_facture, description, pu_ht, qtt) VALUES(now(), $id_facture, '$desc', '$pu_ht', $qtt)") or wf_mysqldie();
     $this->_markForRebuild($id_facture);
   }
 
   function getTotal($id_facture) {
-    $result = mysql_query("SELECT sum(qtt*pu_ht) FROM webfinance_invoice_rows WHERE id_facture=$id_facture") or wf_mysqldie()
+    $result = mysql_query("SELECT sum(qtt*pu_ht) FROM webfinance_invoice_rows WHERE id_facture=$id_facture") or wf_mysqldie();
     list($total) = mysql_fetch_array($result);
     mysql_free_result($result);
 
@@ -49,7 +49,7 @@ class Facture {
                                   f.type_paiement, f.is_paye, f.ref_contrat, f.extra_top, f.extra_bottom, f.num_facture, f.*
                            FROM webfinance_clients as c, webfinance_invoices as f
                            WHERE f.id_client=c.id_client
-                           AND f.id_facture=$id_facture") or wf_mysqldie()
+                           AND f.id_facture=$id_facture") or wf_mysqldie();
     $facture = mysql_fetch_object($result);
 
     $result = mysql_query("SELECT id_facture_ligne,prix_ht,qtt,description FROM webfinance_invoice_rows WHERE id_facture=$id_facture ORDER BY ordre");
@@ -72,7 +72,7 @@ class Facture {
 //     print "<pre>";
 //     print_r($facture);
 
-    $result = mysql_query("SELECT nom FROM webfinance_clients WHERE id_client=".$facture->id_client) or wf_mysqldie()
+    $result = mysql_query("SELECT nom FROM webfinance_clients WHERE id_client=".$facture->id_client) or wf_mysqldie();
     list($facture->nom_client) = mysql_fetch_array($result);
     mysql_free_result($result);
 
@@ -84,7 +84,7 @@ class Facture {
    */
   function setPaid($id_facture) {
     // Marque toutes les lignes comme "payées"
-    mysql_query("UPDATE webfinance_invoices SET date_paiement=now(),is_payee=1 WHERE id_facture=$id_facture") or wf_mysqldie()
+    mysql_query("UPDATE webfinance_invoices SET date_paiement=now(),is_payee=1 WHERE id_facture=$id_facture") or wf_mysqldie();
   }
 
 
