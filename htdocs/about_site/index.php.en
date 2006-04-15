@@ -17,14 +17,14 @@
 <img src="logo.gif" style="float: right;" />
 <h1>Webfinance</h1>
 
-<h2>What is Webfinance?</h2>
+<h2>What is Webfinance ?</h2>
 
 <p><i>Webfinance</i> is a web application based on PHP/MySQL to manage
 invoices, handle clients contacts, manage cash-flow history and make
 cash-flow previsions.
 
 <p>It has been initially developped by a collaborative effort from <a
-href="http://www.nbi.fr">NBI SARL</a> and <a
+href="http://www.nbi.fr">NBI</a> and <a
 href="http://www.isvtec.com/">ISVTEC</a> and is now publicly available
 as a Free and Open Source software under the <a
 href="http://www.gnu.org/">GNU General Public License</a>. We hope to
@@ -64,7 +64,7 @@ mysql -u root --password=verysecret &lt; /path/to/webfinance/schema.mysql4.1.sql
 
 <li>Add the virtual host to Apache configuration and make sure the name resolves :
 <pre class="shell">
-cat /etc/apache/conf.d/webfinance.conf &lt;&lt;EOF
+cat &gt; /etc/apache/conf.d/webfinance.conf &lt;&lt;EOF
 &lt;VirtualHost *&gt;
     ServerName webfinance
     DocumentRoot /path/to/webfinance/htdocs
@@ -129,7 +129,7 @@ modify dbconnect.php
 
 <ul>
   <li>Cyril Bouthors &lt;cyril@isvtec.com&gt; <i>Initial cash-flow specifications, bug reports, feature requests, gettext support</i></li>
-  <li>Nicolas Bouthors &lt;nbouthors@nbi.fr&gt; <i>A lot of code</i></li>
+  <li>Nicolas Bouthors &lt;nbouthors@nbi.fr&gt; <i>Initial developpement for client, clientlog, contacts, and invoice managing, gettext french translation</i></li>
   <li>Pierre Doleans &lt;pierre@isvtec.com&gt; <i>Bug reports, feature requests</i></li>
   <li>Thierry Randrianiriana &lt;thierry@isvtec.com&gt; <i>A lot of code, bugfixes and features</i></li>
   <li>Cedric Ravier &lt;cravier@nbi.fr&gt;<i>Some icons, logo, and other graphical stuff</i></li>

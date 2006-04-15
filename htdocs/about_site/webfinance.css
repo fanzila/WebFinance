@@ -11,6 +11,7 @@ a { color: #6060ff; }
 a:hover { color: #6060ff; background: #ffff30; }
 
 pre.shell { 
+padding: 8px;
 border: dashed 1px blue;
 background: #ffffce;
 color: green;
