@@ -16,23 +16,36 @@ class Client {
   var $id = -1;
   var $data = null;
 
-  function _setInfos() {
-    $result = mysql_query("SELECT * FROM webfinance_clients WHERE id_client=".$this->id) or die("Client:_setInfos ".mysql_error());
-    $this->data = mysql_fetch_object($result);
-    mysql_free_result($result);
+  function _getInfos() {
+    $result = mysql_query("SELECT c.id_client as id,
+                                  c.id_client, c.nom,
+                                  c.date_created,
+                                  c.tel, c.fax,
+                                  c.addr1, c.addr2, c.addr3, c.cp, c.ville, c.pays, c.email,
+                                  c.has_devis, c.has_unpaid, c.ca_total_ht, c.ca_total_ht_year, c.total_du_ht,
+                                  c.vat_number, c.siren,
+                                  c.id_company_type,
+                                  ct.nom as type_name
+                           FROM webfinance_clients as c, webfinance_company_types as ct
+                           WHERE id_client=".$this->id) or wf_mysqldie("Client::_getInfos");
+    if (mysql_num_rows($result)) {
+      $data = mysql_fetch_assoc($result);
+      foreach ($data as $n=>$v) { $this->$n = $v; }
+      mysql_free_result($result);
+    }
   }
 
   function Client($id = null) {
     if (is_numeric($id)) {
       $this->id = $id;
-      $this->_setInfos();
+      $this->_getInfos();
     }
   }
 
   function setId($id) {
     if (is_numeric($id)) {
       $this->id = $id;
-      $this->_setInfos();
+      $this->_getInfos();
     }
   }
 }

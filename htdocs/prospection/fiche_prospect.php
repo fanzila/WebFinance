@@ -151,36 +151,32 @@ var onglet_shown='<?= $shown_tab ?>';
                                AND f.id_facture=fl.id_facture
                                GROUP BY YEAR(date_facture)
                                ORDER BY f.date_facture DESC") or die(mysql_error());
+        $Facture = new Facture();
         while ($year = mysql_fetch_object($result)) {
           printf('<tr><td style="border-bottom: solid 1px #777;" colspan="5"><b style="font-size: 16px;">%s</b> - <b><i>Encours %s&euro; HT</i></b> - <i>%s&euro; HT</i></td></tr>', $year->annee, number_format($year->du_ht_total, 2, ',', ' '), number_format($year->ca_ht_total, 2, ',', ' '));
-          $q = "SELECT f.*,f.id_facture,date_format(f.date_created, '%d/%m/%Y') as date,
-                       f.is_paye,SUM(fl.qtt*fl.prix_ht) as total,f.type_doc,
-                       unix_timestamp(date_facture) as ts_date_facture,
-                       UPPER(LEFT(f.type_doc, 2)) AS code_type_doc
-                FROM webfinance_invoices as f, webfinance_invoice_rows as fl
-                WHERE fl.id_facture=f.id_facture AND f.id_client=".$Client->id."
+
+          $q = "SELECT f.id_facture
+                FROM webfinance_invoices as f
+                WHERE f.id_client=".$Client->id."
                 AND year(f.date_facture) = '".$year->annee."'
-                GROUP BY f.id_facture
                 ORDER BY f.date_facture DESC";
            $result2 = mysql_query($q) or die("$q: ".mysql_error());
            $count=0;
-           $total_du = 0;
-           while ($facture = mysql_fetch_object($result2)) {
+//            $total_du = 0;
+           while (list($id_invoice) = mysql_fetch_array($result2)) {
+             $facture = $Facture->getInfos($id_invoice);
              // Récupération du texte des lignes facturées pour afficher en infobulle.
-             $facture->nice_date_facture = strftime("%d %B %Y", $facture->ts_date_facture);
              $description = "<b>".$facture->nice_date_facture."</b><br/>";
-             $result3 = mysql_query("SELECT description FROM webfinance_invoice_rows WHERE id_facture=".$facture->id_facture);
-             while (list($desc) = mysql_fetch_array($result3)) {
-               $desc = preg_replace("/\r\n/", " ", $desc);
-               $desc = preg_replace("/\"/", "", $desc);
-               $desc = preg_replace("/\'/", "", $desc);
-               $description .= $desc."<br/>";
+             foreach ($facture->lignes as $l) {
+               $l->description = preg_replace("/\r\n/", " ", $l->description);
+               $l->description = preg_replace("/\"/", "", $l->description);
+               $l->description = preg_replace("/\'/", "", $l->description);
+               $description .= $l->description."<br/>";
              }
-             mysql_free_result($result3);
 
-             if ((! $facture->is_paye) && ($facture->type_doc=="facture")) {
-               $total_du += $facture->total;
-             }
+//              if ((! $facture->is_paye) && ($facture->type_doc=="facture")) {
+//                $total_du += $facture->total;
+//              }
              $pdf = sprintf('&nbsp;<a href="gen_facture.php?id=%d"><img src="/imgs/icons/pdf.png" alt="FA" /></a>', $facture->id_facture);
 
              $icon = "";
@@ -199,8 +195,8 @@ var onglet_shown='<?= $shown_tab ?>';
                      $description,
                      $facture->nice_date_facture, // FIXME : nice_date = option dans partie admin heritee par tous les objets penser 6 pour 2006
                      $facture->code_type_doc, $facture->num_facture,
-                     number_format($facture->total, 2, ',', ' '),
-                     number_format($facture->total * 1.196, 2, ',', ' '), // FIXME : Taux de TVA par facture
+                     number_format($facture->total_ht, 2, ',', ' '),
+                     number_format($facture->total_ttc, 2, ',', ' '), // FIXME : Taux de TVA par facture
                      $icon,
                      $facture->id_facture,
                      $pdf);
@@ -244,7 +240,7 @@ $ts_select<br/>
 EOF;
 
 // Affichage de l'existant
-$q = "SELECT *, ts.name as type_suivi,
+$q = "SELECT s.id_suivi, s.message, ts.name as type_suivi,
              UNIX_TIMESTAMP(s.date_added) as ts_date_added
       FROM webfinance_suivi s, webfinance_type_suivi ts
       WHERE ts.id_type_suivi=s.type_suivi

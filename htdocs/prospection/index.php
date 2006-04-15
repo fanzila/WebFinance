@@ -34,14 +34,14 @@ while (list($id_client) = mysql_fetch_array($result)) {
   mysql_query("UPDATE webfinance_clients SET has_devis=true WHERE id_client=$id_client");
 }
 
-// Filtres et tris
+// Begin where clause
 $where_clause = "1";
-if (isset($_GET['q']) && ($_GET['q']!=0)) { $where_clause = "te.id_company_type=".$_GET['q']; }
+if (isset($_GET['q']) && ($_GET['q']!=0)) { $where_clause = "ct.id_company_type=".$_GET['q']; }
 
 if (preg_match("/[a-zA-Z ]+/", $_GET['namelike'])) {
   $where_clause .= " AND c.nom LIKE '%".$_GET['namelike']."%'";
 }
-$where_clause .= " AND c.id_company_type=te.id_company_type ";
+$where_clause .= " AND c.id_company_type=ct.id_company_type ";
 
 $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w+\\&*+/", "", $GLOBALS['_SERVER']['QUERY_STRING']);
 
@@ -72,9 +72,16 @@ switch ($_GET['sort']) {
 }
 
 $total_dehors = 0;
-$result = mysql_query("SELECT *,c.nom as nom FROM webfinance_clients c,webfinance_company_types te WHERE $where_clause ORDER BY $critere") or die(mysql_error());
-while ($client = mysql_fetch_object($result)) {
+// Find matching companies
+$result = mysql_query("SELECT c.nom, c.id_client,ct.id_company_type 
+                       FROM webfinance_clients c,webfinance_company_types ct 
+                       WHERE $where_clause 
+                       ORDER BY $critere") or die(mysql_error()); 
+$client = new Client(1);
+while ($found = mysql_fetch_object($result)) {
   $count++;
+
+  $client->setId($found->id_client); // Populate $client with calculated values from Client object
 
   $grand_total_ca_ht += $client->ca_total_ht;
   $grand_total_ca_ht_year += $client->ca_total_ht_year;
@@ -166,7 +173,7 @@ mysql_free_result($result);
   <input type="hidden" name="sort" value="<?= $_GET['sort'] ?>" />
   <input type="hidden" name="namelike" value="<?= $_GET['namelike'] ?>" />
   <select style="width: 150px;" onchange="this.form.submit();" name="q"><option value="0">Tous<?php
-  $result = mysql_query("SELECT te.id_company_type,te.nom,count(*) as nb FROM webfinance_company_types te, webfinance_clients c WHERE te.id_company_type=c.id_company_type group by te.id_company_type");
+  $result = mysql_query("SELECT ct.id_company_type,ct.nom,count(*) as nb FROM webfinance_company_types ct, webfinance_clients c WHERE ct.id_company_type=c.id_company_type group by ct.id_company_type");
   while ($s = mysql_fetch_object($result)) {
     printf('<option value="%s"%s>%s (%d fiches)</option>', $s->id_company_type, ($s->id_company_type==$_GET['q'])?" selected":"", $s->nom, $s->nb );
   }

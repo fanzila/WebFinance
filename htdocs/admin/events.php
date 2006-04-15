@@ -23,7 +23,7 @@ include("nav.php");
  <td>Qui</td>
 </tr>
 <?php
-$result = mysql_query("SELECT *,date_format(date,'%d/%m/%Y %k:%i') as nice_date FROM webfinance_userlog ORDER BY date DESC");
+$result = mysql_query("SELECT id_userlog,log,date,id_user,date_format(date,'%d/%m/%Y %k:%i') as nice_date FROM webfinance_userlog ORDER BY date DESC");
 $count=1;
 while ($log = mysql_fetch_object($result)) {
   $class = ($count%2)==0?"odd":"even";
