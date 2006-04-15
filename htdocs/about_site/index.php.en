@@ -9,7 +9,7 @@
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <link rel=stylesheet type=text/css href=webfinance.css />
+  <link rel="stylesheet" type="text/css" href="webfinance.css" />
   <title>Webfinance</title>
 </head>
 
@@ -24,13 +24,22 @@
 of bills, tracking of clients and contacts with them. 
 
 <p><i>Webfinance</i> was used solely by NBI until febuary 2006 when it was
-decided to open-source this little application. We hope to get help from
-developpers who are in need of similar functionnalities and could help us inprove
-them.</p>
+decided to open-source this little application. The purpose was to integrate
+with another similar application developped by <a href="http://www.isvtec.com/">ISVTEC SARL</a> 
+which at this time allowed the tracking of bank accounts but not the invoices.
+ISVTEC needed the &laquo;invoice manager&raquo; that NBI had, and NBI needed
+the &laquo;bank manager&raquo; that ISVTEC had.</p>
+
+<p>We then hope to get a small user base (namely other small companies in the
+IT field) and help from their developpers/managers who are in need of
+similar functionnalities.</p>
 
 <h2>Download</h2>
 
-While still in very early stages, you can download the latest sources here :
+While still in very early stages, you can download the latest sources here. The
+HEAD version is the latest developpement release. Probably buggy. The RELEASE
+versions are (hopefully) more stable versions. <a href="#roadmap">See below</a>
+for more info.
 
 <ul class="releases">
 <?php
@@ -53,7 +62,7 @@ apt-get install php-fpdf apache php4 mysql-server-4.1 ttf-freefont gettext libph
 <pre class="shell">
 echo "CREATE DATABASE webfinance" | mysql -u root --password=verysecret
 echo "GRANT ALL ON webfinance.* TO 'webfinance'@'localhost'" | mysql -u root --password=verysecret
-mysql -u root --password=verysecret &lt; /path/to/webfinance/bin/schema.mysql4.1.sql
+mysql -u root --password=verysecret &lt; /path/to/webfinance/schema.mysql4.1.sql
 </pre>
 
 <li>Add the virtual host to Apache configuration and make sure the name resolves :
@@ -91,18 +100,39 @@ modify dbconnect.php
   <li>Send us a mail : <a href="mailto:webfinance@nbi.fr">webfinance@nbi.fr</a>
 </ul>
 
-<h2>Roadmap</h2>
+<a name="roadmap"></a><h2>Roadmap</h2>
 
 <ul>
-  <li>RELEASE_0.1 : First open source</li>
-  <li>RELEASE_0.2 : Blend webcash and backoffice fully, numerous bugfixes needed, promote to other small companies (may 2006 ?)</li>
+  <li>RELEASE_0_1 : First open source</li>
+  <li>RELEASE_0_2 : Due date : <b>End of April 2006 ?</b>
+      <ul>
+        <li>Blend webcash and backoffice fully</li>
+        <li>numerous bugfixes needed</li>
+        <li>Nicer graphs everywhere
+        <li>Tab manager uses one <tt>include</tt> per tab, to generalize use of tabs everywhere needed
+        <li>Promote to other small companies and find 2 other users for feedback</li>
+      </ul>
+  <li>RELEASE_0_3 : Due date : <b>May 2006 ?</b>
+      <ul>
+        <li>Get rid of perl /cgi-bin/</li>
+        <li>Full gettext support (all is translated in at least french and english)</li>
+        <li>At least one different css skin</li>
+        <li>Todo manager</li>
+        <li>Calendar manager (exports/imports palm ?)</li>
+        <li>Bookmark manager : imports, merges and exports for Mozilla format, XBEL (galeon...)</li>
+        <li>access grants by role
+        <li>exports contact adresses to LDAP/emacs/mutt/CSV
+        <li>exports financial data as excel and CSV at least, perhaps to an accounting software (Coala ?)</li>
+      </ul>
   <li>???</li>
 </ul>
 
 <h2>Contributors</h2>
+<i>By alphabetical order</i>
 
 <ul>
   <li>Nicolas Bouthors &lt;nbouthors@nbi.fr&gt; <i>Lots of code</i></li>
+  <li>Thierry Randrianiriana &lt;thierry@jexiste.org&gt; <i>Lots of code, bugfixes and features</i></li>
   <li>Cedric Ravier &lt;cravier@nbi.fr&gt;<i>Some icons, logo, and other graphical stuff</i></li>
 </ul>
 
