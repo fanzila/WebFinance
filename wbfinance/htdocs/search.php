@@ -75,7 +75,7 @@ if ($search_in['invoices']) {
                           f.extra_bottom LIKE '%$q%' OR 
                           f.num_facture LIKE '%$q%' OR 
                           f.commentaire LIKE '%$q%' 
-                        ) GROUP BY f.id_facture") or die(mysql_error());
+                        ) GROUP BY f.id_facture") or wf_mysqldie()
 
   if (mysql_num_rows($result)) {
     print "<h2>"._('Results found in invoices')."</h2>";

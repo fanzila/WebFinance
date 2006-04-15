@@ -25,7 +25,7 @@ $result = mysql_query("select c.id_client,count(*) as has_unpaid
                        AND f.type_doc='facture'
                        AND f.date_facture<=now()
                        AND f.id_client=c.id_client
-                       group by c.id_client") or die(mysql_error());
+                       group by c.id_client") or wf_mysqldie()
 while (list($id_client) = mysql_fetch_array($result)) {
   mysql_query("UPDATE webfinance_clients SET has_unpaid=true WHERE id_client=$id_client");
 }
@@ -76,7 +76,7 @@ $total_dehors = 0;
 $result = mysql_query("SELECT c.nom, c.id_client,ct.id_company_type 
                        FROM webfinance_clients c,webfinance_company_types ct 
                        WHERE $where_clause 
-                       ORDER BY $critere") or die(mysql_error()); 
+                       ORDER BY $critere") or wf_mysqldie() 
 $client = new Client(1);
 while ($found = mysql_fetch_object($result)) {
   $count++;
@@ -106,7 +106,7 @@ $result = mysql_query("SELECT sum(fl.qtt*prix_ht)
                        FROM webfinance_invoice_rows fl, webfinance_invoices f
                        WHERE f.id_facture=fl.id_facture
                        AND f.type_doc='facture'
-                       AND year(f.date_facture) = year(now()) - 2") or die(mysql_error());
+                       AND year(f.date_facture) = year(now()) - 2") or wf_mysqldie()
 list($ca_total_ht_annee_nmoisun) = mysql_fetch_array($result);
 mysql_free_result($result);
 
@@ -115,7 +115,7 @@ $result = mysql_query("SELECT sum(fl.qtt*prix_ht)
                        FROM webfinance_invoice_rows fl, webfinance_invoices f
                        WHERE f.id_facture=fl.id_facture
                        AND f.type_doc='facture'
-                       AND year(f.date_facture) = year(now()) - 1") or die(mysql_error());
+                       AND year(f.date_facture) = year(now()) - 1") or wf_mysqldie()
 list($ca_total_ht_annee_precedente) = mysql_fetch_array($result);
 mysql_free_result($result);
 
@@ -124,17 +124,17 @@ $result = mysql_query("SELECT sum(fl.qtt*prix_ht)
                        FROM webfinance_invoice_rows fl, webfinance_invoices f
                        WHERE f.id_facture=fl.id_facture
                        AND f.type_doc='facture'
-                       AND year(f.date_facture) = year(now())") or die(mysql_error());
+                       AND year(f.date_facture) = year(now())") or wf_mysqldie()
 list($ca_total_ht_annee_encours) = mysql_fetch_array($result);
 mysql_free_result($result);
 
 // Trésorerie : total des transactions effectives 
-$result = mysql_query("SELECT sum(amount) FROM webfinance_transactions WHERE type='real'") or die(mysql_error());
+$result = mysql_query("SELECT sum(amount) FROM webfinance_transactions WHERE type='real'") or wf_mysqldie()
 list($tresorerie_real) = mysql_fetch_array($result);
 mysql_free_result($result);
 
 // Même chose en prévisionnel
-$result = mysql_query("SELECT sum(amount) FROM webfinance_transactions") or die(mysql_error());
+$result = mysql_query("SELECT sum(amount) FROM webfinance_transactions") or wf_mysqldie()
 list($tresorerie_prev) = mysql_fetch_array($result);
 mysql_free_result($result);
 

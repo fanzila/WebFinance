@@ -40,7 +40,7 @@ $result = mysql_query("SELECT sum(fl.prix_ht*fl.qtt) as total, count(f.id_factur
                        AND f.id_client = c.id_client
                        AND f.date_facture>=DATE_SUB(now(), INTERVAL $nb_months MONTH)
                        GROUP BY c.id_client
-                       ORDER BY total") or die(mysql_error());
+                       ORDER BY total") or wf_mysqldie()
 $count = mysql_num_rows($result);
 while ($billed = mysql_fetch_object($result)) {
   $billed->total = sprintf("%d", $billed->total);
