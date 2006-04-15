@@ -27,7 +27,7 @@ if (!preg_match("/^[0-9]+$/", $_GET['id'])) {
 }
 
 $Client = new Client($_GET['id']);
-$title = $Client->data->nom;
+$title = $Client->nom;
 
 array_push($extra_js, "/js/onglets.js");
 
@@ -90,7 +90,7 @@ var onglet_shown='<?= $shown_tab ?>';
 
 <table width="740" border="0" cellspacing="5" cellpadding="0" class="fiche_prospect">
 <tr>
-  <td width="100%"><input type="text" name="nom" value="<?= preg_replace('/"/', '\\"', $Client->data->nom) ?>" style="font-size: 18px; font-weight: bold; width: 510px; border-top: none; border-left: none; border-right: none;" /><br/></td>
+  <td width="100%"><input type="text" name="nom" value="<?= preg_replace('/"/', '\\"', $Client->nom) ?>" style="font-size: 18px; font-weight: bold; width: 510px; border-top: none; border-left: none; border-right: none;" /><br/></td>
   <td nowrap>
     <input style="width: 75px; background: #eee; color: #7f7f7f; border: solid 1px #aaa;" id="submit_button" onclick="submitForm(this.form);" type="button" value="<?= _('Save') ?>" />
     <input style="width: 75px; background: #eee; color: #7f7f7f; border: solid 1px #aaa;" id="cancel_button" type="button" onclick="window.location='fiche_prospect.php?id=<?= $facture->id_client ?>';" value="<?= _('Cancel') ?>" />
@@ -115,15 +115,15 @@ var onglet_shown='<?= $shown_tab ?>';
 
   <table border="0" width="100%"><tr valign="top"><td>
   <b><?= _('Address :') ?></b><br/>
-  <input type="text" name="addr1" value="<?= preg_replace('/"/', '\\"', $Client->data->addr1) ?>" style="color: #666; width: 200px" /><br/>
-  <input type="text" name="addr2" value="<?= preg_replace('/"/', '\\"', $Client->data->addr2) ?>" style="color: #666; width: 200px" /><br/>
-  <input type="text" name="addr3" value="<?= preg_replace('/"/', '\\"', $Client->data->addr3) ?>" style="color: #666; width: 200px" /><br/>
-  <input type="text" name="cp" value="<?= preg_replace('/"/', '\\"', $Client->data->cp) ?>" style="text-align: center; color: #666; width: 48px" /><input type="text" name="ville" value="<?= $Client->data->ville ?>" style="color: #666; width: 148px" /><br/>
-  <input type="text" name="pays" value="<?= preg_replace('/"/', '\\"', $Client->data->pays) ?>" style="color: #666; width: 80px; text-align: center;" /><br/>
+  <input type="text" name="addr1" value="<?= preg_replace('/"/', '\\"', $Client->addr1) ?>" style="color: #666; width: 200px" /><br/>
+  <input type="text" name="addr2" value="<?= preg_replace('/"/', '\\"', $Client->addr2) ?>" style="color: #666; width: 200px" /><br/>
+  <input type="text" name="addr3" value="<?= preg_replace('/"/', '\\"', $Client->addr3) ?>" style="color: #666; width: 200px" /><br/>
+  <input type="text" name="cp" value="<?= preg_replace('/"/', '\\"', $Client->cp) ?>" style="text-align: center; color: #666; width: 48px" /><input type="text" name="ville" value="<?= $Client->ville ?>" style="color: #666; width: 148px" /><br/>
+  <input type="text" name="pays" value="<?= preg_replace('/"/', '\\"', $Client->pays) ?>" style="color: #666; width: 80px; text-align: center;" /><br/>
   <b><?= _('Phone and URL :') ?></b><br/>
-  <input type="text" name="tel" value="<?= addslashes($Client->data->tel) ?>" class="tel" /><input type="text" name="fax" value="<?= $Client->data->fax ?>" class="fax" /><br/>
-  <input type="text" name="email" value="<?= addslashes($Client->data->email) ?>" class="email" /><br>
-  <input type="text" name="web" value="<?= addslashes($Client->data->web) ?>" class="web" /><br>
+  <input type="text" name="tel" value="<?= addslashes($Client->tel) ?>" class="tel" /><input type="text" name="fax" value="<?= $Client->fax ?>" class="fax" /><br/>
+  <input type="text" name="email" value="<?= addslashes($Client->email) ?>" class="email" /><br>
+  <input type="text" name="web" value="<?= addslashes($Client->web) ?>" class="web" /><br>
   </td><td width="100%">
   <?// Contacts ?>
 
