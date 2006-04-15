@@ -17,22 +17,18 @@
 <img src="logo.gif" style="float: right;" />
 <h1>Webfinance</h1>
 
-<h2>What is webfinance ?</h2>
+<h2>What is Webfinance?</h2>
 
-<p>Originaly developped by <a href="http://www.nbi.fr">NBI SARL</a>
-<i>Webfinance</i> is a web application based on PHP/MySQL to allow the creation
-of bills, tracking of clients and contacts with them. 
+<p><i>Webfinance</i> is a web application based on PHP/MySQL to manage
+invoices, handle clients contacts, manage cash-flow history and make
+cash-flow previsions.
 
-<p><i>Webfinance</i> was used solely by NBI until febuary 2006 when it was
-decided to open-source this little application. The purpose was to integrate
-with another similar application developped by <a href="http://www.isvtec.com/">ISVTEC SARL</a> 
-which at this time allowed the tracking of bank accounts but not the invoices.
-ISVTEC needed the &laquo;invoice manager&raquo; that NBI had, and NBI needed
-the &laquo;bank manager&raquo; that ISVTEC had.</p>
-
-<p>We then hope to get a small user base (namely other small companies in the
-IT field) and help from their developpers/managers who are in need of
-similar functionnalities.</p>
+<p>It has been initially developped by a collaborative effort from <a
+href="http://www.nbi.fr">NBI SARL</a> and <a
+href="http://www.isvtec.com/">ISVTEC</a> and is now publicly available
+as a Free and Open Source software under the <a
+href="http://www.gnu.org/">GNU General Public License</a>. We hope to
+get feedback and support from the Free Software community.
 
 <h2>Download</h2>
 
@@ -88,9 +84,9 @@ cp dbconnect.php.skel dbconnect.php
 modify dbconnect.php
 </pre>
 
-<li>Go to <a href="http://webfinance/">http://webfinance/</a> and login as administrator 
+<li>Go to <a href="http://webfinance/">http://webfinance/</a> and login as administrator
   : login = admin, password = admin<br/><br/>
-  
+
   You probably want to start by adding some users and configure your data</li>
 </ul>
 
@@ -132,9 +128,10 @@ modify dbconnect.php
 <i>By alphabetical order</i>
 
 <ul>
-  <li>Cyril Bouthors &lt;cyril@jexiste.org&gt; <i>Bug reports, feature requests, gettext integration</i></li>
-  <li>Nicolas Bouthors &lt;nbouthors@nbi.fr&gt; <i>Lots of code</i></li>
-  <li>Thierry Randrianiriana &lt;thierry@jexiste.org&gt; <i>Lots of code, bugfixes and features</i></li>
+  <li>Cyril Bouthors &lt;cyril@isvtec.com&gt; <i>Initial cash-flow specifications, bug reports, feature requests, gettext support</i></li>
+  <li>Nicolas Bouthors &lt;nbouthors@nbi.fr&gt; <i>A lot of code</i></li>
+  <li>Pierre Doleans &lt;pierre@isvtec.com&gt; <i>Bug reports, feature requests</i></li>
+  <li>Thierry Randrianiriana &lt;thierry@isvtec.com&gt; <i>A lot of code, bugfixes and features</i></li>
   <li>Cedric Ravier &lt;cravier@nbi.fr&gt;<i>Some icons, logo, and other graphical stuff</i></li>
 </ul>
 
