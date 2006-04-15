@@ -45,7 +45,8 @@ href="#roadmap">See below</a> for more info.
 <?php
 $releases = glob("webfinance_*.tar.gz");
 foreach ($releases as $r) {
-  printf('<li><a href="%s">%s</a></li>'."\n", $r, $r);
+  $a = stat($r);
+  printf('<li><a href="%s">%s</a> %s (%.2fKo)</li>'."\n", $r, $r, strftime("%Y-%m-%d", $a['mtime']), filesize($r)/1024);
 }
 ?>
 </ul>
@@ -131,6 +132,7 @@ modify dbconnect.php
 <i>By alphabetical order</i>
 
 <ul>
+  <li>Cyril Bouthors &lt;cyril@jexiste.org&gt; <i>Bug reports, feature requests, gettext integration</i></li>
   <li>Nicolas Bouthors &lt;nbouthors@nbi.fr&gt; <i>Lots of code</i></li>
   <li>Thierry Randrianiriana &lt;thierry@jexiste.org&gt; <i>Lots of code, bugfixes and features</i></li>
   <li>Cedric Ravier &lt;cravier@nbi.fr&gt;<i>Some icons, logo, and other graphical stuff</i></li>
