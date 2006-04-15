@@ -18,12 +18,12 @@ include("top.php");
 
 extract($_GET);
 if (!isset($width)) { $width = 800; }
-if (!isset($height)) { $height = 450; }
+if (!isset($height)) { $height = 200; }
 if (!isset($nb_months)) { $nb_months = 24; }
 
 ?>
 
-<h1>Graphique de Chiffre d'Affaires Mensuel</h1>
+<h1><?= _('Activity graphics') ?></h1>
 <br/>
 Afficher :
 <form onchange="this.submit();" action="showca.php" method="get">
@@ -59,4 +59,9 @@ hauteur image : <input class="bordered" style="width: 50px; text-align: center;"
 <input type="checkbox" name="grid" <?= $grid?"checked":"" ?> /> Dessiner la grille
 </form><br/>
 
-<img src="ca_mensuel.php?width=<?= $width ?>&height=<?= $height ?>&nb_months=<?= $nb_months ?>&grid=<?= $grid?1:0 ?>" alt="Graphique" />
+<h2><?= _('Total Income per month') // FIXME : comment dit-on hors taxes en anglais ? ?></h2>
+<img src="/graphs/ca_mensuel.php?width=<?= $width ?>&height=<?= $height ?>&nb_months=<?= $nb_months ?>&grid=<?= $grid?1:0 ?>" alt="Graphique" />
+<h2><?= _('Total income per client') // FIXME : comment dit-on hors taxes en anglais ? ?></h2>
+<img src="/graphs/clients_income.php?width=<?= $width ?>&height=<?= $height ?>&nb_months=<?= $nb_months ?>&grid=<?= $grid?1:0 ?>" alt="Graphique" />
+<h2><?= _('Debpt per client') // FIXME : comment dit-on hors taxes en anglais ? ?></h2>
+<img src="/graphs/clients_debpt.php?width=<?= $width ?>&height=<?= $height ?>&nb_months=<?= $nb_months ?>&grid=<?= $grid?1:0 ?>" alt="Graphique" />
