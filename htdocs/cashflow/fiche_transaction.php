@@ -15,7 +15,7 @@ require("../top_popup.php");
 $result = mysql_query("SELECT id, id_category, id_account, text, amount, type, date, comment, file_name , id_invoice,
                               unix_timestamp(date) as ts_date
                        FROM webfinance_transactions WHERE id=".$_GET['id'])
-  or die(mysql_error());
+  or wf_mysqldie()
 
 if(mysql_num_rows($result)>0){
   $transaction = mysql_fetch_object($result);
@@ -104,12 +104,12 @@ mysql_free_result($result);
 		     "date_format(date_facture, '%d/%m/%Y') as nice_date_facture ".
 		     "FROM webfinance_invoices ".
 		     "ORDER BY date_facture")
-    or die(mysql_error());
+    or wf_mysqldie()
 
    while($inv=mysql_fetch_assoc($res)){
 
      $result = mysql_query("SELECT prix_ht,qtt FROM webfinance_invoice_rows WHERE id_facture=".$inv['id'])
-       or die(mysql_error());
+       or wf_mysqldie()
 
      $lignes = array();
      $total = 0;

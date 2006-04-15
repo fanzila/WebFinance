@@ -63,7 +63,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 	  $nb_day = ( mktime(0,0,0,$end_month,$end_day,$end_year) - mktime(0,0,0,$start_month,$start_day,$start_year)) / 86400;
 
 	  $query_date_last_real=mysql_query("select UNIX_TIMESTAMP(max(date)) from webfinance_transactions where type='real' ". $query_account)
-	    or die(mysql_error());
+	    or wf_mysqldie()
 
 	   $date_last_real=mysql_result($query_date_last_real, 0);
 
@@ -89,7 +89,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 	      $query_sum_negative=mysql_query("SELECT SUM(amount) as sum ".
 					      "FROM webfinance_transactions ".
 					      "WHERE amount<0 AND date='".$tmp_date_ex[0]."-".$tmp_date_ex[1]."-".$tmp_date_ex[2]."' ".$query_account )
-		or die(mysql_error());
+		or wf_mysqldie()
 	      $res=mysql_fetch_array($query_sum_negative);
 	      if(empty($res['sum']))
 		$res['sum']=0;
@@ -99,7 +99,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 	      $query_sum_positive=mysql_query("SELECT SUM(amount) as sum ".
 					      "FROM webfinance_transactions ".
 					      "WHERE amount>0 AND date='".$tmp_date_ex[0]."-".$tmp_date_ex[1]."-".$tmp_date_ex[2]."' ".$query_account )
-		or die(mysql_error());
+		or wf_mysqldie()
 	      $res=mysql_fetch_array($query_sum_positive);
 	      if(empty($res['sum']))
 		$res['sum']=0;
@@ -125,7 +125,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 			$query_sum_negative=mysql_query("SELECT SUM(amount) as sum ".
 							"FROM webfinance_transactions ".
 							"WHERE amount<0 AND date='$year-$month-$day' ".$query_account )
-			  or die(mysql_error());
+			  or wf_mysqldie()
 			$res=mysql_fetch_array($query_sum_negative);
 			if(empty($res['sum']))
 				$res['sum']=0;
@@ -135,14 +135,14 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 			$query_sum_positive=mysql_query("SELECT SUM(amount) as sum ".
 							"FROM webfinance_transactions ".
 							"WHERE amount>0 AND date='$year-$month-$day' ".$query_account )
-			  or die(mysql_error());
+			  or wf_mysqldie()
 			$res=mysql_fetch_array($query_sum_positive);
 			if(empty($res['sum']))
 				$res['sum']=0;
 			$tmp[]=$res['sum'];
 
 //			$query_sold=mysql_query("SELECT SUM(amount) as sum FROM webfinance_transactions WHERE date<='$year-$month-$day' ".$query_account )
-//			or die(mysql_error());
+//			or wf_mysqldie()
 //			$res=mysql_fetch_array($query_sold);
 //			$tmp[]=$res['sum'];
 
@@ -206,7 +206,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 	  $nb_day = ( mktime(0,0,0,$end_month,$end_day,$end_year) - mktime(0,0,0,$start_month,$start_day,$start_year)) / 86400;
 
 	  $query_date_last_real=mysql_query("select UNIX_TIMESTAMP(max(date)) from webfinance_transactions where type='real' ". $query_account)
-	    or die(mysql_error());
+	    or wf_mysqldie()
 
 	   $date_last_real=mysql_result($query_date_last_real, 0);
 
@@ -234,7 +234,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 	      $query_sold=mysql_query("SELECT SUM(amount) as sum ".
 				      "FROM webfinance_transactions ".
 				      "WHERE date<='$tmp_date' ".$query_account )
-		or die(mysql_error());
+		or wf_mysqldie()
 	      $tmp_val=mysql_result($query_sold, 0);
 	      if(empty($tmp_val))
 		$tmp_val=0;
@@ -246,7 +246,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 		$query_sold=mysql_query("SELECT SUM(amount) as sum ".
 					"FROM webfinance_transactions ".
 					"WHERE date<='$tmp_date' AND type='real' ".$query_account )
-		  or die(mysql_error());
+		  or wf_mysqldie()
 		$tmp_val=mysql_result($query_sold, 0);
 		if(empty($tmp_val))
 		  $tmp_val=0;
@@ -278,7 +278,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 	      $query_sold=mysql_query("SELECT SUM(amount) as sum ".
 				      "FROM webfinance_transactions ".
 				      "WHERE date<='$year-$month-$day' ".$query_account )
-		or die(mysql_error());
+		or wf_mysqldie()
 	      $tmp_val=mysql_result($query_sold, 0);
 	      if(empty($tmp_val))
 		$tmp_val=0;
@@ -290,7 +290,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 		$query_sold=mysql_query("SELECT SUM(amount) as sum ".
 					"FROM webfinance_transactions ".
 					"WHERE date<='$year-$month-$day' AND type='real' ".$query_account )
-		  or die(mysql_error());
+		  or wf_mysqldie()
 		$tmp_val=mysql_result($query_sold, 0);
 		if(empty($tmp_val))
 		  $tmp_val=0;
@@ -351,7 +351,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 			$name="";
 			if(!empty($_GET['account'])){
 				$query=mysql_query("SELECT id, account_name FROM  webfinance_accounts WHERE id=".$_GET['account'])
-				  or die(mysql_error());
+				  or wf_mysqldie()
 				if(mysql_num_rows($query)==1){
 					$query_account=" AND id_account=".$_GET['account'];
 					$account=mysql_fetch_assoc($query);
@@ -360,7 +360,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 			}else
 			  $name.=_("All accounts");
 
-			$query_categories=mysql_query("SELECT id FROM webfinance_categories") or die(mysql_error());
+			$query_categories=mysql_query("SELECT id FROM webfinance_categories") or wf_mysqldie()
 
 			$data_positive=array();
 			$data_negative=array();
@@ -374,7 +374,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 							"WHERE  id_category<1 ".
 							"AND amount>0 ".
 							"AND date BETWEEN '$start_date' AND '$end_date' ".$query_account)
-					or die(mysql_error());
+					or wf_mysqldie()
 			$res=mysql_fetch_assoc($query_sum_category);
 			if($res['sum']!=0)
 				$tmp_categ[1][]=array(_('unknown'),$res['sum'],'peru');
@@ -384,7 +384,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 							"WHERE  id_category<1 ".
 							"AND amount<0 ".
 							"AND date BETWEEN '$start_date' AND '$end_date' ".$query_account)
-					or die(mysql_error());
+					or wf_mysqldie()
 			$res=mysql_fetch_assoc($query_sum_category);
 			if($res['sum']!=0)
 				$tmp_categ[0][]=array(_('unknown'),$res['sum'],'peru');
@@ -397,7 +397,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 								"AND date BETWEEN '$start_date' ".
 								"AND '$end_date' ".$query_account." ".
 								"GROUP BY webfinance_transactions.id_category")
-				  or die(mysql_error());
+				  or wf_mysqldie()
 				$res=mysql_fetch_assoc($query_sum_category);
 				if(!empty($res['sum']) AND $res['sum']<0){
 					$tmp_categ[0][]=array(utf8_decode($res['name']),$res['sum'],$res['color']);
@@ -496,7 +496,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 		}else{
 
 			$query_categories=mysql_query("SELECT id FROM webfinance_categories ORDER BY name")
-			  or die(mysql_error());
+			  or wf_mysqldie()
 
 			$data_positive=array();
 			$data_negative=array();
@@ -506,13 +506,13 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 			$tmp_categ=array();
 
 			$query_sum_category=mysql_query("SELECT SUM(amount) as sum FROM webfinance_transactions WHERE  id_category<1 AND amount>0 ")
-			  or die(mysql_error());
+			  or wf_mysqldie()
 			$res=mysql_fetch_assoc($query_sum_category);
 			if($res['sum']!=0)
 				$tmp_categ[1][]=array('unknown',$res['sum']);
 
 			$query_sum_category=mysql_query("SELECT SUM(amount) as sum FROM webfinance_transactions WHERE  id_category<1 AND amount<0 ")
-			  or die(mysql_error());
+			  or wf_mysqldie()
 			$res=mysql_fetch_assoc($query_sum_category);
 			if($res['sum']!=0)
 				$tmp_categ[0][]=array('unknown',$res['sum']);
@@ -522,7 +522,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 								"FROM webfinance_categories LEFT JOIN webfinance_transactions ON webfinance_categories.id=webfinance_transactions.id_category ".
 								"WHERE id_category=".$category['id']." ".
 								"GROUP BY webfinance_transactions.id_category ")
-				  or die(mysql_error());
+				  or wf_mysqldie()
 				$res=mysql_fetch_assoc($query_sum_category);
 				if(!empty($res['sum']) AND $res['sum']<0){
 					$tmp_categ[0][]=array($res['name'],$res['sum']);
@@ -609,9 +609,9 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 			$query=mysql_query("SELECT MIN(date) as min , MAX(date) as max ".
 					   "FROM webfinance_transactions ".
 					   "WHERE id_account=".$_GET['account'] )
-			  or die(mysql_error());
+			  or wf_mysqldie()
 		}else
-			$query=mysql_query("SELECT MIN(date) as min , MAX(date) as max FROM webfinance_transactions ") or die(mysql_error());
+			$query=mysql_query("SELECT MIN(date) as min , MAX(date) as max FROM webfinance_transactions ") or wf_mysqldie()
 
 		$res=mysql_fetch_assoc($query);
 		if(!empty($res['min']) AND !empty($res['max'])){
@@ -638,7 +638,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 
 			$nb_day = $nb_day+30;
 		$query_date_last_real=mysql_query("select UNIX_TIMESTAMP(max(date)) from webfinance_transactions where type='real' ". $query_account)
-			or die(mysql_error());
+			or wf_mysqldie()
 
 		$date_last_real=mysql_result($query_date_last_real, 0);
 
@@ -657,7 +657,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 
 				// prevs
 				$query_sold=mysql_query("SELECT SUM(amount) as sum FROM webfinance_transactions WHERE date<='$current_date' ".$query_account )
-					or die(mysql_error());
+					or wf_mysqldie()
 				$res=mysql_result($query_sold, 0);
 				if(empty($res))
 					$res=0;
@@ -667,7 +667,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 				// real
 				if(mktime(0, 0, 0, $var[1],1+$step, $var[0]) <= $date_last_real) {
 					$query_sold=mysql_query("SELECT SUM(amount) as sum FROM webfinance_transactions WHERE date<='$current_date' AND type='real' ".$query_account )
-						or die(mysql_error());
+						or wf_mysqldie()
 					$res=mysql_result($query_sold, 0);
 					if(empty($res))
 						$res=0;
@@ -730,10 +730,10 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 		if(!empty($_GET['account'])){
 			$query_account=" AND id_account=".$_GET['account'];
 			$query=mysql_query("SELECT MIN(date) as min , MAX(date) as max FROM webfinance_transactions WHERE id_account=".$_GET['account'] )
-			  or die(mysql_error());
+			  or wf_mysqldie()
 		}else
 			$query=mysql_query("SELECT MIN(date) as min , MAX(date) as max FROM webfinance_transactions ")
-			  or die(mysql_error());
+			  or wf_mysqldie()
 
 		$res=mysql_fetch_assoc($query);
 		if(!empty($res['min']) AND !empty($res['max'])){
@@ -774,7 +774,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 								"FROM webfinance_transactions ".
 								"WHERE amount<0 ".
 								"AND date BETWEEN '$begin_date' AND '$end_date' ".$query_account )
-				  or die(mysql_error());
+				  or wf_mysqldie()
 				$res=mysql_fetch_array($query_sum_negative);
 				$tmp[]=$res['sum']*-1;
 				$max=max($max,$res['sum']*-1);
@@ -783,12 +783,12 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 								"FROM webfinance_transactions ".
 								"WHERE amount>0 ".
 								"AND date BETWEEN '$begin_date' AND '$end_date' ".$query_account )
-				  or die(mysql_error());
+				  or wf_mysqldie()
 				$res=mysql_fetch_array($query_sum_positive);
 				$tmp[]=$res['sum']*1;
 				$max=max($max,$res['sum']);
 
-//				$query_sold=mysql_query("SELECT SUM(amount) as sum FROM webfinance_transactions WHERE date BETWEEN '$start_date' AND '$end_date' ".$query_account ) or die(mysql_error());
+//				$query_sold=mysql_query("SELECT SUM(amount) as sum FROM webfinance_transactions WHERE date BETWEEN '$start_date' AND '$end_date' ".$query_account ) or wf_mysqldie()
 //				$res=mysql_fetch_array($query_sold);
 //				$tmp[]=$res['sum'];
 

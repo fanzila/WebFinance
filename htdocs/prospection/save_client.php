@@ -13,7 +13,7 @@
 include("../inc/main.php");
 
 if ($_GET['action'] == "delete") {
-  mysql_query("DELETE FROM webfinance_clients WHERE id_client=".$_GET['id']) or die(mysql_error());
+  mysql_query("DELETE FROM webfinance_clients WHERE id_client=".$_GET['id']) or wf_mysqldie()
   $_SESSION['message'] = "Le client/prospect, tous ses contacts factures et devis ont été supprimés";
   header("Location: /prospection/");
   die();
@@ -27,7 +27,7 @@ $q = sprintf("UPDATE webfinance_clients SET nom='%s',addr1='%s',addr2='%s',addr3
              $nom, $addr1, $addr2, $addr3, $cp, $ville, $pays, $tel, $fax, $email, $vat_number, $siren, $id_company_type,
              $id_client );
 
-mysql_query($q) or die(mysql_error());
+mysql_query($q) or wf_mysqldie()
 header("Location: fiche_prospect.php?id=$id_client&onglet=".$focused_onglet);
 
 ?>

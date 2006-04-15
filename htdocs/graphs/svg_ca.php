@@ -39,7 +39,7 @@ for ($i=$nb_months-1 ; $i>=0; $i--) {
                          FROM webfinance_invoices as f, webfinance_invoice_rows as fl
                          WHERE fl.id_facture=f.id_facture
                          AND f.type_doc = 'facture'
-                         AND date_format(f.date_facture,'%Y%m') = '$mois' GROUP BY groupme") or die(mysql_error());
+                         AND date_format(f.date_facture,'%Y%m') = '$mois' GROUP BY groupme") or wf_mysqldie()
   $billed = mysql_fetch_object($result);
   $bar = new stdClass();
   $bar->value = $billed->total;
