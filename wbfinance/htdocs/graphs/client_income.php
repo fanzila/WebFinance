@@ -47,7 +47,7 @@ for ($i=$nb_months-1 ; $i>=0; $i--) {
                          WHERE fl.id_facture=f.id_facture
                          AND f.type_doc = 'facture'
                          AND f.id_client=".$_GET['id_client']."
-                         AND date_format(f.date_facture,'%Y%m') = '$mois' GROUP BY groupme") or wf_mysqldie()
+                         AND date_format(f.date_facture,'%Y%m') = '$mois' GROUP BY groupme") or wf_mysqldie();
   $billed = mysql_fetch_object($result);
   $billed->total = sprintf("%d", $billed->total);
   $bar->addValue($billed->total, $mois_shown, preg_replace("/\./", ",", sprintf("%.1f", $billed->total/1000))."K\xe2\x82\xac");

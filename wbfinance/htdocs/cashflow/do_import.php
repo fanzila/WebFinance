@@ -22,7 +22,7 @@ function compare_invoices_transaction($op){
                            WHERE fl.id_facture=f.id_facture
                            GROUP BY f.id_facture
                            HAVING total_facture='$op->montant'")
-    or wf_mysqldie()
+    or wf_mysqldie();
     $a = mysql_fetch_array($result);
     if (($a[2] == 1) && ($a[2] == 0)) {
       print "<b style=\"color: green;\">La facture correspondante à ce virement à été trouvée, elle est marquée « payée »</b><br/>";

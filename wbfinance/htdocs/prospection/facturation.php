@@ -68,7 +68,7 @@ $result = mysql_query("SELECT f.id_facture
                        AND f.id_client=c.id_client
                        AND f.date_facture<=now() 
                        AND ".$where_clause." 
-                       ORDER BY $order_clause") or wf_mysqldie()
+                       ORDER BY $order_clause") or wf_mysqldie();
 $mois = array();
 while (list($id_facture) = mysql_fetch_array($result)) {
   $count++;

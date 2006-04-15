@@ -65,7 +65,7 @@ foreach ($transactions as $op) {
                          FROM webfinance_categories
                          WHERE re IS NOT NULL
                          AND '".addslashes($op->desc)."' RLIKE re
-                         GROUP BY id") or wf_mysqldie()
+                         GROUP BY id") or wf_mysqldie();
   list($nb_matches,$id, $name) = mysql_fetch_array($result);
   switch ($nb_matches) {
     case 0 : print "<b style=\"color: orange;\">Aucune catégorie ne correspond, à vous de classer cette transaction</b><br/>";

@@ -21,7 +21,7 @@ if (is_array($_POST['action'])) {
       case "change_category" : $q = "UPDATE webfinance_transactions SET id_category=".$action['id_category']." WHERE id=$id_transaction"; break;
       default: die('Woooops, don\'t know how to '.$action['type']);
     }
-    mysql_query($q) or wf_mysqldie()
+    mysql_query($q) or wf_mysqldie();
   }
   header("Location: index.php?".$query);
   die();
@@ -68,7 +68,7 @@ if($id_transaction>0){
 	       $fq, $id_category, $id_account, $text, $amount, $type, $date, $comment);
  }
 
-mysql_query($q) or wf_mysqldie()
+mysql_query($q) or wf_mysqldie();
 
 ?>
 <script>

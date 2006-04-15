@@ -39,7 +39,7 @@ $data->addr3 = $_POST['addr3'];
 $data->date_creation = $_POST['date_creation'];
 
 $data = base64_encode(serialize($data));
-mysql_query("INSERT INTO webfinance_pref (type_pref, value) VALUES('societe', '$data');") or wf_mysqldie()
+mysql_query("INSERT INTO webfinance_pref (type_pref, value) VALUES('societe', '$data');") or wf_mysqldie();
 
 // Enregistrement compte(s) banquaire(s)
 mysql_query("DELETE FROM webfinance_pref WHERE type_pref='rib'");
@@ -59,7 +59,7 @@ foreach ($_POST as $n=>$v) {
 
     if ($rib->compte != "") {
       $rib = base64_encode(serialize($rib));
-      mysql_query("INSERT INTO webfinance_pref (type_pref, value) VALUES('rib', '$rib')") or wf_mysqldie()
+      mysql_query("INSERT INTO webfinance_pref (type_pref, value) VALUES('rib', '$rib')") or wf_mysqldie();
     }
   }
 }
@@ -76,7 +76,7 @@ if ($_POST['banque_new'] != "") {
   $rib->swift = $_POST['swift_new'];
 
   $rib = base64_encode(serialize($rib));
-  mysql_query("INSERT INTO webfinance_pref (type_pref, value) VALUES('rib', '$rib')") or wf_mysqldie()
+  mysql_query("INSERT INTO webfinance_pref (type_pref, value) VALUES('rib', '$rib')") or wf_mysqldie();
 }
 
 header("Location: societe.php");

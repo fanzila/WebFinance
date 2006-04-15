@@ -27,11 +27,11 @@ function update_ca() {
                           FROM webfinance_invoice_rows as fl, webfinance_invoices as f
                           WHERE fl.id_facture=f.id_facture
                           AND f.type_doc='facture'
-                          GROUP BY f.id_client") or wf_mysqldie()
+                          GROUP BY f.id_client") or wf_mysqldie();
   while ($ca = mysql_fetch_object($result)) {
     $q = sprintf("UPDATE webfinance_clients SET ca_total_ht='%.2f' WHERE id_client=%d",
                  $ca->ca_total_ht, $ca->id_client );
-    mysql_query($q) or wf_mysqldie()
+    mysql_query($q) or wf_mysqldie();
 
   }
   mysql_free_result($result);
@@ -42,11 +42,11 @@ function update_ca() {
                           WHERE fl.id_facture=f.id_facture
                           AND f.type_doc='facture'
                           AND f.date_facture>=date_sub(now(), INTERVAL 1 YEAR)
-                          GROUP BY f.id_client") or wf_mysqldie()
+                          GROUP BY f.id_client") or wf_mysqldie();
   while ($ca = mysql_fetch_object($result)) {
     $q = sprintf("UPDATE webfinance_clients SET ca_total_ht_year='%.2f' WHERE id_client=%d",
                  $ca->ca_total_ht_year, $ca->id_client );
-    mysql_query($q) or wf_mysqldie()
+    mysql_query($q) or wf_mysqldie();
 
   }
   mysql_free_result($result);
@@ -59,10 +59,10 @@ function update_ca() {
                          AND f.type_doc='facture'
                          AND f.date_facture<=now()
                          AND f.id_facture=fl.id_facture
-                         GROUP BY f.id_client") or wf_mysqldie()
+                         GROUP BY f.id_client") or wf_mysqldie();
   while ($du = mysql_fetch_object($result)) {
     $q = sprintf("UPDATE webfinance_clients SET total_du_ht='%.2f' WHERE id_client=%d", $du->total_du_ht, $du->id_client );
-    mysql_query($q) or wf_mysqldie()
+    mysql_query($q) or wf_mysqldie();
   }
 
 
@@ -75,7 +75,7 @@ function update_transaction($id_invoice){
     $facture = $Facture->getInfos($id_invoice);
 
     $result=mysql_query("SELECT id, id_category FROM webfinance_transactions WHERE id_invoice=$id_invoice" )
-      or wf_mysqldie()
+      or wf_mysqldie();
     $nb=mysql_num_rows($result);
 
     $text = "Num fact: $facture->num_facture, Ref contrat:  $facture->ref_contrat";
@@ -95,7 +95,7 @@ function update_transaction($id_invoice){
                          FROM webfinance_categories
                          WHERE re IS NOT NULL
                          AND '".addslashes($comment." ".$text )."' RLIKE re
-                         GROUP BY id") or wf_mysqldie()
+                         GROUP BY id") or wf_mysqldie();
 	list($nb_matches,$id, $name) = mysql_fetch_array($result);
 	if($nb_matches>0)
 	  $id_category=$id;
@@ -112,7 +112,7 @@ function update_transaction($id_invoice){
 	"comment='%s' ".
 	"WHERE id_invoice=%d";
       $q = sprintf($query, $facture->id_compte, $id_category, $text, preg_replace("!,!", ".", $facture->total_ttc),  date("Y-m-d", $facture->timestamp_date_paiement) , $comment, $id_invoice );
-      mysql_query($q) or wf_mysqldie()
+      mysql_query($q) or wf_mysqldie();
 
 
     }else if($nb<1){
@@ -127,7 +127,7 @@ function update_transaction($id_invoice){
 	"comment='%s', ".
 	"id_invoice=%d";
       $q = sprintf($query, $facture->id_compte, $id_category, $text, preg_replace('!,!', '.', $facture->total_ttc), date("Y-m-d", $facture->timestamp_date_paiement) , $comment, $id_invoice );
-      mysql_query($q) or wf_mysqldie()
+      mysql_query($q) or wf_mysqldie();
     }
   }
 }
@@ -170,7 +170,7 @@ if ($action == "save_facture") {
   if (($facture->is_envoye == 0) && ($is_envoye == "on")) {
     $result = mysql_query("SELECT count(*) FROM webfinance_invoices
                            WHERE num_facture!=''
-                           AND year(date_facture)=year('".$facture->date_facture."')") or wf_mysqldie()
+                           AND year(date_facture)=year('".$facture->date_facture."')") or wf_mysqldie();
     list($nb) = mysql_fetch_array($result);
     mysql_free_result($result);
 
@@ -186,7 +186,7 @@ if ($action == "save_facture") {
                 WHERE id_facture='%d'",
                $type_paiement, ($is_paye == "on")?1:0, ($is_paye == "on")?"date_paiement=now(), ":"date_paiement='$date_prev' , ", $ref_contrat, $extra_top, $extra_bottom, $accompte, $date_facture, $type_doc, $commentaire, $id_type_presta, $id_compte, ($is_envoye=="on")?1:0, $num_facture,
                $id_facture);
-  mysql_query($q) or wf_mysqldie()
+  mysql_query($q) or wf_mysqldie();
 
   logmessage("Enregistrement de la facture fa:".$_POST['id_facture']);
 
@@ -194,7 +194,7 @@ if ($action == "save_facture") {
     // Enregistrement d'une nouvelle ligne de facturation pour une facture.
     $q = sprintf("INSERT INTO webfinance_invoice_rows (id_facture,description,prix_ht,qtt) VALUES(%d, '%s', '%s', '%s')",
                  $_POST['id_facture'], $_POST['line_new'], $_POST['prix_ht_new'], $_POST['qtt_new'] );
-    $result = mysql_query($q) or wf_mysqldie()
+    $result = mysql_query($q) or wf_mysqldie();
     mysql_query("UPDATE webfinance_invoices SET date_generated=NULL WHERE id_facture=".$_POST['id_facture']);
   }
 
@@ -206,20 +206,20 @@ if ($action == "save_facture") {
                    $_POST['prix_ht_'.$matches[1]],
                    $_POST['qtt_'.$matches[1]],
                    $matches[1] );
-      mysql_query($q) or wf_mysqldie()
+      mysql_query($q) or wf_mysqldie();
     }
   }
 
   if (preg_match("/^raise:([0-9]+)$/", $_POST['raise_lower'], $matches)) {
-    mysql_query("UPDATE webfinance_invoice_rows SET ordre=ordre-3 WHERE id_facture_ligne=".$matches[1]) or wf_mysqldie()
+    mysql_query("UPDATE webfinance_invoice_rows SET ordre=ordre-3 WHERE id_facture_ligne=".$matches[1]) or wf_mysqldie();
     renum();
   }
   if (preg_match("/^lower:([0-9]+)$/", $_POST['raise_lower'], $matches)) {
-    mysql_query("UPDATE webfinance_invoice_rows SET ordre=ordre+3 WHERE id_facture_ligne=".$matches[1]) or wf_mysqldie()
+    mysql_query("UPDATE webfinance_invoice_rows SET ordre=ordre+3 WHERE id_facture_ligne=".$matches[1]) or wf_mysqldie();
     renum();
   }
   if (preg_match("/^delete:([0-9]+)$/", $_POST['raise_lower'], $matches)) {
-    mysql_query("DELETE FROM webfinance_invoice_rows WHERE id_facture_ligne=".$matches[1]) or wf_mysqldie()
+    mysql_query("DELETE FROM webfinance_invoice_rows WHERE id_facture_ligne=".$matches[1]) or wf_mysqldie();
     renum();
   }
 
@@ -254,7 +254,7 @@ if ($action == "save_facture") {
   list($id_client) = mysql_fetch_array($result);
   mysql_free_result($result);
 
-  mysql_query("INSERT INTO webfinance_invoices (id_client,date_created,date_facture) VALUES($id_client, now(), now())") or wf_mysqldie()
+  mysql_query("INSERT INTO webfinance_invoices (id_client,date_created,date_facture) VALUES($id_client, now(), now())") or wf_mysqldie();
   $result = mysql_query("SELECT id_facture FROM webfinance_invoices WHERE id_client=$id_client AND date_sub(now(), INTERVAL 2 SECOND)<date_created");
   list($id_new_facture) = mysql_fetch_array($result);
   mysql_free_result($result);
@@ -269,9 +269,9 @@ if ($action == "save_facture") {
                  f1.extra_bottom=f2.extra_bottom,
                  f1.id_type_presta=f2.id_type_presta
                WHERE f1.id_facture=$id_new_facture
-                 AND f2.id_facture=$id") or wf_mysqldie()
+                 AND f2.id_facture=$id") or wf_mysqldie();
 
-  mysql_query("INSERT INTO webfinance_invoice_rows (id_facture,description,qtt,ordre,prix_ht) SELECT $id_new_facture,description,qtt,ordre,prix_ht FROM webfinance_invoice_rows WHERE id_facture=$id") or wf_mysqldie()
+  mysql_query("INSERT INTO webfinance_invoice_rows (id_facture,description,qtt,ordre,prix_ht) SELECT $id_new_facture,description,qtt,ordre,prix_ht FROM webfinance_invoice_rows WHERE id_facture=$id") or wf_mysqldie();
 
   header("Location: edit_facture.php?id_facture=$id_new_facture");
   die();

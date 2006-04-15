@@ -13,7 +13,7 @@
   <?php
   global $Client;
   // Liste les personnes contacts pour ce client
-  $result = mysql_query("SELECT nom,prenom,fonction,mobile,tel,note,email FROM webfinance_personne WHERE client=".$_GET['id']." ORDER BY nom") or wf_mysqldie()
+  $result = mysql_query("SELECT nom,prenom,fonction,mobile,tel,note,email FROM webfinance_personne WHERE client=".$_GET['id']." ORDER BY nom") or wf_mysqldie();
   $count = 1;
   while ($contact = mysql_fetch_object($result)) {
     $contact->note = preg_replace("!\r\n!", "<br/>", $contact->note );

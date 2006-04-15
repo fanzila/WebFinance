@@ -39,7 +39,7 @@ foreach ($_POST['cat'] as $id=>$data) {
     }
     $q = preg_replace("!,$!", " WHERE id=$id", $q);
   }
-  mysql_query($q) or wf_mysqldie()
+  mysql_query($q) or wf_mysqldie();
 }
 
 header("Location: categories.php");

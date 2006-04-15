@@ -31,7 +31,7 @@ $result = mysql_query("SELECT sum(fl.prix_ht*fl.qtt) as total, count(f.id_factur
                        WHERE fl.id_facture=f.id_facture
                        AND f.is_paye=0
                        AND f.type_doc = 'facture'
-                       GROUP BY groupme") or wf_mysqldie()
+                       GROUP BY groupme") or wf_mysqldie();
 $bar->setBarColor(255, 92, 92) ;
 while ($billed = mysql_fetch_object($result)) {
   $billed->total = sprintf("%d", $billed->total);

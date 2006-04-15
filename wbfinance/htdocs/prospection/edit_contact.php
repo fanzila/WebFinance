@@ -33,7 +33,7 @@ if ((isset($_GET['id_client'])) && (!preg_match("/^[0-9]+$/", $_GET['id_client']
 if (isset($_GET['id_personne'])) {
   $action = "save";
 
-  $result = mysql_query("SELECT id_personne,nom,prenom,email,tel,mobile,client,fonction,note FROM webfinance_personne WHERE id_personne=".$_GET['id_personne']) or wf_mysqldie();
+  $result = mysql_query("SELECT id_personne,nom,prenom,email,tel,mobile,client,fonction,note FROM webfinance_personne WHERE id_personne=".$_GET['id_personne']) or wf_mysqldie();;
   $personne = mysql_fetch_object($result);
   mysql_free_result($result);
 
