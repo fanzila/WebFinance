@@ -58,11 +58,11 @@ $societe = unserialize(base64_decode($value));
 
 <?php
 
-$result = mysql_query("SELECT * FROM webfinance_pref WHERE owner=-1 AND type_pref='logo'");
+$result = mysql_query("SELECT type_pref,value FROM webfinance_pref WHERE owner=-1 AND type_pref='logo'");
 $logo = mysql_fetch_object($result);
 mysql_free_result($result);
 
-if ($logo->id_pref > 0) {
+if (mysql_num_rows($result)) {
   printf('Logo actuel : <br/><img src="data:image/png;base64,%s" /><br/>', $logo->value);
 }
 

@@ -7,11 +7,8 @@
 //
 // You can use and redistribute this file under the term of the GNU GPL v2.0
 //
-?>
-<?php
-
 // $Id$
-// Génère un PDF pour une facture NBI
+// Génère un PDF pour une facture 
 
 require("../inc/main.php");
 require("../inc/dbconnect.php");
@@ -19,20 +16,10 @@ require("/usr/share/fpdf/fpdf.php");
 
 define('EURO',chr(128));
 
+$Facture = new Facture();
 if (is_numeric($_GET['id'])) {
-  $result = mysql_query("SELECT f.*, c.nom as raison_sociale,
-                                c.addr1,c.addr2,c.addr3,c.cp,c.ville, c.vat_number,
-                                unix_timestamp(f.date_facture) as ts_date_facture
-                         FROM webfinance_invoices as f,webfinance_clients as c
-                         WHERE f.id_facture=".$_GET['id']."
-                         AND f.id_client=c.id_client") or die(mysql_error());
-  $facture = mysql_fetch_object($result);
-  mysql_free_result($result);
-
-//    print $facture->extra_bottom."<br/>";
-//    $facture->extra_bottom = preg_replace("/\xE2\x82\xAC/", "EUROSYMBOL", $facture->extra_bottom );
-//    print $facture->extra_bottom."<br/>";
-
+  $facture = $Facture->getInfos($_GET['id']);
+   
   foreach ($facture as $n=>$v) {
     $facture->$n = preg_replace("/\xE2\x82\xAC/", "EUROSYMBOL", $facture->$n );
     $facture->$n = utf8_decode($facture->$n); // FPDF ne support pas l'UTF-8
@@ -59,7 +46,7 @@ $pdf->Cell(190, 5, "Téléphone 0872 49 38 27 - Fax 01 46 87 21 99 - http://www.nb
 // Adresse
 $pdf->SetFont('Arial','B',11);
 $pdf->SetXY(115, 50);
-$pdf->Cell(80,5, $facture->raison_sociale, 0, 0 );
+$pdf->Cell(80,5, $facture->nom_client, 0, 0 );
 $pdf->SetFont('Arial','',11);
 $y = 54;
 for ($i=0 ; $i<3 ; $i++) {
@@ -214,9 +201,9 @@ $pdf->Ln();
 
 $pdf->SetAuthor("NBI SARL");
 $pdf->SetCreator("Webfinance $Id$ Using FPDF");
-$pdf->SetSubject("Facture n° ".$facture->num_facture." pour ".$facture->raison_sociale);
+$pdf->SetSubject("Facture n° ".$facture->num_facture." pour ".$facture->nom_client);
 $pdf->SetTitle("Facture n° ".$facture->num_facture);
-$pdf->Output("Facture_".$facture->num_facture."_".preg_replace("/[ ]/", "_", $facture->raison_sociale).".pdf", "D");
+$pdf->Output("Facture_".$facture->num_facture."_".preg_replace("/[ ]/", "_", $facture->nom_client).".pdf", "D");
 
 // vim: fileencoding=latin1
 

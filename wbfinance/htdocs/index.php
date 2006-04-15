@@ -33,7 +33,7 @@ include("top.php");
     <div style="overflow: auto; height: 250px;">
     <table width="100%" border="0" cellspacing="0" cellpadding="5">
     <?php
-    $result = mysql_query("SELECT *,date_format(date,'%d/%m/%Y %k:%i') as nice_date FROM webfinance_userlog ORDER BY date DESC LIMIT 100");
+    $result = mysql_query("SELECT id_userlog,log,date,id_user,date_format(date,'%d/%m/%Y %k:%i') as nice_date FROM webfinance_userlog ORDER BY date DESC LIMIT 100");
     $count=1;
     while ($log = mysql_fetch_object($result)) {
       $class = ($count%2)==0?"odd":"even";

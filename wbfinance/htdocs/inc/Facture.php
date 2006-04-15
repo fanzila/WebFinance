@@ -44,6 +44,7 @@ class Facture {
                                   unix_timestamp(f.date_facture) as timestamp_date_facture,
                                   unix_timestamp(f.date_paiement) as timestamp_date_paiement,
                                   date_format(f.date_facture, '%Y%m') as mois_facture,
+                                  UPPER(LEFT(f.type_doc, 2)) AS code_type_doc,
                                   date_sent<now() as is_sent,
                                   f.type_paiement, f.is_paye, f.ref_contrat, f.extra_top, f.extra_bottom, f.num_facture, f.*
                            FROM webfinance_clients as c, webfinance_invoices as f

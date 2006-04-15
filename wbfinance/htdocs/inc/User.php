@@ -18,9 +18,12 @@ class User {
     if ($id_user == "") {
       $id_user = $_SESSION['id_user'];
     }
-    $result = mysql_query("SELECT *,date_format(creation_date,'%d/%m/%Y') as nice_creation_date,
+    $result = mysql_query("SELECT last_name, first_name, login,
+                                  email, disabled, last_login, creation_date,
+                                  admin, role, modification_date,
+                                  date_format(creation_date,'%d/%m/%Y') as nice_creation_date,
                                   date_format(modification_date,'%d/%m/%Y') as nice_modification_date
-                           FROM webfinance_users WHERE id_user=$id_user") or nbi_mysqldie();
+                           FROM webfinance_users WHERE id_user=$id_user") or wf_mysqldie();
 
 
     $user = mysql_fetch_object($result);

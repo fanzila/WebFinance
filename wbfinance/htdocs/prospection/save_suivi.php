@@ -25,7 +25,7 @@ if ($_POST['action'] == "create") {
                $_POST['type_suivi'], $_POST['id_client'], $_POST['message'], $user->id_user,
                ($_POST['deltadays']!=0)?"date_add(now(), INTERVAL ".$_POST['deltadays']." DAY)":"NULL");
 
-  mysql_query($q) or nbi_mysqldie();
+  mysql_query($q) or wf_mysqldie();
 } elseif ($_POST['action'] == "save") {
 } else {
   die("Don't know what to do with posted data");

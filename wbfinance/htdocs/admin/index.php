@@ -37,7 +37,7 @@ function confirmDelete(id) {
   <td>Actions</td>
 </tr>
 <?php
-$result = mysql_query("SELECT *,date_format(last_login,'%d/%m/%Y') as nice_last_login
+$result = mysql_query("SELECT first_name,last_name,id_user,email,login,date_format(last_login,'%d/%m/%Y') as nice_last_login
                        FROM webfinance_users ORDER by last_login DESC");
 $count=1;
 while ($user = mysql_fetch_object($result)) {
