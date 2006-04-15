@@ -191,7 +191,7 @@ mysql_free_result($result);
 <td style="width: 278px; float: left; border: solid 1px black; margin-left: 10px; padding: 10px;">
 <b>CA &euro;HT sur quatre mois</b><br/>
 <center>
-<a href="/showca.php"><img src="/ca_mensuel.php?width=250&height=300&nb_months=4" alt="CA trimestre"/></a>
+<a href="/showca.php"><img src="/graphs/ca_mensuel.php?width=250&height=300&nb_months=4" alt="CA sur 4 mois"/></a>
 </center>
 </td>
 
