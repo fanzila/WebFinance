@@ -293,3 +293,12 @@ msgstr "Ajouter une transaction"
 
 msgid "Validate"
 msgstr "Valider"
+
+# Client.php (object)
+msgid "See financial info about this company on Societe.com"
+msgstr "Voir les informations financières à propos de cette entreprise sur Societe.com"
+
+msgid "Cannot link to societe.com if no RCS or siren specified. Click icon to perform a search."
+msgstr "Numéro de RCS ou numéro Siren innexistant lien direct Societe.com impossible. Cliquez pour faire une recherche"
+
+
