@@ -122,12 +122,14 @@ var onglet_shown='<?= $shown_tab ?>';
   <input type="text" name="pays" value="<?= preg_replace('/"/', '\\"', $Client->pays) ?>" style="color: #666; width: 80px; text-align: center;" /><br/>
   <b><?= _('Phone and URL :') ?></b><br/>
   <input type="text" name="tel" value="<?= addslashes($Client->tel) ?>" class="tel" /><input type="text" name="fax" value="<?= $Client->fax ?>" class="fax" /><br/>
-  <input type="text" name="email" value="<?= addslashes($Client->email) ?>" class="email" /><br>
-  <input type="text" name="web" value="<?= addslashes($Client->web) ?>" class="web" /><br>
+  <input type="text" name="email" value="<?= addslashes($Client->email) ?>" class="email" /><br/>
+  <input type="text" name="web" value="<?= addslashes($Client->web) ?>" class="web" /><br/>
+  <br/>
+  <?= $Client->link_societe ?>
   </td><td width="100%">
   <?// Contacts ?>
 
-  <b><?= _('Contacts :') ?></b><br>
+  <b><?= _('Contacts :') ?></b><br/>
   <?include "contact_entreprise.php" ?>
   <div style="text-align: center;"><a href="#" onclick="inpagePopup(event, this, 240, 250, 'edit_contact.php?id=_new&id_client=<?= $Client->id ?>');"><?= _('Add a new contact') ?></a></div>
   </td>

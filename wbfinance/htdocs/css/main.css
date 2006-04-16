@@ -34,7 +34,7 @@ textarea { font-family: arial, helvetica; font-size: 12px; }
 
 a:hover { color: #1010ff; background: #ffff60; }
 a { color: #3030ff; text-decoration: none; }
-img.bouton { /* cursor: pointer; cursor: hand; */ }
+img.bouton { cursor: pointer; cursor: hand; }
 a img { border: none; }
 
 /* Pas de bordure jaune sur les icones lien en hover */
@@ -44,8 +44,8 @@ img.icon { display: block;}
 div.nav a { background: none; }
 div.nav a:hover { background: none; }
 
-a.bouton { background: none; }
 a.bouton:hover { background: none; }
+a img.bouton:hover { background: none ; }
 
 .bordered { border: solid 1px black; }
 .framed { border: solid 1px black; border-top: none; }
@@ -79,7 +79,7 @@ input.fax { width: 79px; background: url('../imgs/icons/fax.gif') no-repeat top 
 input.email { width: 182px; background: url('../imgs/icons/mail.gif') no-repeat top left white; padding-left: 18px; text-align: center; }
 input.gsm { width: 79px; background: url('../imgs/icons/gsm.gif') no-repeat top left white; padding-left: 15px; text-align: center; word-spacing: -1px; }
 input.tva { width: 182px; background: url('../imgs/icons/tva.gif') no-repeat top left white; padding-left: 18px; text-align: center; }
-input.siren { width: 167px; background: url('../imgs/icons/siren.gif') no-repeat top left white; padding-left: 33px; text-align: center; }
+input.siren { width: 146px; background: url('../imgs/icons/siren.gif') no-repeat top left white; padding-left: 33px; text-align: center; }
 input.web { background: url('../imgs/icons/web.gif') no-repeat top left white; padding-left: 18px; text-align: center; width: 182px; }
 
 select { font-size: 11px; padding: 0px; }
