@@ -104,7 +104,7 @@ var onglet_shown='<?= $shown_tab ?>';
   <td id="handle_contacts" onclick="focusOnglet('contacts');"><?= _('Contacts') ?></td>
   <td id="handle_facturation" onclick="focusOnglet('facturation');"><?= _('Billing') ?></td>
   <td id="handle_log" onclick="focusOnglet('log');"><?= _('Flollow&nbsp;up') ?></td>
-  <td id="handle_other" onclick="focusOnglet('other');"><?= _('Miscelaneous') ?></td>
+  <td id="handle_other" onclick="focusOnglet('other');"><?= _('Miscellaneous') ?></td>
   <td id="handle_graph" onclick="focusOnglet('graph');"><?= _('Graphics') ?></td>
   <td style="background: none;" width="100%"></td>
 </tr>
