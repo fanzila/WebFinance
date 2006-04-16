@@ -130,10 +130,10 @@ function checkForm(f) {
   <td><select name="pref_default_onglet_fiche_contact">
   <?php
   foreach (array(
-                  'contacts' => _('Contact & Adresses'),
-                  'facturation' => _('Billing'), 
+                  'contacts' => _('Contact & Addresses'),
+                  'facturation' => _('Billing'),
                   'log' => _('Client log'),
-                  'other' => _('Miscelaneous'),
+                  'other' => _('Miscellaneous'),
                   'graph' => _('Graphics')
                  ) as $v=>$n) {
     printf('<option value="%s"%s>%s</option>', $v, ($v==$User->prefs->default_onglet_fiche_contact)?" selected":"", $n);

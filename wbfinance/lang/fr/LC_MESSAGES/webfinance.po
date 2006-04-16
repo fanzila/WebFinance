@@ -92,7 +92,7 @@ msgstr "Dépenses par catégorie\n%s\ndu %s au %s"
 msgid "Cash flow / all history"
 msgstr "Trésorerie / tout"
 
-msgid "real" 
+msgid "real"
 msgstr "Réel"
 
 msgid "prev"
@@ -107,7 +107,7 @@ msgstr "Enregistrer"
 msgid "Language"
 msgstr "Langue"
 
-msgid "Login screen" 
+msgid "Login screen"
 msgstr "Identification"
 
 msgid "Login"
@@ -200,7 +200,7 @@ msgstr "Coordonnées"
 msgid "Flollow&nbsp;up"
 msgstr "Suivi"
 
-msgid "Miscelaneous"
+msgid "Miscellaneous"
 msgstr "Divers"
 
 msgid "Phone and URL"
@@ -300,5 +300,3 @@ msgstr "Voir les informations financières à propos de cette entreprise sur Soc
 
 msgid "Cannot link to societe.com if no RCS or siren specified. Click icon to perform a search."
 msgstr "Numéro de RCS ou numéro Siren innexistant lien direct Societe.com impossible. Cliquez pour faire une recherche"
-
-
