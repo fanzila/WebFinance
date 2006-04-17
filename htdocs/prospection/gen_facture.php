@@ -21,10 +21,12 @@ if (is_numeric($_GET['id'])) {
   $facture = $Facture->getInfos($_GET['id']);
    
   foreach ($facture as $n=>$v) {
-    $facture->$n = preg_replace("/\xE2\x82\xAC/", "EUROSYMBOL", $facture->$n );
-    $facture->$n = utf8_decode($facture->$n); // FPDF ne support pas l'UTF-8
-    $facture->$n = preg_replace("/EUROSYMBOL/", chr(128), $facture->$n );
-    $facture->$n = preg_replace("/\\\\EUR\\{([0-9.,]+)\\}/", "\\1 ".chr(128), $facture->$n );
+    if (!is_array($v)) {
+      $facture->$n = preg_replace("/\xE2\x82\xAC/", "EUROSYMBOL", $facture->$n );
+      $facture->$n = utf8_decode($facture->$n); // FPDF ne support pas l'UTF-8
+      $facture->$n = preg_replace("/EUROSYMBOL/", chr(128), $facture->$n );
+      $facture->$n = preg_replace("/\\\\EUR\\{([0-9.,]+)\\}/", "\\1 ".chr(128), $facture->$n );
+    }
   }
 }
 
@@ -88,8 +90,7 @@ $pdf->Ln();
 
 $total_ht = 0;
 
-$result = mysql_query("SELECT * FROM webfinance_invoice_rows WHERE id_facture=".$facture->id_facture." ORDER BY ordre");
-while ($ligne = mysql_fetch_object($result)) {
+foreach ($facture->lignes as $ligne ) {
   foreach( $ligne as $n=>$v) {
     $ligne->$n = preg_replace("/\xE2\x82\xAC/", "EUROSYMBOL", $ligne->$n );
     $ligne->$n = utf8_decode($ligne->$n);
@@ -116,7 +117,6 @@ while ($ligne = mysql_fetch_object($result)) {
   $pdf->Cell(30, 2, "", "LR");
   $pdf->Ln();
 }
-mysql_free_result($result);
 
 $y_fin = $pdf->getY();
 if ($y < 190) {
