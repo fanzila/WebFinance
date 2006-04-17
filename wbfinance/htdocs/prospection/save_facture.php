@@ -179,8 +179,8 @@ if ($action == "save_facture") {
     $num_facture = strftime("%y-$nb", $facture->timestamp_date_facture);
   }
   //date prev
-  $date_prev=$facture->timestamp_date_facture+($_POST['type_prev'] * 86400 );
-  $date_prev=date("Y-m-d",$date_prev);
+//   $date_prev=$facture->timestamp_date_facture+($_POST['type_prev'] * 86400 );
+//   $date_prev=date("Y-m-d",$date_prev);
 
   $q = sprintf("UPDATE webfinance_invoices SET type_paiement='%s',is_paye=%d,%s ref_contrat='%s', extra_top='%s', extra_bottom='%s', accompte='%s', date_facture='%s', type_doc='%s', commentaire='%s', id_type_presta=%d, id_compte=%d, is_envoye=%d, num_facture='%s'
                 WHERE id_facture='%d'",
