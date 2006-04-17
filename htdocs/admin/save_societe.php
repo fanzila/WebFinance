@@ -36,6 +36,8 @@ $data->siren = $_POST['siren'];
 $data->addr1 = $_POST['addr1'];
 $data->addr2 = $_POST['addr2'];
 $data->addr3 = $_POST['addr3'];
+$data->cp = $_POST['cp'];
+$data->ville = stripslashes($_POST['ville']);
 $data->date_creation = $_POST['date_creation'];
 
 $data = base64_encode(serialize($data));

@@ -49,6 +49,13 @@ $societe = unserialize(base64_decode($value));
   <td><input type="text" name="addr3" value="<?= $societe->addr3 ?>" /></td>
 </tr>
 <tr>
+  <td>CP/Ville</td>
+  <td>
+    <input type="text" style="width: 50px;" name="cp" value="<?= $societe->cp ?>" />
+    <input type="text" style="width: 80px;" name="ville" value="<?= $societe->ville ?>" />
+  </td>
+</tr>
+<tr>
   <td>Date de création</td>
   <td><input type="text" name="date_creation" value="<?= $societe->date_creation ?>" />
 </tr>
