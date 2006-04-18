@@ -15,7 +15,6 @@ include("inc/main.php");
 $title = _("Home");
 include("top.php");
 ?>
-
 <table border="0" cellspacing="5" cellpadding="0" class="mosaique">
 <tr>
   <td colspan="2">

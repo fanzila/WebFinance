@@ -59,6 +59,13 @@ $societe = unserialize(base64_decode($value));
   <td>Date de création</td>
   <td><input type="text" name="date_creation" value="<?= $societe->date_creation ?>" />
 </tr>
+<tr>
+  <td colspan="2">
+  Invoice top line <br/>
+  <input style="width: 300px;" type="text" name="invoice_top_line1" value="<?= $societe->invoice_top_line1 ?>" /><br/>
+  <input style="width: 300px;" type="text" name="invoice_top_line2" value="<?= $societe->invoice_top_line2 ?>" /><br/>
+  </td>
+</tr>
 </table>
 
 <h1>Logo</h1>

@@ -39,6 +39,8 @@ $data->addr3 = $_POST['addr3'];
 $data->cp = $_POST['cp'];
 $data->ville = stripslashes($_POST['ville']);
 $data->date_creation = $_POST['date_creation'];
+$data->invoice_top_line1 = $_POST['invoice_top_line1'];
+$data->invoice_top_line2 = $_POST['invoice_top_line2'];
 
 $data = base64_encode(serialize($data));
 mysql_query("INSERT INTO webfinance_pref (type_pref, value) VALUES('societe', '$data');") or wf_mysqldie();
