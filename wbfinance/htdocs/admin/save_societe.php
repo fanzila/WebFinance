@@ -23,7 +23,7 @@ if (file_exists($_FILES['logo']['tmp_name'])) {
     $data .= $read;
   }
   $data = base64_encode($data);
-  mysql_query("INSERT INTO webfinance_pref (owner,value,type_pref) values(-1, '$data', 'logo')");
+  mysql_query("INSERT INTO webfinance_pref (owner,value,type_pref) values(-1, '$data', 'logo')") or wf_mysqldie("Admin::saving logo");
 }
 
 // Enregistrement adresse et raison sociale
