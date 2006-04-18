@@ -300,3 +300,6 @@ msgstr "Voir les informations financières à propos de cette entreprise sur Soc
 
 msgid "Cannot link to societe.com if no RCS or siren specified. Click icon to perform a search."
 msgstr "Numéro de RCS ou numéro Siren innexistant lien direct Societe.com impossible. Cliquez pour faire une recherche"
+
+msgid " #"
+msgstr " n°"

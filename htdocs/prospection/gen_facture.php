@@ -14,6 +14,28 @@ require("../inc/main.php");
 require("../inc/dbconnect.php");
 require("/usr/share/fpdf/fpdf.php");
 
+// Get my company info (address...)
+$result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='societe' AND owner=-1");
+if (mysql_num_rows($result) != 1) { die(_("You didn't setup your company address and name. Go to 'Admin' and 'My company'")); }
+list($value) = mysql_fetch_array($result);
+mysql_free_result($result);
+$societe = unserialize(base64_decode($value));
+foreach ($societe as $n=>$v) {
+  $societe->$n = preg_replace("/\xE2\x82\xAC/", "EUROSYMBOL", $societe->$n );
+  $societe->$n = utf8_decode($societe->$n); // FPDF ne support pas l'UTF-8
+  $societe->$n = preg_replace("/EUROSYMBOL/", chr(128), $societe->$n );
+  $societe->$n = preg_replace("/\\\\EUR\\{([0-9.,]+)\\}/", "\\1 ".chr(128), $societe->$n );
+}
+$result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='logo' AND owner=-1");
+if (mysql_num_rows($result) != 1) { die(_("You didn't setup the logo for your comany. Go to 'Admin' and 'My company'")); }
+list($logo_data) = mysql_fetch_array($result);
+$logo_data = base64_decode($logo_data);
+
+// Save the logo to a temp file since fpdf cannot read from a var
+$logo_tmp = fopen("/tmp/logo.png", "w");
+fwrite($logo_tmp, $logo_data);
+fclose($logo_tmp);
+
 define('EURO',chr(128));
 
 $Facture = new Facture();
@@ -37,13 +59,15 @@ $pdf->SetAutoPageBreak(true);
 $pdf->AddPage();
 
 // Logo
-$pdf->Image("logo_nbi.jpg", 90, 5, 25 );
+$pdf->Image("/tmp/logo.png", 90, 5, 25 );
 $pdf->SetFont('Arial','',5);
-$pdf->SetXY(10,14);
-$pdf->Cell(190, 5, "NBI - SARL au capital de 15000".EURO." - 3 Allée Berlioz 94800 Villejuif - RCS Créteil 451 605 380", 0, 0, "C");
+$logo_size = getimagesize("/tmp/logo.png");
+$logo_height=$logo_size[1]*25/$logo_size[0];
+$pdf->SetXY(10,$logo_height+5);
+$pdf->Cell(190, 5, $societe->invoice_top_line1, 0, 0, "C");
 $pdf->SetLineWidth(0.3);
-$pdf->SetXY(10,17);
-$pdf->Cell(190, 5, "Téléphone 0872 49 38 27 - Fax 01 46 87 21 99 - http://www.nbi.fr/ - contact@nbi.fr", "B", 0, "C");
+$pdf->SetXY(10,$logo_height+8);
+$pdf->Cell(190, 5, $societe->invoice_top_line2, "B", 0, "C");
 
 // Adresse
 $pdf->SetFont('Arial','B',11);
@@ -63,26 +87,26 @@ $pdf->SetXY(115, $y);
 $pdf->Cell(80, 4, $facture->cp." ".$facture->ville, 0, 0 );
 
 // Donnees factures
-$pdf->SetXY(10, 27);
+$pdf->SetXY(10, 19+$logo_height);
 $pdf->SetFont('Arial','B',14);
-$pdf->Cell(60, 4, "Facture n° ".$facture->num_facture);
+$pdf->Cell(60, 4, ucfirst($facture->type_doc).utf8_decode(_(' #')).$facture->num_facture);
 $pdf->SetFont('Arial','',9);
-$pdf->SetXY(10, 40);
-$pdf->Cell(60, 4, "Villejuif le ".strftime("%d/%m/%Y", $facture->ts_date_facture));
-$pdf->SetXY(10, 45);
-$pdf->Cell(60, 4, "Code TVA NBI : FR 80 451 605 380");
-$pdf->SetXY(10, 50);
+$pdf->SetXY(10, 27+$logo_height);
+$pdf->Cell(60, 4, $societe->ville." le ".strftime("%d/%m/%Y", $facture->timestamp_date_facture));
+$pdf->SetXY(10, 32+$logo_height);
+$pdf->Cell(60, 4, "Code TVA ".$societe->raison_sociale." : ".$societe->tva_intracommunautaire);
+$pdf->SetXY(10, 37+$logo_height);
 $pdf->Cell(60, 4, "Votre Code TVA : ".$facture->vat_number);
-$pdf->SetXY(10, 55);
+$pdf->SetXY(10, 42+$logo_height);
 $pdf->Cell(60, 4, $facture->ref_contrat);
-$pdf->SetXY(10, 60);
+$pdf->SetXY(10, 47+$logo_height);
 $pdf->Cell(60, 4, $facture->extra_top);
 
 // Lignes de facturation
 $pdf->SetLineWidth(0.1);
 $pdf->SetXY(10,80);
 $pdf->SetFont('Arial', 'B', '10');
-$pdf->Cell(110, 6, "Désignation", 1);
+$pdf->Cell(110, 6, "Désignation", 1); // FIXME : gettext
 $pdf->Cell(20, 6, "Quantité", 1, 0, "C" );
 $pdf->Cell(30, 6, "Prix HT", 1, 0, "C" );
 $pdf->Cell(30, 6, "Total", 1, 0, "C" );
@@ -129,8 +153,8 @@ if ($y < 190) {
 
 // Total HT
 $pdf->SetFont('Arial', '', '11');
-$pdf->Cell(130, 6, "Paiement : ".$facture->type_paiement );
-$pdf->Cell(30, 6, "Sous Total", "", 0, "R");
+$pdf->Cell(130, 6, "Paiement : ".$facture->type_paiement ); // FIXME : gettext
+$pdf->Cell(30, 6, "Sous Total", "", 0, "R"); // FIXME : gettext
 $pdf->Cell(30, 6, preg_replace("/\./", ",", sprintf("%.2f".EURO, $total_ht)), "", 0, "R");
 $pdf->Ln();
 
@@ -199,11 +223,15 @@ $pdf->Cell(25, 6, "SWIFT/BIC : ", "B");
 $pdf->Cell(55, 6, $cpt->swift, "BR");
 $pdf->Ln();
 
-$pdf->SetAuthor("NBI SARL");
+$pdf->SetAuthor($societe->raison_sociale);
 $pdf->SetCreator("Webfinance $Id$ Using FPDF");
-$pdf->SetSubject("Facture n° ".$facture->num_facture." pour ".$facture->nom_client);
-$pdf->SetTitle("Facture n° ".$facture->num_facture);
-$pdf->Output("Facture_".$facture->num_facture."_".preg_replace("/[ ]/", "_", $facture->nom_client).".pdf", "D");
+$pdf->SetSubject(ucfirst($facture->type_doc)." n° ".$facture->num_facture." pour ".$facture->nom_client);
+$pdf->SetTitle(ucfirst($facture->type_doc)." n° ".$facture->num_facture);
+$pdf->Output(ucfirst($facture->type_doc)."_".$facture->num_facture."_".preg_replace("/[ ]/", "_", $facture->nom_client).".pdf", "D");
+
+
+// Delete temporary logofile
+unlink("/tmp/logo.png");
 
 // vim: fileencoding=latin1
 
