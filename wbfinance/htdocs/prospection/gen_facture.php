@@ -8,7 +8,7 @@
 // You can use and redistribute this file under the term of the GNU GPL v2.0
 //
 // $Id$
-// Génère un PDF pour une facture 
+// Génère un PDF pour une facture
 
 require("../inc/main.php");
 require("../inc/dbconnect.php");
@@ -41,7 +41,7 @@ define('EURO',chr(128));
 $Facture = new Facture();
 if (is_numeric($_GET['id'])) {
   $facture = $Facture->getInfos($_GET['id']);
-   
+
   foreach ($facture as $n=>$v) {
     if (!is_array($v)) {
       $facture->$n = preg_replace("/\xE2\x82\xAC/", "EUROSYMBOL", $facture->$n );
@@ -227,7 +227,12 @@ $pdf->SetAuthor($societe->raison_sociale);
 $pdf->SetCreator("Webfinance $Id$ Using FPDF");
 $pdf->SetSubject(ucfirst($facture->type_doc)." n° ".$facture->num_facture." pour ".$facture->nom_client);
 $pdf->SetTitle(ucfirst($facture->type_doc)." n° ".$facture->num_facture);
-$pdf->Output(ucfirst($facture->type_doc)."_".$facture->num_facture."_".preg_replace("/[ ]/", "_", $facture->nom_client).".pdf", "D");
+
+if(isset($_GET['dest']) AND $_GET['dest']=="file"){
+  $pdf->Output("/tmp/".ucfirst($facture->type_doc)."_".$facture->num_facture."_".preg_replace("/[ ]/", "_", $facture->nom_client).".pdf", "F");
+  $pdf->Close();
+}else
+  $pdf->Output(ucfirst($facture->type_doc)."_".$facture->num_facture."_".preg_replace("/[ ]/", "_", $facture->nom_client).".pdf", "D");
 
 
 // Delete temporary logofile

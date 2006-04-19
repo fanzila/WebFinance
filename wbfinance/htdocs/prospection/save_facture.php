@@ -275,7 +275,81 @@ if ($action == "save_facture") {
 
   header("Location: edit_facture.php?id_facture=$id_new_facture");
   die();
-} else {
+
+  }else if($action == "send"){
+
+  extract($_GET);
+  require("/usr/share/php/libphp-phpmailer/class.phpmailer.php");
+
+  $mails=array();
+
+  //Récupérer les adresses mails:
+  $result = mysql_query("SELECT webfinance_invoices.id_client, email ".
+			"FROM webfinance_clients LEFT JOIN webfinance_invoices ON (webfinance_clients.id_client = webfinance_invoices.id_client) ".
+			"WHERE id_facture=$id")
+     or wf_mysqldie();
+  $client=mysql_fetch_assoc($result);
+  mysql_free_result($result);
+  if(preg_match('/^[A-z0-9][\w.-]*@[A-z0-9][\w\-\.]+\.[A-Za-z]{2,4}$/',$client['email']))
+    $mails[]=$client['email'];
+  $result = mysql_query("SELECT email FROM webfinance_personne WHERE client=".$client['id_client'])
+    or wf_mysqldie();
+  while($person=mysql_fetch_assoc($result)){
+    if(!in_array($person['email'],$mails) AND preg_match('/^[A-z0-9][\w.-]*@[A-z0-9][\w\-\.]+\.[A-Za-z]{2,4}$/',$person['email']))
+      $mails[] = $person['email'];
+  }
+  mysql_free_result($result);
+
+  if(count($mails)>0){
+
+    //récupérer les info sur la société
+    $result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='societe' AND owner=-1")
+      or wf_mysqldie();
+    list($value) = mysql_fetch_array($result);
+    mysql_free_result($result);
+    $societe = unserialize(base64_decode($value));
+
+    //récupération des infos sur la facture
+    $Facture = new Facture();
+    $invoice = $Facture->getInfos($id);
+
+    //compléter l'entête de l'email
+    $mail = new PHPMailer();
+    $mail->From = $societe->email;
+    $mail->FromName = $societe->raison_sociale;
+    foreach($mails as $address)
+      $mail->AddAddress($address);
+
+    $mail->Subject = ucfirst($invoice->type_doc)." n° ".$invoice->num_facture." pour ".$invoice->nom_client;
+    $mail->Body = ucfirst($invoice->type_doc)." n° ".$invoice->num_facture." pour ".$invoice->nom_client;
+
+    $mail->WordWrap = 80;
+
+    //générer la facture en pdf
+    $fp = fopen("http://".$_SERVER['SERVER_NAME']."/prospection/gen_facture.php?dest=file&id=$id","r");
+    fclose($fp);
+
+    //attach the invoice file
+    $file_name=ucfirst($invoice->type_doc)."_".$invoice->num_facture."_".preg_replace("/[ ]/", "_", $invoice->nom_client).".pdf";
+    $mail->AddAttachment("/tmp/$file_name" , $file_name);
+
+    if(!$mail->Send()){
+      echo _("Invoice was not sent");
+      echo "Mailer Error: " . $mail->ErrorInfo;
+    }
+    else{
+      //mettre à jour l'état de la facture, update sql
+      mysql_query("UPDATE webfinance_invoices SET is_envoye=1")
+	or wf_mysqldie();
+    }
+    header("Location: edit_facture.php?id_facture=$id");
+    die();
+
+  }else
+    echo _("Please add mail address!");
+
+
+ }else {
   die("Don't know what to do when asked to $action an invoice");
 }
 
