@@ -283,6 +283,7 @@ function del_ligne() {
       <td colspan="2" class="liens_boutons">
       <a href="fiche_prospect.php?id=<?= $facture->id_client ?>">Retour fiche client</a><br/>
       <a href="save_facture.php?id=<?= $facture->id_facture ?>&action=duplicate">Dupliquer <?= $facture->type_doc ?></a><br/>
+      <a href="save_facture.php?id=<?= $facture->id_facture ?>&action=send">Envoyer <?= $facture->type_doc ?></a><br/>
       <?php
         printf('<a href="gen_facture.php?id=%d">PDF</a><br/>', $facture->id_facture);
         if (! $facture->immuable)

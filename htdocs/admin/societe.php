@@ -49,6 +49,10 @@ $societe = unserialize(base64_decode($value));
   <td><input type="text" name="addr3" value="<?= $societe->addr3 ?>" /></td>
 </tr>
 <tr>
+  <td><?= _('Email') ?></td>
+  <td><input type="text" name="email" value="<?= $societe->email ?>" /></td>
+</tr>
+<tr>
   <td>CP/Ville</td>
   <td>
     <input type="text" style="width: 50px;" name="cp" value="<?= $societe->cp ?>" />
@@ -169,7 +173,7 @@ EOF;
 </tr>
 </table>
 <i>Nota : pour supprimer un compte banquaire, positionner le numéro de compte à vide</i><br/>
-<input type="submit" value="Enregistrer" />
+  <input type="submit" value=<?= _("Save") ?> />
 </form>
 
 <?php

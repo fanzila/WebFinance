@@ -1,4 +1,4 @@
-- apt-get install php-fpdf
+- apt-get install php-fpdf libphp-phpmailer
 
 - create a database
 - insert the SQL dump
