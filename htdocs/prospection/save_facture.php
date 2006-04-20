@@ -235,18 +235,21 @@ if ($action == "save_facture") {
 } elseif ($action == "delete_facture") {
   // delete_facture
   // Suppression d'une facture
-  $result = mysql_query("SELECT id_client FROM webfinance_invoices WHERE id_facture=".$_GET['id_facture']);
-  list($id_client) = mysql_fetch_array($result);
+  $result = mysql_query("SELECT id_client, num_facture FROM webfinance_invoices WHERE id_facture=".$_GET['id_facture']);
+  list($id_client,$num_facture) = mysql_fetch_array($result);
   mysql_free_result($result);
 
-  logmessage("Suppression d'une facture pour client:$id_client");
+  logmessage(_("Delete invoice")." #$num_facture for client:$id_client");
+  logmessage(_("Delete invoice")." #$num_facture fa:".$_GET['id_facture'] );
 
   mysql_query("DELETE FROM webfinance_invoices WHERE id_facture=".$_GET['id_facture']);
   mysql_query("DELETE FROM webfinance_invoice_rows WHERE id_facture=".$_GET['id_facture']);
   mysql_query("DELETE FROM webfinance_transactions WHERE id_invoice=".$_GET['id_facture']." AND type<>'real'");
 
   update_ca();
+
   header("Location: fiche_prospect.php?id=$id_client");
+
 } elseif ($action == "duplicate") {
   extract($_GET);
 
@@ -341,6 +344,9 @@ if ($action == "save_facture") {
       //mettre à jour l'état de la facture, update sql
       mysql_query("UPDATE webfinance_invoices SET is_envoye=1")
 	or wf_mysqldie();
+
+      logmessage(_("Send invoice")." #$invoice->num_facture fa:$id");
+
     }
     header("Location: edit_facture.php?id_facture=$id");
     die();
