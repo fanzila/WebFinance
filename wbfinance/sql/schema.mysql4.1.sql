@@ -1,9 +1,9 @@
 --
 -- Webfinance schema
--- 
+--
 -- Requires InnoDB.
 -- Apply with mysql -u root --password=topsecret < schema.sql
--- 
+--
 -- Nicolas Bouthors <nbouthors@nbi.fr>
 --
 -- $Id$
@@ -308,15 +308,24 @@ CREATE TABLE `webfinance_users` (
   `last_login` datetime default NULL,
   `creation_date` datetime default NULL,
   `admin` tinyint(4) default '0',
-  `role` varchar(30) default NULL,
+  `role` varchar(64) default NULL,
   `modification_date` datetime default NULL,
   `prefs` blob,
   PRIMARY KEY  (`id_user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 
+DROP TABLE IF EXISTS `webfinance_roles`;
+CREATE TABLE `webfinance_roles` (
+  `id_role` int(11) NOT NULL auto_increment,
+  `name` varchar(20) NOT NULL,
+  `description` blob,
+  PRIMARY KEY  (`id_role`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
+
 
 --
--- DEFAULT DATA INSERT 
+-- DEFAULT DATA INSERT
 --
 
 INSERT INTO `webfinance_type_tva` (`id_type_tva`, `nom`, `taux`) VALUES (1, 'Taux normal 19,6%', 19.600),
@@ -327,7 +336,7 @@ INSERT INTO `webfinance_type_presta` (`id_type_presta`, `nom`) VALUES (1, 'Forma
 (3, 'Dev'),
 (4, 'Support');
 
-INSERT INTO `webfinance_type_suivi` (`id_type_suivi`, `name`, `selectable`) VALUES 
+INSERT INTO `webfinance_type_suivi` (`id_type_suivi`, `name`, `selectable`) VALUES
 (1, 'Création entreprise', 0),
 (2, 'Contact Téléphonique', 1),
 (3, 'Courier envoyé', 1),
@@ -344,11 +353,11 @@ INSERT INTO `webfinance_type_tva` VALUES
 INSERT INTO `webfinance_company_types` (nom) VALUES
     ('Client'),('Prospect'),('Fournisseur'),('Archive');
 
-INSERT INTO `webfinance_banks` (`id`, `name`, `short_name`, `phone`, `mail`, `comment`) VALUES 
+INSERT INTO `webfinance_banks` (`id`, `name`, `short_name`, `phone`, `mail`, `comment`) VALUES
 (1, 'My bank', 'mybank', '', '', '');
 
 -- Voir http://www.plancomptable.com/pc99/titre-IV/liste_des_comptes_sb.htm
-INSERT INTO `webfinance_categories` (`id`, `name`, `class`, `re`, `plan_comptable`) VALUES 
+INSERT INTO `webfinance_categories` (`id`, `name`, `class`, `re`, `plan_comptable`) VALUES
 (1   , 'Unknown', '', '', ''),
 (NULL, 'Salaire', 'salaires', 'salaire',''),
 (NULL, 'Loyer', 'loyer', 'loyer',''),
@@ -391,4 +400,3 @@ ALTER TABLE `webfinance_personne`
 
 -- vim: fileencoding=utf8
 -- EOF
-

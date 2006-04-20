@@ -18,7 +18,7 @@ class User {
     if ($id_user == "") {
       $id_user = $_SESSION['id_user'];
     }
-    $result = mysql_query("SELECT last_name, first_name, login,
+    $result = mysql_query("SELECT id_user, last_name, first_name, login,
                                   email, disabled, last_login, creation_date,
                                   admin, role, modification_date,
                                   date_format(creation_date,'%d/%m/%Y') as nice_creation_date,
@@ -93,6 +93,14 @@ class User {
     return $is_admin;
   }
 
+  function hasRole($role,$id_user) {
+    $result = mysql_query("SELECT COUNT(*) FROM webfinance_users WHERE id_user=$id_user AND role RLIKE '(^|,)$role(,|$)' ") or wf_mysqldie();
+    list($hasRole) = mysql_fetch_array($result);
+    mysql_free_result($result);
+
+    return $hasRole;
+  }
+
   function saveData($data=null) {
     if (!is_array($data))
       return false;
@@ -101,14 +109,17 @@ class User {
       $_SESSION['message'] = "Vous n'êtes pas administrateur";
       return false;
     }
+
     extract($data);
 
-    $q = sprintf("UPDATE webfinance_users SET first_name='%s', last_name='%s', login='%s', email='%s', disabled=%d, admin=%d,
+    $roles=implode(",",$data['role']);
+
+    $q = sprintf("UPDATE webfinance_users SET first_name='%s', last_name='%s', login='%s', email='%s', disabled=%d, admin=%d, role='%s',
                          modification_date=now()
                   WHERE id_user=%d",
 
-                  $first_name, $last_name, $login, $email, ($disabled == "on")?1:0, ($admin == "on")?1:0,
-                  $id_user );
+		 $first_name, $last_name, $login, $email, ($disabled == "on")?1:0, ($admin == "on")?1:0, $roles,
+		 $id_user );
     mysql_query($q) or wf_mysqldie();
     logmessage("Modification de l'utilisateur user:$id_user");
     $_SESSION['message'] = "Données enregistrées";
