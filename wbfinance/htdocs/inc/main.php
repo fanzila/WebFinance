@@ -29,7 +29,7 @@ function parselogline($str) {
           list($num_facture) = mysql_fetch_array($result);
           mysql_free_result($result);
           if (empty($num_facture)) {
-            $str = preg_replace("/".$matches[0]."/", '<i>facture supprimée</i>', $str);
+            $str = preg_replace("/".$matches[0]."/", "<i>"._('invoice deleted')."</i>", $str);
           } else {
             $str = preg_replace("/".$matches[0]."/", '<a href="/prospection/edit_facture.php?id_facture='.$matches[2].'">'.$num_facture.'</a> <a href="/prospection/getfacture.php?id='.$matches[2].'"><img src="/imgs/icons/pdf.png" valign="bottom"></a>', $str);
           }
@@ -76,12 +76,12 @@ function logmessage($msg) {
 }
 
 // crée un champ date avec calendrier dans un formulaire
-// Params : 
-//   $input_name => field name 
+// Params :
+//   $input_name => field name
 //   $default_time => Unix timestamp of defatuls field value defaults to time()
 //   $autosubmit => if true the selection of a date will close the popup and submit the form
 //   $input_id => id of the input field defaults to input_name. You need to specify a plain string if input_name contains "[" or "]"
-//   $extra_style => CSS override 
+//   $extra_style => CSS override
 function makeDateField($input_name, $defaulttime=null, $autosubmit=0, $input_id=null, $extra_style="") {
 
   if (!isset($defaulttime)) { $defaulttime = time(); }
