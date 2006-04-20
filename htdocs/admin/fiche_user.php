@@ -1,10 +1,10 @@
-<?php 
-// 
+<?php
+//
 // This file is part of « Webfinance »
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
-// 
+//
 // You can use and redistribute this file under the term of the GNU GPL v2.0
 //
 ?>
@@ -55,6 +55,27 @@ function checkForm(f) {
     Créé le <?=$user->nice_creation_date?><br/>
     Modifié le <?=$user->nice_modification_date?>
   </td>
+</tr>
+<?
+   $result=mysql_query("SELECT id_role, name FROM webfinance_roles") or wf_mysqldie();
+   if(mysql_num_rows($result)>0){
+?>
+ <tr>
+ <td colspan="2">
+  <table>
+   <tr>
+    <td>Roles:</td>
+<?
+    while($role=mysql_fetch_assoc($result)){
+     printf("<td><input type='checkbox' name='role[]' %s value='%s' >%s</td>",($User->hasRole($role['name'] , $user->id_user )>0)?"checked":"",$role['name'],$role['name'] );
+    }
+?>
+   </tr>
+  </table>
+<?
+}
+?>
+ </td>
 </tr>
 <tr>
   <td colspan="4" style="text-align: center;">

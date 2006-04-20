@@ -17,16 +17,23 @@ include("../top.php");
 include("nav.php");
 ?>
 <script type="text/javascript">
-function confirmDelete(id) {
+function confirmDeleteUser(id) {
   if (confirm('Voulez-vous vraiment supprimer cet utilisateur ?')) {
     window.location = 'save_user.php?action=delete&id='+id;
   }
 }
+function confirmDeleteRole(id) {
+  if (confirm('Voulez-vous vraiment supprimer cet role ?')) {
+    window.location = 'save_roles.php?action=delete&id='+id;
+  }
+}
+
+
 </script>
 
-<h2>Utilisateurs backoffice</h2>
-
 <div style="background: #ffcece"><?= $_SESSION['message']; $_SESSION['message'] = ""; ?></div>
+
+<h2>Utilisateurs backoffice</h2>
 
 <table border="0" cellspacing="0" cellpadding="5" style="border: solid 1px black;">
 <tr align=center class=row_header>
@@ -49,7 +56,7 @@ while ($user = mysql_fetch_object($result)) {
   <td><a href="mailto:$user->email">$user->email</a></td>
   <td>$user->nice_last_login</td>
   <td>
-    <a href="javascript:confirmDelete($user->id_user);"><img src="/imgs/icons/delete.png" alt="Supprimer" /></a>
+    <a href="javascript:confirmDeleteUser($user->id_user);"><img src="/imgs/icons/delete.png" alt="<?= _('Delete')?>" /></a>
     <a href="fiche_user.php?id=$user->id_user"><img src="/imgs/icons/edit.png" alt="Modifier" /></a>
   </td>
 </tr>
@@ -59,7 +66,50 @@ EOF;
 mysql_free_result($result);
 ?>
 </table><br/>
-<a href="fiche_user.php?id=-1">Créer un utilisateur</a>
+<a href="fiche_user.php?id=-1"><?= _('Créer un utilisateur') ?></a>
+
+<p>
+<h2>Roles</h2>
+
+<form action="save_roles.php" id="main_form" method="post">
+
+<table border="0" cellspacing="0" cellpadding="3" class="framed">
+<tr style="text-align: center;" class="row_header">
+  <td><?= _('Name') ?></td>
+  <td><?= _('Description') ?></a></td>
+  <td><?= _('Actions') ?></td>
+</tr>
+<?php
+
+$result = mysql_query("SELECT id_role, name, description
+                       FROM webfinance_roles
+                       ORDER BY name") or wf_mysqldie();
+while ($c = mysql_fetch_assoc($result)) {
+  extract($c);
+
+  print <<<EOF
+<tr>
+  <td><input type="text" name="cat[$id_role][name]" value="$name" style="width: 80px;" /></td>
+  <td><input type="text" name="cat[$id_role][description]" value="$description" style="width: 200px;" /></td>
+  <td align="center"><a href="javascript:confirmDeleteRole($id_role);"><img src="/imgs/icons/delete.gif" /></a>
+</tr>
+EOF;
+}
+
+?>
+<tr style="background: #ceffce;">
+  <td><input type="text" name="cat[new][name]" value="" style="width: 80px;" /></td>
+  <td><input type="text" name="cat[new][description]" value="" style="width: 200px;" /></td>
+  <td></td>
+</tr>
+<tr>
+  <td style="text-align: center;" colspan="3"><input type="submit" value="<?= _('Save') ?>" /></td>
+</table>
+
+</form>
+
+</p>
+
 
 <?php
 
