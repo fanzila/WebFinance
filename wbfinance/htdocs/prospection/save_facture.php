@@ -188,7 +188,7 @@ if ($action == "save_facture") {
                $id_facture);
   mysql_query($q) or wf_mysqldie();
 
-  logmessage("Enregistrement de la facture fa:".$_POST['id_facture']);
+  logmessage(_("Save invoice")." (#$num_facture) fa:".$_POST['id_facture']);
 
   if ((is_numeric($_POST['prix_ht_new'])) && (is_numeric($_POST['qtt_new'])) && ($_POST['prix_ht_new'] > 0) && !empty($_POST['line_new'])) {
     // Enregistrement d'une nouvelle ligne de facturation pour une facture.
@@ -240,7 +240,7 @@ if ($action == "save_facture") {
   mysql_free_result($result);
 
   logmessage(_("Delete invoice")." #$num_facture for client:$id_client");
-  logmessage(_("Delete invoice")." #$num_facture fa:".$_GET['id_facture'] );
+  logmessage(_("Delete invoice")." (#$num_facture) fa:".$_GET['id_facture'] );
 
   mysql_query("DELETE FROM webfinance_invoices WHERE id_facture=".$_GET['id_facture']);
   mysql_query("DELETE FROM webfinance_invoice_rows WHERE id_facture=".$_GET['id_facture']);

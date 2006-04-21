@@ -8,18 +8,13 @@
 // You can use and redistribute this file under the term of the GNU GPL v2.0
 //
 ?>
-<div class="nav">
+<div>
 <?php
 
 //$Id$
 
-$elements = array(_('Home') => '/',
-                  _('Client') => '/client/',
-                  _('Companies') => '/prospection/?q=1',
-                  _('Cashflow') => '/tresorerie/',
-                  _('My account') => '/moncompte/',
-                  _('Administration') => '/admin/',
-                  _('Logout') => '/logout.php',
+$elements = array( _('Clients') => 'index.php?q=1',
+		   _('Billing') => 'facturation.php',
                  );
 
 foreach ($elements as $elname=>$url) {

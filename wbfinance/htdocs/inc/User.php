@@ -23,8 +23,8 @@ class User {
                                   admin, role, modification_date,
                                   date_format(creation_date,'%d/%m/%Y') as nice_creation_date,
                                   date_format(modification_date,'%d/%m/%Y') as nice_modification_date
-                           FROM webfinance_users WHERE id_user=$id_user") or wf_mysqldie();;
-
+                           FROM webfinance_users WHERE id_user=$id_user")
+      or wf_mysqldie();
 
     $user = mysql_fetch_object($result);
     $this->userData = $user;
