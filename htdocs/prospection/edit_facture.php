@@ -14,7 +14,8 @@ include("../inc/main.php");
 if (!is_numeric($_GET['id_facture'])) {
   // Création de facture
   mysql_query("INSERT INTO webfinance_invoices (date_created,date_facture,id_client) values(now(), now(), ".$_GET['id_client'].")") or wf_mysqldie();
-  $result = mysql_query("SELECT id_facture FROM webfinance_invoices WHERE id_client=".$_GET['id_client']." AND date_sub(now(), INTERVAL 1 SECOND)<=date_created");
+  $result = mysql_query("SELECT id_facture FROM webfinance_invoices WHERE id_client=".$_GET['id_client']." AND date_sub(now(), INTERVAL 1 SECOND)<=date_created")
+    or wf_mysql_die();
   list($id_facture) = mysql_fetch_array($result);
   header("Location: edit_facture.php?id_facture=".$id_facture);
   die();
@@ -283,7 +284,7 @@ function del_ligne() {
       <td colspan="2" class="liens_boutons">
       <a href="fiche_prospect.php?id=<?= $facture->id_client ?>">Retour fiche client</a><br/>
       <a href="save_facture.php?id=<?= $facture->id_facture ?>&action=duplicate">Dupliquer <?= $facture->type_doc ?></a><br/>
-      <a href="save_facture.php?id=<?= $facture->id_facture ?>&action=send">Envoyer <?= $facture->type_doc ?></a><br/>
+      <a href="send_facture.php?id=<?= $facture->id_facture ?>"><?= _('Send') ?> <?= $facture->type_doc ?></a><br/>
       <?php
         printf('<a href="gen_facture.php?id=%d">PDF</a><br/>', $facture->id_facture);
         if (! $facture->immuable)

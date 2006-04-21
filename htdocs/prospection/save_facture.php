@@ -281,27 +281,8 @@ if ($action == "save_facture") {
 
   }else if($action == "send"){
 
-  extract($_GET);
+  extract($_POST);
   require("/usr/share/php/libphp-phpmailer/class.phpmailer.php");
-
-  $mails=array();
-
-  //Récupérer les adresses mails:
-  $result = mysql_query("SELECT webfinance_invoices.id_client, email ".
-			"FROM webfinance_clients LEFT JOIN webfinance_invoices ON (webfinance_clients.id_client = webfinance_invoices.id_client) ".
-			"WHERE id_facture=$id")
-     or wf_mysqldie();
-  $client=mysql_fetch_assoc($result);
-  mysql_free_result($result);
-  if(preg_match('/^[A-z0-9][\w.-]*@[A-z0-9][\w\-\.]+\.[A-Za-z]{2,4}$/',$client['email']))
-    $mails[]=$client['email'];
-  $result = mysql_query("SELECT email FROM webfinance_personne WHERE client=".$client['id_client'])
-    or wf_mysqldie();
-  while($person=mysql_fetch_assoc($result)){
-    if(!in_array($person['email'],$mails) AND preg_match('/^[A-z0-9][\w.-]*@[A-z0-9][\w\-\.]+\.[A-Za-z]{2,4}$/',$person['email']))
-      $mails[] = $person['email'];
-  }
-  mysql_free_result($result);
 
   if(count($mails)>0){
 
@@ -318,13 +299,18 @@ if ($action == "save_facture") {
 
     //compléter l'entête de l'email
     $mail = new PHPMailer();
-    $mail->From = $societe->email;
-    $mail->FromName = $societe->raison_sociale;
+    if(preg_match('/^[A-z0-9][\w.-]*@[A-z0-9][\w\-\.]+\.[A-Za-z]{2,4}$/',$from) )
+      $mail->From = $from;
+    else
+      $mail->From = $societe->email;
+
+    $mail->FromName = $from_name;
+
     foreach($mails as $address)
       $mail->AddAddress($address);
 
-    $mail->Subject = ucfirst($invoice->type_doc)." n° ".$invoice->num_facture." pour ".$invoice->nom_client;
-    $mail->Body = ucfirst($invoice->type_doc)." n° ".$invoice->num_facture." pour ".$invoice->nom_client;
+    $mail->Subject = $subject;
+    $mail->Body = $body;
 
     $mail->WordWrap = 80;
 
