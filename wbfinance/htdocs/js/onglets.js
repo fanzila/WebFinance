@@ -2,6 +2,8 @@
  * $Id$
  */
 
+var onglet_shown = '';
+
 function focusOnglet(id) {
   if ((onglet_shown != '') && (onglet_shown != id)) {
     shown = document.getElementById('tab_'+onglet_shown);
