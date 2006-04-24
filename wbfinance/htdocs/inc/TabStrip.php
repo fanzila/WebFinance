@@ -19,10 +19,11 @@ class TabStrip {
     // FIXME : file include 
   }
 
-  function addTab($title, $content, $id="") {
-    if ($id == 0) {
+  function addTab($title, $content, $id=null) {
+    if ($id == null) {
       $id=count($this->title);
     }
+    if (!$this->focused_onglet) { $this->focused_onglet = $id; } // First added tab is focused by default
     $this->title[$id] = $title;
     $this->content[$id] = $content;
 
@@ -45,11 +46,12 @@ EOF;
         die("TabStrip::Tab $id has no content");
       }
     }
+    $colspan = count($this->title)+1;
     $html .= <<<EOF
-  <td style="background: none;" width="100%"></td>
+  <td style="border: none; background: none;" width="100%"></td>
 </tr>
 <tr style="vertical-align: top;">
-<td colspan="6" class="onglet_holder">
+<td colspan="$colspan" class="onglet_holder">
 EOF;
     foreach ($this->title as $id=>$t) {
       $html .= sprintf('<div style="display: none;" id="tab_%s">', $id);
@@ -58,6 +60,11 @@ EOF;
     }
 
     $html .= "<script type=\"text/javascript\">focusOnglet('".$this->focused_onglet."');</script>";
+    $html .= <<<EOF
+</td>
+</tr>
+</table>
+EOF;
 
     print $html;
   }
