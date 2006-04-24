@@ -13,6 +13,7 @@
 
 include("../inc/main.php");
 $title = _("Client");
+$page_name="client";
 include("../top.php");
 
 $client_role="client";
@@ -112,7 +113,7 @@ while (list($id_facture) = mysql_fetch_array($result)) {
    mysql_free_result($result2);
 
 ?>
-<tr onmouseover="return escape('$description');" class="row_$class">
+<tr onmouseover="return escape('<?=$description?>');" class="row_$class">
   <td><?=$count?></td>
   <td><?=$fa->nice_date_facture?></td>
   <td><img src="/imgs/icons/<?=$icon?>.gif" alt="<?=$icon?>" /></td>
