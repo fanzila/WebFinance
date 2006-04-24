@@ -7,6 +7,7 @@ tr.onglets td {
  font-size: 12px;
  color: #bbb;
  font-weight: bold;
+ white-space: nowrap;
 }
 
 tr.onglets td.focus { 
@@ -17,6 +18,7 @@ tr.onglets td.focus {
  font-weight: bold;
  color: white;
  font-size: 12px;
+ white-space: nowrap;
 }
 
 td.onglet_holder {
