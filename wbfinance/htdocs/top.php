@@ -19,13 +19,20 @@ if ($GLOBALS['_SERVER']['HTTP_HOST'] != "backoffice.nbi.fr") {
 }
 
 global $title;
+global $page_name;
+
 $User = new User();
 
 if (! $User->isLogued()) {
   header("Location: /login.php");
 }
 
-$User->getInfos();
+$user = $User->getInfos();
+
+if(!$User->isAdmin() AND $User->hasRole("client", $user->id_user) AND $page_name!="client"){
+   header("Location: /client/");
+ }
+
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
