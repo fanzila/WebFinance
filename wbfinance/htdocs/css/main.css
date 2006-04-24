@@ -34,7 +34,7 @@ textarea { font-family: arial, helvetica; font-size: 12px; }
 
 a:hover { color: #1010ff; background: #ffff60; }
 a { color: #3030ff; text-decoration: none; }
-img.bouton { cursor: pointer; cursor: hand; }
+img.bouton { cursor: pointer; }
 a img { border: none; }
 
 /* Pas de bordure jaune sur les icones lien en hover */
