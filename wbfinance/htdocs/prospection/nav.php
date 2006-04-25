@@ -13,18 +13,20 @@
 
 //$Id$
 
-$elements = array( _('Clients') => 'index.php?q=1',
-                   _('Targets') => 'index.php?q=2',
-                  _('Add company') => 'fiche_prospect.php?action=_new',
-                  _('Billing') => 'facturation.php',
+$elements = array( _('Customers') => array( 'url' => 'index.php?q=1', 'roles' => 'manager,accounting,employee' ),
+                   _('Targets') => array( 'url' => 'index.php?q=2', 'roles' => 'manager,accounting,employee' ),
+                  _('Add company') => array( 'url' => 'fiche_prospect.php?action=_new', 'roles' => 'manager' ),
+                  _('Billing') => array( 'url' => 'facturation.php', 'roles' => 'manager,accounting' )
                  );
 
-foreach ($elements as $elname=>$url) {
-  $on = '/imgs/boutons/'.urlencode(base64_encode($elname.":on")).'.png';
-  array_push($_SESSION['preload_images'], $on);
-  $off = '/imgs/boutons/'.urlencode(base64_encode($elname.":off")).'.png';
-  printf( '<a class="bouton" href="%s"><img onMouseOver="this.src=\'%s\';" onMouseOut="this.src=\'%s\';" src="%s" border=0 /></a>',
-           $url, $on, $off, $off);
+foreach ($elements as $elname=>$data) {
+  if (isAuthorized($_SESSION['id_user'], $data['roles'])) {
+    $on = '/imgs/boutons/'.urlencode(base64_encode($elname.":on")).'.png';
+    array_push($_SESSION['preload_images'], $on);
+    $off = '/imgs/boutons/'.urlencode(base64_encode($elname.":off")).'.png';
+    printf( '<a class="bouton" href="%s"><img onMouseOver="this.src=\'%s\';" onMouseOut="this.src=\'%s\';" src="%s" border=0 /></a>',
+             $url, $on, $off, $off);
+  }
 }
 
 ?>

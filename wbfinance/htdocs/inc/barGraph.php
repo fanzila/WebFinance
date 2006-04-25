@@ -87,7 +87,11 @@ class barGraph {
     $blue = imagecolorallocate ($this->im, 0, 0, 255);
     $red  = imagecolorallocate ($this->im, 255, 0, 0);
 
-    $this->step = $this->width / sizeof($this->data);
+    if (!count($this->data)) {
+      $this->step = 20;
+    } else {
+      $this->step = $this->width / sizeof($this->data);
+    }
 
     // Calculate average value
     $i = 0 ;
@@ -96,8 +100,12 @@ class barGraph {
       $grand_total += $data;
       $i++;
     }
-    $average = $grand_total/$i;
-    $y_average = 15 + ($this->height-15) - ($average*($this->height-15)/$this->max);
+    if ($i>0) { $average = $grand_total/$i; } else { $average = 0; }
+    if ($this->max > 0) {
+      $y_average = 15 + ($this->height-15) - ($average*($this->height-15)/$this->max);
+    } else {
+      $y_average = 15 + ($this->height-15);
+    }
 
     // Draw unit grid behind (ie before) bars
     if ($this->draw_grid) {
@@ -119,7 +127,11 @@ class barGraph {
 
     $i=0;
     foreach ($this->data as $data) {
-      $bar_height = ($data*($this->height-15)/$this->max);
+      if ($this->max > 0) {
+        $bar_height = ($data*($this->height-15)/$this->max);
+      } else {
+        $bar_height = 0;
+      }
       $bar_height = ($bar_height<15)?15:$bar_height;
 
       $left = $i*$this->step;

@@ -42,7 +42,7 @@ if ($GLOBALS['_SERVER']['REQUEST_METHOD'] == "POST") {
 
 $user = $User->getinfos($_SESSION['id_user']);
 
-$roles=array("manager","accounting","employee","client");
+$roles="manager,accounting,employee,client";
 include("../top.php");
 
 ?>

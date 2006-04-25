@@ -14,7 +14,7 @@
 
 require("../inc/main.php");
 $title = _('Cashflow');
-$roles=array("manager","accounting");
+$roles="manager,accounting";
 require("../top.php");
 require("nav.php");
 ?>

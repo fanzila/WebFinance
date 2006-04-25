@@ -29,6 +29,9 @@ msgstr "Trésorerie"
 msgid "My account"
 msgstr "Mon compte"
 
+msgid "Customers"
+msgstr "Clients"
+
 msgid "Administration"
 msgstr "Administration"
 

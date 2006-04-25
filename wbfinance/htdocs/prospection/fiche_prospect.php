@@ -14,6 +14,7 @@
 //
 //
 include("../inc/main.php");
+$roles = "manager,employee,accounting";
 
 if ($_GET['action'] == '_new') {
   mysql_query("INSERT INTO webfinance_clients (nom,date_created) VALUES('Nouvelle Entreprise', now())");
