@@ -13,7 +13,7 @@
 
 include("../inc/main.php");
 $title = _("Companies");
-$roles=array("manager");
+$roles="manager,employee";
 include("../top.php");
 include("nav.php");
 
@@ -161,6 +161,9 @@ mysql_free_result($result);
   <td><b><?= _("Billed and unpaid") ?></b></td>
   <td><a href="facturation.php?type=unpaid"><?= number_format($total_dehors, 0, ',', ' ') ?>&euro; HT / <?= number_format($total_dehors*1.196, 0, ',', ' ') ?>&euro; TTC</a></td>
 </tr>
+<?php
+if (isAuthorized($_SESSION['id_user'], 'manager,accounting')) {
+?>
 <tr>
   <td><b><?= _('Cash (real)') ?></b></td>
   <td><a href="/tresorerie/"><?= number_format($tresorerie_real, 0, ',', ' ') ?>&euro;</a></td>
@@ -169,6 +172,9 @@ mysql_free_result($result);
   <td><b><?= _('Cash (forecast)') ?></b></td>
   <td><a href="/tresorerie/"><?= number_format($tresorerie_prev, 0, ',', ' ') ?>&euro;</a></td>
 </tr>
+<?php
+}
+?>
 <tr>
   <td><b><?= _("Only show") ?></b></td><td><form action="index.php" method="get">
   <input type="hidden" name="sort" value="<?= $_GET['sort'] ?>" />

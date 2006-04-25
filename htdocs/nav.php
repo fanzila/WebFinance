@@ -7,27 +7,31 @@
 //
 // You can use and redistribute this file under the term of the GNU GPL v2.0
 //
+
+require_once("inc/main.php");
 ?>
 <div class="nav">
 <?php
 
 //$Id$
 
-$elements = array(_('Home') => '/',
-                  _('Client') => '/client/',
-                  _('Companies') => '/prospection/?q=1',
-                  _('Cashflow') => '/tresorerie/',
-                  _('My account') => '/moncompte/',
-                  _('Administration') => '/admin/',
-                  _('Logout') => '/logout.php',
+$elements = array(_('Home') => array( 'url' => '/', 'roles' => 'any' ),
+                  _('Client') => array( 'url' => '/client/', 'roles' => 'client' ),
+                  _('Companies') => array( 'url' => '/prospection/?q=1', 'roles' => 'manager,employee,accounting' ),
+                  _('Cashflow') => array( 'url' => '/tresorerie/', 'roles' => 'manager,accounting' ),
+                  _('My account') => array( 'url' => '/moncompte/', 'roles' => 'any' ),
+                  _('Administration') => array( 'url' => '/admin/', 'roles' => 'manager' ),
+                  _('Logout') => array( 'url' => '/logout.php', 'roles' => 'any' ),
                  );
 
-foreach ($elements as $elname=>$url) {
-  $on = '/imgs/boutons/'.urlencode(base64_encode($elname.":on")).'.png';
-  array_push($_SESSION['preload_images'], $on);
-  $off = '/imgs/boutons/'.urlencode(base64_encode($elname.":off")).'.png';
-  printf( '<a class="bouton" href="%s"><img onMouseOver="this.src=\'%s\';" onMouseOut="this.src=\'%s\';" src="%s" border=0 /></a>',
-           $url, $on, $off, $off);
+foreach ($elements as $elname=>$data) {
+  if (isAuthorized($_SESSION['id_user'], $data['roles'])) {
+    $on = '/imgs/boutons/'.urlencode(base64_encode($elname.":on")).'.png';
+    array_push($_SESSION['preload_images'], $on);
+    $off = '/imgs/boutons/'.urlencode(base64_encode($elname.":off")).'.png';
+    printf( '<a class="bouton" href="%s"><img onMouseOver="this.src=\'%s\';" onMouseOut="this.src=\'%s\';" src="%s" border=0 /></a>',
+             $data['url'], $on, $off, $off);
+  }
 }
 
 ?>

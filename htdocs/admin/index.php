@@ -13,7 +13,7 @@
 
 include("../inc/main.php");
 $title = _("Administration");
-$roles = array();
+$roles = "any";
 include("../top.php");
 include("nav.php");
 ?>
