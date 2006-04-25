@@ -118,6 +118,24 @@ function wf_mysqldie($message="") {
   die();
 }
 
+function isAuthorized($id_user,$roles){
+  $authorized=false;
+  $req=mysql_query("SELECT admin, role FROM webfinance_users  WHERE id_user=$id_user")
+    or wf_mysqldie();
+  list($admin,$user_roles)=mysql_fetch_array($req);
+  if($admin>0){
+    $authorized=true;
+  }else{
+    $user_roles=explode(",",$user_roles);
+    foreach($user_roles as $role){
+      if(in_array($role,$roles)){
+	return $authorized=true;
+      }
+    }
+  }
+  return $authorized;
+}
+
 
 header("Content-Type: text/html; charset=utf-8");
 

@@ -230,6 +230,7 @@ function del_ligne() {
 	<td>Prevision</td>
 	<td>
 	<select name="type_prev">
+	  <option value="0"><?=_('None')?></option>
 	  <option value="1"><?=_('asap')?></option>
 	  <option value="7"><?= _('+ 1 week')?></option>
 	  <option value="14"><?=_('+ 2 weeks')?></option>

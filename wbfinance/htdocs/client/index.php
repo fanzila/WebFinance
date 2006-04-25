@@ -13,7 +13,7 @@
 
 include("../inc/main.php");
 $title = _("Client");
-$page_name="client";
+$roles=array("manager","accounting","employee","client");
 include("../top.php");
 
 $client_role="client";
