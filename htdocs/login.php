@@ -1,10 +1,10 @@
-<?php 
-// 
+<?php
+//
 // This file is part of « Webfinance »
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
-// 
+//
 // You can use and redistribute this file under the term of the GNU GPL v2.0
 //
 ?>
@@ -13,7 +13,7 @@
 include("inc/main.php");
 $User = new User();
 if ($User->login($_POST)) {
-  if ($_POST['came_from'] != "") {
+  if ($_POST['came_from'] != "" AND !preg_match('/login.php$/i',$_POST['came_from']) ) {
     header("Location: ".$_POST['came_from']);
   } else {
     header("Location: /");
