@@ -13,6 +13,7 @@
 
 include("../inc/main.php");
 $title = _("Administration");
+$roles = array();
 include("../top.php");
 include("nav.php");
 ?>
@@ -64,6 +65,10 @@ EOF;
   $count++;
 }
 mysql_free_result($result);
+
+
+$help_rights=addslashes("Les valeurs possible sont: client,manager,accounting,employee.");
+
 ?>
 </table><br/>
 <a href="fiche_user.php?id=-1"><?= _('Créer un utilisateur') ?></a>
@@ -75,8 +80,8 @@ mysql_free_result($result);
 
 <table border="0" cellspacing="0" cellpadding="3" class="framed">
 <tr style="text-align: center;" class="row_header">
-  <td><?= _('Name') ?></td>
-  <td><?= _('Description') ?></a></td>
+  <td><?= _('Name') ?><img class="help_icon" src="/imgs/icons/help.png" onmouseover="return escape('<?= $help_rights ?>');" /> </td>
+  <td><?= _('Description') ?></td>
   <td><?= _('Actions') ?></td>
 </tr>
 <?php

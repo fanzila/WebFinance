@@ -13,6 +13,7 @@
 
 include("inc/main.php");
 $title = _("Home");
+$roles=array("manager","accounting","employee");
 include("top.php");
 ?>
 <table border="0" cellspacing="5" cellpadding="0" class="mosaique">
