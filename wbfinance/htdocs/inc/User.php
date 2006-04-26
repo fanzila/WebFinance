@@ -93,6 +93,27 @@ class User {
     return $is_admin;
   }
 
+  function isAuthorized($id_user,$roles){
+    if ($roles == "any") // The special "any" role is granted to all users (and non users for that matter)
+      return true;
+
+    $req=mysql_query("SELECT admin, role FROM webfinance_users  WHERE id_user=$id_user") or wf_mysqldie();
+    list($admin,$user_roles)=mysql_fetch_array($req);
+
+    if($admin>0){
+      return true;
+    } else {
+      $user_roles=explode(",",$user_roles);
+      foreach($user_roles as $role){
+	if(preg_match("!(,|^)$role(,|$)!",$roles)) {
+	    return true;
+	}
+      }
+    }
+    return false;
+  }
+
+
   function hasRole($role,$id_user) {
     $result = mysql_query("SELECT COUNT(*) FROM webfinance_users WHERE id_user=$id_user AND role RLIKE '(^|,)$role(,|$)' ") or wf_mysqldie();
     list($hasRole) = mysql_fetch_array($result);

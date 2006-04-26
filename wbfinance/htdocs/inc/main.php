@@ -118,26 +118,6 @@ function wf_mysqldie($message="") {
   die();
 }
 
-function isAuthorized($id_user,$roles){
-  if ($roles == "any") { return true; } // The special "any" role is granted to all users (and non users for that matter)
-
-  $req=mysql_query("SELECT admin, role FROM webfinance_users  WHERE id_user=$id_user") or wf_mysqldie();
-  list($admin,$user_roles)=mysql_fetch_array($req);
-
-  if($admin>0){
-    return true;
-  } else {
-    $user_roles=explode(",",$user_roles);
-    foreach($user_roles as $role){
-      if(preg_match("!(,|^)$role(,|$)!",$roles)) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-
 header("Content-Type: text/html; charset=utf-8");
 
 // This array starts empty here and is filled by pages

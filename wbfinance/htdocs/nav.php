@@ -23,9 +23,9 @@ $elements = array(_('Home') => array( 'url' => '/', 'roles' => 'any' ),
                   _('Administration') => array( 'url' => '/admin/', 'roles' => 'manager' ),
                   _('Logout') => array( 'url' => '/logout.php', 'roles' => 'any' ),
                  );
-
+$User= new User();
 foreach ($elements as $elname=>$data) {
-  if (isAuthorized($_SESSION['id_user'], $data['roles'])) {
+  if ($User->isAuthorized($_SESSION['id_user'], $data['roles'])) {
     $on = '/imgs/boutons/'.urlencode(base64_encode($elname.":on")).'.png';
     array_push($_SESSION['preload_images'], $on);
     $off = '/imgs/boutons/'.urlencode(base64_encode($elname.":off")).'.png';
