@@ -18,7 +18,7 @@ include("top.php");
 ?>
 <table border="0" cellspacing="5" cellpadding="0" class="mosaique">
 <tr>
-  <td colspan="2">
+  <td>
     Chiffre d'affaire mensuel (18 derniers mois, total, incluant les impayés <a href="showca.php">plus</a>)<br/>
     <a href="showca.php"><img src="/graphs/ca_mensuel.php?width=600&height=250&nb_months=18&grid=0" /></a>
   </td>
@@ -28,7 +28,10 @@ include("top.php");
   </td>
 </tr>
 <tr valign="top">
-  <td width="350">
+  <td>
+  <a href="/tresorerie/"><img src="/graphs/plots.php?type=amount&account=&end_date=&width=600&height=250" /></a>
+  </td>
+  <td width="250">
     100 derniers évènements (<a href="/admin/events.php"><?=_('show all')?></a>)
     <div style="overflow: auto; height: 250px;">
     <table width="100%" border="0" cellspacing="0" cellpadding="5">
@@ -57,6 +60,7 @@ EOF;
     </table>
 
   </td>
+  <!--
   <td width="250">
     TODO
     <div style="height: 250px; overflow: auto;">
@@ -81,6 +85,7 @@ EOF;
     </ul>
     </div>
   </td>
+  -->
   <td style="border: none;" ></td>
 </tr>
 </table>
