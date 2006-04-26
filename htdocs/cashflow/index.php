@@ -17,6 +17,9 @@ $title = _('Cashflow');
 $roles="manager,accounting";
 require("../top.php");
 require("nav.php");
+
+// Number of transaction to show on one page
+$transactions_per_page = 10;
 ?>
 <script type="text/javascript">
 
@@ -223,6 +226,8 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
        $where_clause = preg_replace("/ OR $/", ")", $where_clause);
      }
 
+     $limit_clause = sprintf(" LIMIT %d,%d", $filter['page']*$transactions_per_page, $transactions_per_page );
+
      // Filter on dates
      if (($ts_start_date != 0) && ($ts_end_date != 0)) {
        $where_clause .= " AND (unix_timestamp(date)>=$ts_start_date AND unix_timestamp(date)<=$ts_end_date) ";
@@ -267,11 +272,18 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
      // END order clause
      // -------------------------------------------------------------------------------------------------------------
 
+
      $q = "SELECT t.id,t.amount,t.date,UNIX_TIMESTAMP(t.date) as ts_date,c.name,t.type,t.text,t.comment,c.color,t.id_category,t.file_name,t.id_account
            FROM webfinance_transactions AS t LEFT JOIN webfinance_categories AS c ON t.id_category=c.id
            HAVING $where_clause
            ORDER BY $order_clause";
-//[ ]      print "<pre>$q</pre>";
+     // Get number of total pages for this filter :
+     $result = mysql_query($q) or wf_mysqldie();
+     $nb_transactions = mysql_num_rows($result);
+     mysql_free_result($result);
+
+     $q .= $limit_clause;
+     $result = mysql_query($q) or wf_mysqldie();
 
      $filter_base = sprintf("sort=%d&filter[start_date]=%s&filter[end_date]=%s&filter[textsearch]=%s&filter[amount]=%s",
                             $_GET['sort'], $filter[start_date], $filter[end_date], $filter[textsearch], $filter[amount] );
@@ -337,6 +349,18 @@ EOF;
     <tr class="row_header">
       <td colspan="2" style="text-align: center"><?= _('Filter') ?></td>
     </tr>
+    <tr>
+      <td>Page</td>
+      <td><?php
+      for ($i=0 ; $i<$nb_transactions/$transactions_per_page ; $i++) {
+        if ($filter['page'] == $i) {
+          printf("%d ", $i+1);
+        } else {
+          printf('<a class="pager_link" href="?%s&filter[page]=%d">%d</a> ', $filter_base, $i, $i+1 );
+        }
+      }
+      ?>
+      </td>
     <tr>
       <td><b><?= _('Account :') ?></b></td>
       <td><select name="filter[id_account]" style="width: 150px;">
