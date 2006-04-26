@@ -29,9 +29,10 @@ if (! $User->isLogued()) {
 
 $user = $User->getInfos();
 
-if(!isAuthorized($user->id_user, $roles)){
- header("Location: /welcome.php");
-}
+if(!$User->isAuthorized($user->id_user,$roles)){
+  header("Location: /welcome.php");
+ }
+
 
 
 ?>
