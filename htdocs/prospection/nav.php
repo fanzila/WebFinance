@@ -18,9 +18,9 @@ $elements = array( _('Customers') => array( 'url' => 'index.php?q=1', 'roles' =>
                   _('Add company') => array( 'url' => 'fiche_prospect.php?action=_new', 'roles' => 'manager' ),
                   _('Billing') => array( 'url' => 'facturation.php', 'roles' => 'manager,accounting' )
                  );
-
+$User = new User();
 foreach ($elements as $elname=>$data) {
-  if (isAuthorized($_SESSION['id_user'], $data['roles'])) {
+  if ($User->isAuthorized($_SESSION['id_user'], $data['roles'])) {
     $on = '/imgs/boutons/'.urlencode(base64_encode($elname.":on")).'.png';
     array_push($_SESSION['preload_images'], $on);
     $off = '/imgs/boutons/'.urlencode(base64_encode($elname.":off")).'.png';
