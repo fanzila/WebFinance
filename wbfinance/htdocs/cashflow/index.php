@@ -52,7 +52,7 @@ function updateCheck(id) {
   f_action.selected_transactions.value = sel;
 }
 function changeAction(sel) {
-  if (specific_shown) 
+  if (specific_shown)
     specific_shown.style.display = 'none';
   specific_options = document.getElementById( 'action_' + sel.options[sel.selectedIndex].value );
   if (specific_options) {
@@ -63,13 +63,13 @@ function changeAction(sel) {
 
 function submitAction(f) {
 
-  f.selected_transactions.value = ''; 
+  f.selected_transactions.value = '';
   check_form = document.getElementById('checkboxes');
   for (i=0 ; i<check_form.elements.length ; i++) {
     el = check_form.elements[i];
 
     if (m = el.id.match(/chk_(.*)/)) { // is a checkbox
-      if (el.checked) { // is checked 
+      if (el.checked) { // is checked
         f.selected_transactions.value = f.selected_transactions.value + m[1]+',';
       }
     }
@@ -187,7 +187,7 @@ if ($ts_start_date > $ts_end_date) {
 // End check filter data coherence
 // ---------------------------------------------------------------------------------------------------------------------
 
-$old_query_string = $GLOBALS['_SERVER']['QUERY_STRING']; // FIXME : Better than pass the big $filter around by get we sould store it in the session. 
+$old_query_string = $GLOBALS['_SERVER']['QUERY_STRING']; // FIXME : Better than pass the big $filter around by get we sould store it in the session.
 $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBALS['_SERVER']['QUERY_STRING']);
 
 // print "-".$GLOBALS['_SERVER']['QUERY_STRING']."--";
@@ -202,7 +202,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
     <table border="0" cellspacing="0" width="750" cellpadding="3" class="framed">
       <tr style="text-align: center;" class="row_header">
         <td><input onmouseover="return escape('<?= _('Check and unchecks all transactions shown') ?>');" type="checkbox" onchange="checkAll(this);" /></td>
-        <td colspan="2"></td>
+        <td></td>
         <td><a href="?sort=date&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Date') ?></a></td>
         <td><a href="?sort=category&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Category') ?></a>/<a href="?sort=color&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Color') ?></a></td>
         <td><a href="?sort=type&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Type') ?></a></td>
@@ -267,7 +267,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
      // END order clause
      // -------------------------------------------------------------------------------------------------------------
 
-     $q = "SELECT t.id,t.amount,t.date,UNIX_TIMESTAMP(t.date) as ts_date,c.name,t.type,t.text,t.comment,c.color,t.id_category,t.id_account
+     $q = "SELECT t.id,t.amount,t.date,UNIX_TIMESTAMP(t.date) as ts_date,c.name,t.type,t.text,t.comment,c.color,t.id_category,t.file_name,t.id_account
            FROM webfinance_transactions AS t LEFT JOIN webfinance_categories AS c ON t.id_category=c.id
            HAVING $where_clause
            ORDER BY $order_clause";
@@ -292,6 +292,14 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
        $help_edit = addslashes(_('Click to modify this transaction'));
 
        $class = ($count%2)?"row_odd":"row_even";
+
+       //file
+       $file="";
+       if($tr->file_name != ""){
+	 //put a icon here
+	 $file="<a href='file.php?action=file&id=$tr->id'><small>$tr->file_name</small></a>";
+       }
+
        print <<<EOF
 <tr class="$class">
   <td>
@@ -303,7 +311,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
   <td>$fmt_date</td>
   <td style="background: $tr->color; text-align: center;" nowrap><a href="?$filter_base&filter[shown_cat][$tr->id_category]='on'">$tr->name</a></td>
   <td style="text-align: center;">$tr->type</td>
-  <td width="100%" style="font-size: 9px;">$tr->text<br/><i>$tr->comment</i></td>
+	 <td width="100%" style="font-size: 9px;">$tr->text<br/><i>$tr->comment</i>&nbsp;$file</td>
   <td style="text-align: right; font-weight: bold; background: $amount_color" nowrap>$fmt_amount &euro;</td>
   <td style="text-align: right; background: $balance_color;" nowrap>$fmt_balance &euro;</td>
 </tr>
