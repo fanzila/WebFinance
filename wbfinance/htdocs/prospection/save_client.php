@@ -12,6 +12,15 @@
 
 include("../inc/main.php");
 
+global $User;
+$user = $User->getInfos();
+if (!$User->isAuthorized($user->id_user,"manager")) {
+  header("Location: fiche_prospect.php?id=".$_POST['id_client']);
+  die();
+}
+// print_r($User->getInfos());
+// die();
+
 if ($_GET['action'] == "delete") {
   mysql_query("DELETE FROM webfinance_clients WHERE id_client=".$_GET['id']) or wf_mysqldie();
   $_SESSION['message'] = "Le client/prospect, tous ses contacts factures et devis ont été supprimés";
