@@ -68,11 +68,29 @@ function update_ca() {
 
 }
 
-function update_transaction($id_invoice){
+function update_transaction($id_invoice, $type_prev){
 
   $Facture = new Facture();
   if (is_numeric($_POST['id_facture'])){
     $facture = $Facture->getInfos($id_invoice);
+
+    if($facture->is_paye){
+      $type="real";
+      $date_transaction=date("Y-m-d", $facture->timestamp_date_paiement );
+    }else if($type_prev==1){
+      $type="asap";
+      $date_transaction=date("Y-m-d", mktime(0,0,0,date("m"),date("d")+1, date("Y")) );
+    }else if($type_prev>1){
+      $type="prevision";
+      $date_transaction=date("Y-m-d", ($facture->timestamp_date_facture)+(86400*$type_prev) );
+    }else{
+      $type="prevision";
+       if($facture->timestamp_date_facture < $facture->timestamp_date_paiement )
+	 $date_transaction=date("Y-m-d",$facture->timestamp_date_paiement);
+       else
+	 $date_transaction=date("Y-m-d",$facture->timestamp_date_facture);
+    }
+
 
     $result=mysql_query("SELECT id, id_category FROM webfinance_transactions WHERE id_invoice=$id_invoice" )
       or wf_mysqldie();
@@ -107,11 +125,11 @@ function update_transaction($id_invoice){
 	"id_category=%d, ".
 	"text='%s', ".
 	"amount='%s', ".
-	"type='prevision', ".
+	"type='$type', ".
 	"date='%s', ".
 	"comment='%s' ".
 	"WHERE id_invoice=%d";
-      $q = sprintf($query, $facture->id_compte, $id_category, $text, preg_replace("!,!", ".", $facture->total_ttc),  date("Y-m-d", $facture->timestamp_date_paiement) , $comment, $id_invoice );
+      $q = sprintf($query, $facture->id_compte, $id_category, $text, preg_replace("!,!", ".", $facture->total_ttc),  $date_transaction , $comment, $id_invoice );
       mysql_query($q) or wf_mysqldie();
 
 
@@ -122,11 +140,11 @@ function update_transaction($id_invoice){
 	"id_category=%d, ".
 	"text='%s', ".
 	"amount='%s', ".
-	"type='prevision', ".
+	"type='$type', ".
 	"date='%s', ".
 	"comment='%s', ".
 	"id_invoice=%d";
-      $q = sprintf($query, $facture->id_compte, $id_category, $text, preg_replace('!,!', '.', $facture->total_ttc), date("Y-m-d", $facture->timestamp_date_paiement) , $comment, $id_invoice );
+      $q = sprintf($query, $facture->id_compte, $id_category, $text, preg_replace('!,!', '.', $facture->total_ttc), $date_transaction , $comment, $id_invoice );
       mysql_query($q) or wf_mysqldie();
     }
   }
@@ -229,7 +247,7 @@ if ($action == "save_facture") {
   update_ca();
   regenerate($_POST['id_facture']);
 
-  update_transaction($_POST['id_facture']);
+  update_transaction($_POST['id_facture'],$type_prev);
 
   header("Location: edit_facture.php?id_facture=".$_POST['id_facture']);
 } elseif ($action == "delete_facture") {
