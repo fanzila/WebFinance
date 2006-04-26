@@ -25,7 +25,7 @@ foreach ($elements as $elname=>$data) {
     array_push($_SESSION['preload_images'], $on);
     $off = '/imgs/boutons/'.urlencode(base64_encode($elname.":off")).'.png';
     printf( '<a class="bouton" href="%s"><img onMouseOver="this.src=\'%s\';" onMouseOut="this.src=\'%s\';" src="%s" border=0 /></a>',
-             $url, $on, $off, $off);
+             $data['url'], $on, $off, $off);
   }
 }
 

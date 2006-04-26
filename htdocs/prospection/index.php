@@ -19,7 +19,7 @@ include("nav.php");
 
 // House keeping : lister les factures inpayées et marquer les clients qui en ont.
 // FIXME : should go in save_facture.php
-mysql_query("UPDATE webfinance_clients SET has_unpaid=false,has_devis=false");
+mysql_query("UPDATE webfinance_clients SET has_unpaid=false,has_devis=false") or wf_mysqldie();
 $result = mysql_query("select c.id_client,count(*) as has_unpaid
                        FROM webfinance_invoices as f,webfinance_clients as c
                        WHERE f.is_paye=0
@@ -37,7 +37,9 @@ while (list($id_client) = mysql_fetch_array($result)) {
 
 // Begin where clause
 $where_clause = "1";
-if (isset($_GET['q']) && ($_GET['q']!=0)) { $where_clause = "ct.id_company_type=".$_GET['q']; }
+if (isset($_GET['q']) && ($_GET['q']!=0)) {
+  $where_clause = "ct.id_company_type=".$_GET['q'];
+}
 
 if (preg_match("/[a-zA-Z ]+/", $_GET['namelike'])) {
   $where_clause .= " AND c.nom LIKE '%".$_GET['namelike']."%'";
@@ -74,10 +76,10 @@ switch ($_GET['sort']) {
 
 $total_dehors = 0;
 // Find matching companies
-$result = mysql_query("SELECT c.nom, c.id_client,ct.id_company_type 
-                       FROM webfinance_clients c,webfinance_company_types ct 
-                       WHERE $where_clause 
-                       ORDER BY $critere") or wf_mysqldie(); 
+$result = mysql_query("SELECT c.nom, c.id_client,ct.id_company_type
+                       FROM webfinance_clients c,webfinance_company_types ct
+                       WHERE $where_clause
+                       ORDER BY $critere") or wf_mysqldie();
 $client = new Client(1);
 while ($found = mysql_fetch_object($result)) {
   $count++;
@@ -129,7 +131,7 @@ $result = mysql_query("SELECT sum(fl.qtt*prix_ht)
 list($ca_total_ht_annee_encours) = mysql_fetch_array($result);
 mysql_free_result($result);
 
-// Trésorerie : total des transactions effectives 
+// Trésorerie : total des transactions effectives
 $result = mysql_query("SELECT sum(amount) FROM webfinance_transactions WHERE type='real'") or wf_mysqldie();
 list($tresorerie_real) = mysql_fetch_array($result);
 mysql_free_result($result);
