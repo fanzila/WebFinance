@@ -39,11 +39,10 @@ if ($GLOBALS['_SERVER']['REQUEST_METHOD'] == "POST") {
   }
 }
 
-
-$user = $User->getinfos($_SESSION['id_user']);
-
 $roles="any";
 include("../top.php");
+
+$user = $User->getInfos($_SESSION['id_user']);
 
 ?>
 
@@ -52,9 +51,27 @@ function checkForm(f) {
   f.submit();
 }
 </script>
-<h2>Mon mot de passe</h2>
 
 <div style="background: #ffcece;"><?= $_SESSION['message']; $_SESSION['message'] = ""; ?></div>
+
+<h2><?=_('My account') ?></h2>
+<table border="0" cellspacing="7" cellpadding="0">
+<tr>
+  <td><?=_('My account') ?></td>
+  <td><?= $user->login ?></td>
+</tr>
+<tr>
+  <td><?=_('Name') ?></td>
+  <td><?=$user->fisrt_name?> <?=$user->last_name?></td>
+</tr>
+<tr>
+  <td><?=_('Role')?>s</td>
+  <td><?=$user->role?></td>
+</tr>
+</table>
+
+
+<h2><?= _('My password') ?></h2>
 
 <form id="main_form" name="change_pass" action="index.php" method="post">
 <input type="hidden" name="action" value="changepass" />
@@ -79,7 +96,7 @@ function checkForm(f) {
 </table>
 </form>
 
-<h2>Options personnelles</h2>
+<h2><?=_('My preferences')?></h2>
 
 <form id="main_form" name="user_prefs" action="index.php" method="post">
 <input type="hidden" name="action" value="userprefs" />
@@ -141,6 +158,22 @@ function checkForm(f) {
   }
   ?>
   </select></td>
+</tr>
+<tr>
+  <td><?=_('Transactions')?></td>
+  <td>
+  <?php
+      if(empty($User->prefs->transactions_display))
+	$User->prefs->transactions_display=50;
+   ?>
+      <select name="pref_transactions_display">
+  <?php
+      for($i=10; $i <=100; $i=$i+10){
+	printf('<option value="%s" %s>%s</option>', $i, ($i==$User->prefs->transactions_display)?"selected":"", $i, $tr_disp);
+      }
+  ?>
+  </select>&nbsp;<?=_('per')?> page
+</td>
 </tr>
 <tr>
   <td colspan="2" style="text-align: center;">
