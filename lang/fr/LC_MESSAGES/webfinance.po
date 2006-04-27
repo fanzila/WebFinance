@@ -306,3 +306,6 @@ msgstr "Numéro de RCS ou numéro Siren innexistant lien direct Societe.com impo
 
 msgid " #"
 msgstr " n°"
+
+msgid "Show grids in graphs"
+msgstr "Afficher la grille dans les graphiques"

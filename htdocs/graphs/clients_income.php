@@ -30,7 +30,14 @@ if (is_numeric($_GET['nb_months']))
 else
   $nb_months = 12;
 
-$bar = new barGraph($width, $height, $_GET['grid']);
+if (preg_match("!^[0-9]+(|,[0-9]+)$!", $_GET['limit_clients'])) // Matches 5 and 10,5 and nothing else
+  $limit_clients = "LIMIT ".$_GET['limit_clients'];
+else
+  $limit_clients = "";
+
+global $User;
+
+$bar = new barGraph($width, $height, $User->prefs->graphgrid);
 $bar->setBarColor(103, 133, 195); # NBI blue
 $result = mysql_query("SELECT sum(fl.prix_ht*fl.qtt) as total, count(f.id_facture) as nb_factures, c.nom
                        FROM webfinance_invoices as f, webfinance_invoice_rows as fl, webfinance_clients as c
@@ -39,7 +46,8 @@ $result = mysql_query("SELECT sum(fl.prix_ht*fl.qtt) as total, count(f.id_factur
                        AND f.id_client = c.id_client
                        AND f.date_facture>=DATE_SUB(now(), INTERVAL $nb_months MONTH)
                        GROUP BY c.id_client
-                       ORDER BY total") or wf_mysqldie();
+                       ORDER BY total DESC
+                       $limit_clients") or wf_mysqldie();
 $count = mysql_num_rows($result);
 while ($billed = mysql_fetch_object($result)) {
   $billed->total = sprintf("%d", $billed->total);

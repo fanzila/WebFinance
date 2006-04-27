@@ -30,7 +30,9 @@ if (is_numeric($_GET['nb_months']))
 else
   $nb_months = 12;
 
-$bar = new barGraph($width, $height, $_GET['grid']);
+global $User;
+
+$bar = new barGraph($width, $height, $User->prefs->graphgrid);
 $bar->setBarColor(255, 92, 92) ;
 $result = mysql_query("SELECT sum(fl.prix_ht*fl.qtt) as total, count(f.id_facture) as nb_factures, c.nom
                        FROM webfinance_invoices as f, webfinance_invoice_rows as fl, webfinance_clients as c

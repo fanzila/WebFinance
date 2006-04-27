@@ -34,7 +34,9 @@ if (is_numeric($_GET['nb_months']))
 else
   $nb_months = 12;
 
-$bar = new barGraph($width, $height, $_GET['grid']);
+global $User;
+
+$bar = new barGraph($width, $height, $User->prefs->graphgrid);
 $bar->setBarColor(255, 92, 92) ;
 for ($i=$nb_months-1 ; $i>=0; $i--) {
   $result = mysql_query("SELECT date_format(date_sub(now(), INTERVAL $i MONTH), '%m/%y') as mois_shown, date_format(date_sub(now(), INTERVAL $i MONTH), '%Y%m') as mois");
