@@ -132,7 +132,7 @@ var onglet_shown='<?= $shown_tab ?>';
 
   <b><?= _('Contacts :') ?></b><br/>
   <?include "contact_entreprise.php" ?>
-  <div style="text-align: center;"><a href="#" onclick="inpagePopup(event, this, 240, 250, 'edit_contact.php?id=_new&id_client=<?= $Client->id ?>');"><?= _('Add a new contact') ?></a></div>
+  <div style="text-align: center;"><a href="#" onclick="inpagePopup(event, this, 240, 270, 'edit_contact.php?id=_new&id_client=<?= $Client->id ?>');"><?= _('Add a new contact') ?></a></div>
   </td>
 
   </table>
