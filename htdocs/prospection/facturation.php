@@ -13,6 +13,7 @@
 
 include("../inc/main.php");
 $title = _("Billing");
+$roles = "manager,employee,accounting";
 include("../top.php");
 include("nav.php");
 
@@ -38,9 +39,9 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w+\\&*+/", "", $GLOBA
 switch ($_GET['sort']) {
   case "num" : $order_clause = "f.num_facture DESC"; break;
   case "client" : $order_clause = "c.nom"; break;
-  case "montant_ttc" : 
+  case "montant_ttc" :
   case "montant_ht" : $order_clause = "f.id_client"; break;
-  case "date" : 
+  case "date" :
   default : $order_clause = "f.date_facture DESC";
 }
 
@@ -61,13 +62,13 @@ switch ($_GET['sort']) {
 </tr>
 <?php
 $total_ca_ht = 0;
-$result = mysql_query("SELECT f.id_facture 
+$result = mysql_query("SELECT f.id_facture
                        FROM webfinance_invoices f , webfinance_clients as c
-                       WHERE type_doc='facture' 
-                       AND f.num_facture!='' 
+                       WHERE type_doc='facture'
+                       AND f.num_facture!=''
                        AND f.id_client=c.id_client
-                       AND f.date_facture<=now() 
-                       AND ".$where_clause." 
+                       AND f.date_facture<=now()
+                       AND ".$where_clause."
                        ORDER BY $order_clause") or wf_mysqldie();
 $mois = array();
 while (list($id_facture) = mysql_fetch_array($result)) {
