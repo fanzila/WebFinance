@@ -359,7 +359,12 @@ EOF;
     </tr>
     <tr>
       <td><b>Page</b></td>
-      <td><?php
+      <td>
+       <?php
+
+       if($filter['page']>0)
+	 printf('<a class="pager_link" href="?%s&filter[page]=%d"><<&nbsp;</a> ', $filter_base, $filter['page']-1 );
+
       for ($i=0 ; $i<$nb_transactions/$transactions_per_page ; $i++) {
         if ($filter['page'] == $i) {
           printf("%d ", $i+1);
@@ -367,6 +372,9 @@ EOF;
           printf('<a class="pager_link" href="?%s&filter[page]=%d">%d</a> ', $filter_base, $i, $i+1 );
         }
       }
+	if($filter['page'] < floor($nb_transactions/$transactions_per_page) )
+	  printf('<a class="pager_link" href="?%s&filter[page]=%d">&nbsp;>></a> ', $filter_base, $filter['page']+1 );
+
       ?>
       </td>
     <tr>
