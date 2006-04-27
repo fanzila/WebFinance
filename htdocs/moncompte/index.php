@@ -163,13 +163,13 @@ function checkForm(f) {
   <td><?=_('Transactions')?></td>
   <td>
   <?php
-      if(empty($User->prefs->transactions_display))
-	$User->prefs->transactions_display=50;
+      if(empty($User->prefs->transactions_per_page))
+	$User->prefs->transactions_per_page=50;
    ?>
-      <select name="pref_transactions_display">
+      <select name="pref_transactions_per_page">
   <?php
       for($i=10; $i <=100; $i=$i+10){
-	printf('<option value="%s" %s>%s</option>', $i, ($i==$User->prefs->transactions_display)?"selected":"", $i, $tr_disp);
+	printf('<option value="%s" %s>%s</option>', $i, ($i==$User->prefs->transactions_per_page)?"selected":"", $i, $tr_disp);
       }
   ?>
   </select>&nbsp;<?=_('per')?> page
