@@ -152,10 +152,11 @@ class User {
       return false;
     }
     extract($data);
+    $roles=implode(",",$data['role']);
 
-    $q = sprintf("INSERT INTO webfinance_users (login, first_name, last_name, password, email, disabled, admin, modification_date, creation_date)
-                  VALUES('%s', '%s', '%s', md5('%s'), '%s', %d, %d, now(), now() )",
-                  $login, $first_name, $last_name, $this->randomPass(), $email, ($disabled == "on")?1:0, ($admin == "on")?1:0 );
+    $q = sprintf("INSERT INTO webfinance_users (login, first_name, last_name, password, email, role, disabled, admin,  modification_date, creation_date)
+                  VALUES('%s', '%s', '%s', md5('%s'), '%s','%s',  %d, %d, now(), now() )",
+		 $login, $first_name, $last_name, $passwd, $email, $roles, ($disabled == "on")?1:0, ($admin == "on")?1:0 );
     mysql_query($q) or wf_mysqldie();
     $result = mysql_query("SELECT id_user FROM webfinance_users WHERE creation_date>date_sub(now(), INTERVAL 1 SECOND)");
     list($new_id_user) = mysql_fetch_array($result);

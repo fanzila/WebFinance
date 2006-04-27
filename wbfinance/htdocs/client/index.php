@@ -43,9 +43,10 @@ if (isset($_GET['type']) AND $_GET['type']!="") {
 }
 
 $w_clause="";
-if( !$user->isAdmin AND in_array($client_role,$roles) ){
+if( in_array($client_role,$roles) AND count($role)==1 ){
   $is_client=true;
-  $w_clause= " AND ( webfinance_clients.email LIKE '$user->email' OR webfinance_personne.email LIKE '$user->email')";
+  //  $w_clause= " AND ( webfinance_clients.email LIKE '$user->email' OR webfinance_personne.email LIKE '$user->email')";
+  $w_clause= " AND webfinance_personne.id_user=$user->id_user ";
   $where_clause .= $w_clause;
  }
 
@@ -90,6 +91,7 @@ $q="SELECT webfinance_invoices.id_facture ".
   "AND ".$where_clause." ".
   "ORDER BY $order_clause ";
 
+
 $result = mysql_query($q) or wf_mysqldie();
 
 $mois = array();
@@ -118,7 +120,14 @@ while (list($id_facture) = mysql_fetch_array($result)) {
   <td><?=$fa->nice_date_facture?></td>
   <td><img src="/imgs/icons/<?=$icon?>.gif" alt="<?=$icon?>" /></td>
   <td>FA<?=$fa->num_facture?></td>
-  <td><a href="../prospection/fiche_prospect.php?id=<?=$fa->id_client?>"><?=$fa->nom_client?></a></td>
+  <td>
+<?
+   if(!$is_client)
+     printf("<a href='../prospection/fiche_prospect.php?id=%d '>%s</a>",$fa->id_client,$fa->nom_client);
+   else
+     echo $fa->nom_client;
+?>
+  </td>
   <td><?=$fa->nice_total_ht?>&euro;</td>
   <td><?=$fa->nice_total_ttc?>&euro;</td>
   <td>

@@ -16,16 +16,45 @@ if ($GLOBALS['HTTP_SERVER_VARS']['REQUEST_METHOD'] != "POST") {
   die();
 }
 
+$User = new User();
+
+$user_data=array(
+		 "login"=>$_POST['login'],
+		 "first_name"=>$_POST['prenom'],
+		 "last_name"=>$_POST['nom'],
+		 "passwd"=>$_POST['passwd'],
+		 "email"=>$_POST['email'],
+		 "role"=>array("client"),
+		 "disabled"=>"off",
+		 "admin"=>"off"
+		 );
+
+
 if ($_POST['action'] == "create") {
-  $q = sprintf("INSERT INTO webfinance_personne (nom,prenom,email,tel,mobile,client,fonction,date_created) VALUES('%s', '%s', '%s', '%s', '%s', %d, '%s', now())",
-               $_POST['nom'], $_POST['prenom'], $_POST['email'], $_POST['tel'], $_POST['mobile'], $_POST['client'], $_POST['fonction'] );
+
+  $id_user = $User->createUser($user_data);
+
+  $q = sprintf("INSERT INTO webfinance_personne (id_user,nom,prenom,email,tel,mobile,client,fonction,date_created) VALUES (%d,'%s', '%s', '%s', '%s', '%s', %d, '%s', now())",
+	       $id_user,$_POST['nom'], $_POST['prenom'], $_POST['email'], $_POST['tel'], $_POST['mobile'], $_POST['client'], $_POST['fonction'] );
+
   mysql_query($q) or wf_mysqldie("Error inserting personne");
+
 } elseif ($_POST['action'] == "save") {
-  $q = sprintf("UPDATE webfinance_personne SET nom='%s',prenom='%s',email='%s',tel='%s',mobile='%s',fonction='%s',note='%s' WHERE id_personne=%d",
-               $_POST['nom'], $_POST['prenom'], $_POST['email'], $_POST['tel'], $_POST['mobile'], $_POST['fonction'], $_POST['note'], $_POST['id_personne']);
+
+  $result = mysql_query("SELECT count(id_user) FROM webfinance_users WHERE id_user=".$_POST['id_user']) or wf_mysqldie();
+  list($exists) = mysql_fetch_array($result);
+  if(!$exists)
+    $_POST['id_user'] = $User->createUser($user_data);
+  else
+    $User->saveData($user_data);
+
+  $q = sprintf("UPDATE webfinance_personne SET id_user=%d, nom='%s',prenom='%s',email='%s',tel='%s',mobile='%s',fonction='%s',note='%s' WHERE id_personne=%d",
+               $_POST['id_user'], $_POST['nom'], $_POST['prenom'], $_POST['email'], $_POST['tel'], $_POST['mobile'], $_POST['fonction'], $_POST['note'], $_POST['id_personne']);
 
   mysql_query($q) or wf_mysqldie("Saving person");
+
 } elseif ($_POST['action'] == "delete") {
+  $User->delete($_POST['id_user']);
   mysql_query("DELETE FROM webfinance_personne WHERE id_personne=".$_POST['id_personne']);
 } else {
   die("Don't know what to do with posted data");

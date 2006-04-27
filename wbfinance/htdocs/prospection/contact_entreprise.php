@@ -25,11 +25,11 @@
     print <<<EOF
       <tr onmouseover="this.className='row_over';" onmouseout="this.className='row_$class';" class="row_$class" valign="top">
         <td width="16">$mail</td>
-        <td onclick="inpagePopup(event, this, 240, 250, 'edit_contact.php?id_personne=$contact->id_personne');" ><b>$contact->prenom $contact->nom</b></td>
-        <td onclick="inpagePopup(event, this, 240, 250, 'edit_contact.php?id_personne=$contact->id_personne');" >$contact->fonction</td>
-        <td onclick="inpagePopup(event, this, 240, 250, 'edit_contact.php?id_personne=$contact->id_personne');" >$mobile</td>
-        <td onclick="inpagePopup(event, this, 240, 250, 'edit_contact.php?id_personne=$contact->id_personne');" >$tel</td>
-        <td onclick="inpagePopup(event, this, 240, 250, 'edit_contact.php?id_personne=$contact->id_personne');" >$note</td>
+        <td onclick="inpagePopup(event, this, 240, 270, 'edit_contact.php?id_personne=$contact->id_personne');" ><b>$contact->prenom $contact->nom</b></td>
+        <td onclick="inpagePopup(event, this, 240, 270, 'edit_contact.php?id_personne=$contact->id_personne');" >$contact->fonction</td>
+        <td onclick="inpagePopup(event, this, 240, 270, 'edit_contact.php?id_personne=$contact->id_personne');" >$mobile</td>
+        <td onclick="inpagePopup(event, this, 240, 270, 'edit_contact.php?id_personne=$contact->id_personne');" >$tel</td>
+        <td onclick="inpagePopup(event, this, 240, 270, 'edit_contact.php?id_personne=$contact->id_personne');" >$note</td>
       </tr>
 EOF;
     $count++;

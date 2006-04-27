@@ -298,7 +298,20 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
      $result = mysql_query($q) or wf_mysqldie();
      $total_shown = 0;
      $count = 1;
+     $prev_date="";
      while ($tr = mysql_fetch_object($result)) {
+
+       //s�parer les mois
+       $current_month=date("F Y",$tr->ts_date);
+       if(!empty($prev_date)){
+	 if(date("m",$prev_date)!=date("m",$tr->ts_date))
+	   echo "<tr><td colspan='9' align='center'><b>$current_month</b></td></tr>";
+       }else
+	 echo "<tr><td colspan='9' align='center'><b>$current_month</b></td></tr>";
+
+       $prev_date=$tr->ts_date;
+
+
        $total_shown += $tr->amount;
 
        $fmt_date = strftime("%d/%m/%Y", $tr->ts_date); // Formated date (localized)

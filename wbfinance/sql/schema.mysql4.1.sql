@@ -182,6 +182,7 @@ CREATE TABLE `webfinance_naf` (
 DROP TABLE IF EXISTS `webfinance_personne`;
 CREATE TABLE `webfinance_personne` (
   `id_personne` int(11) NOT NULL auto_increment,
+  `id_user` int(11) NOT NULL default '0',
   `nom` varchar(100) default NULL,
   `prenom` varchar(100) default NULL,
   `date_created` datetime default NULL,
