@@ -24,7 +24,6 @@ $User = new User();
 $user =  $User->getInfo();
 $roles = explode(",",$user->role);
 
-
 $Facture = new Facture();
 $total_ca_ht = 0;
 
@@ -43,13 +42,11 @@ if (isset($_GET['type']) AND $_GET['type']!="") {
 }
 
 $w_clause="";
-if( in_array($client_role,$roles) AND count($role)==1 ){
+if($user->admin<1 AND count($roles)==1 AND in_array($client_role,$roles) ) {
   $is_client=true;
-  //  $w_clause= " AND ( webfinance_clients.email LIKE '$user->email' OR webfinance_personne.email LIKE '$user->email')";
-  $w_clause= " AND webfinance_personne.id_user=$user->id_user ";
+  $w_clause=" AND webfinance_personne.id_user=$user->id_user ";
   $where_clause .= $w_clause;
  }
-
 
 $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w+\\&*+/", "", $GLOBALS['_SERVER']['QUERY_STRING']);
 
@@ -82,15 +79,18 @@ switch ($_GET['sort']) {
 $total_ca_ht = 0;
 
 $q="SELECT webfinance_invoices.id_facture ".
-  "FROM webfinance_invoices, webfinance_clients ".
-  "LEFT JOIN webfinance_personne ON webfinance_clients.id_client = webfinance_personne.client ".
-  "WHERE webfinance_invoices.id_client = webfinance_clients.id_client ".
-  "AND type_doc='facture' ".
-  "AND num_facture!='' ".
-  "AND date_facture<=now() ".
-  "AND ".$where_clause." ".
+  "FROM webfinance_personne, webfinance_users, webfinance_clients, webfinance_invoices ".
+  "WHERE ".
+  "( ".
+  "webfinance_personne.id_user = webfinance_users.id_user ".
+  "AND webfinance_clients.id_client = webfinance_personne.client ".
+  "AND webfinance_clients.id_client = webfinance_invoices.id_client ".
+  " ) ".
+  "AND webfinance_invoices.type_doc='facture' ".
+  "AND webfinance_invoices.num_facture!='' ".
+  "AND webfinance_invoices.date_facture<=now() ".
+  "AND $where_clause ".
   "ORDER BY $order_clause ";
-
 
 $result = mysql_query($q) or wf_mysqldie();
 
@@ -169,10 +169,14 @@ while (list($id_facture) = mysql_fetch_array($result)) {
      <option value=""><?= _('All')?></option>
 <?php
 
- $q="SELECT webfinance_clients.id_client, webfinance_clients.nom ".
-     "FROM webfinance_invoices, webfinance_clients ".
-     "LEFT JOIN webfinance_personne ON webfinance_clients.id_client = webfinance_personne.client ".
-     "WHERE webfinance_invoices.id_client = webfinance_clients.id_client ".$w_clause;
+$q="SELECT DISTINCT webfinance_clients.id_client, webfinance_clients.nom ".
+  "FROM webfinance_clients, webfinance_invoices, webfinance_personne ".
+  "WHERE ".
+  "webfinance_clients.id_client = webfinance_invoices.id_client ".
+  "AND webfinance_personne.client = webfinance_clients.id_client ".
+  "AND webfinance_invoices.type_doc='facture' ".
+  " $w_clause ".
+  "ORDER BY webfinance_clients.nom ASC";
 
  $result = mysql_query($q) or wf_mysqldie();
 
