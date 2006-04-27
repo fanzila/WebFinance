@@ -24,7 +24,9 @@ if (is_numeric($_GET['height']))
 else
   $height = 300;
 
-$bar = new barGraph($width, $height, $_GET['grid']);
+global $User;
+
+$bar = new barGraph($width, $height, $User->prefs->graphgrid);
 $result = mysql_query("SELECT sum(fl.prix_ht*fl.qtt) as total, count(f.id_facture) as nb_factures,
                                date_format(f.date_facture, '%Y%m') as groupme, date_format(f.date_facture, '%m/%y') as mois
                        FROM webfinance_invoices as f, webfinance_invoice_rows as fl

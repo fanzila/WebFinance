@@ -146,6 +146,8 @@ function checkForm(f) {
   }
   ?>
   </select></td>
+
+  <td colspan="2"><input type="checkbox" name="pref_graphgrid" <?= ($User->prefs->graphgrid)?"checked":"" ?> /> <?= _('Show grids in graphs') ?></td>
 </tr>
 <tr>
   <td>Onglet par défaut dans la fiche entreprise</td>
