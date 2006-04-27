@@ -18,8 +18,16 @@ $roles="manager,accounting";
 require("../top.php");
 require("nav.php");
 
+$User = new User();
+
+$user = $User->getInfos($_SESSION['id_user']);
+
 // Number of transaction to show on one page
-$transactions_per_page = 10;
+if(is_numeric($User->prefs->transactions_per_page) and $User->prefs->transactions_per_page>0 )
+  $transactions_per_page = $User->prefs->transactions_per_page;
+else
+  $transactions_per_page = 50;
+
 ?>
 <script type="text/javascript">
 
@@ -350,7 +358,7 @@ EOF;
       <td colspan="2" style="text-align: center"><?= _('Filter') ?></td>
     </tr>
     <tr>
-      <td>Page</td>
+      <td><b>Page</b></td>
       <td><?php
       for ($i=0 ; $i<$nb_transactions/$transactions_per_page ; $i++) {
         if ($filter['page'] == $i) {
