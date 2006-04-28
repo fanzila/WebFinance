@@ -71,20 +71,18 @@ if (isset($_GET['id_personne'])) {
 <tr>
   <td width="50"><?=_('Login')?></td><td><input type="text" style="width: 145px;" name="login" value="<?= $personne->login ?>" /></td>
 </tr>
-<tr>
 <?
-  if($personne->id_user>0)
-    $result = mysql_query("SELECT count(id_user) FROM webfinance_users WHERE id_user=$personne->id_user") or wf_mysqldie();
-  list($exists) = mysql_fetch_array($result);
-  if(!$exists){
+  if( !($User->exists($personne->id_user)) ){
 ?>
-
-  <td width="50"><?=_('Password')?></td><td><input type="password" style="width: 145px;" name="passwd" value=""/></td>
-
+<tr>
+ <td width='50'><?=_('Password')?></td><td><input type='password' style='width: 145px;' name='passwd' /></td>
+</tr>
+<tr>
+  <td width="70"><?=_('Send info')?></td><td><input type="checkbox" name="send_info"/></td>
+</tr>
 <?
   }
-?>
-</tr>
+ ?>
 <tr>
   <td colspan="2"><input class="email" type="text" size="20" name="email" value="<?= $personne->email ?>" /></td>
 </tr>
@@ -144,8 +142,8 @@ function checkForm(f) {
     return false;
   }
 
-  if ((f.login.value == '') | (f.passwd.value == '')) {
-    alert('login and password required!');
+  if (f.login.value == '') {
+    alert('login is required!');
     return false;
   }
 

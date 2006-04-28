@@ -143,16 +143,33 @@ class User {
 		 $id_user );
     mysql_query($q) or wf_mysqldie();
     logmessage("Modification de l'utilisateur user:$id_user");
-    $_SESSION['message'] = "DonnÃ©es enregistrÃ©es";
+    $_SESSION['message'] = _("Data saved");
+  }
+
+  function existsLogin($login){
+    $result = mysql_query("SELECT count(id_user) FROM webfinance_users WHERE login='$login'") or wf_mysqldie();
+    list($exists) = mysql_fetch_array($result);
+    return $exists;
+  }
+
+  function exists($id_user){
+    $result = mysql_query("SELECT count(id_user) FROM webfinance_users WHERE id_user=$id_user") or wf_mysqldie();
+    list($exists) = mysql_fetch_array($result);
+    return $exists;
   }
 
   function createUser($data=null) {
     if (! $this->isAdmin($_SESSION['id_user'])) {
-      $_SESSION['message'] = "Vous n'Ãªtes pas administrateur";
+      $_SESSION['message'] = _("You aren't the Administrator");
       return false;
     }
     extract($data);
     $roles=implode(",",$data['role']);
+
+    if($this->existsLogin($login)){
+      $_SESSION['message'] =  _("Sorry, this user already exists!");
+      return false;
+    }
 
     $q = sprintf("INSERT INTO webfinance_users (login, first_name, last_name, password, email, role, disabled, admin,  modification_date, creation_date)
                   VALUES('%s', '%s', '%s', md5('%s'), '%s','%s',  %d, %d, now(), now() )",
@@ -163,7 +180,7 @@ class User {
     mysql_free_result($result);
 
     logmessage("CrÃ©ation d'un nouvel utilisateur user:$new_id_user");
-    $_SESSION['message'] = "Utilisateur crÃ©Ã©";
+    $_SESSION['message'] = _("User added");
 
     return $new_id_user;
   }
@@ -178,6 +195,7 @@ class User {
     mysql_free_result($result);
     logmessage("Suppression de l'utilisateur $login ($prenom $nom)");
     mysql_query("DELETE FROM webfinance_users WHERE id_user=$id_user");
+    $_SESSION['message'] = _("User deleted");
   }
 
   function randomPass() {
@@ -228,6 +246,52 @@ class User {
     list($data) = mysql_fetch_array($result);
     $this->prefs = unserialize(base64_decode($data));
   }
+
+  function sendInfo($id_user,$passwd){
+    require("/usr/share/php/libphp-phpmailer/class.phpmailer.php");
+    //récupérer les info de l'utilisateur
+    $user = $this->getInfo($id_user);
+
+    //récupérer les info sur la société
+    $result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='societe' AND owner=-1")
+      or wf_mysqldie();
+    list($value) = mysql_fetch_array($result);
+    mysql_free_result($result);
+    $societe = unserialize(base64_decode($value));
+
+    //sujet
+    $subject= $societe->raison_sociale.": "._('your account informations');
+
+    //text
+    $body = _('You receive this mail because you have an account ...')."\n";
+    $body .= _('Login').": ".$user->login."\n";
+    $body .= _('Password').": ".$passwd."\n";
+
+    //compléter l'entête de l'email
+    $mail = new PHPMailer();
+    if(preg_match('/^[A-z0-9][\w.-]*@[A-z0-9][\w\-\.]+\.[A-Za-z]{2,4}$/',$societe->email) )
+      $mail->From = $from;
+    else
+      $mail->From = $societe->email;
+
+    $mail->FromName = $societe->raison_sociale;
+
+    $mail->AddAddress($user->email, $user->first_name." ".$user->last_name );
+
+    $mail->Subject = $subject;
+    $mail->Body = $body;
+
+    $mail->WordWrap = 80;
+
+    if(!$mail->Send()){
+      echo _("User information was not sent");
+      echo "Mailer Error: " . $mail->ErrorInfo;
+      $_SESSION['message']=_('User information was not sent');
+    }else
+      $_SESSION['message']=_('User information sent');
+
+  }
+
 }
 
 ?>
