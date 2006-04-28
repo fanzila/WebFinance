@@ -302,7 +302,7 @@ CREATE TABLE `webfinance_users` (
   `id_user` int(11) NOT NULL auto_increment,
   `last_name` varchar(100) default NULL,
   `first_name` varchar(100) default NULL,
-  `login` varchar(10) default NULL,
+  `login` varchar(10) NOT NULL,
   `password` varchar(100) default NULL,
   `email` varchar(255) default NULL,
   `disabled` tinyint(4) NOT NULL default '1',

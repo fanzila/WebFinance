@@ -19,6 +19,7 @@ if ($GLOBALS['HTTP_SERVER_VARS']['REQUEST_METHOD'] != "POST") {
 $User = new User();
 
 $user_data=array(
+		 "id_user"=>$_POST['id_user'],
 		 "login"=>$_POST['login'],
 		 "first_name"=>$_POST['prenom'],
 		 "last_name"=>$_POST['nom'],
@@ -30,14 +31,29 @@ $user_data=array(
 		 );
 
 
+
 if ($_POST['action'] == "create") {
 
+  if(strlen($user_data['passwd'])<1 or strlen($user_data['passwd'])>50 )
+    $user_data['passwd']=$User->randomPass;
+
   $id_user = $User->createUser($user_data);
+
+  $_SESSION['tmp_message'] = $_SESSION['message'];
 
   $q = sprintf("INSERT INTO webfinance_personne (id_user,nom,prenom,email,tel,mobile,client,fonction,date_created) VALUES (%d,'%s', '%s', '%s', '%s', '%s', %d, '%s', now())",
 	       $id_user,$_POST['nom'], $_POST['prenom'], $_POST['email'], $_POST['tel'], $_POST['mobile'], $_POST['client'], $_POST['fonction'] );
 
   mysql_query($q) or wf_mysqldie("Error inserting personne");
+
+  $_SESSION['tmp_message'] .= "<br/>"._("Contact added");
+
+  if(isset($_POST['send_info'])){
+    $User->sendInfo($id_user,$user_data['passwd']);
+    $_SESSION['tmp_message'] .= "<br/>".$_SESSION['message'];
+  }
+  $_SESSION['message']=$_SESSION['tmp_message'];
+  $_SESSION['tmp_message']="";
 
 } elseif ($_POST['action'] == "save") {
 
@@ -53,11 +69,16 @@ if ($_POST['action'] == "create") {
 
   mysql_query($q) or wf_mysqldie("Saving person");
 
+  $_SESSION['message'] .= " <br/>"._("Contact updated");
+
 } elseif ($_POST['action'] == "delete") {
   $User->delete($_POST['id_user']);
   mysql_query("DELETE FROM webfinance_personne WHERE id_personne=".$_POST['id_personne']);
+
+  $_SESSION['message'] .= " <br/>"._("Contact deleted");
+
 } else {
-  die("Don't know what to do with posted data");
+  die(_("Don't know what to do with posted data"));
 }
 
 ?>

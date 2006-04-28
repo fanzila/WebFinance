@@ -84,6 +84,8 @@ var onglet_shown='<?= $shown_tab ?>';
 
 </script>
 
+<div style="background: #ffcece"><?= $_SESSION['message']; $_SESSION['message'] = ""; ?></div>
+
 <form onchange="formChanged();" id="main_form" action="save_client.php" method="post">
 
 <input type="hidden" name="focused_onglet" value="<?= $_GET['focused_onglet'] ?>" />
@@ -128,11 +130,10 @@ var onglet_shown='<?= $shown_tab ?>';
   <br/>
   <?= $Client->link_societe ?>
   </td><td width="100%">
-  <?// Contacts ?>
 
   <b><?= _('Contacts :') ?></b><br/>
   <?include "contact_entreprise.php" ?>
-  <div style="text-align: center;"><a href="#" onclick="inpagePopup(event, this, 240, 270, 'edit_contact.php?id=_new&id_client=<?= $Client->id ?>');"><?= _('Add a new contact') ?></a></div>
+  <div style="text-align: center;"><a href="#" onclick="inpagePopup(event, this, 240, 300, 'edit_contact.php?id=_new&id_client=<?= $Client->id ?>');"><?= _('Add a new contact') ?></a></div>
   </td>
 
   </table>
