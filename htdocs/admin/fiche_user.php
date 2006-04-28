@@ -12,6 +12,7 @@
 
 // $Id$
 include("../inc/main.php");
+$roles = 'admin';
 include("../top.php");
 include("nav.php");
 
@@ -33,7 +34,7 @@ function checkForm(f) {
 }
 </script>
 
-<div style="background: #ffcece"><?= $_SESSION['message']; $_SESSION['message']=""; ?></div>
+<?= $_SESSION['message']; $_SESSION['message']=""; ?>
 
 <form name="userdata" action="save_user.php" method="post">
 <input type="hidden" name="id_user" value="<?= $user->id_user ?>" />
@@ -59,25 +60,19 @@ function checkForm(f) {
     Modifié le <?=$user->nice_modification_date?>
   </td>
 </tr>
-<?
-   $result=mysql_query("SELECT id_role, name FROM webfinance_roles") or wf_mysqldie();
-   if(mysql_num_rows($result)>0){
-?>
  <tr>
  <td colspan="2">
   <table>
    <tr>
     <td>Roles:</td>
 <?
-    while($role=mysql_fetch_assoc($result)){
-     printf("<td><input type='checkbox' name='role[]' %s value='%s' >%s</td>",($User->hasRole($role['name'] , $user->id_user )>0)?"checked":"",$role['name'],$role['name'] );
-    }
+   $result=mysql_query("SELECT id_role, name FROM webfinance_roles") or wf_mysqldie();
+   while($role=mysql_fetch_assoc($result)){
+    printf("<td><input type='checkbox' name='role[]' %s value='%s' >%s</td>",($User->hasRole($role['name'] , $user->id_user )>0)?"checked":"",$role['name'],$role['name'] );
+   }
 ?>
    </tr>
   </table>
-<?
-}
-?>
  </td>
 </tr>
 <tr>
@@ -91,5 +86,6 @@ function checkForm(f) {
 
 
 <?php
+$Revision = '$Revision$';
 include("../bottom.php");
 ?>

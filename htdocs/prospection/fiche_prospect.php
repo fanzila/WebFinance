@@ -84,7 +84,7 @@ var onglet_shown='<?= $shown_tab ?>';
 
 </script>
 
-<div style="background: #ffcece"><?= $_SESSION['message']; $_SESSION['message'] = ""; ?></div>
+<?= $_SESSION['message']; $_SESSION['message']=""; ?>
 
 <form onchange="formChanged();" id="main_form" action="save_client.php" method="post">
 

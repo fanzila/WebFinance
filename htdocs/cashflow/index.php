@@ -302,7 +302,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
      while ($tr = mysql_fetch_object($result)) {
 
        //s�parer les mois
-       $current_month=date("F Y",$tr->ts_date);
+       $current_month=ucfirst(strftime("%B %Y",$tr->ts_date));
        if(!empty($prev_date)){
 	 if(date("m",$prev_date)!=date("m",$tr->ts_date))
 	   echo "<tr><td colspan='9' align='center'><b>$current_month</b></td></tr>";

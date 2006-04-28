@@ -11,8 +11,9 @@
 //
 // Real importing is done in do_import.php + import_*.php
 
-$title = _("Import");
 require("../inc/main.php");
+$title = _("Import");
+$roles = 'manager';
 require("../top.php");
 require("nav.php");
 

@@ -26,7 +26,8 @@ if (($GLOBALS['HTTP_SERVER_VARS']['REDIRECT_STATUS'] == "404") && (preg_match("/
 
 Lien suivi depuis : <?= $GLOBALS['_SERVER']['HTTP_REFERER'] ?><br/>
 URI demandée : <?= $GLOBALS['_SERVER']['REDIRECT_URL'] ?>
-  <?php
+<?php
+  $Revision = '$Revision$';
   require("bottom.php");
 }
 

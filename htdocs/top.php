@@ -29,10 +29,13 @@ if (! $User->isLogued()) {
 
 $user = $User->getInfos();
 
-if(!$User->isAuthorized($user->id_user,$roles)){
+if(!$User->isAuthorized($roles)){
   header("Location: /welcome.php");
- }
+}
 
+if ($_SESSION['message'] != "") {
+  $_SESSION['message'] = '<div class="post_message">'.$_SESSION['message']."</div>";
+}
 
 
 ?>
@@ -42,7 +45,7 @@ if(!$User->isAuthorized($user->id_user,$roles)){
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <link rel=stylesheet type=text/css href=/css/main.css />
-  <title>Webfinance<?= ($title=="")?"":" - $title" ?></title>
+  <title><?= ($title=="")?"":"$title - " ?>Webfinance</title>
   <script type="text/javascript" language="javascript" src="/js/preloader.js.php"></script>
   <?include "extra_js.php" ?>
 </head>
@@ -55,12 +58,12 @@ if(!$User->isAuthorized($user->id_user,$roles)){
      <?include $GLOBALS['_SERVER']['DOCUMENT_ROOT']."/nav.php" ?>
     <img height="200" width="1" src="/imgs/blank.gif" /><br />
 
+    <?php if ($User->isAuthorized('admin,employee,manager')) { ?>
     <form action="/search.php" method="get">
     <input id="searchfield" type="text" name="q" style="width: 100px; margin-bottom: 5px;" class="bordered" />
     <input type="submit" value="<?= _('Search') ?>" class="bordered" style="width: 102px;" /><br/>
     </form>
+    <?php }?>
 
-    <img height="200" width="1" src="/imgs/blank.gif" /><br />
-    <img src="/imgs/logo.gif" alt="NBi" />
   </td>
   <td valign=top>

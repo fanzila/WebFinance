@@ -18,6 +18,7 @@ require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/dbconnect.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/User.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/Facture.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/Client.php");
+require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/TabStrip.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT'].'/inc/gettext.php');
 
 function parselogline($str) {
@@ -110,7 +111,7 @@ function wf_mysqldie($message="") {
     print "Page : ".$GLOBALS['_SERVER']['SCRIPT_NAME']."\n";
     print "Message : $message\n";
     print "Mysql error : \n";
-    print mysql_error();
+    print mysql_error(); 
     if (headers_sent()) {
       print '</pre></div>';
     }

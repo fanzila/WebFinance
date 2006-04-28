@@ -14,6 +14,7 @@
 
 $title = _("Categories");
 require("../inc/main.php");
+$roles = 'manager,accounting';
 require("../top.php");
 require("nav.php");
 

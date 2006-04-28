@@ -36,7 +36,7 @@ $off = '/imgs/boutons/'.urlencode(base64_encode(_("Connect").":off")).'.png';
     <table border="0" cellspacing="0" cellpadding="10" style="border: solid 1px black; margin: auto auto auto auto;">
       <tr><td><?= _("Login") ?></td><td><input type="text" size="20" style="border: solid 1px #777;" name="login" id="login" value="" /></td></tr>
       <tr><td><?= _("Password") ?></td><td><input type="password" style="border: solid 1px #777;" size="20" name="password" /></td></tr>
-      <tr><td colspan="2" style="text-align:center"><input type="image" src="<?= $off ?>" onmouseover="this.src='<?= $on ?>';" onmouseout="this.src='<?= $off ?>';" /></td></tr>
+      <tr><td colspan="2" style="text-align:center"><input style="border: none;" type="image" src="<?= $off ?>" onmouseover="this.src='<?= $on ?>';" onmouseout="this.src='<?= $off ?>';" /></td></tr>
     </table>
     </form>
 </div>

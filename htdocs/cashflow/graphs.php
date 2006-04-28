@@ -12,11 +12,11 @@ function navigation($account,$start_date_ex,$end_date_ex){
   ?>
     <a href="?start_date=<?=$last_date_start?>&end_date=<?=$last_date_end?>&account=<?=$account?>">&lt;&lt;</a>
        <big style='font-weight: bold;'>
-        <?=date("d F Y",mktime(0,0,0,$start_date_ex[1],$start_date_ex[2],$start_date_ex[0]))?>
+        <?=strftime("%d %B %Y",mktime(0,0,0,$start_date_ex[1],$start_date_ex[2],$start_date_ex[0]))?>
        </big>
        to
        <big style='font-weight: bold;'>
-        <?=date("d F Y",mktime(0,0,0,$end_date_ex[1],$end_date_ex[2],$end_date_ex[0]))?>
+        <?=strftime("%d %B %Y",mktime(0,0,0,$end_date_ex[1],$end_date_ex[2],$end_date_ex[0]))?>
        </big>
        <a href="?start_date=<?=$next_date_start?>&end_date=<?=$next_date_end?>&account=<?=$account?>">&gt;&gt;</a>
   <?
@@ -24,6 +24,7 @@ function navigation($account,$start_date_ex,$end_date_ex){
 
 
 $title = _("Financial graphics");
+$roles = 'manager,accounting';
 require("../top.php");
 require("nav.php");
 
@@ -136,5 +137,6 @@ if(isset($_GET['account']) AND !empty($_GET['account']))
 
  <hr/>
 <?
+$Revision = '$Revision$';
 require("../bottom.php");
  ?>

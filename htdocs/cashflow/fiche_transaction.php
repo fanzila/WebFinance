@@ -95,7 +95,7 @@ mysql_free_result($result);
   <tr>
   <td><?= _('Invoice') ?> :</td>
   <td colspan="3">
- <select name="id_invoice">
+ <select style="width: 300px;" name="id_invoice">
   <option value="0">-- related invoice --</option>
 <?
   $res = mysql_query("SELECT id_facture as id, ".
@@ -142,7 +142,6 @@ mysql_free_result($result);
 <tr>
   <td colspan="4" style="text-align: center">
     <input id="submit_button" type="submit" value="<?=_('Save') ?>" />
-    <input id="cancel_button" type="button" onclick="window.parent.document.getElementById('inpage_popup').style.display='none';"  value="<?=_('Cancel') ?>" />
   </td>
 </tr>
 </table>
@@ -150,5 +149,5 @@ mysql_free_result($result);
 
 <?php
 $Revision = '$Revision$';
-require("../bottom.php");
+require("../bottom_popup.php");
 ?>

@@ -21,6 +21,7 @@ if (!is_numeric($_GET['id_facture'])) {
   die();
 }
 
+$roles = 'manager,employee';
 include("../top.php");
 include("nav.php");
 $Facture = new Facture();
@@ -383,5 +384,6 @@ if (! $facture->immuable) { // Début ajout une ligne
 </pre>
 
 <?php
+$Revision = '$Revision$';
 include("../bottom.php");
 ?>

@@ -16,16 +16,16 @@ require_once("inc/main.php");
 //$Id$
 
 $elements = array(_('Home') => array( 'url' => '/', 'roles' => 'any' ),
-                  _('Client') => array( 'url' => '/client/', 'roles' => 'client' ),
+                  _('My invoices') => array( 'url' => '/client/', 'roles' => 'client' ),
                   _('Companies') => array( 'url' => '/prospection/?q=1', 'roles' => 'manager,employee,accounting' ),
                   _('Cashflow') => array( 'url' => '/tresorerie/', 'roles' => 'manager,accounting' ),
                   _('My account') => array( 'url' => '/moncompte/', 'roles' => 'any' ),
-                  _('Administration') => array( 'url' => '/admin/', 'roles' => 'manager' ),
+                  _('Administration') => array( 'url' => '/admin/', 'roles' => 'manager,admin' ),
                   _('Logout') => array( 'url' => '/logout.php', 'roles' => 'any' ),
                  );
 $User= new User();
 foreach ($elements as $elname=>$data) {
-  if ($User->isAuthorized($_SESSION['id_user'], $data['roles'])) {
+  if ($User->isAuthorized($data['roles'])) {
     $on = '/imgs/boutons/'.urlencode(base64_encode($elname.":on")).'.png';
     array_push($_SESSION['preload_images'], $on);
     $off = '/imgs/boutons/'.urlencode(base64_encode($elname.":off")).'.png';

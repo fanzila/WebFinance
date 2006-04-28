@@ -31,18 +31,11 @@ include("inc/main.php");
   <td style="text-align: center" width=150 valign=top>
      <?include $GLOBALS['_SERVER']['DOCUMENT_ROOT']."/nav.php" ?>
     <img height="200" width="1" src="/imgs/blank.gif" /><br />
-
-    <form action="/search.php" method="get">
-    <input id="searchfield" type="text" name="q" style="width: 100px; margin-bottom: 5px;" class="bordered" />
-    <input type="submit" value="<?= _('Search') ?>" class="bordered" style="width: 102px;" /><br/>
-    </form>
-
-    <img height="200" width="1" src="/imgs/blank.gif" /><br />
-    <img src="/imgs/logo.gif" alt="NBi" />
   </td>
   <td valign=top><?= _("Welcome to WebFinance ...") ?></td>
 <?php
-
+ 
+  $Revision = '$Revision$';
     include("bottom.php")
 
 ?>
