@@ -312,7 +312,8 @@ CREATE TABLE `webfinance_users` (
   `role` varchar(64) default NULL,
   `modification_date` datetime default NULL,
   `prefs` blob,
-  PRIMARY KEY  (`id_user`)
+  PRIMARY KEY  (`id_user`),
+  UNIQUE KEY `login` (`login`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 
 DROP TABLE IF EXISTS `webfinance_roles`;
