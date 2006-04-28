@@ -29,7 +29,7 @@ include("top.php");
 </tr>
 <tr valign="top">
   <td>
-  <a href="/tresorerie/"><img src="/graphs/plots.php?type=amount&account=&end_date=&width=600&height=250" /></a>
+  <a href="/tresorerie/"><img alt="<?= _('Cashflow') ?>" src="/graphs/cashflow.php?account=&end_date=&width=600&height=250" /></a>
   </td>
   <td width="250">
     100 derniers évènements (<a href="/admin/events.php"><?=_('show all')?></a>)
