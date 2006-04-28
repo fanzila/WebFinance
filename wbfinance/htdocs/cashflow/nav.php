@@ -14,17 +14,21 @@
 //$Id$
 
 $elements = array(
-                  _('Transactions') => 'index.php',
-                  _('Graphics') => 'graphs.php',
-                  _('Categories') => 'categories.php',
-                  _('Import') => 'import.php',
+                  _('Transactions') => array('url'=>'index.php', 'roles'=>'manager,accounting'),
+                  _('Graphics') => array('url'=>'graphs.php', 'roles'=>'manager,accounting'),
+                  _('Categories') => array('url' => 'categories.php', 'roles' => 'manager,accounting'),
+                  _('Import') => array('url'=>'import.php', 'roles'=>'manager')
                  );
 
-foreach ($elements as $elname=>$url) {
-  $on = '/imgs/boutons/'.urlencode(base64_encode($elname.":on")).'.png';
-  array_push($_SESSION['preload_images'], $on);
-  $off = '/imgs/boutons/'.urlencode(base64_encode($elname.":off")).'.png';
-  print "<a class=\"bouton\" href=\"$url\"><img onMouseOver=\"this.src='$on';\" onMouseOut=\"this.src='$off';\" src=\"$off\" border=0 /></a> ";
+
+foreach ($elements as $elname=>$data) {
+  if ($User->isAuthorized($data['roles'])) {
+    $on = '/imgs/boutons/'.urlencode(base64_encode($elname.":on")).'.png';
+    array_push($_SESSION['preload_images'], $on);
+    $off = '/imgs/boutons/'.urlencode(base64_encode($elname.":off")).'.png';
+    printf( '<a class="bouton" href="%s"><img onMouseOver="this.src=\'%s\';" onMouseOut="this.src=\'%s\';" src="%s" border=0 /></a>',
+             $data['url'], $on, $off, $off);
+  }
 }
 
 ?>

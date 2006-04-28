@@ -308,7 +308,6 @@ CREATE TABLE `webfinance_users` (
   `disabled` tinyint(4) NOT NULL default '1',
   `last_login` datetime default NULL,
   `creation_date` datetime default NULL,
-  `admin` tinyint(4) default '0',
   `role` varchar(64) default NULL,
   `modification_date` datetime default NULL,
   `prefs` blob,
@@ -346,7 +345,7 @@ INSERT INTO `webfinance_type_suivi` (`id_type_suivi`, `name`, `selectable`) VALU
 (5, 'Rendez-vous', 1),
 (6, 'Presta', 1);
 
-INSERT INTO `webfinance_users` (`id_user`, `last_name`, `first_name`, `login`, `password`, `email`, `disabled`, `last_login`, `creation_date`, `admin`, `role`, `modification_date`, `prefs`) VALUES (1, NULL, NULL, 'admin', '21232f297a57a5a743894a0e4a801fc3', NULL, 0, '2006-04-06 16:34:51', NULL, 1, NULL, NULL, '');
+INSERT INTO `webfinance_users` (`id_user`, `last_name`, `first_name`, `login`, `password`, `email`, `disabled`, `last_login`, `creation_date`, `role`, `modification_date`, `prefs`) VALUES (1, NULL, NULL, 'admin', '21232f297a57a5a743894a0e4a801fc3', NULL, 0, '2006-04-06 16:34:51', NULL, 1, 'admin,manager', NULL, '');
 
 INSERT INTO `webfinance_type_tva` VALUES
 (NULL,'Taux normal 19,6%', 19.6),

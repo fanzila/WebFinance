@@ -12,6 +12,7 @@
   </td>
 </tr>
 </table>
+<div id="revision"><?= $Revision ?></div>
 <script type="text/javascript" language=javascript src=/js/wz_tooltip.js></script>
 <script type="text/javascript" src="/js/inpage_popup.js"></script>
 </body>

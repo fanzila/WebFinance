@@ -1,6 +1,6 @@
 <?php
 //
-// This file is part of « Webfinance »
+// This file is part of Â« Webfinance Â»
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
@@ -51,7 +51,7 @@ class User {
         $_SESSION['id_user'] = $id_user;
 
         $result = mysql_query("UPDATE webfinance_users SET last_login=now() WHERE id_user=$id_user");
-        logmessage("Connexion");
+        logmessage("Connected");
         return $id_user;
       }
     } else {
@@ -60,7 +60,7 @@ class User {
   }
 
   function logout($url = "") {
-    logmessage("Déconnexion");
+    logmessage("Disconnect");
     $_SESSION['id_user'] = -1;
     session_destroy();
     header("Location: /");
@@ -85,29 +85,28 @@ class User {
     return $passwd;
   }
 
-  function isAdmin($id_user) {
-    $result = mysql_query("SELECT admin=1 FROM webfinance_users WHERE id_user=$id_user");
-    list($is_admin) = mysql_fetch_array($result);
-    mysql_free_result($result);
+//   function isAdmin($id_user) {
+//     $result = mysql_query("SELECT admin=1 FROM webfinance_users WHERE id_user=$id_user");
+//     list($is_admin) = mysql_fetch_array($result);
+//     mysql_free_result($result);
+// 
+//     return $is_admin;
+//   }
 
-    return $is_admin;
-  }
+  function isAuthorized($roles, $id_user=null){
+    if ($id_user == null) 
+      $id_user = $_SESSION['id_user'];
 
-  function isAuthorized($id_user,$roles){
     if ($roles == "any") // The special "any" role is granted to all users (and non users for that matter)
       return true;
 
-    $req=mysql_query("SELECT admin, role FROM webfinance_users  WHERE id_user=$id_user") or wf_mysqldie();
-    list($admin,$user_roles)=mysql_fetch_array($req);
+    $req=mysql_query("SELECT role FROM webfinance_users  WHERE id_user=$id_user") or wf_mysqldie();
+    list($user_roles)=mysql_fetch_array($req);
 
-    if($admin>0){
-      return true;
-    } else {
-      $user_roles=explode(",",$user_roles);
-      foreach($user_roles as $role){
-	if(preg_match("!(,|^)$role(,|$)!",$roles)) {
-	    return true;
-	}
+    $user_roles=explode(",",$user_roles);
+    foreach($user_roles as $role){
+      if(preg_match("!(,|^)$role(,|$)!",$roles)) {
+        return true;
       }
     }
     return false;
@@ -126,8 +125,8 @@ class User {
     if (!is_array($data))
       return false;
 
-    if (! $this->isAdmin($_SESSION['id_user'])) {
-      $_SESSION['message'] = "Vous n'êtes pas administrateur";
+    if (! $this->isAuthorized('admin') ) {
+      $_SESSION['message'] = _('Sorry, you are not administrator');
       return false;
     }
 
@@ -142,7 +141,7 @@ class User {
 		 $first_name, $last_name, $login, $email, ($disabled == "on")?1:0, ($admin == "on")?1:0, $roles,
 		 $id_user );
     mysql_query($q) or wf_mysqldie();
-    logmessage("Modification de l'utilisateur user:$id_user");
+    logmessage("Modified user:$id_user");
     $_SESSION['message'] = _("Data saved");
   }
 
@@ -159,7 +158,7 @@ class User {
   }
 
   function createUser($data=null) {
-    if (! $this->isAdmin($_SESSION['id_user'])) {
+    if (! $this->isAuthorized('admin')) {
       $_SESSION['message'] = _("You aren't the Administrator");
       return false;
     }
@@ -179,21 +178,21 @@ class User {
     list($new_id_user) = mysql_fetch_array($result);
     mysql_free_result($result);
 
-    logmessage("Création d'un nouvel utilisateur user:$new_id_user");
+    logmessage("Created new user:$new_id_user");
     $_SESSION['message'] = _("User added");
 
     return $new_id_user;
   }
 
   function delete($id_user) {
-    if (! $this->isAdmin($_SESSION['id_user'])) {
-      $_SESSION['message'] = "Vous n'êtes pas administrateur";
+    if (! $this->isAuthorized('admin')) {
+      $_SESSION['message'] = "Vous n'Ãªtes pas administrateur";
       return false;
     }
     $result = mysql_query("SELECT login,first_name,last_name FROM webfinance_users WHERE id_user=$id_user");
     list($login, $prenom, $nom) = mysql_fetch_array($result);
     mysql_free_result($result);
-    logmessage("Suppression de l'utilisateur $login ($prenom $nom)");
+    logmessage("Deleted user $login ($prenom $nom)");
     mysql_query("DELETE FROM webfinance_users WHERE id_user=$id_user");
     $_SESSION['message'] = _("User deleted");
   }
@@ -218,10 +217,10 @@ class User {
 
     if ($ok) {
       mysql_query("UPDATE webfinance_users SET password=md5('$new_pass') WHERE id_user=$id_user");
-      logmessage("Mot de passe pour user:$id_user changé");
-      $_SESSION['message'] = "Mot de passe modifié";
+      logmessage("Changed password for user:$id_user");
+      $_SESSION['message'] = _('Password changed');
     } else {
-      $_SESSION['message'] = "Ancien mot de passe incorrect";
+      $_SESSION['message'] = _('Wrong password');
       return false;
     }
   }
@@ -237,7 +236,7 @@ class User {
     } else {
       mysql_query("INSERT INTO webfinance_pref (value,owner,type_pref) VALUES('$data', ".$_SESSION['id_user'].",'user_pref')") or wf_mysqldie();
     }
-    $_SESSION['message'] = "Vos préférences sont enregistrées";
+    $_SESSION['message'] = _('The data has been saved');
   }
 
   // Expects an object
@@ -249,10 +248,10 @@ class User {
 
   function sendInfo($id_user,$passwd){
     require("/usr/share/php/libphp-phpmailer/class.phpmailer.php");
-    //r�cup�rer les info de l'utilisateur
+    //récupérer les info de l'utilisateur
     $user = $this->getInfo($id_user);
 
-    //r�cup�rer les info sur la soci�t�
+    //récupérer les info sur la société
     $result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='societe' AND owner=-1")
       or wf_mysqldie();
     list($value) = mysql_fetch_array($result);
@@ -267,7 +266,7 @@ class User {
     $body .= _('Login').": ".$user->login."\n";
     $body .= _('Password').": ".$passwd."\n";
 
-    //compl�ter l'ent�te de l'email
+    //compléter l'entête de l'email
     $mail = new PHPMailer();
     if(preg_match('/^[A-z0-9][\w.-]*@[A-z0-9][\w\-\.]+\.[A-Za-z]{2,4}$/',$societe->email) )
       $mail->From = $from;

@@ -178,6 +178,7 @@ EOF;
 
 <?php
 
+$Revision = '$Revision$';
 include("../bottom.php");
 
 ?>

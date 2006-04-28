@@ -13,6 +13,7 @@
 // $Id$
 
 require("../inc/main.php");
+$roles = 'any';
 $title = _('Skeleton');
 require("../top.php");
 

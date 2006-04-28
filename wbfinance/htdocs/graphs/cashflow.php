@@ -84,7 +84,7 @@ for($step = 0; $step < $nb_day ; $step++) {
   $tmp=array();
 
   if($date_ex[2]==1)
-    $tmp[]=date("M y", mktime(0, 0, 0, $var[1],1+$step, $var[0]) );
+    $tmp[]=utf8_decode( strftime("%B %y", mktime(0, 0, 0, $var[1],1+$step, $var[0]) ));
   else
     $tmp[]='';
 

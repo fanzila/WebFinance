@@ -14,7 +14,7 @@ require("../inc/main.php");
 
 if ($_GET['action'] == "delete") {
   mysql_query("DELETE FROM webfinance_roles WHERE id_role=".$_GET['id']);
-  $_SESSION['message'] = "Role supprimé";
+  $_SESSION['message'] = _('Role deleted');
   header("Location: index.php");
 }
 

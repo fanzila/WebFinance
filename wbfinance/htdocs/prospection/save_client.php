@@ -14,7 +14,8 @@ include("../inc/main.php");
 
 global $User;
 $user = $User->getInfos();
-if (!$User->isAuthorized($user->id_user,"manager")) {
+if (!$User->isAuthorized("admin,manager")) {
+  $_SESSION['message'] = _('You are not allowed to modify this information');
   header("Location: fiche_prospect.php?id=".$_POST['id_client']);
   die();
 }
@@ -23,7 +24,7 @@ if (!$User->isAuthorized($user->id_user,"manager")) {
 
 if ($_GET['action'] == "delete") {
   mysql_query("DELETE FROM webfinance_clients WHERE id_client=".$_GET['id']) or wf_mysqldie();
-  $_SESSION['message'] = "Le client/prospect, tous ses contacts factures et devis ont été supprimés";
+  $_SESSION['message'] = _('The company, contacts, and invoices has been deleted from the database');
   header("Location: /prospection/");
   die();
 }

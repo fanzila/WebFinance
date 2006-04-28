@@ -13,7 +13,7 @@
 
 include("../inc/main.php");
 $title = _("Administration");
-$roles = "any";
+$roles = "admin,employee";
 include("../top.php");
 include("nav.php");
 ?>
@@ -32,7 +32,7 @@ function confirmDeleteRole(id) {
 
 </script>
 
-<div style="background: #ffcece"><?= $_SESSION['message']; $_SESSION['message'] = ""; ?></div>
+<?= $_SESSION['message']; $_SESSION['message']=""; ?>
 
 <h2>Utilisateurs backoffice</h2>
 
@@ -118,6 +118,7 @@ EOF;
 
 <?php
 
+$Revision = '$Revision$';
 include("../bottom.php");
 
 ?>

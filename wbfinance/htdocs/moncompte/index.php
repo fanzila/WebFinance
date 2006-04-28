@@ -40,6 +40,7 @@ if ($GLOBALS['_SERVER']['REQUEST_METHOD'] == "POST") {
 }
 
 $roles="any";
+$title = _('My account');
 include("../top.php");
 
 $user = $User->getInfos($_SESSION['id_user']);
@@ -52,13 +53,13 @@ function checkForm(f) {
 }
 </script>
 
-<div style="background: #ffcece;"><?= $_SESSION['message']; $_SESSION['message'] = ""; ?></div>
+<?= $_SESSION['message']; $_SESSION['message'] = ""; ?>
 
 <h2><?=_('My account') ?></h2>
 <table border="0" cellspacing="7" cellpadding="0">
 <tr>
   <td><?=_('Name') ?>:</td>
-  <td><?=$user->fisrt_name?> <?=$user->last_name?></td>
+  <td><?=$user->first_name?> <?=$user->last_name?></td>
 </tr>
 <tr>
   <td><?=_('Email') ?>:</td>
@@ -190,6 +191,7 @@ function checkForm(f) {
 </form>
 
 <?php
+$Revision = '$Revision$';
 include("../bottom.php");
 
 ?>

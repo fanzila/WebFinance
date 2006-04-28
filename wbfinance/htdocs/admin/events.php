@@ -11,6 +11,7 @@
 <?php
 
 include_once("../inc/main.php");
+$roles = 'admin';
 include("../top.php");
 include("nav.php");
 
@@ -47,5 +48,6 @@ mysql_free_result($result);
 </table>
 
 <?php
+$Revision = '$Revision$';
 include("../bottom.php");
 ?>

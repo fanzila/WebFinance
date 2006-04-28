@@ -309,3 +309,42 @@ msgstr " n°"
 
 msgid "Show grids in graphs"
 msgstr "Afficher la grille dans les graphiques"
+
+msgid "My password"
+msgstr "Mon mot de passe"
+
+msgid "My preferences"
+msgstr "Mes préférences"
+
+msgid "You are not allowed to modify this information"
+msgstr "Vous n'êtes pas autorisé à modifier ces données"
+
+msgid "The company, contacts, and invoices has been deleted from the database"
+msgstr "L'entreprise, ses contacts et factures ont été supprimé de la base"
+
+msgid "Activity graphics"
+msgstr "Graphiques d'activité"
+
+msgid "Total income per month"
+msgstr "Chiffre d'affaire par mois"
+
+msgid "Total income per client"
+msgstr "Chiffre d'affaire par client"
+
+msgid "Debt per client"
+msgstr "Encours par client"
+
+msgid "My invoices"
+msgstr "Mes factures"
+
+msgid "The data has been saved"
+msgstr "Les données sont enregistrées"
+
+msgid "Password changed"
+msgstr "Le mot de passe est changé"
+
+msgid "Wrong password"
+msgstr "Mauvais mot de passe"
+
+msgid "Invoice"
+msgstr "Facture"

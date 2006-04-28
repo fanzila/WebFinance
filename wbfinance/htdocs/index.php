@@ -89,3 +89,8 @@ EOF;
   <td style="border: none;" ></td>
 </tr>
 </table>
+
+<?php
+$Revision = '$Revision: ';
+include("bottom.php");
+?>

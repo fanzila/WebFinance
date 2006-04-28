@@ -32,6 +32,7 @@ foreach ($_SESSION as $n=>$v) {
 }
 print "</pre>";
 
+$Revision = '$Revision$';
 include("bottom.php");
 
 ?>

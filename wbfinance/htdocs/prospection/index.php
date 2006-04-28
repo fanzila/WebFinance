@@ -164,7 +164,7 @@ mysql_free_result($result);
   <td><a href="facturation.php?type=unpaid"><?= number_format($total_dehors, 0, ',', ' ') ?>&euro; HT / <?= number_format($total_dehors*1.196, 0, ',', ' ') ?>&euro; TTC</a></td>
 </tr>
 <?php
-if ($User->isAuthorized($_SESSION['id_user'], 'manager,accounting')) {
+if ($User->isAuthorized('manager,accounting')) {
 ?>
 <tr>
   <td><b><?= _('Cash (real)') ?></b></td>
@@ -215,6 +215,7 @@ if ($User->isAuthorized($_SESSION['id_user'], 'manager,accounting')) {
 </table>
 <?php
 
+$Revision = '$Revision$';
 include("../bottom.php");
 
 ?>
