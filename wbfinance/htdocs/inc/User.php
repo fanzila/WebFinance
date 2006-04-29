@@ -132,7 +132,11 @@ class User {
 
     extract($data);
 
-    $roles=implode(",",$data['role']);
+    if (is_array($data['role'])) {
+      $roles=implode(",",$data['role']);
+    } else {
+      $roles = '';
+    }
 
     $q = sprintf("UPDATE webfinance_users SET first_name='%s', last_name='%s', login='%s', email='%s', disabled=%d, admin=%d, role='%s',
                          modification_date=now()
