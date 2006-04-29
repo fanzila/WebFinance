@@ -48,7 +48,7 @@ function checkForm(f) {
   <td>Email</td><td><input class="border" type="text" size="50" name="email" value="<?=$user->email ?>" /></td>
 </tr>
 <tr>
-  <td clspan="2"><?=_('Password')?></td><td><input class="border" type="password" size="20" name="passwd"/></td>
+  <td clspan="2"><?=_('Password')?></td><td><input class="border" type="password" size="20" name="password"/></td>
 </tr>
 <tr>
   <td valign="top" colspan="3">
