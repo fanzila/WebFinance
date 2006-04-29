@@ -138,11 +138,11 @@ class User {
       $roles = '';
     }
 
-    $q = sprintf("UPDATE webfinance_users SET first_name='%s', last_name='%s', login='%s', email='%s', disabled=%d, admin=%d, role='%s',
-                         modification_date=now()
+    $q = sprintf("UPDATE webfinance_users SET first_name='%s', last_name='%s', login='%s', email='%s', disabled=%d, admin=%d, role='%s', 
+                         password=md5('%s'), modification_date=now()
                   WHERE id_user=%d",
 
-		 $first_name, $last_name, $login, $email, ($disabled == "on")?1:0, ($admin == "on")?1:0, $roles,
+		 $first_name, $last_name, $login, $email, ($disabled == "on")?1:0, ($admin == "on")?1:0, $roles, $password,
 		 $id_user );
     mysql_query($q) or wf_mysqldie();
     logmessage("Modified user:$id_user");

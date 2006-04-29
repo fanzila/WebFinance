@@ -91,6 +91,6 @@ EOF;
 </table>
 
 <?php
-$Revision = '$Revision: ';
+$Revision = '$Revision$';
 include("bottom.php");
 ?>
