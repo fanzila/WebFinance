@@ -10,6 +10,7 @@ if (!isset($width)) { $width = 500; }
 if (!isset($height)) { $height = 400; }
 if (!isset($legend)) { $legend = 1; } // By default show legend
 if (!isset($movingaverage)) { $movingaverage = 0; } // By default hide movingaverage
+if (!isset($hidetitle)) { $hidetitle = 0; } // By default hide hidetitle
 
 /*
  * return positive if $start_date < $end_date
@@ -127,42 +128,39 @@ if($nb_day>0){
 //Define the object
 $graph2=& new PHPlot_Data($width,$height);
 
-// Base apearance fonts
-// $graph2->SetFont('title','/usr/share/fonts/truetype/freefont/FreeSansBold.ttf');
-// $graph2->SetFont('legend','/usr/share/fonts/truetype/freefont/FreeSansBold.ttf');
-// $graph2->SetFont('generic','/usr/share/fonts/truetype/freefont/FreeSansBold.ttf');
-// $graph2->SetFont('generic','/usr/share/fonts/truetype/freefont/FreeSansBold.ttf');
-// $graph2->SetFont('x_label','/usr/share/fonts/truetype/freefont/FreeSansBold.ttf');
-// $graph2->SetFont('y_label','/usr/share/fonts/truetype/freefont/FreeSansBold.ttf');
-// $graph2->SetFont('x_title','/usr/share/fonts/truetype/freefont/FreeSansBold.ttf');
-// $graph2->SetFont('y_title','/usr/share/fonts/truetype/freefont/FreeSansBold.ttf');
-// $graph2->SetUseTTF(1);
 
 //Set titles
-$title=utf8_decode(_("Cash flow / all history"));
+if ($hidetitle) {
+  $title = "";
+  $graph2->SetYTitle('');
+} else {
+  $title=utf8_decode(_("Cash flow / all history"));
+  $graph2->SetYTitle('€');
+} 
 
 $graph2->SetTitle($title);
 $graph2->SetXTitle('');
-$graph2->SetYTitle(_('Amount (Euro)'));
 
 // NB Calculate the density of tick horizontaly and verticaly to not "flood"
 // the graph. Try to be clever : take into account the width & height of the
 // image, and the range of values.
 //
 // First verticaly
-$range = $max + abs($min); 
+$range = $max + abs($min);
 $ratioy = 1000*$height/$range; // $ratioy = nb of pixels per 1000 euro
 if ($ratioy > 20) {
   $graph2->SetYTickIncrement( 1000 );
 } else if ($ratioy > 10) {
-  $graph2->SetYTickIncrement( 5000 ); 
+  $graph2->SetYTickIncrement( 5000 );
 } else if ($ratioy > 5) {
   $graph2->SetYTickIncrement( 10000 );
-} 
+} else {
+  $graph2->SetYTickIncrement( 15000 );
+}
 
 // Then horizontaly
 $ratiox = ($width / $nb_day);
-if ($ratiox > 15) { 
+if ($ratiox > 15) {
   // 30 pixels per day is plenty to show the grid at day level. Labels are the
   // day date ex "2 feb 06"
   $moving_average_blur = 7; // Week
@@ -170,17 +168,17 @@ if ($ratiox > 15) {
   for ($i=0 ; $i<count($data) ; $i++) {
     $data[$i][0] = strftime("%e %b %y", $data[$i][0]);
   }
-} elseif ($ratiox > 10) { 
+} elseif ($ratiox > 10) {
   // 10 pixels is enought to show the grid at week level
   $graph2->SetXTickIncrement( 7 );
   $moving_average_blur = 15; // 2 Weeks
   for ($i=0 ; $i<count($data) ; $i++) {
-    if ($i%7 == 0) 
+    if ($i%7 == 0)
       $data[$i][0] = strftime("%W-%y", $data[$i][0]); // Week number + year
-    else 
+    else
       $data[$i][0] = "";
   }
-} else { // Under 10 pixels per day we show the grid at month level 
+} else { // Under 10 pixels per day we show the grid at month level
   $graph2->SetXTickIncrement( 30 );
   $old_ts = $data[0][0] - 86400*60;
   $moving_average_blur = 20; // 20 days
@@ -211,6 +209,7 @@ $graph2->SetDataColors(array( 'red' ,'blue', 'green'));
 $graph2->SetDataType("text-data");
 $graph2->SetDataValues($data);
 $graph2->SetPlotType("lines");
+$graph2->SetLineWidth( array(2, 2, 2) );
 
 if ($movingaverage) {
       $graph2->DoMovingAverage(1,$moving_average_blur,FALSE);
@@ -223,6 +222,27 @@ if (isset($User->prefs->graphgrid) && $User->prefs->graphgrid == "on") {
   $graph2->SetDrawXGrid(false);
   $graph2->SetDrawYGrid(false);
 }
+
+// Base apearance fonts : use TTF for unicode support and nice looks.
+//
+// This is a hack around crippled phplot object interface that makes it
+// impossible to specify a correct filepath for the fonts used. We access
+// directly the object's internal properties just before rendering.
+$graph2->ttf_path = "../../client_data/ttf";
+$ttf_dir = "/usr/share/fonts/truetype/freefont";
+$fonts = array(
+    'title_font' => array('size' => 13, 'font'=>$ttf_dir.'/FreeSansBold.ttf'),
+    'legend_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSansBold.ttf'), 
+    'generic_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSansBold.ttf'), 
+    'x_label_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSansBold.ttf'), 
+    'y_label_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSansBold.ttf'), 
+    'x_title_font' => array('size' => 10, 'font'=>$ttf_dir.'/FreeSansBold.ttf'), 
+    'y_title_font' => array('size' => 10, 'font'=>$ttf_dir.'/FreeSansBold.ttf')
+);
+foreach ($fonts as $object=>$fontdata) {
+  $graph2->$object = $fontdata;
+}
+$graph2->use_ttf = TRUE;
 $graph2->DrawGraph();
 
 // vim: sw=2 ts=2
