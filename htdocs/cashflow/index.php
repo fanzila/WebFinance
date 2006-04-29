@@ -492,6 +492,15 @@ EOF;
   </table>
   </form>
 
+  <div class="bordered" style="margin-top: 20px;" >
+  <?php
+    $small_image_url = sprintf("/graphs/cashflow.php?grid=0&width=300&height=200&legend=0&end_date=%s&start_date=%s",
+                               strftime("%Y-%m-%d", $ts_end_date), 
+                               strftime("%Y-%m-%d", $ts_start_date)
+                              );
+  ?>
+  <img src="<?= $small_image_url ?>" alt="<?= _('Cashflow over the selected period') ?>" />
+  </div>
 
 
   </td>
