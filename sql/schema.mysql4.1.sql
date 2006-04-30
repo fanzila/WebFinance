@@ -344,7 +344,7 @@ INSERT INTO `webfinance_type_suivi` (`id_type_suivi`, `name`, `selectable`) VALU
 (5, 'Rendez-vous', 1),
 (6, 'Presta', 1);
 
-INSERT INTO `webfinance_users` (`id_user`, `last_name`, `first_name`, `login`, `password`, `email`, `disabled`, `last_login`, `creation_date`, `role`, `modification_date`, `prefs`) VALUES (1, NULL, NULL, 'admin', '21232f297a57a5a743894a0e4a801fc3', NULL, 0, '2006-04-06 16:34:51', NULL, 1, 'admin,manager', NULL, '');
+INSERT INTO `webfinance_users` (`id_user`, `last_name`, `first_name`, `login`, `password`, `email`, `disabled`, `last_login`, `creation_date`, `role`, `modification_date`, `prefs`) VALUES (1, NULL, NULL, 'admin', '21232f297a57a5a743894a0e4a801fc3', NULL, 0, '2006-04-06 16:34:51', NULL, 'admin,manager', NULL, '');
 
 INSERT INTO `webfinance_type_tva` VALUES
 (NULL,'Taux normal 19,6%', 19.6),
@@ -357,21 +357,21 @@ INSERT INTO `webfinance_banks` (`id`, `name`, `short_name`, `phone`, `mail`, `co
 (1, 'My bank', 'mybank', '', '', '');
 
 -- Voir http://www.plancomptable.com/pc99/titre-IV/liste_des_comptes_sb.htm
-INSERT INTO `webfinance_categories` (`id`, `name`, `class`, `re`, `plan_comptable`) VALUES
-(1   , 'Unknown', '', '', ''),
-(NULL, 'Salaire', 'salaires', 'salaire',''),
-(NULL, 'Loyer', 'loyer', 'loyer',''),
-(NULL, 'Frais bancaires', 'frais', '(cotisation signature pro|facturation progeliance net|net arrete au [0-9]{2} [0-9]{2} [0-9]{2})','627'),
-(NULL, 'Téléphone mobile', 'telecom', ' prelevement sfr ','626'),
-(NULL, 'FT', 'telecom', '(france telecom|TIP.*fr telecom)','626'),
-(NULL, 'Timbres', 'telecom', ' la poste ','626'),
-(NULL, 'Internet', 'telecom', 'Free Telecom Free HautDebit',''),
-(NULL, 'Matériel', 'fournitures', '',''),
-(NULL, 'Fournitures bureau', 'fournitures', 'jpg commerce electronique',''),
-(NULL, 'Serveur', 'fourniteures', '',''),
-(NULL, 'Transports', 'transports', ' (websncf|sncf|esso|totalfinaelf) ',''),
-(NULL, 'Impots - IS', 'impots', '',''),
-(NULL, 'Impots - TVA', 'impots', '', '');
+INSERT INTO `webfinance_categories` (`id`, `name`, `re`, `plan_comptable`) VALUES
+(1   , 'Unknown', '', ''),
+(NULL, 'Salaire', 'salaire',''),
+(NULL, 'Loyer', 'loyer',''),
+(NULL, 'Frais bancaires', '(cotisation signature pro|facturation progeliance net|net arrete au [0-9]{2} [0-9]{2} [0-9]{2})','627'),
+(NULL, 'Téléphone mobile', ' prelevement sfr ','626'),
+(NULL, 'FT', '(france telecom|TIP.*fr telecom)','626'),
+(NULL, 'Timbres', ' la poste ','626'),
+(NULL, 'Internet', 'Free Telecom Free HautDebit',''),
+(NULL, 'Matériel', '',''),
+(NULL, 'Fournitures bureau', 'jpg commerce electronique',''),
+(NULL, 'Serveur', '',''),
+(NULL, 'Transports', ' (websncf|sncf|esso|totalfinaelf) ',''),
+(NULL, 'Impots - IS', '',''),
+(NULL, 'Impots - TVA', '', '');
 
 -- INSERT INTO `webfinance_clients` (`id_client`, `nom`, `date_created`, `tel`, `fax`, `addr1`, `cp`, `ville`, `addr2`, `addr3`, `pays`, `vat_number`, `has_unpaid`, `state`, `ca_total_ht`, `ca_total_ht_year`, `has_devis`, `email`, `siren`, `total_du_ht`, `id_company_type`) VALUES (1, 'Entreprise X', '2006-04-06 10:57:27', '313131', '', 'Antananarivo', '', '', '', '', 'France', '', 1, 'Madagascar', 42.0000, 42.0000, 0, '', '', 42.0000, 1);
 
