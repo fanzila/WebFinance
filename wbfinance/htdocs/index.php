@@ -7,8 +7,6 @@
 //
 // You can use and redistribute this file under the term of the GNU GPL v2.0
 //
-?>
-<?php
 // $Id$
 
 include("inc/main.php");

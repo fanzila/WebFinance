@@ -7,10 +7,9 @@
 //
 // You can use and redistribute this file under the term of the GNU GPL v2.0
 //
-?>
-<?php
 // $Id$
 // Common topper
+
 
 include_once("inc/main.php");
 
@@ -34,10 +33,13 @@ if ($_SESSION['message'] != "") {
   $_SESSION['message'] = '<div class="post_message">'.$_SESSION['message']."</div>";
 }
 
+if (!isset($User->prefs->theme)) 
+  $User->prefs->theme = "main";
 $css_theme = "/css/themes/".$User->prefs->theme."/main.css";
 if (! file_exists($GLOBALS['_SERVER']['DOCUMENT_ROOT'].$css_theme)) {
-  $css_theme = "/css/main.css"; // Historic default
-}
+  $css_theme = "/css/themes/main/main.css"; // Historic default
+  $User->prefs->theme = "main";
+} 
 
 $search_button = '/imgs/boutons/'.urlencode(base64_encode(_('Search').":off:".$User->prefs->theme)).'.png';
 $search_button_on = '/imgs/boutons/'.urlencode(base64_encode(_('Search').":on:".$User->prefs->theme)).'.png';
