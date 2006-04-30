@@ -494,9 +494,10 @@ EOF;
 
   <div class="bordered" style="margin-top: 20px;" >
   <?php
-    $small_image_url = sprintf("/graphs/cashflow.php?grid=0&width=300&height=200&legend=0&end_date=%s&start_date=%s&hidetitle=1",
+    $small_image_url = sprintf("/graphs/cashflow.php?grid=0&width=300&height=200&legend=0&end_date=%s&start_date=%s&hidetitle=1&account=%d",
                                strftime("%Y-%m-%d", $ts_end_date), 
-                               strftime("%Y-%m-%d", $ts_start_date)
+                               strftime("%Y-%m-%d", $ts_start_date),
+                               ($filter['id_account']==0)?"":$filter['id_account']
                               );
   ?>
   <img src="<?= $small_image_url ?>" onmouseover="return escape('<?= _('Cashflow over the selected period') ?>');" />
