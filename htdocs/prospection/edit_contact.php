@@ -11,21 +11,9 @@
 <?php
 // $Id$
 // This is a indocPopup : see inpage_popup.js
-?>
-<?include "../inc/main.php" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
+include( "../inc/main.php" );
+include("../top_popup.php");
 
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <link rel=stylesheet type=text/css href=/css/main.css />
-  <title>NBI Backoffice<?= ($title=="")?"":" - $title" ?></title>
-  <script type="text/javascript" language=javascript src="/js/base.js"></script>
-  <script type="text/javascript" language=javascript src="/js/preloader.js.php"></script>
-</head>
-
-<body onload="focusNom();">
-<?php
 if ((isset($_GET['id_client'])) && (!preg_match("/^[0-9]+$/", $_GET['id_client']))) {
   die("Wrong parameters");
 } else {
@@ -160,6 +148,8 @@ function focusNom() {
   f.nom.select();
   f.nom.focus();
 }
+
+focusNom();
 </script>
 
 <script src="/js/inpage_popup.js"></script>

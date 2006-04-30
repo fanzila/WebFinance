@@ -149,7 +149,7 @@ mysql_free_result($result);
 
 </td><td style="vertical-align: top" height="100">
 
-<table border=0 cellspacing=0 cellpadding=3 class="bordered" style="margin-left: 10px; margin-bottom: 10px; width: 300px;">
+<table border=0 cellspacing=0 cellpadding=3 class="bordered" style="margin-left: 10px; width: 300px; background: white; color: black;">
 <tr>
   <td><b><?= strftime(_("Total income %Y"), time()); ?></b></td>
   <td><?= number_format($ca_total_ht_annee_encours, 0, ',', ' ') ?>&euro; HT / <?= number_format($ca_total_ht_annee_encours*1.196, 0, ',', ' ') ?>&euro; TTC </td>
@@ -206,12 +206,14 @@ if ($User->isAuthorized('manager,accounting')) {
 </td>
 </tr>
 
-<tr>
-<td style="width: 278px; float: left; border: solid 1px black; margin-left: 10px; padding: 10px;">
+<tr style="vertical-align: top">
+<td style="padding: 10px;">
+<div class="bordered" style="width: 300px;">
 <b>CA &euro;HT sur quatre mois</b><br/>
 <center>
 <a href="/showca.php"><img src="/graphs/ca_mensuel.php?width=250&height=300&nb_months=4" alt="CA sur 4 mois"/></a>
 </center>
+</div>
 </td>
 
 </tr>

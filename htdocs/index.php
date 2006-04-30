@@ -86,7 +86,6 @@ EOF;
     </div>
   </td>
   -->
-  <td style="border: none;" ></td>
 </tr>
 </table>
 

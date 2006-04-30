@@ -27,13 +27,18 @@ if (! $User->isLogued()) {
 
 $User->getInfos();
 
+$css_theme = "/css/themes/".$User->prefs->theme."/main.css";
+if (! file_exists($GLOBALS['_SERVER']['DOCUMENT_ROOT'].$css_theme)) {
+  $css_theme = "/css/main.css"; // Historic default
+}
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <link rel=stylesheet type=text/css href=/css/main.css />
+  <link rel="stylesheet" type="text/css" href="<?= $css_theme ?>" />
   <title>Webfinance<?= ($title=="")?"":" - $title" ?></title>
   <script type="text/javascript" language="javascript" src="/js/preloader.js.php"></script>
   <?include "extra_js.php" ?>

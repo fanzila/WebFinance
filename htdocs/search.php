@@ -11,6 +11,7 @@
 
 require("inc/main.php");
 $title = _('Search results');
+$roles = 'manager,employee';
 require("top.php");
 
 // Search fields 
@@ -64,6 +65,23 @@ if (!is_array($search_in)) {
 <?php
 // Display some results
 
+// Search in clients
+if ($search_in['clients']) {
+  $result = mysql_query("SELECT c.id_client,c.nom
+                         FROM webfinance_client AS c
+                         WHERE (
+                          c.nom LIKE '%$q%'
+                        )") or wf_mysqldie();
+  if (mysql_num_rows($result)) {
+    $nb = mysql_num_rows($result);
+    print "<h2>"._('Results found in companies :')."</h2>";
+
+    printf("<h3>"._('%d invoice%s matching your search')."</h3>", $nb, ($nb>1)?"s":"" );
+    print '<ul class="search_results">';
+    print '</ul>';
+  }
+}
+
 // Search in invoices
 if ($search_in['invoices']) {
   $result = mysql_query("SELECT f.id_facture,id_client,sum(fl.qtt*fl.prix_ht) as total_facture,
@@ -74,13 +92,15 @@ if ($search_in['invoices']) {
                           f.extra_top LIKE '%$q%' OR 
                           f.extra_bottom LIKE '%$q%' OR 
                           f.num_facture LIKE '%$q%' OR 
-                          f.commentaire LIKE '%$q%' 
+                          f.commentaire LIKE '%$q%'  OR
+                          fl.description LIKE '%$q%'
                         ) GROUP BY f.id_facture") or wf_mysqldie();
 
   if (mysql_num_rows($result)) {
-    print "<h2>"._('Results found in invoices')."</h2>";
+    $nb = mysql_num_rows($result);
+    print "<h2>"._('Results found in invoices :')."</h2>";
 
-    printf(_('<h3>%d invoice%s matches your search</h3>'";
+    printf("<h3>"._('%d invoice%s matching your search')."</h3>", $nb, ($nb>1)?"s":"" );
     print '<ul class="search_results">';
     while ($found = mysql_fetch_object($result)) {
       $invoice = new Facture();
