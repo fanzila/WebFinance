@@ -17,6 +17,9 @@ $roles="manager,employee,accounting";
 include("../top.php");
 include("nav.php");
 
+global $User;
+$User->getInfos();
+
 // House keeping : lister les factures inpayées et marquer les clients qui en ont.
 // FIXME : should go in save_facture.php
 mysql_query("UPDATE webfinance_clients SET has_unpaid=false,has_devis=false") or wf_mysqldie();
