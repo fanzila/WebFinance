@@ -90,10 +90,6 @@ if($nb_day>0){
         $tmp=array();
 
         $tmp[0] = mktime(0, 0, 0, $var[1],1+$step, $var[0]);
-//         if($date_ex[2]==1)
-//           $tmp[0]=utf8_decode( ucfirst( strftime("%b %y", mktime(0, 0, 0, $var[1],1+$step, $var[0]) )));
-//         else
-//           $tmp[0]=utf8_decode( ucfirst( strftime("%e", mktime(0, 0, 0, $var[1],1+$step, $var[0]) )));
 
         // prevs
         $query_sold=mysql_query("SELECT SUM(amount) as sum FROM webfinance_transactions WHERE date<='$current_date' ".$query_account )
@@ -128,20 +124,19 @@ if($nb_day>0){
 //Define the object
 $graph2=& new PHPlot_Data($width,$height);
 
-
 //Set titles
 if ($hidetitle) {
   $title = "";
   $graph2->SetYTitle('');
 } else {
   $title=utf8_decode(_("Cash flow / all history"));
-  $graph2->SetYTitle('€');
+  $graph2->SetYTitle('€'); // <-- this is possible only with UTF8-aware TTF fonts
 } 
 
 $graph2->SetTitle($title);
 $graph2->SetXTitle('');
 
-// NB Calculate the density of tick horizontaly and verticaly to not "flood"
+// NB : Calculate the density of tick horizontaly and verticaly to not "flood"
 // the graph. Try to be clever : take into account the width & height of the
 // image, and the range of values.
 //
@@ -165,6 +160,7 @@ if ($ratiox > 15) {
   // day date ex "2 feb 06"
   $moving_average_blur = 7; // Week
   $graph2->SetXTickIncrement( 1 );
+  $graph2->SetXLabelAngle(60); // <-- this is possible only with TTF fonts
   for ($i=0 ; $i<count($data) ; $i++) {
     $data[$i][0] = strftime("%e %b %y", $data[$i][0]);
   }
@@ -172,16 +168,19 @@ if ($ratiox > 15) {
   // 10 pixels is enought to show the grid at week level
   $graph2->SetXTickIncrement( 7 );
   $moving_average_blur = 15; // 2 Weeks
+  $graph2->SetXLabelAngle(30); // <-- this is possible only with TTF fonts
+
   for ($i=0 ; $i<count($data) ; $i++) {
     if ($i%7 == 0)
-      $data[$i][0] = strftime("%W-%y", $data[$i][0]); // Week number + year
+      $data[$i][0] = strftime("Semaine %W", $data[$i][0]); // Week number + year
     else
       $data[$i][0] = "";
   }
 } else { // Under 10 pixels per day we show the grid at month level
   $graph2->SetXTickIncrement( 30 );
-  $old_ts = $data[0][0] - 86400*60;
+  $old_ts = $data[0][0] - 86400*60; // Make sur we wrap to print the first label
   $moving_average_blur = 20; // 20 days
+  $graph2->SetXLabelAngle(0); // <-- this is possible only with TTF fonts
   for ($i=0 ; $i<count($data) ; $i++) {
     if (strftime("%m%Y", $old_ts) != strftime("%m%Y", $data[$i][0])) {
       $old_ts = $data[$i][0];
@@ -192,8 +191,6 @@ if ($ratiox > 15) {
     }
   }
 }
-
-$graph2->SetXLabelAngle(90);
 
 # Make a legend for the 2 functions:
 //		$graph2->SetLineWidths(array('1','1'));
@@ -212,7 +209,7 @@ $graph2->SetPlotType("lines");
 $graph2->SetLineWidth( array(2, 2, 2) );
 
 if ($movingaverage) {
-      $graph2->DoMovingAverage(1,$moving_average_blur,FALSE);
+  $graph2->DoMovingAverage(1,$moving_average_blur,FALSE);
 }
 
 if (isset($User->prefs->graphgrid) && $User->prefs->graphgrid == "on") {
@@ -223,19 +220,19 @@ if (isset($User->prefs->graphgrid) && $User->prefs->graphgrid == "on") {
   $graph2->SetDrawYGrid(false);
 }
 
-// Base apearance fonts : use TTF for unicode support and nice looks.
+// NB : Base apearance fonts : use TTF for unicode support and nice looks.
 //
-// This is a hack around crippled phplot object interface that makes it
-// impossible to specify a correct filepath for the fonts used. We access
-// directly the object's internal properties just before rendering.
-$graph2->ttf_path = "../../client_data/ttf";
+// This is a hack around crippled phplot's object interface that makes it
+// impossible to specify a correct filepath for the fonts used with it's
+// getter/setter methods. We access directly the object's internal properties
+// just before rendering.
 $ttf_dir = "/usr/share/fonts/truetype/freefont";
 $fonts = array(
     'title_font' => array('size' => 13, 'font'=>$ttf_dir.'/FreeSansBold.ttf'),
     'legend_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSansBold.ttf'), 
     'generic_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSansBold.ttf'), 
-    'x_label_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSansBold.ttf'), 
-    'y_label_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSansBold.ttf'), 
+    'x_label_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSans.ttf'), 
+    'y_label_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSans.ttf'), 
     'x_title_font' => array('size' => 10, 'font'=>$ttf_dir.'/FreeSansBold.ttf'), 
     'y_title_font' => array('size' => 10, 'font'=>$ttf_dir.'/FreeSansBold.ttf')
 );
