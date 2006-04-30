@@ -19,24 +19,43 @@ $tab = new TabStrip();
 global $User;
 $User->getInfos();
 
-print "<form>";
+?>
+<script type="text/javascript">
+
+function updateCashFlow(chk) {
+  i = document.getElementById('cashflow_img');
+  if (!i) return;
+  url = i.src;
+  url = url.replace(/&movingaverage=[0-9]+/, '');
+  if (chk.checked) {
+    url = url+'&movingaverage=1';
+  } else {
+    url = url+'&movingaverage=0';
+  }
+  i.src = url;
+}
+
+</script>
+<form>
+<?php
 
 if ($User->isAuthorized('accounting,manager')) {
   $cashflow = <<<EOF
-<img alt="cashflow" src="cashflow.php?width=850&height=400" width="850" height="400" />
+<input type="checkbox" name="moving_average" onchange="updateCashFlow(this)"> Display moving average
+<img id="cashflow_img" alt="cashflow" src="cashflow.php?width=850&height=500&movingaverage=0" width="850" height="500" />
 EOF;
-  $tab->addTab(_('Cashflow'), $cashflow);
+  $tab->addTab(_('Cashflow'), $cashflow, 'cashflow');
 }
 
 if ($User->isAuthorized('accounting,eployee,manager')) {
-  // FIXME : ici un formulaire pour utiliser le paramètre limit_clients (pour
-  // "détasser" les petits clients, ne pas faire apparaître les gros). 
   $clientincome = <<<EOF
 <img id="clients_income" alt="clients_income" src="clients_income.php?width=850&height=400" width="850" height="400" />
 EOF;
-  $tab->addTab(_('Client income'), $clientincome);
+  $tab->addTab(_('Client income'), $clientincome, 'client_income');
 }
 
+if (isset($_GET['tab']))
+  $tab->setFocusedTab($_GET['tab']);
 $tab->realise();
 
 print "</form>";
