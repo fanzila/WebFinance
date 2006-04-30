@@ -67,8 +67,8 @@ if(diff_date($start_date,$_GET['start_date'])>0)
 }
 
 $data=array();
-$max=1;
-$min=-1;
+$max=0;
+$min=0;
 $nb_day=diff_date($start_date,$end_date);
 
 if($nb_day>0){
@@ -211,19 +211,27 @@ $graph2->SetLineWidth( array(2, 2, 2) );
 // NB : Find the vertical range and extend it for positive and negative values
 // to the next "round" number so that the horizontal ticks fall on nice odd
 // numbers. 
-$tmp_max = abs($max);
-$exp = 0;
-while ($tmp_max > 10) { $tmp_max /= 10; $exp++; }
-$tmp_max = ceil($tmp_max);
-while ($exp > 0) { $tmp_max *= 10; $exp--; }
-$tmp_max = $max/abs($max) * $tmp_max;
+if (abs($max) > 0) {
+  $tmp_max = abs($max);
+  $exp = 0;
+  while ($tmp_max > 10) { $tmp_max /= 10; $exp++; }
+  $tmp_max = ceil($tmp_max);
+  while ($exp > 0) { $tmp_max *= 10; $exp--; }
+  $tmp_max = $max/abs($max) * $tmp_max;
+} else {
+  $tmp_max = 0;
+}
 
-$tmp_min = abs($min);
-$exp = 0;
-while ($tmp_min > 10) { $tmp_min /= 10; $exp++; }
-$tmp_min = ceil($tmp_min);
-while ($exp > 0) { $tmp_min *= 10; $exp--; }
-$tmp_min = $min/abs($min) * $tmp_min;
+if (abs($min) > 0) {
+  $tmp_min = abs($min);
+  $exp = 0;
+  while ($tmp_min > 10) { $tmp_min /= 10; $exp++; }
+  $tmp_min = ceil($tmp_min);
+  while ($exp > 0) { $tmp_min *= 10; $exp--; }
+  $tmp_min = $min/abs($min) * $tmp_min;
+} else {
+  $tmp_min = 0;
+}
 
 $graph2->SetPlotAreaWorld(null, null, null, null);
 $graph2->plot_min_y = $tmp_min;
