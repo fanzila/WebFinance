@@ -23,11 +23,15 @@ class TabStrip {
     if ($id == null) {
       $id=count($this->title);
     }
-    if (!$this->focused_onglet) { $this->focused_onglet = $id; } // First added tab is focused by default
+    if (!$this->focusedTab) { $this->focusedTab = $id; } // First added tab is focused by default
     $this->title[$id] = $title;
     $this->content[$id] = $content;
 
     $this->nb_tab++;
+  }
+
+  function setFocusedTab($id) {
+    $this->focusedTab = $id;
   }
 
   function setTitle($id, $title) {
@@ -54,17 +58,17 @@ EOF;
 <td colspan="$colspan" class="onglet_holder">
 EOF;
     foreach ($this->title as $id=>$t) {
-      $html .= sprintf('<div style="display: none;" id="tab_%s">', $id);
+      $html .= sprintf('<div style="display: none;" id="tab_%s">'."\n", $id);
       $html .= $this->content[$id];
-      $html .= sprintf('</div>');
+      $html .= sprintf('</div>'."\n");
     }
 
-    $html .= "<script type=\"text/javascript\">focusOnglet('".$this->focused_onglet."');</script>";
     $html .= <<<EOF
 </td>
 </tr>
 </table>
 EOF;
+    $html .= "<script type=\"text/javascript\">focusOnglet('".$this->focusedTab."');</script>";
 
     print $html;
   }
