@@ -206,7 +206,7 @@ $graph2->SetDataColors(array( 'red' ,'blue', 'green'));
 $graph2->SetDataType("text-data");
 $graph2->SetDataValues($data);
 $graph2->SetPlotType("lines");
-$graph2->SetLineWidth( array(2, 2, 2) );
+$graph2->SetLineWidth( array(1, 1, 2) );
 
 // NB : Find the vertical range and extend it for positive and negative values
 // to the next "round" number so that the horizontal ticks fall on nice odd
