@@ -143,7 +143,6 @@ $graph2->SetXTitle('');
 // First verticaly
 $range = $max + abs($min);
 $ratioy = 1000*$height/$range; // $ratioy = nb of pixels per 1000 euro
-$graph2->SetTitle($ratioy);
 if ($ratioy > 20) {
   $graph2->SetYTickIncrement( 1000 );
 } else if ($ratioy > 9) {
