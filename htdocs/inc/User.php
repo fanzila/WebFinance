@@ -20,7 +20,7 @@ class User {
     }
     $result = mysql_query("SELECT id_user, last_name, first_name, login,
                                   email, disabled, last_login, creation_date,
-                                  admin, role, modification_date,
+                                  role, modification_date,
                                   date_format(creation_date,'%d/%m/%Y') as nice_creation_date,
                                   date_format(modification_date,'%d/%m/%Y') as nice_modification_date
                            FROM webfinance_users WHERE id_user=$id_user")
@@ -138,7 +138,7 @@ class User {
       $roles = '';
     }
 
-    $q = sprintf("UPDATE webfinance_users SET first_name='%s', last_name='%s', login='%s', email='%s', disabled=%d, admin=%d, role='%s', 
+    $q = sprintf("UPDATE webfinance_users SET first_name='%s', last_name='%s', login='%s', email='%s', disabled=%d, role='%s', 
                          password=md5('%s'), modification_date=now()
                   WHERE id_user=%d",
 
@@ -174,9 +174,9 @@ class User {
       return false;
     }
 
-    $q = sprintf("INSERT INTO webfinance_users (login, first_name, last_name, password, email, role, disabled, admin,  modification_date, creation_date)
+    $q = sprintf("INSERT INTO webfinance_users (login, first_name, last_name, password, email, role, disabled,  modification_date, creation_date)
                   VALUES('%s', '%s', '%s', md5('%s'), '%s','%s',  %d, %d, now(), now() )",
-		 $login, $first_name, $last_name, $passwd, $email, $roles, ($disabled == "on")?1:0, ($admin == "on")?1:0 );
+		 $login, $first_name, $last_name, $passwd, $email, $roles, ($disabled == "on")?1:0 );
     mysql_query($q) or wf_mysqldie();
     $result = mysql_query("SELECT id_user FROM webfinance_users WHERE creation_date>date_sub(now(), INTERVAL 1 SECOND)");
     list($new_id_user) = mysql_fetch_array($result);
