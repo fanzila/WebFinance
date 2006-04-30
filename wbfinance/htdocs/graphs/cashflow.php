@@ -164,19 +164,19 @@ if ($ratiox > 15) {
   for ($i=0 ; $i<count($data) ; $i++) {
     $data[$i][0] = strftime("%e %b %y", $data[$i][0]);
   }
-} elseif ($ratiox > 10) {
-  // 10 pixels is enought to show the grid at week level
+} elseif ($ratiox > 7) {
+  // 7 pixels is enough to show the grid at week level
   $graph2->SetXTickIncrement( 7 );
   $moving_average_blur = 15; // 2 Weeks
   $graph2->SetXLabelAngle(30); // <-- this is possible only with TTF fonts
 
   for ($i=0 ; $i<count($data) ; $i++) {
     if ($i%7 == 0)
-      $data[$i][0] = strftime("Semaine %W", $data[$i][0]); // Week number + year
+      $data[$i][0] = strftime(_("Week #%W"), $data[$i][0]); // Week number + year
     else
       $data[$i][0] = "";
   }
-} else { // Under 10 pixels per day we show the grid at month level
+} else { // Under 7 pixels per day we show the grid at month level
   $graph2->SetXTickIncrement( 30 );
   $old_ts = $data[0][0] - 86400*60; // Make sur we wrap to print the first label
   $moving_average_blur = 20; // 20 days
@@ -207,6 +207,27 @@ $graph2->SetDataType("text-data");
 $graph2->SetDataValues($data);
 $graph2->SetPlotType("lines");
 $graph2->SetLineWidth( array(2, 2, 2) );
+
+// NB : Find the vertical range and extend it for positive and negative values
+// to the next "round" number so that the horizontal ticks fall on nice odd
+// numbers. 
+$tmp_max = abs($max);
+$exp = 0;
+while ($tmp_max > 10) { $tmp_max /= 10; $exp++; }
+$tmp_max = ceil($tmp_max);
+while ($exp > 0) { $tmp_max *= 10; $exp--; }
+$tmp_max = $max/abs($max) * $tmp_max;
+
+$tmp_min = abs($min);
+$exp = 0;
+while ($tmp_min > 10) { $tmp_min /= 10; $exp++; }
+$tmp_min = ceil($tmp_min);
+while ($exp > 0) { $tmp_min *= 10; $exp--; }
+$tmp_min = $min/abs($min) * $tmp_min;
+
+$graph2->SetPlotAreaWorld(null, null, null, null);
+$graph2->plot_min_y = $tmp_min;
+$graph2->plot_max_y = $tmp_max;
 
 if ($movingaverage) {
   $graph2->DoMovingAverage(1,$moving_average_blur,FALSE);
