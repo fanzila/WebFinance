@@ -248,6 +248,10 @@ class User {
     $result = mysql_query("SELECT value FROM webfinance_pref WHERE owner=".$_SESSION['id_user']." AND type_pref='user_pref'") or wf_mysqldie();
     list($data) = mysql_fetch_array($result);
     $this->prefs = unserialize(base64_decode($data));
+
+    if (!isset($this->prefs->theme)) {
+      $this->prefs->theme = "main";
+    }
   }
 
   function sendInfo($id_user,$passwd){

@@ -33,8 +33,6 @@ if ($_SESSION['message'] != "") {
   $_SESSION['message'] = '<div class="post_message">'.$_SESSION['message']."</div>";
 }
 
-if (!isset($User->prefs->theme)) 
-  $User->prefs->theme = "main";
 $css_theme = "/css/themes/".$User->prefs->theme."/main.css";
 if (! file_exists($GLOBALS['_SERVER']['DOCUMENT_ROOT'].$css_theme)) {
   $css_theme = "/css/themes/main/main.css"; // Historic default
