@@ -14,10 +14,6 @@
 
 include_once("inc/main.php");
 
-if ($GLOBALS['_SERVER']['HTTP_HOST'] != "backoffice.nbi.fr") {
-  $_SESSION['debug'] = 1;
-}
-
 global $title;
 global $roles;
 
@@ -25,6 +21,7 @@ $User = new User();
 
 if (! $User->isLogued()) {
   header("Location: /login.php");
+  die();
 }
 
 $user = $User->getInfos();
@@ -37,6 +34,13 @@ if ($_SESSION['message'] != "") {
   $_SESSION['message'] = '<div class="post_message">'.$_SESSION['message']."</div>";
 }
 
+$css_theme = "/css/themes/".$User->prefs->theme."/main.css";
+if (! file_exists($GLOBALS['_SERVER']['DOCUMENT_ROOT'].$css_theme)) {
+  $css_theme = "/css/main.css"; // Historic default
+}
+
+$search_button = '/imgs/boutons/'.urlencode(base64_encode(_('Search').":off:".$User->prefs->theme)).'.png';
+$search_button_on = '/imgs/boutons/'.urlencode(base64_encode(_('Search').":on:".$User->prefs->theme)).'.png';
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -44,7 +48,7 @@ if ($_SESSION['message'] != "") {
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <link rel=stylesheet type=text/css href=/css/main.css />
+  <link rel="stylesheet" type="text/css" href="<?= $css_theme ?>" />
   <title><?= ($title=="")?"":"$title - " ?>Webfinance</title>
   <script type="text/javascript" language="javascript" src="/js/preloader.js.php"></script>
   <?include "extra_js.php" ?>
@@ -60,8 +64,8 @@ if ($_SESSION['message'] != "") {
 
     <?php if ($User->isAuthorized('admin,employee,manager')) { ?>
     <form action="/search.php" method="get">
-    <input id="searchfield" type="text" name="q" style="width: 100px; margin-bottom: 5px;" class="bordered" />
-    <input type="submit" value="<?= _('Search') ?>" class="bordered" style="width: 102px;" /><br/>
+    <input id="searchfield" type="text" name="q" style="width: 120px; margin-bottom: 5px;" class="bordered" />
+    <input type="image" src="<?= $search_button ?>" onmouseover="this.src='<?= $search_button_on ?>';" onmouseout="this.src='<?= $search_button ?>';" style="border: none;" /><br/>
     </form>
     <?php }?>
 

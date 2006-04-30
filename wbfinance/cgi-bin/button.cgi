@@ -24,9 +24,9 @@ sub fail {
 }
 
 sub make_image {
-  my ($label, $type, $cache_file) = @_;
+  my ($label, $type, $skin_dir, $cache_file) = @_;
 
-  $font = "../client_data/ttf/".$font.".ttf";
+  $font = "../htdocs/css/themes/$skin_dir/buttonfont.ttf";
   unless (-f $font) {
     print STDERR "$! ".$font;
     fail('No such font');
@@ -36,7 +36,7 @@ sub make_image {
   my $cache = 1;
 
   # Read background image
-  my $filename="../client_data/boutons/".$type.".png";
+  my $filename="../htdocs/css/themes/$skin_dir/".$type.".png";
   my $image = new Image::Magick->new();
   $image->Set(dither=>'False');
   my $err = $image->ReadImage($filename);
@@ -93,6 +93,7 @@ sub make_image {
 
   $image->Annotate( %tmp );
 
+  print "Content-Type: image/png\n\n";
   binmode STDOUT;
   $image->Write(file=>\*STDOUT, "image.png");
   if ($cache) {
@@ -111,8 +112,10 @@ unless(defined $cgi->param('data')) { fail('no data'); }
 
 my $data = decode_base64($cgi->param('data'));
 my @data = split(/:/, $data);
+# print "Content-Type: text/plain\n\n";
+# print $data;
+# exit();
 
-print "Content-Type: image/png\n\n";
 
 $data[$#data+1] = "../htdocs/imgs/boutons/".$cgi->param("data").".png";
 make_image( @data );

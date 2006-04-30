@@ -83,15 +83,15 @@ function checkForm(f) {
 <table border="0" cellspacing="7" cellpadding="0">
 <tr>
   <td>Ancien mot de passe</td>
-  <td><input name="old_password" type="password" class="border" /></td>
+  <td><input name="old_password" type="password" /></td>
 </tr>
 <tr>
   <td>Nouveau mot de passe</td>
-  <td><input name="new_pass1" type="password" class="border" /></td>
+  <td><input name="new_pass1" type="password" /></td>
 </tr>
 <tr>
   <td>Répéter</td>
-  <td><input name="new_pass2" type="password" class="border" /></td>
+  <td><input name="new_pass2" type="password" /></td>
 </tr>
 <tr>
   <td colspan="2" style="text-align: center;">
@@ -119,16 +119,18 @@ function checkForm(f) {
     ?>
     </select>
   </td>
-  <td>Thème graphique</td>
+  <td><?= _('Skin') ?></td>
   <td>
     <select name="pref_theme">
     <?php
-    $themes = glob("../css/main*.css");
+    $themes = glob("../css/themes/*");
     foreach ($themes as $theme) {
-      $theme = basename($theme);
-      $theme = preg_replace("/\.css$/", "", $theme);
-      printf('<option value="%s"%s>%s</option>',
-             $theme, ($theme==$User->prefs->theme)?" selected":"", $theme );
+      if (is_dir($theme)) {
+        $theme = basename($theme);
+        $theme = preg_replace("/\.css$/", "", $theme);
+        printf('<option value="%s"%s>%s</option>',
+               $theme, ($theme==$User->prefs->theme)?" selected":"", $theme );
+      }
     }
     ?>
     </select>

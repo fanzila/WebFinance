@@ -24,11 +24,12 @@ $elements = array(_('Home') => array( 'url' => '/', 'roles' => 'any' ),
                   _('Logout') => array( 'url' => '/logout.php', 'roles' => 'any' ),
                  );
 $User= new User();
+$User->getInfos();
 foreach ($elements as $elname=>$data) {
   if ($User->isAuthorized($data['roles'])) {
-    $on = '/imgs/boutons/'.urlencode(base64_encode($elname.":on")).'.png';
+    $on = '/imgs/boutons/'.urlencode(base64_encode($elname.":on:".$User->prefs->theme)).'.png';
     array_push($_SESSION['preload_images'], $on);
-    $off = '/imgs/boutons/'.urlencode(base64_encode($elname.":off")).'.png';
+    $off = '/imgs/boutons/'.urlencode(base64_encode($elname.":off:".$User->prefs->theme)).'.png';
     printf( '<a class="bouton" href="%s"><img onMouseOver="this.src=\'%s\';" onMouseOut="this.src=\'%s\';" src="%s" border=0 /></a>',
              $data['url'], $on, $off, $off);
   }

@@ -45,7 +45,6 @@ CREATE TABLE `webfinance_categories` (
   `id` int(11) NOT NULL auto_increment,
   `name` varchar(255) NOT NULL,
   `comment` text,
-  `class` varchar(32) default NULL,
   `re` varchar(255), -- as in regexp
   `plan_comptable` varchar(100),
   `color` varchar(7) default '#cefce',

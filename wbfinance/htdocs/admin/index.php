@@ -36,8 +36,8 @@ function confirmDeleteRole(id) {
 
 <h2>Utilisateurs backoffice</h2>
 
-<table border="0" cellspacing="0" cellpadding="5" style="border: solid 1px black;">
-<tr align=center class=row_header>
+<table border="0" cellspacing="0" cellpadding="5" class="framed">
+<tr align=center class="row_header">
   <td>Login</td>
   <td>Nom</td>
   <td>Mail</td>
@@ -93,7 +93,7 @@ while ($c = mysql_fetch_assoc($result)) {
   extract($c);
 
   print <<<EOF
-<tr>
+<tr class="row_even">
   <td><input type="text" name="cat[$id_role][name]" value="$name" style="width: 80px;" /></td>
   <td><input type="text" name="cat[$id_role][description]" value="$description" style="width: 200px;" /></td>
   <td align="center"><a href="javascript:confirmDeleteRole($id_role);"><img src="/imgs/icons/delete.gif" /></a>
@@ -107,7 +107,7 @@ EOF;
   <td><input type="text" name="cat[new][description]" value="" style="width: 200px;" /></td>
   <td></td>
 </tr>
-<tr>
+<tr class="row_even">
   <td style="text-align: center;" colspan="3"><input type="submit" value="<?= _('Save') ?>" /></td>
 </table>
 

@@ -348,3 +348,6 @@ msgstr "Mauvais mot de passe"
 
 msgid "Invoice"
 msgstr "Facture"
+
+msgid "Week #%W"
+msgstr "Semaine %W"

@@ -305,9 +305,9 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
        $current_month=ucfirst(strftime("%B %Y",$tr->ts_date));
        if(!empty($prev_date)){
 	 if(date("m",$prev_date)!=date("m",$tr->ts_date))
-	   echo "<tr><td colspan='9' align='center'><b>$current_month</b></td></tr>";
+	   echo "<tr class=\"row_even\"><td colspan='9' align='center'><b>$current_month</b></td></tr>";
        }else
-	 echo "<tr><td colspan='9' align='center'><b>$current_month</b></td></tr>";
+	 echo "<tr class=\"row_even\"><td colspan='9' align='center'><b>$current_month</b></td></tr>";
 
        $prev_date=$tr->ts_date;
 
@@ -352,7 +352,7 @@ EOF;
        $count++;
      }
      ?>
-     <tr>
+     <tr class="row_even">
        <td colspan="6" style="text-align: right; font-weight: bold;"><?= _('Total amount of shown transactions') ?></td>
        <td nowrap style="text-align: right; font-weight: bold;"><?= number_format($total_shown, 2, ',', ' ') ?> &euro;</td>
        <td></td>
@@ -370,7 +370,8 @@ EOF;
     <tr class="row_header">
       <td colspan="2" style="text-align: center"><?= _('Filter') ?></td>
     </tr>
-    <tr>
+    <?php if ($nb_transactions/$transactions_per_page > 1) { ?>
+    <tr class="row_even">
       <td><b>Page</b></td>
       <td>
        <?php
@@ -390,7 +391,9 @@ EOF;
 
       ?>
       </td>
-    <tr>
+    </tr>
+    <?php } ?>
+    <tr class="row_even">
       <td><b><?= _('Account :') ?></b></td>
       <td><select name="filter[id_account]" style="width: 150px;">
         <option value="0"><?= _('-- All accounts --') ?></option>
@@ -403,27 +406,27 @@ EOF;
       mysql_free_result($result);
       ?></select></td>
     </tr>
-    <tr>
+    <tr class="row_even">
       <td nowrap><b><?= _('Amount') ?> <img class="help_icon" src="/imgs/icons/help.png" onmouseover="return escape('<?= _('Enter a number for 10% aproximated search, enter 100-200 to search transactions fromm 100&euro; to 200&euro; included') ?>');" /></b></td>
       <td><input style="text-align: center; width: 130px;" type="text" id="amount_criteria" name="filter[amount]" value="<?= $filter['amount'] ?>" /><img src="/imgs/icons/delete.gif" onmouseover="return escape('<?= _('Click to suppress this filter criteria') ?>');" onclick="fld = document.getElementById('amount_criteria'); fld.value = ''; fld.form.submit();" /></td>
     </tr>
-    <tr>
+    <tr class="row_even">
       <td nowrap><b><?= _('Text contains :') ?></b></td>
       <td><input style="text-align: center; width: 130px;" id="text_criteria" type="text" name="filter[textsearch]" value="<?= $filter['textsearch'] ?>" /><img src="/imgs/icons/delete.gif" onmouseover="return escape('<?= _('Click to suppress this filter criteria') ?>');" onclick="fld = document.getElementById('text_criteria'); fld.value = ''; fld.form.submit();" /></td>
     </tr>
-    <tr>
+    <tr class="row_even">
       <td nowrap><b><?= _('Start date :') ?></b></td>
       <td><?php makeDateField("filter[start_date]", $ts_start_date, 1, 'start_date_criteria', 'width: 114px'); ?><img src="/imgs/icons/delete.gif" onmouseover="return escape('<?= _('Click to suppress this filter criteria') ?>');" onclick="fld = document.getElementById('start_date_criteria'); fld.value = ''; fld.form.submit();" /></td>
     </tr>
-    <tr>
+    <tr class="row_even">
       <td nowrap><b><?= _('End date :') ?></b></td>
       <td><?php makeDateField("filter[end_date]", $ts_end_date, 1, 'end_date_criteria', 'width: 114px'); ?><img src="/imgs/icons/delete.gif" onmouseover="return escape('<?= _('Click to suppress this filter criteria') ?>');" onclick="fld = document.getElementById('end_date_criteria'); fld.value = ''; fld.form.submit();" /></td>
     </tr>
-    <tr>
+    <tr class="row_even">
       <td nowrap><b><?= _('Shown categories :') ?></b></td>
       <td><input type="checkbox" name="filter[shown_cat][check_all]" /><b><?= _('View all') ?></b></td>
     </tr>
-    <tr>
+    <tr class="row_even">
       <?php
       $count = 0;
       $result = mysql_query("SELECT id,name,color FROM webfinance_categories ORDER BY name");
@@ -431,7 +434,7 @@ EOF;
         printf('<td nowrap><input type="checkbox" name="filter[shown_cat][%d]" %s>&nbsp;%s</td>', $cat->id, ($filter['shown_cat'][$cat->id])?"checked":"", $cat->name );
         $count++;
         if ($count % 2 == 0) {
-          print "</tr>\n<tr>\n";
+          print "</tr>\n<tr class=\"row_even\">\n";
         }
       }
       mysql_free_result($result);
@@ -450,7 +453,7 @@ EOF;
   <tr class="row_header">
     <td style="text-align: center;" colspan="2"><?= _('Action on selected transactions') ?></td>
   </tr>
-  <tr>
+  <tr class="row_even">
     <td style="width: 90px;"><?= _('Action') ?></td>
     <td>
       <select onchange="changeAction(this);" name="action[type]" style="width: 200px;">
@@ -459,7 +462,7 @@ EOF;
         <option value="change_category"><?= _('Change category...') ?></option>
       </select>
   </tr>
-  <tr>
+  <tr class="row_even">
     <td colspan="2">
       <div id="action_change_account" style="display: none;">
         <div style="display: block; float: left; width: 90px;"><?= _('To account ') ?></div>&nbsp;<select name="action[id_account]" style="width: 150px;">
@@ -486,7 +489,7 @@ EOF;
       </div>
     </td>
   </tr>
-  <tr>
+  <tr class="row_even">
     <td colspan="2" style="text-align: center"><input type="button" onclick="submitAction(this.form);" value="<?= _('Apply this action') ?>" /></td>
   </tr>
   </table>

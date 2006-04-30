@@ -1,0 +1,85 @@
+@import url('../main.css');
+@import url('../onglets.css');
+@import url('../fiche_prospect.css');
+@import url('../calendar.css');
+
+h1 { margin: 0px; font-size: 20px; color: black; }
+h2 { margin: 0px; margin-bottom: 5px; font-size: 16px;}
+h3 { margin: 0px; font-size: 14px;}
+h4 { margin: 0px; font-size: 12px;}
+h5 { margin: 0px; font-size: 10px;}
+h6 { margin: 0px; font-size: 8px;}
+
+img.bouton { cursor: pointer; }
+a img { border: none; }
+
+div.nav a { background: none; }
+div.nav a:hover { background: none; }
+
+a.bouton:hover { background: none; }
+a img.bouton:hover { background: none ; }
+
+div.boutons { margin: 0px; margin-bottom: 10px; font-size: 10px; background: #eee; color: black; padding: 5px; }
+div.boutons a { padding-right: 10px; padding-left: 10px; }
+
+.tooltip {
+background: white;
+border: solid 1px black;
+padding: 5px;
+color: black;
+}
+
+table.facture td { font-size: 12px; }
+table.facture input { border: solid 1px #cecece; }
+table.facture textarea { border: solid 1px #cecece; }
+
+.fiche_prospect td { font-size: 11px; }
+input, select { border: solid 1px #ddd;  margin-right: 2px; margin-bottom: 2px; font-size: 11px; background: red; }
+textarea { border: solid 1px #ddd; background: red; }
+
+.liens_boutons { text-align: center; padding: 5px;}
+
+input.tel { width: 80px; background: url('/imgs/icons/tel.gif') no-repeat top left white; padding-left: 17px; text-align: center; word-spacing: -1px; }
+input.fax { width: 79px; background: url('/imgs/icons/fax.gif') no-repeat top left white; padding-left: 20px; text-align: center; word-spacing: -1px; }
+input.email { width: 182px; background: url('/imgs/icons/mail.gif') no-repeat top left white; padding-left: 18px; text-align: center; }
+input.gsm { width: 79px; background: url('/imgs/icons/gsm.gif') no-repeat top left white; padding-left: 15px; text-align: center; word-spacing: -1px; }
+input.tva { width: 182px; background: url('/imgs/icons/tva.gif') no-repeat top left white; padding-left: 18px; text-align: center; }
+input.siren { width: 146px; background: url('/imgs/icons/siren.gif') no-repeat top left white; padding-left: 33px; text-align: center; }
+input.web { background: url('/imgs/icons/web.gif') no-repeat top left white; padding-left: 18px; text-align: center; width: 182px; }
+
+select { font-size: 11px; padding: 0px; }
+
+table.mosaique td { border: solid 1px black; padding: 10px; color: black; background: white; }
+
+img.help_icon { vertical-align: bottom; }
+
+div#advanced_search {
+border: solid 1px #ddd;
+padding: 5px; 
+background: #eee;
+}
+
+input.amount_field {
+  text-align: right;
+}
+
+div#revision {
+  left: 35px;
+  top: 500px; 
+  width: 100px;
+  text-align: center;
+  position: absolute;
+  color: #aaa;
+}
+
+div.post_message{
+  background: url('/imgs/icons/help.gif') no-repeat 5px 5px #ccf;
+  border: dashed 2px #aaf;
+  position: absolute; 
+  right: 30px;
+  top: 30px;
+  padding: 20px;
+  padding-top: 5px;
+  font-style: italic;
+  padding-left: 30px;
+}
