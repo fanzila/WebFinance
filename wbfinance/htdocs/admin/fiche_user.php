@@ -60,7 +60,7 @@ function checkForm(f) {
   </td>
 </tr>
  <tr>
- <td colspan="2">
+ <td colspan="4">
   <table>
    <tr>
     <td>Roles:</td>
