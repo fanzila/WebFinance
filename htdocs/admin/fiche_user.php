@@ -53,7 +53,6 @@ function checkForm(f) {
 <tr>
   <td valign="top" colspan="3">
     <input type="checkbox" name="disabled" <?= ($user->disabled)?"checked":"" ?> /> Compte désactivé<br/>
-    <input type="checkbox" name="admin" <?= ($user->admin)?"checked":"" ?> /> Administrateur<br/>
   </td>
   <td>
     Créé le <?=$user->nice_creation_date?><br/>
