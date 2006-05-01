@@ -257,7 +257,7 @@ if (isset($User->prefs->graphgrid) && $User->prefs->graphgrid == "on") {
 // just before rendering.
 $ttf_dir = "/usr/share/fonts/truetype/freefont";
 $fonts = array(
-    'title_font' => array('size' => 13, 'font'=>$ttf_dir.'/FreeSansBold.ttf'),
+    'title_font' => array('size' => 13, 'font'=>$GLOBALS['_SERVER']['DOCUMENT_ROOT']."/css/themes/".$User->prefs->theme."/buttonfont.ttf"),
     'legend_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSansBold.ttf'), 
     'generic_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSansBold.ttf'), 
     'x_label_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSans.ttf'), 

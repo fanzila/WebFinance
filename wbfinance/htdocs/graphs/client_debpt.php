@@ -37,6 +37,7 @@ else
 global $User;
 
 $bar = new barGraph($width, $height, $User->prefs->graphgrid);
+$bar->setFont($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/css/themes/".$User->prefs->theme."/buttonfont.ttf");
 $bar->setBarColor(255, 92, 92) ;
 for ($i=$nb_months-1 ; $i>=0; $i--) {
   $result = mysql_query("SELECT date_format(date_sub(now(), INTERVAL $i MONTH), '%m/%y') as mois_shown, date_format(date_sub(now(), INTERVAL $i MONTH), '%Y%m') as mois");

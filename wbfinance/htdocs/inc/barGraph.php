@@ -23,7 +23,7 @@ class barGraph {
   var $margin = 5;
   var $C_bar, $C_barframe, $C_text, $C_average, $C_grid;
   var $nb_shades = 50;
-  var $sans_bold_ttf = "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf";
+  var $ttf_font = "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf";
   var $draw_grid = 1;
 
   function _htmlColorToGD($html) {
@@ -119,7 +119,7 @@ class barGraph {
         $h = $this->height - ($step*$count)*(($this->height-15)/$this->max);
         imagerectangle($this->im, 0, $h, $this->width, $h, $this->C_grid );
         if ($count % 2 == 0) {
-          imagettftext($this->im, 8, 0, 1, $h-2, $this->C_grid, $this->sans_bold_ttf, sprintf("%d%s\xe2\x82\xacHT",  $step*$count, ($step==1000)?"K":"") );
+          imagettftext($this->im, 8, 0, 1, $h-2, $this->C_grid, $this->ttf_font, sprintf("%d%s\xe2\x82\xacHT",  $step*$count, ($step==1000)?"K":"") );
         }
         $count++;
       }
@@ -149,7 +149,7 @@ class barGraph {
       imagestring($this->im, 1, $i*$this->step+($this->step-strlen($this->labels[$i])*imagefontwidth(1))/2, $this->height-10, $this->labels[$i], $this->C_text);
 
       $dummy = imagecreate(10, 10);
-      $bounding_box = imagettftext($dummy, $this->font_size, 90, $i*$this->step+15, $this->height-$bar_height+20, $this->C_text, $this->sans_bold_ttf, $this->barlabels[$i]);
+      $bounding_box = imagettftext($dummy, $this->font_size, 90, $i*$this->step+15, $this->height-$bar_height+20, $this->C_text, $this->ttf_font, $this->barlabels[$i]);
       imagedestroy($dummy);
 
       $text_height = $bounding_box[0] - $bounding_box[4];
@@ -160,15 +160,22 @@ class barGraph {
         $text_y = $this->height-$bar_height-5;
       }
       $text_x = $i*$this->step + $text_height + ($this->step - $this->margin*2 - $text_height)/2;
-      $bounding_box = imagettftext($this->im, $this->font_size, 90, $text_x, $text_y, $this->C_text, $this->sans_bold_ttf, $this->barlabels[$i]);
+      $bounding_box = imagettftext($this->im, $this->font_size, 90, $text_x, $text_y, $this->C_text, $this->ttf_font, $this->barlabels[$i]);
       $i++;
     }
 
     imagerectangle($this->im, 0, $y_average, $this->width, $y_average, $this->C_average );
-    imagettftext($this->im, 9, 0, 1, $y_average-2, $this->C_average, $this->sans_bold_ttf, sprintf("Moyenne : %.1fK\xe2\x82\xacHT", $average/1000) );
+    imagettftext($this->im, 9, 0, 1, $y_average-2, $this->C_average, $this->ttf_font, sprintf("Moyenne : %.1fK\xe2\x82\xacHT", $average/1000) );
     // imagestring ($this->im, 1, 5, 5,  "A Simple Text String", $text_color);
     imagepng ($this->im);
     imagedestroy($this->im);
+  }
+
+  function setFont($fontfile) {
+    if (!file_exists($fontfile)) {
+      return FALSE;
+    }
+    $this->ttf_font = $fontfile;
   }
 }
 
