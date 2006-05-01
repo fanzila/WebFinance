@@ -125,7 +125,7 @@ function checkForm(f) {
     <?php
     $themes = glob("../css/themes/*");
     foreach ($themes as $theme) {
-      if (is_dir($theme)) {
+      if (basename($theme)!="CVS" && is_dir($theme)) {
         $theme = basename($theme);
         $theme = preg_replace("/\.css$/", "", $theme);
         printf('<option value="%s"%s>%s</option>',

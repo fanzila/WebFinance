@@ -33,6 +33,7 @@ else
 global $User;
 
 $bar = new barGraph($width, $height, $User->prefs->graphgrid);
+$bar->setFont($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/css/themes/".$User->prefs->theme."/buttonfont.ttf");
 $bar->setBarColor(255, 92, 92) ;
 $result = mysql_query("SELECT sum(fl.prix_ht*fl.qtt) as total, count(f.id_facture) as nb_factures, c.nom
                        FROM webfinance_invoices as f, webfinance_invoice_rows as fl, webfinance_clients as c

@@ -16,7 +16,7 @@ include("inc/main.php");
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <link rel=stylesheet type=text/css href=/css/main.css />
+  <link rel=stylesheet type=text/css href=/css/themes/main/main.css />
   <title>Webfinance<?= ($title=="")?"":" - $title" ?></title>
   <script type="text/javascript" language="javascript" src="/js/preloader.js.php"></script>
   <?include "extra_js.php" ?>
