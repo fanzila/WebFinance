@@ -56,12 +56,12 @@ if (isset($_GET['id_personne'])) {
 <tr>
   <td>Fonction</td><td><input type="text" style="width: 145px;" name="fonction" value="<?= $personne->fonction ?>" /></td>
 </tr>
-<tr>
-  <td width="50"><?=_('Login')?></td><td><input type="text" style="width: 145px;" name="login" value="<?= $personne->login ?>" /></td>
-</tr>
 <?
   if( !($User->exists($personne->id_user)) ){
 ?>
+<tr>
+  <td width="50"><?=_('Login')?></td><td><input type="text" width: 145px;" name="login" value="<?= $personne->login ?>" /></td>
+</tr>
 <tr>
  <td width='50'><?=_('Password')?></td><td><input type='password' style='width: 145px;' name='passwd' /></td>
 </tr>
@@ -69,8 +69,14 @@ if (isset($_GET['id_personne'])) {
   <td width="70"><?=_('Send info')?></td><td><input type="checkbox" name="send_info"/></td>
 </tr>
 <?
-  }
+  }else{
  ?>
+<tr>
+  <td width="50"><?=_('Login')?></td><td width="145"><?= $personne->login ?></td>
+</tr>
+<?
+  }
+?>
 <tr>
   <td colspan="2"><input class="email" type="text" size="20" name="email" value="<?= $personne->email ?>" /></td>
 </tr>

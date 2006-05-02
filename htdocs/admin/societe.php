@@ -12,6 +12,7 @@
 // $Id$
 
 include("../inc/main.php");
+$roles = 'admin,manager';
 include("../top.php");
 include("nav.php");
 
