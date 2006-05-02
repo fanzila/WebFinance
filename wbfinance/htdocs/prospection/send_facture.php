@@ -13,6 +13,7 @@
 
 $title = _("Send Invoice");
 require("../inc/main.php");
+$roles = 'manager,admin';
 require("../top.php");
 require("nav.php");
 
@@ -81,9 +82,12 @@ $invoice = $Facture->getInfos($id);
    <td><?=_('Recipient')?></td>
    <td>
   <?
-  foreach($mails as $name => $mail)
-   printf("<input type='checkbox' name='mails[]' checked value='%s' >%s < %s ><br/>",$mail, $name, $mail );
-
+  if(count($mails)<1)
+    echo _("You must add a mail address!");
+  else{
+    foreach($mails as $name => $mail)
+      printf("<input type='checkbox' name='mails[]' checked value='%s' >%s < %s ><br/>",$mail, $name, $mail );
+  }
   ?>
    </td>
   </tr>

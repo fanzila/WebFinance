@@ -29,7 +29,6 @@ class User {
     $user = mysql_fetch_object($result);
     $this->userData = $user;
     mysql_free_result($result);
-
     $this->getPrefs();
     return $user;
   }
@@ -229,6 +228,14 @@ class User {
     }
   }
 
+  function setPass($id_user, $new_pass) {
+    mysql_query("UPDATE webfinance_users SET password=md5('$new_pass') WHERE id_user=$id_user")
+      or wf_mysqldie();
+    logmessage("Changed password for user:$id_user");
+    $_SESSION['message'] = _('Password changed');
+    return true;
+  }
+
   // Expects an object
   function setPrefs($prefs) {
     $data = base64_encode(serialize($prefs));
@@ -269,7 +276,7 @@ class User {
     //sujet
     $subject= $societe->raison_sociale.": "._('your account informations');
 
-    //text
+    //text may be in the preference #FIXME
     $body = _('You receive this mail because you have an account ...')."\n";
     $body .= _('Name').": ".$user->first_name." ".$user->last_name."\n";
     $body .= _('Login').": ".$user->login."\n";

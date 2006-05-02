@@ -11,7 +11,7 @@
 <?php
 
 include_once("../inc/main.php");
-$roles = 'admin';
+$roles = 'admin, manager';
 include("../top.php");
 include("nav.php");
 

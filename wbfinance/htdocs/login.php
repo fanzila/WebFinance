@@ -13,7 +13,7 @@
 include("inc/main.php");
 $User = new User();
 if ($User->login($_POST)) {
-  if ($_POST['came_from'] != "" AND !preg_match('/login.php$/i',$_POST['came_from']) ) {
+  if ($_POST['came_from'] != "" AND !preg_match('/login.php$/i',$_POST['came_from']) AND !preg_match('/passwd.php$/i',$_POST['came_from']) ) {
     header("Location: ".$_POST['came_from']);
   } else {
     header("Location: /");
@@ -38,6 +38,6 @@ if ($User->login($_POST)) {
     </table>
     </form>
 </div>
-
+<center><a href="passwd.php"><small><?= _("Forgot password")?></small></a></center>
 </body>
 </html>
