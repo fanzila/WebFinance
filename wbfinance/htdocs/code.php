@@ -4,7 +4,7 @@ include("inc/main.php");
 $text=$_SESSION['code']; //on récupére le code à générer
 
 $im = imagecreatefromjpeg("./imgs/secret.jpg");
-$id = imagecreatefromjpeg("/imgs/secret.jpg");
+$id = imagecreatefromjpeg("./imgs/secret.jpg");
 $grey = imagecolorallocate($im, 128, 128, 128);
 $black = imagecolorallocate($im, 0, 0, 0);
 $font = "./css/themes/main/buttonfont.ttf";
