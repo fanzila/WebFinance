@@ -89,12 +89,12 @@ class User {
 //     $result = mysql_query("SELECT admin=1 FROM webfinance_users WHERE id_user=$id_user");
 //     list($is_admin) = mysql_fetch_array($result);
 //     mysql_free_result($result);
-// 
+//
 //     return $is_admin;
 //   }
 
   function isAuthorized($roles, $id_user=null){
-    if ($id_user == null) 
+    if ($id_user == null)
       $id_user = $_SESSION['id_user'];
 
     if ($roles == "any") // The special "any" role is granted to all users (and non users for that matter)
@@ -138,7 +138,7 @@ class User {
       $roles = '';
     }
 
-    $q = sprintf("UPDATE webfinance_users SET first_name='%s', last_name='%s', login='%s', email='%s', disabled=%d, role='%s', 
+    $q = sprintf("UPDATE webfinance_users SET first_name='%s', last_name='%s', login='%s', email='%s', disabled=%d, role='%s',
                          password=md5('%s'), modification_date=now()
                   WHERE id_user=%d",
 
@@ -175,7 +175,7 @@ class User {
     }
 
     $q = sprintf("INSERT INTO webfinance_users (login, first_name, last_name, password, email, role, disabled,  modification_date, creation_date)
-                  VALUES('%s', '%s', '%s', md5('%s'), '%s','%s',  %d, %d, now(), now() )",
+                  VALUES('%s', '%s', '%s', md5('%s'), '%s','%s',  %d, now(), now() )",
 		 $login, $first_name, $last_name, $passwd, $email, $roles, ($disabled == "on")?1:0 );
     mysql_query($q) or wf_mysqldie();
     $result = mysql_query("SELECT id_user FROM webfinance_users WHERE creation_date>date_sub(now(), INTERVAL 1 SECOND)");
@@ -271,6 +271,7 @@ class User {
 
     //text
     $body = _('You receive this mail because you have an account ...')."\n";
+    $body .= _('Name').": ".$user->first_name." ".$user->last_name."\n";
     $body .= _('Login').": ".$user->login."\n";
     $body .= _('Password').": ".$passwd."\n";
 
