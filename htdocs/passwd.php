@@ -52,6 +52,6 @@ if(isset($_POST['login'])){
     </table>
     </form>
 </div>
-<center><a href="login.php"><small><?= _("Login")?></small></a></center>
+<center><a href="login.php"><?= _("Login")?></a></center>
 </body>
 </html>
