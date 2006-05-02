@@ -38,6 +38,6 @@ if ($User->login($_POST)) {
     </table>
     </form>
 </div>
-<center><a href="passwd.php"><small><?= _("Forgot password")?></small></a></center>
+<center><a href="passwd.php"><?= _("Forgot password")?></a></center>
 </body>
 </html>

@@ -131,11 +131,6 @@ function checkForm(f) {
     alert('Il faut au moins un nom ou un prénom');
     return false;
   }
-  if (f.email.value == '') {
-    alert('An account must have an email address');
-    return false;
-  }
-
   if (f.login.value == '') {
     alert('login is required!');
     return false;
