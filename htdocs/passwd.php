@@ -13,28 +13,41 @@
 include("inc/main.php");
 $User = new User();
 if(isset($_POST['login'])){
-  if($User->existsLogin($_POST['login'])){
-    $q = mysql_query("SELECT id_user, email FROM webfinance_users WHERE login='".$_POST['login']."'")
-      or wf_mysqldie();
-    list($id_user,$email)=mysql_fetch_array($q);
-    if(is_numeric($id_user)){
-      $pass = $User->random_password();
-      if($User->setPass($id_user,$pass)){
-	$_SESSION['id_user'] = $id_user;
-	$User->sendInfo($id_user,$pass);
-	$_SESSION['id_user'] = -1;
-	echo _("User information sent to")." ".$email;
+  if($_POST['code']==$_SESSION['code']){
+    if($User->existsLogin($_POST['login'])){
+      $q = mysql_query("SELECT id_user, email FROM webfinance_users WHERE login='".$_POST['login']."'")
+	or wf_mysqldie();
+      list($id_user,$email)=mysql_fetch_array($q);
+      if(is_numeric($id_user)){
+	$pass = $User->random_password();
+	if($User->setPass($id_user,$pass)){
+	  $_SESSION['id_user'] = $id_user;
+	  $User->sendInfo($id_user,$pass);
+	  $_SESSION['id_user'] = -1;
+	  echo _("User information sent to")." ".$email;
       }else{
-	echo _("Set new password: fails");
+	  echo _("Set new password: fails");
+	}
+      }else{
+	echo _("The id_user isn't correct");
       }
-    }else{
-      echo _("The id_user isn't correct");
-    }
 
+    }else{
+      echo _("This login doesn't exist!");
+    }
   }else{
-    echo _("This login doesn't exist!");
+    echo _("Invalid code");
   }
+}
+
+$chars = "abBCDEFcdefghijkmnPQRSTUVWXYpqrstxyz123456789";
+$code="";
+srand((double)microtime()*1000000); //  Génération aléatoire du code
+for($i=0; $i<5;$i++){
+  $code.= $chars[rand()%strlen($chars)];
  }
+$_SESSION['code'] = $code;
+
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -48,6 +61,8 @@ if(isset($_POST['login'])){
     <form action="passwd.php" method="post">
     <table border="0" cellspacing="0" cellpadding="10" style="border: solid 1px black; margin: auto auto auto auto;">
       <tr><td><?= _("Login") ?></td><td><input type="text" size="20" style="border: solid 1px #777;" name="login" id="login" value="" /></td></tr>
+      <tr><td></td><td><img src="code.php"></td></tr>
+      <tr><td>Code</td><td><input type="text" size="20" style="border: solid 1px #777;" name="code" id="login" value="" /></td></tr>
       <tr><td colspan="2" style="text-align:center"><input value="<?= _('Send') ?>" type="submit" /></td></tr>
     </table>
     </form>
