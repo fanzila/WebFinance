@@ -7,7 +7,7 @@ body {
 font-family: arial, helvetica, sans serif;
 font-size: 10px;
 margin: 0px;
-background: #9090ff;
+background: #9999ff;
 color: white;
 }
 td { font-size: 12px; }
@@ -27,7 +27,7 @@ tr.row_odd td a, tr.row_even td a { color: #000099; }
 img.bouton { cursor: pointer; }
 a img { border: none; }
 
-div.nav { background: #9090ff; }
+div.nav { background: #9999ff; }
 
 div.bordered { background: white; }
 .bordered { border: solid 1px black; }
