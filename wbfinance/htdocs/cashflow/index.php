@@ -377,17 +377,18 @@ EOF;
        <?php
 
        if($filter['page']>0)
-	 printf('<a class="pager_link" href="?%s&filter[page]=%d"><<&nbsp;</a> ', $filter_base, $filter['page']-1 );
+	 printf('<a class="pager_link" href="?%s&filter[page]=%d"><<</a>', $filter_base, $filter['page']-1 );
 
       for ($i=0 ; $i<$nb_transactions/$transactions_per_page ; $i++) {
-        if ($filter['page'] == $i) {
+	printf("&nbsp;");
+	if ($filter['page'] == $i) {
           printf("%d ", $i+1);
         } else {
-          printf('<a class="pager_link" href="?%s&filter[page]=%d">%d</a> ', $filter_base, $i, $i+1 );
+          printf('<a class="pager_link" href="?%s&filter[page]=%d">%d</a>', $filter_base, $i, $i+1 );
         }
       }
 	if($filter['page'] < floor($nb_transactions/$transactions_per_page) )
-	  printf('<a class="pager_link" href="?%s&filter[page]=%d">&nbsp;>></a> ', $filter_base, $filter['page']+1 );
+	  printf('<a class="pager_link" href="?%s&filter[page]=%d">&nbsp;>></a>', $filter_base, $filter['page']+1 );
 
       ?>
       </td>
@@ -498,7 +499,7 @@ EOF;
   <div class="bordered" style="margin-top: 20px;" >
   <?php
     $small_image_url = sprintf("/graphs/cashflow.php?grid=0&width=300&height=200&legend=0&end_date=%s&start_date=%s&hidetitle=1&account=%d",
-                               strftime("%Y-%m-%d", $ts_end_date), 
+                               strftime("%Y-%m-%d", $ts_end_date),
                                strftime("%Y-%m-%d", $ts_start_date),
                                ($filter['id_account']==0)?"":$filter['id_account']
                               );
