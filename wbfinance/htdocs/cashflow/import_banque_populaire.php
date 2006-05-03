@@ -49,11 +49,16 @@ while(!feof($fp)) {
 //   - Enfin chaque opération est stockée dans la table des opérations
 //     générale.
 
+$indic= false;
+print "<form action='save_transaction.php' method='post'>";
+print "<input type='hidden' name='action' value='update_invoices'>";
+
 foreach ($transactions as $op) {
   printf("Transaction de <b>%s&euro;</b> du <b>%s</b> intitulée <i>%s</i><div style=\"font-size: 10px; border-left: solid 4px #ceceff; margin-left: 10px; padding-left: 10px;\">\n", $op->montant, $op->date, $op->desc );
 
   if ($op->montant > 0) {
-    compare_invoices_transaction($op);
+    if(compare_invoices_transaction($op))
+      $indic=true;
   } else {
     // S'il s'agit d'un débit, le lier à un fournisseur ? à un bon de commande ?
   }
@@ -97,6 +102,13 @@ foreach ($transactions as $op) {
   print "</div>";
 }
 
-print count($transactions)." opérations trouvées dans le fichier";
+print count($transactions)." opérations trouvées dans le fichier.<br/>";
+
+if($indic){
+  printf("<br/><input type='submit' value='%s'>",_("Update"));
+ }
+print "</form><br/>";
+
+
 
 ?>

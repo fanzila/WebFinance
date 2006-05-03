@@ -16,9 +16,15 @@ if (is_array($_POST['action'])) {
   foreach (explode(',', $selected_transactions) as $id_transaction) {
     $q = "";
     switch ($action['type']) {
-      case "delete": $q = "DELETE FROM webfinance_transactions WHERE id=$id_transaction"; break;
-      case "change_account" : $q = "UPDATE webfinance_transactions SET id_account=".$action['id_account']." WHERE id=$id_transaction"; break;
-      case "change_category" : $q = "UPDATE webfinance_transactions SET id_category=".$action['id_category']." WHERE id=$id_transaction"; break;
+      case "delete":
+	$q = "DELETE FROM webfinance_transactions WHERE id=$id_transaction";
+	break;
+      case "change_account" :
+	$q = "UPDATE webfinance_transactions SET id_account=".$action['id_account']." WHERE id=$id_transaction";
+	break;
+      case "change_category" :
+	$q = "UPDATE webfinance_transactions SET id_category=".$action['id_category']." WHERE id=$id_transaction";
+	break;
       default: die('Woooops, don\'t know how to '.$action['type']);
     }
     mysql_query($q) or wf_mysqldie();
@@ -26,6 +32,16 @@ if (is_array($_POST['action'])) {
   header("Location: index.php?".$query);
   die();
 }
+
+if($_POST['action']=="update_invoices" AND is_array($_POST['invoices'])){
+
+  foreach($_POST['invoices'] as $id_invoice){
+    mysql_query("UPDATE webfinance_invoices SET is_paye=1,date_paiement=STR_TO_DATE('".$date_tr[$id_invoice]."', '%d/%m/%Y') WHERE id_facture=$id_invoice")
+      or wf_mysqldie();
+  }
+  header("Location: index.php");
+  die();
+ }
 
 
 

@@ -10,28 +10,37 @@
 // $Id$
 
 require("../inc/main.php");
+$roles = 'manager,admin';
 require("../top.php");
 require("nav.php");
 
 function compare_invoices_transaction($op){
-
+  $indic=false;
+  $amount=str_replace(',','.',$op->montant);
+  $min = ($amount/1.196)-0.01;
+  $max = ($amount/1.196)+0.01;
   // S'il s'agit d'un crédit, tenter de retrouver la facture correspondante
-  $result = mysql_query("SELECT f.id_facture, f.is_paye, count(*), 1.196*SUM(fl.qtt*fl.prix_ht) as total_facture
-                           FROM webfinance_invoices as f,
-                                webfinance_invoice_rows as fl
-                           WHERE fl.id_facture=f.id_facture
-                           GROUP BY f.id_facture
-                           HAVING total_facture='$op->montant'")
-    or wf_mysqldie();
-    $a = mysql_fetch_array($result);
-    if (($a[2] == 1) && ($a[2] == 0)) {
-      print "<b style=\"color: green;\">La facture correspondante à ce virement à été trouvée, elle est marquée « payée »</b><br/>";
-      // Une seule facture correspond, et elle n'est pas marquée payée, on la marque payée.
-      mysql_query("UPDATE webfinance_invoices SET is_paye=1,date_paiement=STR_TO_DATE('$op->date', '%d/%m/%Y') WHERE id_facture=".$a[0]);
-    } else {
-      print "<b style=\"color: red;\">Impossible de trouver la facture correspondante à ce virement ! Incohérence dans les factures ou paiement erroné !</b><br/>";
-    }
+  $q = "SELECT id_facture, is_paye, date_facture, num_facture, ref_contrat, total_facture_ht, 1.196*total_facture_ht as total_facture FROM wf_view_invoices ".
+    "WHERE total_facture_ht>=%s AND total_facture_ht<=%s ";
+  $query = sprintf($q,$min, $max);
 
+  $result =  mysql_query($query) or wf_mysqldie();
+
+  if(mysql_num_rows($result)<1){
+    print "<b style=\"color: red;\">Impossible de trouver la facture correspondante à ce virement ! Incohérence dans les factures ou paiement erroné !</b><br/>";
+  }else{
+    while($invoice = mysql_fetch_assoc($result)){
+      //print_r($invoice);
+      if ( $is_paye < 1 ) {
+	print "<b style=\"color: green;\">La facture correspondante à ce virement à été trouvée, elle est marquée « payée »</b><br/>";
+	printf("<input type='hidden' name='date_tr[%d]' value='%s'>",$invoice['id_facture'],$op->date);
+	printf("<input type='checkbox' name='invoices[]'  value='%d' >",$invoice['id_facture']);
+	printf("#%s : %s : %s&euro; : %s <br/>", $invoice['num_facture'],$invoice['ref_contrat'],round($invoice['total_facture'],3), strftime($invoice['date_facture']) ) ;
+	$indic=true;
+      }
+    }
+  }
+  return $indic;
 }
 
 if (preg_match("!\.!", $_POST['filtre'])) { die("Wrong filter"); } // file traversal

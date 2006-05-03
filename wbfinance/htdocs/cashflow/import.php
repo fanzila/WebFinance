@@ -13,7 +13,7 @@
 
 require("../inc/main.php");
 $title = _("Import");
-$roles = 'manager';
+$roles = 'manager,admin';
 require("../top.php");
 require("nav.php");
 
