@@ -260,8 +260,8 @@ CREATE TABLE `webfinance_transactions` (
   KEY `id_account` (`id_account`,`id_category`),
   KEY `id_category` (`id_category`),
   KEY `date` (`date`),
-  KEY `id_invoice` (`id_invoice`),
-  UNIQUE `unique_transaction` (`id_account`, `amount`, `type`, `date`)
+  KEY `id_invoice` (`id_invoice`)
+--  UNIQUE `unique_transaction` (`id_account`, `amount`, `type`, `date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=52 ;
 
 DROP TABLE IF EXISTS `webfinance_type_presta`;
