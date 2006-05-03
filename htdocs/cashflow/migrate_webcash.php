@@ -148,8 +148,8 @@ echo "<br/>";
 
 //import transactions
 mysql_select_db('webcash');
-$result = mysql_query("SELECT id, id_account, id_category, text, amount, type, document, date, date_update, webcash_tr.comment, file, file_type, file_name ".
-		      "FROM webcash_transactions webcash_tr")
+$result = mysql_query("SELECT id, id_account, id_categorie, text, amount, type, document, date, date_update, comment, file, file_type, file_name ".
+		      "FROM webcash_operations")
   or die(mysql_error());
 $nb_webcash = mysql_num_rows($result);
 
@@ -178,15 +178,15 @@ while($webcash_tr = mysql_fetch_assoc($result)){
   mysql_query(sprintf($q,
 		      $webcash_tr['id'],
 		      $webcash_tr['id_account'],
-		      $webcash_tr['id_category'],
-		      $webcash_tr['text'],
+		      $webcash_tr['id_categorie'],
+		      addslashes($webcash_tr['text']),
 		      $webcash_tr['amount'],
 		      $webcash_tr['type'],
 		      $webcash_tr['document'],
 		      $webcash_tr['date'],
 		      $webcash_tr['date_update'],
 		      $webcash_tr['comment'],
-		      $webcash_tr['file'],
+		      addslashes($webcash_tr['file']),
 		      $webcash_tr['file_type'],
 		      $webcash_tr['file_name']))
     or die(mysql_error());
