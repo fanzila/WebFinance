@@ -17,7 +17,7 @@ $elements = array(
                   _('Transactions') => array('url'=>'index.php', 'roles'=>'manager,accounting'),
                   _('Graphics') => array('url'=>'graphs.php', 'roles'=>'manager,accounting'),
                   _('Categories') => array('url' => 'categories.php', 'roles' => 'manager,accounting'),
-                  _('Import') => array('url'=>'import.php', 'roles'=>'manager')
+                  _('Import') => array('url'=>'import.php', 'roles'=>'manager,admin')
                  );
 
 
