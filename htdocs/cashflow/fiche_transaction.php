@@ -134,7 +134,7 @@ mysql_free_result($result);
   <td><?= _('File') ?> :<br/>
   <? if(!empty($transaction->file_name)){
   ?>
-       <input checked='checked' name='file_del' value='1' type='checkbox'' />&nbsp<a href='file.php?action=file&id=<?=$transaction->id ?>'><?=$transaction->file_name ?></a><br/>
+       <input checked='checked' name='file_del' value='1' type='checkbox' />&nbsp<a href='file.php?action=file&type=transactions&id=<?=$transaction->id ?>'><?=$transaction->file_name ?></a><br/>
  <? }?>
   </td>
  <td colspan="3"><input type="file" name="file" /></td>

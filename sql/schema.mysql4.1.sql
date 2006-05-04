@@ -106,31 +106,21 @@ CREATE TABLE `webfinance_domain` (
   UNIQUE KEY `nom` (`nom`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
-DROP TABLE IF EXISTS `webfinance_expense_details`;
-CREATE TABLE `webfinance_expense_details` (
-  `id` int(11) NOT NULL auto_increment,
-  `id_expense` int(11) NOT NULL,
-  `comment` text,
-  `amount` decimal(14,2) NOT NULL default '0.00',
-  `file` blob,
-  `file_type` varchar(25) default NULL,
-  `file_name` varchar(50) default NULL,
-  PRIMARY KEY  (`id`),
-  KEY `id_expense` (`id_expense`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-
 DROP TABLE IF EXISTS `webfinance_expenses`;
 CREATE TABLE `webfinance_expenses` (
   `id` int(11) NOT NULL auto_increment,
-  `date` date default NULL,
   `id_user` int(11) NOT NULL,
   `id_transaction` int(11) NOT NULL,
+  `amount` decimal(14,2) default '0.00',
   `comment` text,
   `date_update` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  `file` blob,
+  `file_type` varchar(32) default NULL,
+  `file_name` varchar(64) default NULL,
   PRIMARY KEY  (`id`),
   KEY `id_user` (`id_user`),
   KEY `id_transaction` (`id_transaction`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=12 ;
 
 DROP TABLE IF EXISTS `webfinance_invoice_rows`;
 CREATE TABLE `webfinance_invoice_rows` (
@@ -409,8 +399,6 @@ ALTER TABLE `webfinance_accounts`
   ADD CONSTRAINT `webfinance_accounts_ibfk_1` FOREIGN KEY (`id_bank`) REFERENCES `webfinance_banks` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 -- ALTER TABLE `webfinance_dns`
 --   ADD CONSTRAINT `pfk_domain` FOREIGN KEY (`id_domain`) REFERENCES `webfinance_domain` (`id_domain`) ON DELETE CASCADE;
-ALTER TABLE `webfinance_expense_details`
-  ADD CONSTRAINT `webfinance_expense_details_ibfk_1` FOREIGN KEY (`id_expense`) REFERENCES `webfinance_expenses` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 ALTER TABLE `webfinance_personne`
   ADD CONSTRAINT `pfk_client` FOREIGN KEY (`client`) REFERENCES `webfinance_clients` (`id_client`);
 -- ALTER TABLE `webfinance_transactions`
