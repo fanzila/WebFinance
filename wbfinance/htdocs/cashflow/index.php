@@ -376,22 +376,36 @@ EOF;
       <td>
        <?php
 
-       if($filter['page']>0)
-	 printf('<a class="pager_link" href="?%s&filter[page]=%d"><<</a>', $filter_base, $filter['page']-1 );
+     $nb_page= ceil($nb_transactions/$transactions_per_page);
+     $diz=1+floor($filter['page']/10);
+     $start=0;
+     $end=$nb_transactions/$transactions_per_page;
+     if((10*$diz) < $nb_transactions/$transactions_per_page)
+       $end=10*$diz;
 
-      for ($i=0 ; $i<$nb_transactions/$transactions_per_page ; $i++) {
-	printf("&nbsp;");
-	if ($filter['page'] == $i) {
-          printf("%d ", $i+1);
-        } else {
-          printf('<a class="pager_link" href="?%s&filter[page]=%d">%d</a>', $filter_base, $i, $i+1 );
-        }
-      }
-	if($filter['page'] < floor($nb_transactions/$transactions_per_page) )
-	  printf('<a class="pager_link" href="?%s&filter[page]=%d">&nbsp;>></a>', $filter_base, $filter['page']+1 );
+     if($filter['page']>0)
+       printf('<a class="pager_link" href="?%s&filter[page]=%d"><<</a>', $filter_base, $filter['page']-1 );
+     if($filter['page']>9  ){
+       printf('<a class="pager_link" href="?%s&filter[page]=%d">&nbsp;...</a>', $filter_base, ((floor($filter['page']/10))*10)-1   );
+       $start=((floor($filter['page']/10))*10);
+     }
+	for ($i=$start ; $i<$end ; $i++) {
+	   if ($filter['page'] == $i) {
+		 printf("%d", $i+1);
+	   } else {
+	     printf('<a class="pager_link" href="?%s&filter[page]=%d">%d</a>', $filter_base, $i, $i+1 );
+	   }
+	   print("&nbsp;");
+	}
+     if($end < floor($nb_transactions/$transactions_per_page)  ){
+       printf('<a class="pager_link" href="?%s&filter[page]=%d">...&nbsp;</a>', $filter_base, $end  );
+     }
 
+     if($filter['page'] < floor($nb_transactions/$transactions_per_page) )
+       printf('<a class="pager_link" href="?%s&filter[page]=%d">>></a>', $filter_base, $filter['page']+1 );
       ?>
       </td>
+
     </tr>
     <?php } ?>
     <tr class="row_even">
