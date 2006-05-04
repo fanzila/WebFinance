@@ -195,62 +195,12 @@ mysql_free_result($result);
 
 $q = mysql_query("SELECT COUNT(*) FROM webfinance_transactions ") or die(mysql_error());
 list($nb_wf)=mysql_fetch_array($q);
-echo $nb_webcash." - ".$nb_wf."<br/>";
+
 
 //mysql_query("ALTER TABLE webfinance_transactions ADD UNIQUE unique_transaction (id_account, amount, type, date)");
 
 echo "transactions importation: ";
-if($nb_webcash == $nb_wf){
-    echo "OK";
- }else{
-  echo "FAILED";
-  exit;
- }
-echo "<br/>";
-
-//Import expenses
-mysql_select_db('webcash');
-
-$result = mysql_query("SELECT ".
-		      "id, ".
-		      "date, ".
-		      "id_user, ".
-		      "id_operation, ".
-		      "comment, ".
-		      "date_update ".
-		      "FROM webcash_expenses")
-  or die(mysql_error());
-$nb_webcash = mysql_num_rows($result);
-
-mysql_select_db('webfinance');
-mysql_query("TRUNCATE TABLE webfinance_expense_details") or die(mysql_error());
-mysql_query("TRUNCATE TABLE webfinance_expenses") or die(mysql_error());
-
-  $q="INSERT INTO webfinance_expenses SET ".
-    "id=%d, ".
-    "date='%s', ".
-    "id_user=%d, ".
-    "id_transaction=%d, ".
-    "comment='%s', ".
-    "date_update='%s'";
-
-while($webcash_exp = mysql_fetch_assoc($result)){
-  //  print_r($webcash_exp);
-  mysql_query(sprintf($q,
-		      $webcash_exp['id'],
-		      $webcash_exp['date'],
-		      $webcash_exp['id_user'],
-		      $webcash_exp['id_operation'],
-		      $webcash_exp['comment'],
-		      $webcash_exp['date_update']))
-    or die(mysql_error());
-}
-mysql_free_result($result);
-
-$q = mysql_query("SELECT COUNT(*) FROM webfinance_expenses ") or die(mysql_error());
-list($nb_wf)=mysql_fetch_array($q);
-
-echo "expenses importation: ";
+echo $nb_webcash." - ".$nb_wf." ";
 if($nb_webcash == $nb_wf){
     echo "OK";
  }else{
@@ -262,25 +212,26 @@ echo "<br/>";
 //Import expenses_details
 mysql_select_db('webcash');
 
-$result = mysql_query("SELECT ".
-		      "id, ".
-		      "id_expense, ".
-		      "comment, ".
-		      "amount, ".
-		      "file, ".
-		      "file_type, ".
-		      "file_name ".
-		      "FROM webcash_expense_details")
+$result = mysql_query("SELECT COUNT(*) FROM webcash_expense_details") or die(mysql_error());
+list($nb_webcash1)= mysql_fetch_array($result);
+
+$result = mysql_query("SELECT * FROM webcash_expenses  LEFT JOIN webcash_expense_details ON  webcash_expenses.id=webcash_expense_details.id_expense")
   or die(mysql_error());
-$nb_webcash = mysql_num_rows($result);
+$nb_webcash2 = mysql_num_rows($result);
+
+
 
 mysql_select_db('webfinance');
+mysql_query("TRUNCATE TABLE webfinance_expenses") or die(mysql_error());
+
 
   $q="INSERT INTO webfinance_expenses SET ".
     "id=%d, ".
-    "id_expense=%d, ".
-    "comment='%s', ".
+    "id_user=%d, ".
+    "id_transaction=%d, ".
     "amount='%s', ".
+    "comment='%s', ".
+    "date_update='%s', ".
     "file='%s', ".
     "file_type='%s', ".
     "file_name='%s'";
@@ -289,9 +240,11 @@ while($webcash_exp = mysql_fetch_assoc($result)){
   //  print_r($webcash_exp);
   mysql_query(sprintf($q,
 		      $webcash_exp['id'],
-		      $webcash_exp['id_expense'],
-		      $webcash_exp['comment'],
+		      $webcash_exp['id_user'],
+		      $webcash_exp['id_transaction'],
 		      $webcash_exp['amount'],
+		      $webcash_exp['comment'],
+		      $webcash_exp['date_update'],
 		      $webcash_exp['file'],
 		      $webcash_exp['file_type'],
 		      $webcash_exp['file_name']))
@@ -299,20 +252,17 @@ while($webcash_exp = mysql_fetch_assoc($result)){
 }
 mysql_free_result($result);
 
-$q = mysql_query("SELECT COUNT(*) FROM webfinance_expense_details ") or die(mysql_error());
+$q = mysql_query("SELECT COUNT(*) FROM webfinance_expenses ") or die(mysql_error());
 list($nb_wf)=mysql_fetch_array($q);
 
-echo "expenses details importation: ";
-if($nb_webcash == $nb_wf){
+echo "expenses importation: ";
+if($nb_webcash1 == $nb_wf AND $nb_webcash2 == $nb_wf){
     echo "OK";
  }else{
   echo "FAILED";
   exit;
  }
 echo "<br/>";
-
-
-
 
 $Revision = '$Revision$';
 include("../bottom.php");

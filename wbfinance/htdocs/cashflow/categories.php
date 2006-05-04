@@ -88,7 +88,7 @@ EOF;
   <td></td>
 </tr>
 <tr class="row_even">
-  <td style="text-align: center;" colspan="6"><input type="submit" value="Enregistrer" /></td>
+  <td style="text-align: center;" colspan="6"><input type="submit" value=<?= _("Save") ?> /></td>
 </table>
 
 </form>

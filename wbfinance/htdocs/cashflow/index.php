@@ -330,7 +330,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
        $file="";
        if($tr->file_name != ""){
 	 //put a icon here
-	 $file="<a href='file.php?action=file&id=$tr->id'><small>$tr->file_name</small></a>";
+	 $file="<a href='file.php?action=file&type=transactions&id=$tr->id'><small>$tr->file_name</small></a>";
        }
 
        print <<<EOF
