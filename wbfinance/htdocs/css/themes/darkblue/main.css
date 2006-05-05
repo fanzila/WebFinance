@@ -13,6 +13,8 @@ color: white;
 td { font-size: 13px; }
 form { display: inline; }
 
+.row_warning { background: yellow; }
+.row_error { background: red; }
 .row_odd { background: #eeeeff; color: black; }
 .row_even { background: white; color: black; }
 .row_over { background: #91a8d5; }

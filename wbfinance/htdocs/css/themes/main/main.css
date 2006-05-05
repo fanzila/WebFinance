@@ -12,6 +12,8 @@ background: white;
 td { font-size: 12px; }
 form { display: inline; }
 
+.row_warning { background: yellow; }
+.row_error { background: red; }
 .row_odd { background: #eeeeff; }
 .row_even { background: white; }
 .row_over { background: #91a8d5; }

@@ -102,7 +102,7 @@ if(isset($_GET['id_transaction']) AND is_numeric($_GET['id_transaction'])){
 
       $class = ($count++ %2 == 0)?"even":"odd";
       if(strlen($file_name)>0 ){
-	$link="<a href='file.php?action=file&type=expenses&id=$id' title='$file_name'>&nbsp;[File]&nbsp;</a><input checked='checked' name='file_del[$id]' value='1' type='checkbox'' />";
+	$link="<a href='file.php?action=file&type=expenses&id=$id' title='$file_name'>&nbsp;<img src='/imgs/icons/attachment.png'></a><input checked='checked' name='file_del[$id]' value='1' type='checkbox'' />";
       }
 
 
