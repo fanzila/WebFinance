@@ -9,9 +9,34 @@ require("../top.php");
 
 $db_selected = mysql_select_db('webcash');
 if (!$db_selected) {
-    die ('Can\'t use foo : ' . mysql_error());
+    die ('Can\'t use WEBCASH DB : ' . mysql_error());
+ }else{
+
+?>
+
+<script type="text/javascript">
+
+function ask_confirmation(txt) {
+  resultat = confirm(txt);
+  if(resultat=="1"){
+      return true;
+  } else {
+      return false;
+  }
 }
-echo "<pre/>";
+</script>
+
+<form method="post">
+<input type="hidden" value="migrate" name="action"/>
+<input type="submit" value="migrate Webcash"  onclick="return ask_confirmation('Do you really want to migrate webcash?');"/>
+</form>
+<br/>
+<?
+
+ }
+
+
+if(isset($_POST['action']) AND $_POST['action']=="migrate"){
 
 //Import categories
 $result = mysql_query("SELECT id, name, comment, color FROM webcash_categories") or die(mysql_error());
@@ -263,6 +288,9 @@ if($nb_webcash1 == $nb_wf AND $nb_webcash2 == $nb_wf){
   exit;
  }
 echo "<br/>";
+
+
+ }
 
 $Revision = '$Revision$';
 include("../bottom.php");
