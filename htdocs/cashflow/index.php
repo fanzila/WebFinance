@@ -326,11 +326,14 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
 
        $class = ($count%2)?"row_odd":"row_even";
 
+       if($tr->type=="prevision" AND $tr->ts_date<mktime(23,59,59,date("m"),date("d")-1,date("Y")))
+	 $class = "row_error";
+
        //file
        $file="";
        if($tr->file_name != ""){
 	 //put a icon here
-	 $file="<a href='file.php?action=file&type=transactions&id=$tr->id'><small>$tr->file_name</small></a>";
+	 $file="<a href='file.php?action=file&type=transactions&id=$tr->id' title='$tr->file_name'><img src='/imgs/icons/attachment.png'/></a>";
        }
 
        print <<<EOF
@@ -344,7 +347,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
   <td>$fmt_date</td>
   <td style="background: $tr->color; text-align: center;" nowrap><a href="?$filter_base&filter[shown_cat][$tr->id_category]='on'">$tr->name</a></td>
   <td style="text-align: center;">$tr->type</td>
-	 <td width="100%" style="font-size: 9px;">$tr->text<br/><i>$tr->comment</i>&nbsp;$file</td>
+	 <td width="100%" style="font-size: 9px;">$tr->text<br/><i>$tr->comment</i>&nbsp;$file&nbsp;<a href="expenses.php?id_transaction=$tr->id">[expenses]</a></td>
   <td style="text-align: right; font-weight: bold; background: $amount_color" nowrap>$fmt_amount &euro;</td>
   <td style="text-align: right; background: $balance_color;" nowrap>$fmt_balance &euro;</td>
 </tr>
