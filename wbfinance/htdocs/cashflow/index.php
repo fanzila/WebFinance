@@ -209,7 +209,8 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
 <tr style="vertical-align: top;">
   <td width="100%">
     <?php // Transaction listing ?>
-    <form id="checkboxes" name="checkboxes"> <? // This form does not submit !! It's only here to allow apearance of checkboxes ?>
+    <form id="checkboxes" name="checkboxes" action="save_transaction.php" method="post"> <? // This form does not submit !! It's only here to allow apearance of checkboxes ?>
+     <input type="hidden" name="action" value="update_transactions"/>
     <table border="0" cellspacing="0" width="750" cellpadding="3" class="framed">
       <tr style="text-align: center;" class="row_header">
         <td><input onmouseover="return escape('<?= _('Check and unchecks all transactions shown') ?>');" type="checkbox" onchange="checkAll(this);" /></td>
@@ -336,7 +337,49 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
 	 $file="<a href='file.php?action=file&type=transactions&id=$tr->id' title='$tr->file_name'><img src='/imgs/icons/attachment.png'/></a>";
        }
 
+       if($view=="edit"){
+
+?>
+  <input type="hidden" name="query" value="<?= $old_query_string ?>" />
+
+<tr class="<?=$class?>">
+  <td>
+	 <input type="checkbox" id="chk_<?=$tr->id?>" name="chk[]" onchange="updateCheck(<?=$tr->id?>);" value="<?=$tr->id?>"/>
+  </td>
+  <td>
+	 <img src="/imgs/icons/edit.gif" onmouseover="return escape('<?=$help_edit?>');" onclick="inpagePopup(event, this, 440, 350, 'fiche_transaction.php?id=<?=$tr->id?>');" />
+  </td>
+  <td><?=$fmt_date?></td>
+  <td style="background: <?= $tr->color ?>; text-align: center;" nowrap>
+   <select name='categ[<?= $tr->id ?>]'>
+<?
+     foreach($categories as $categ ){
+	 printf("<option value='%d' %s>%s</option>",$categ['id'],($tr->id_category==$categ['id'])?"selected":"", $categ['name']);
+       }
+?>
+    </select>
+  </td>
+
+  <td style="text-align: center;">
+   <select name='type[<?= $tr->id ?>]'>
+      <option value="real" <? if("real"==$tr->type) echo "selected"; ?> ><?= _('Real') ?></option>
+      <option value="prevision" <? if("prevision"==$tr->type) echo "selected"; ?> ><?= _('Prevision') ?></option>
+      <option value="asap" <? if("asap"==$tr->type) echo "selected";  ?> ><?= _('ASAP') ?></option>
+   </select>
+  </td>
+  <td width="100%" style="font-size: 9px;"><?=$tr->text?><br/><i><?=$tr->comment?></i>&nbsp;<?=$file?>&nbsp;<a href="expenses.php?id_transaction=<?=$tr->id?>">[expenses]</a></td>
+  <td style="text-align: right; font-weight: bold; background: $amount_color" nowrap><?=$fmt_amount?> &euro;</td>
+  <td style="text-align: right; background: <?=$balance_color?>;" nowrap><?=$fmt_balance?> &euro;</td>
+</tr>
+
+<?
+
+
+     }else{
+
        print <<<EOF
+ <input type="hidden" name="query" value="$old_query_string" />
+
 <tr class="$class">
   <td>
 	 <input type="checkbox" id="chk_$tr->id" name="chk[]" onchange="updateCheck($tr->id);" value="$tr->id"/>
@@ -352,11 +395,22 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
   <td style="text-align: right; background: $balance_color;" nowrap>$fmt_balance &euro;</td>
 </tr>
 EOF;
+
+       }
+
        $count++;
      }
      ?>
      <tr class="row_even">
-       <td colspan="6" style="text-align: right; font-weight: bold;"><?= _('Total amount of shown transactions') ?></td>
+       <td colspan="2">
+<?
+       if($view=="edit" AND $count>1)
+	 printf("<input type='submit' value='%s'/>",_('Update'));
+       else
+	 printf("<a href='?view=edit&%s'>Edit</a>",$old_query_string);
+?>
+       </td>
+       <td colspan="4" style="text-align: right; font-weight: bold;"><?= _('Total amount of shown transactions') ?></td>
        <td nowrap style="text-align: right; font-weight: bold;"><?= number_format($total_shown, 2, ',', ' ') ?> &euro;</td>
        <td></td>
      </tr>
