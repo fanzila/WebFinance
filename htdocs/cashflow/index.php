@@ -340,7 +340,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
        if($view=="edit"){
 
 ?>
-  <input type="hidden" name="query" value="<?= $old_query_string ?>" />
+  <input type="hidden" name="query" value="?view=edit&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>" />
 
 <tr class="<?=$class?>">
   <td>
@@ -377,8 +377,10 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
 
      }else{
 
+	 $globals_query_string=$GLOBALS['_SERVER']['QUERY_STRING'];
+
        print <<<EOF
- <input type="hidden" name="query" value="$old_query_string" />
+ <input type="hidden" name="query" value="$globals_query_string" />
 
 <tr class="$class">
   <td>
@@ -423,6 +425,7 @@ EOF;
     <?php // Filter ?>
     <form id="main_form" onchange="this.submit();" method="get">
     <input type="hidden" name="sort" value="<?= $_GET['sort'] ?>" />
+    <input type="hidden" name="view" value="<?= $view ?>" />
     <table border="0" cellspacing="0" cellpadding="3" width="310" class="framed">
     <tr class="row_header">
       <td colspan="2" style="text-align: center"><?= _('Filter') ?></td>
