@@ -378,18 +378,18 @@ INSERT INTO `webfinance_roles` (`id_role`, `name`, `description`) VALUES (7, 'ma
 
 -- Create view
 
-CREATE VIEW  wf_view_invoices 
-AS 
-SELECT 
-webfinance_invoices.id_facture, 
-webfinance_invoices.num_facture,
-webfinance_invoices.ref_contrat,  
-webfinance_invoices.date_facture,  
-is_paye, 
-SUM( qtt * prix_ht ) as total_facture_ht
-FROM webfinance_invoice_rows, webfinance_invoices
-WHERE webfinance_invoice_rows.id_facture = webfinance_invoices.id_facture 
-GROUP BY id_facture;
+-- CREATE VIEW  wf_view_invoices 
+-- AS 
+-- SELECT 
+-- webfinance_invoices.id_facture, 
+-- webfinance_invoices.num_facture,
+-- webfinance_invoices.ref_contrat,  
+-- webfinance_invoices.date_facture,  
+-- is_paye, 
+-- SUM( qtt * prix_ht ) as total_facture_ht
+-- FROM webfinance_invoice_rows, webfinance_invoices
+-- WHERE webfinance_invoice_rows.id_facture = webfinance_invoices.id_facture 
+-- GROUP BY id_facture;
 
 
 --

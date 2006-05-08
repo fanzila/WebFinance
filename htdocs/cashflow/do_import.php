@@ -17,11 +17,34 @@ require("nav.php");
 function compare_invoices_transaction($op){
   $indic=false;
   $amount=str_replace(',','.',$op->montant);
-  $min = ($amount/1.196)-0.01;
-  $max = ($amount/1.196)+0.01;
+  $min = ($amount/1.196)-0.1;
+  $max = ($amount/1.196)+0.1;
   // S'il s'agit d'un crédit, tenter de retrouver la facture correspondante
-  $q = "SELECT id_facture, is_paye, date_facture, num_facture, ref_contrat, total_facture_ht, 1.196*total_facture_ht as total_facture FROM wf_view_invoices ".
-    "WHERE total_facture_ht>=%s AND total_facture_ht<=%s ";
+
+  //    $q = "SELECT id_facture, is_paye, date_facture, num_facture, ref_contrat, total_facture_ht, 1.196*total_facture_ht as total_facture FROM wf_view_invoices ".
+  //  "WHERE total_facture_ht>=%s AND total_facture_ht<=%s ";
+
+  $q = "SELECT ".
+    "wf_in.id_facture, ".
+    "is_paye, ".
+    "date_facture, ".
+    "num_facture, ".
+    "ref_contrat, ".
+    "SUM(qtt * prix_ht) as total_facture_ht, ".
+    "1.196*SUM(qtt * prix_ht) as total_facture ".
+    "FROM webfinance_invoices wf_in , webfinance_invoice_rows wf_in_rows ".
+    "WHERE wf_in_rows.id_facture=wf_in.id_facture ".
+    "AND ".
+    "( ".
+    "SELECT SUM( qtt * prix_ht ) as total_facture_ht ".
+    "FROM webfinance_invoice_rows, webfinance_invoices ".
+    "WHERE webfinance_invoice_rows.id_facture = webfinance_invoices.id_facture ".
+    "AND webfinance_invoice_rows.id_facture=wf_in.id_facture ".
+    "GROUP BY webfinance_invoice_rows.id_facture ".
+    ") ".
+    "BETWEEN %s AND %s ".
+    "GROUP BY id_facture";
+
   $query = sprintf($q,$min, $max);
 
   $result =  mysql_query($query) or wf_mysqldie();
@@ -32,7 +55,7 @@ function compare_invoices_transaction($op){
     while($invoice = mysql_fetch_assoc($result)){
       //print_r($invoice);
       if ( $is_paye < 1 ) {
-	print "<b style=\"color: green;\">La facture correspondante à ce virement à été trouvée, elle est marquée « payée »</b><br/>";
+	print "<b style=\"color: green;\">La facture correspondante à ce virement a été trouvée, elle est marquée « payée »</b><br/>";
 	printf("<input type='hidden' name='date_tr[%d]' value='%s'>",$invoice['id_facture'],$op->date);
 	printf("<input type='checkbox' name='invoices[]'  value='%d' >",$invoice['id_facture']);
 	printf("#%s : %s : %s&euro; : %s <br/>", $invoice['num_facture'],$invoice['ref_contrat'],round($invoice['total_facture'],3), strftime($invoice['date_facture']) ) ;
