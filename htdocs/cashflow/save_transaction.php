@@ -43,7 +43,8 @@ if($_POST['action']=="update_transactions" AND is_array($_POST['categ'])){
     mysql_query("UPDATE webfinance_transactions SET id_category=$id_category,type='".$type[$id_tr]."' WHERE id=$id_tr")
       or wf_mysqldie();
   }
-  header("Location: edit_transactions.php?".$query);
+  $back=$GLOBALS['_SERVER']['HTTP_REFERER'];
+  header("Location: $back?".$query);
   die();
  }
 
