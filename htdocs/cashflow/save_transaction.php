@@ -29,9 +29,23 @@ if (is_array($_POST['action'])) {
     }
     mysql_query($q) or wf_mysqldie();
   }
-  header("Location: index.php?".$query);
+  $back=$GLOBALS['_SERVER']['HTTP_REFERER'];
+  header("Location: $back?".$query);
   die();
 }
+
+//echo "<pre/>";print_r($_POST);
+
+if($_POST['action']=="update_transactions" AND is_array($_POST['categ'])){
+
+  $types=$_POST['type'];
+  foreach($_POST['categ'] as $id_tr=>$id_category){
+    mysql_query("UPDATE webfinance_transactions SET id_category=$id_category,type='".$type[$id_tr]."' WHERE id=$id_tr")
+      or wf_mysqldie();
+  }
+  header("Location: edit_transactions.php?".$query);
+  die();
+ }
 
 if($_POST['action']=="update_invoices" AND is_array($_POST['invoices'])){
 
