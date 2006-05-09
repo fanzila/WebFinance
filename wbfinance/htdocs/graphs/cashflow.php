@@ -26,17 +26,6 @@ function diff_date( $start_date,$end_date){
 	return floor(($date - $date2) / (3600 * 24));
 }
 
-function cmp_data($array1, $array2){
-	$sum1=array_sum($array1);
-	$sum2=array_sum($array2);
-	if ($sum1==$sum2)
-        return 0;
-    if($sum1<0 AND $sum2<0)
-    		return ($sum1 < $sum2) ? -1 : 1;
-    	else
-    		return ($sum1 < $sum2) ? 1 : -1;
-}
-
 $query_account="";
 $text="";
 if(!empty($_GET['account'])){
@@ -58,12 +47,12 @@ if(!empty($res['min']) AND !empty($res['max'])){
 }
 
 if(isset($_GET['end_date']) AND !empty($_GET['end_date'])){
-if(diff_date($end_date,$_GET['end_date'])>0)
-  $end_date=$_GET['end_date'];
+  if(diff_date($end_date,$_GET['end_date'])>0)
+    $end_date=$_GET['end_date'];
 }
 if(isset($_GET['start_date']) AND !empty($_GET['start_date'])){
-if(diff_date($start_date,$_GET['start_date'])>0)
-  $start_date=$_GET['start_date'];
+  if(diff_date($start_date,$_GET['start_date'])>0)
+    $start_date=$_GET['start_date'];
 }
 
 $data=array();
@@ -77,7 +66,7 @@ if($nb_day>0){
 
       // $nb_day = $nb_day+30;
       $query_date_last_real=mysql_query("select UNIX_TIMESTAMP(max(date)) from webfinance_transactions where type='real' ". $query_account)
-      or wf_mysqldie();
+	or wf_mysqldie();
 
       $date_last_real=mysql_result($query_date_last_real, 0);
 
@@ -131,7 +120,7 @@ if ($hidetitle) {
 } else {
   $title=utf8_decode(_("Cash flow / all history"));
   $graph2->SetYTitle('€'); // <-- this is possible only with UTF8-aware TTF fonts
-} 
+}
 
 $graph2->SetTitle($title);
 $graph2->SetXTitle('');
@@ -180,7 +169,7 @@ if ($ratiox > 15) {
   $graph2->SetXTickIncrement( 30 );
   $old_ts = $data[0][0] - 86400*60; // Make sur we wrap to print the first label
   $moving_average_blur = 20; // 20 days
-  $graph2->SetXLabelAngle(0); // <-- this is possible only with TTF fonts
+  $graph2->SetXLabelAngle(90); // <-- this is possible only with TTF fonts
   for ($i=0 ; $i<count($data) ; $i++) {
     if (strftime("%m%Y", $old_ts) != strftime("%m%Y", $data[$i][0])) {
       $old_ts = $data[$i][0];
@@ -210,7 +199,7 @@ $graph2->SetLineWidth( array(1, 1, 2) );
 
 // NB : Find the vertical range and extend it for positive and negative values
 // to the next "round" number so that the horizontal ticks fall on nice odd
-// numbers. 
+// numbers.
 if (abs($max) > 0) {
   $tmp_max = abs($max);
   $exp = 0;
@@ -258,11 +247,11 @@ if (isset($User->prefs->graphgrid) && $User->prefs->graphgrid == "on") {
 $ttf_dir = "/usr/share/fonts/truetype/freefont";
 $fonts = array(
     'title_font' => array('size' => 13, 'font'=>$GLOBALS['_SERVER']['DOCUMENT_ROOT']."/css/themes/".$User->prefs->theme."/buttonfont.ttf"),
-    'legend_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSansBold.ttf'), 
-    'generic_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSansBold.ttf'), 
-    'x_label_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSans.ttf'), 
-    'y_label_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSans.ttf'), 
-    'x_title_font' => array('size' => 10, 'font'=>$ttf_dir.'/FreeSansBold.ttf'), 
+    'legend_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSansBold.ttf'),
+    'generic_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSansBold.ttf'),
+    'x_label_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSans.ttf'),
+    'y_label_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSans.ttf'),
+    'x_title_font' => array('size' => 10, 'font'=>$ttf_dir.'/FreeSansBold.ttf'),
     'y_title_font' => array('size' => 10, 'font'=>$ttf_dir.'/FreeSansBold.ttf')
 );
 foreach ($fonts as $object=>$fontdata) {
