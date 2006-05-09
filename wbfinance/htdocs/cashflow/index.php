@@ -406,10 +406,12 @@ EOF;
      <tr class="row_even">
        <td colspan="2">
 <?
-       if($view=="edit" AND $count>1)
-	 printf("<input type='submit' value='%s'/>",_('Update'));
-       else
-	 printf("<a href='?view=edit&%s'>Edit</a>",$old_query_string);
+       if($count>1){
+	 if($view=="edit")
+	   printf("<input type='submit' value='%s'/>",_('Update'));
+	 else
+	   printf("<a href='?view=edit&%s'>Edit</a>",$old_query_string);
+       }
 ?>
        </td>
        <td colspan="4" style="text-align: right; font-weight: bold;"><?= _('Total amount of shown transactions') ?></td>

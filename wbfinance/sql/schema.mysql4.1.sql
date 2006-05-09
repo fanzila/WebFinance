@@ -10,34 +10,34 @@
 
 SET FOREIGN_KEY_CHECKS = 0;
 
-DROP TABLE IF EXISTS `webfinance_accounts`;
-CREATE TABLE `webfinance_accounts` (
-  `id` int(11) NOT NULL auto_increment,
-  `account_name` varchar(128) NOT NULL,
-  `id_bank` int(11) NOT NULL default '0',
-  `id_user` int(11) default '0',
-  `account` varchar(255) NOT NULL,
-  `comment` text NOT NULL,
-  `currency` varchar(64) NOT NULL default 'EUR',
-  `country` varchar(128) NOT NULL,
-  `type` varchar(64) default 'compte commercial',
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `account_name` (`account_name`),
-  KEY `id_bank` (`id_bank`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=15 ;
+-- DROP TABLE IF EXISTS `webfinance_accounts`;
+-- CREATE TABLE `webfinance_accounts` (
+--  `id` int(11) NOT NULL auto_increment,
+--  `account_name` varchar(128) NOT NULL,
+--  `id_bank` int(11) NOT NULL default '0',
+--  `id_user` int(11) default '0',
+--  `account` varchar(255) NOT NULL,
+--  `comment` text NOT NULL,
+--  `currency` varchar(64) NOT NULL default 'EUR',
+--  `country` varchar(128) NOT NULL,
+--  `type` varchar(64) default 'compte commercial',
+--  PRIMARY KEY  (`id`),
+--  UNIQUE KEY `account_name` (`account_name`),
+--  KEY `id_bank` (`id_bank`)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=15 ;
 
-DROP TABLE IF EXISTS `webfinance_banks`;
-CREATE TABLE `webfinance_banks` (
-  `id` int(11) NOT NULL auto_increment,
-  `name` varchar(255) NOT NULL default '',
-  `short_name` varchar(64) default NULL,
-  `phone` varchar(64) default '00.00.00.00',
-  `mail` varchar(64) default 'example@example.com',
-  `comment` text,
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `name` (`name`),
-  UNIQUE KEY `short_name` (`short_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=30 ;
+-- DROP TABLE IF EXISTS `webfinance_banks`;
+-- CREATE TABLE `webfinance_banks` (
+--  `id` int(11) NOT NULL auto_increment,
+--  `name` varchar(255) NOT NULL default '',
+--  `short_name` varchar(64) default NULL,
+--  `phone` varchar(64) default '00.00.00.00',
+--  `mail` varchar(64) default 'example@example.com',
+--  `comment` text,
+--  PRIMARY KEY  (`id`),
+--  UNIQUE KEY `name` (`name`),
+--  UNIQUE KEY `short_name` (`short_name`)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=30 ;
 
 
 DROP TABLE IF EXISTS `webfinance_categories`;
@@ -343,8 +343,7 @@ INSERT INTO `webfinance_type_tva` VALUES
 INSERT INTO `webfinance_company_types` (nom) VALUES
     ('Client'),('Prospect'),('Fournisseur'),('Archive');
 
-INSERT INTO `webfinance_banks` (`id`, `name`, `short_name`, `phone`, `mail`, `comment`) VALUES
-(1, 'My bank', 'mybank', '', '', '');
+-- INSERT INTO `webfinance_banks` (`id`, `name`, `short_name`, `phone`, `mail`, `comment`) VALUES (1, 'My bank', 'mybank', '', '', '');
 
 -- Voir http://www.plancomptable.com/pc99/titre-IV/liste_des_comptes_sb.htm
 INSERT INTO `webfinance_categories` (`id`, `name`, `re`, `plan_comptable`) VALUES
@@ -395,8 +394,8 @@ INSERT INTO `webfinance_roles` (`id_role`, `name`, `description`) VALUES (7, 'ma
 --
 -- Constraints for dumped tables
 --
-ALTER TABLE `webfinance_accounts`
-  ADD CONSTRAINT `webfinance_accounts_ibfk_1` FOREIGN KEY (`id_bank`) REFERENCES `webfinance_banks` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+-- ALTER TABLE `webfinance_accounts`
+--  ADD CONSTRAINT `webfinance_accounts_ibfk_1` FOREIGN KEY (`id_bank`) REFERENCES `webfinance_banks` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 -- ALTER TABLE `webfinance_dns`
 --   ADD CONSTRAINT `pfk_domain` FOREIGN KEY (`id_domain`) REFERENCES `webfinance_domain` (`id_domain`) ON DELETE CASCADE;
 ALTER TABLE `webfinance_personne`

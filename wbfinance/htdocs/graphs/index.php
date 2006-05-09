@@ -47,7 +47,7 @@ EOF;
   $tab->addTab(_('Cashflow'), $cashflow, 'cashflow');
 }
 
-if ($User->isAuthorized('accounting,eployee,manager')) {
+if ($User->isAuthorized('accounting,employee,manager')) {
   $clientincome = <<<EOF
 <img id="clients_income" alt="clients_income" src="clients_income.php?width=850&height=400" width="850" height="400" />
 EOF;

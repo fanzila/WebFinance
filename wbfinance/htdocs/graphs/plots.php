@@ -348,17 +348,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 			$start_date=$_GET['start_date'];
 
 			$query_account="";
-			$name="";
-			if(!empty($_GET['account'])){
-				$query=mysql_query("SELECT id, account_name FROM  webfinance_accounts WHERE id=".$_GET['account'])
-				  or wf_mysqldie();
-				if(mysql_num_rows($query)==1){
-					$query_account=" AND id_account=".$_GET['account'];
-					$account=mysql_fetch_assoc($query);
-					$name.=$account['account_name'];
-				}
-			}else
-			  $name.=_("All accounts");
+			$name.=_("All accounts");
 
 			$query_categories=mysql_query("SELECT id FROM webfinance_categories") or wf_mysqldie();
 
@@ -693,7 +683,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 		$graph2->SetTitle($title);
 		$graph2->SetXTitle('');
 		//$graph2->SetNumXTicks($nb_day/40);
-		$graph2->SetYTitle(_('Amount (Euro)')); 
+		$graph2->SetYTitle(_('Amount (Euro)'));
 
 		if($max>10000)
 			$graph2->SetYTickIncrement( round($max/10,-3) );
