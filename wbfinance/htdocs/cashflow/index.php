@@ -283,7 +283,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
      // -------------------------------------------------------------------------------------------------------------
 
 
-     $q = "SELECT t.id,t.amount,t.date,UNIX_TIMESTAMP(t.date) as ts_date,c.name,t.type,t.text,t.comment,c.color,t.id_category,t.file_name,t.id_account
+     $q = "SELECT t.id,t.amount,t.date,UNIX_TIMESTAMP(t.date) as ts_date, c.name,t.type,t.text,t.comment,c.color,t.id_category,t.file_name,t.id_account
            FROM webfinance_transactions AS t LEFT JOIN webfinance_categories AS c ON t.id_category=c.id
            HAVING $where_clause
            ORDER BY $order_clause";
@@ -301,8 +301,8 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
      $total_shown = 0;
      $count = 1;
      $prev_date="";
-     while ($tr = mysql_fetch_object($result)) {
 
+     while ($tr = mysql_fetch_object($result)) {
        //s�parer les mois
        $current_month=ucfirst(strftime("%B %Y",$tr->ts_date));
        if(!empty($prev_date)){
@@ -312,7 +312,6 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
 	 echo "<tr class=\"row_even\"><td colspan='9' align='center'><b>$current_month</b></td></tr>";
 
        $prev_date=$tr->ts_date;
-
 
        $total_shown += $tr->amount;
 
@@ -433,6 +432,23 @@ EOF;
     <tr class="row_header">
       <td colspan="2" style="text-align: center"><?= _('Filter') ?></td>
     </tr>
+
+    <tr class="row_even">
+     <td><b><?=_('Months')?></b></td>
+     <td>
+<?
+printf('<a class="pager_link" href="?%s&filter[start_date]=%s&filter[end_date]=%s"> << </a> ',
+$filter_base,
+       date("d/m/Y",mktime(0,0,0,date("n",$prev_date)-1,1,date("Y",$prev_date) ) ) ,
+     date("d/m/Y",mktime(0,0,0,date("n",$prev_date),0,date("Y",$prev_date) ) ) );
+echo $current_month;
+printf('<a class="pager_link" href="?%s&filter[start_date]=%s&filter[end_date]=%s"> >> </a> ',
+$filter_base,
+       date("d/m/Y",mktime(0,0,0,date("n",$prev_date)+1,1,date("Y",$prev_date) ) ) ,
+     date("d/m/Y",mktime(0,0,0,date("n",$prev_date)+2,0,date("Y",$prev_date) ) ) );
+?>
+     </td>
+    </tr>
     <?php if ($nb_transactions/$transactions_per_page > 1) { ?>
     <tr class="row_even">
       <td><b>Page</b></td>
@@ -454,7 +470,7 @@ EOF;
      }
 	for ($i=$start ; $i<$end ; $i++) {
 	   if ($filter['page'] == $i) {
-		 printf("%d", $i+1);
+		 printf("[%d]", $i+1);
 	   } else {
 	     printf('<a class="pager_link" href="?%s&filter[page]=%d">%d</a>', $filter_base, $i, $i+1 );
 	   }
