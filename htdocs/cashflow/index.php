@@ -128,7 +128,8 @@ if ((!count($filter['shown_cat'])) || ($filter['shown_cat']['check_all'] == "on"
   while (list($id) = mysql_fetch_array($result)) {
     $filter['shown_cat'][$id] = "on";
   }
-
+  //affichage des transactions non catégorisées
+    $filter['shown_cat'][0] = "on";
   mysql_free_result($result);
 
   unset($filter['shown_cat']['check_all'] );
