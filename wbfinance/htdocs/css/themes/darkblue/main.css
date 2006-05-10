@@ -49,13 +49,13 @@ table.facture textarea { border: solid 1px #cecece; }
 input, select { border: solid 1px #ddd;  margin-right: 2px; margin-bottom: 2px; font-size: 11px; background: #ceceff; }
 textarea { border: solid 1px #ddd; background: #ceceff; font-family: times new roman, times, serif; font-size: 12px; }
 
-input.tel { width: 80px; background: url('/imgs/icons/tel.gif') no-repeat top left #ceceff; padding-left: 17px; text-align: center; word-spacing: -1px; }
-input.fax { width: 79px; background: url('/imgs/icons/fax.gif') no-repeat top left #ceceff; padding-left: 20px; text-align: center; word-spacing: -1px; }
-input.email { width: 182px; background: url('/imgs/icons/mail.gif') no-repeat top left #ceceff; padding-left: 18px; text-align: center; }
-input.gsm { width: 79px; background: url('/imgs/icons/gsm.gif') no-repeat top left #ceceff; padding-left: 15px; text-align: center; word-spacing: -1px; }
-input.tva { width: 182px; background: url('/imgs/icons/tva.gif') no-repeat top left #ceceff; padding-left: 18px; text-align: center; }
-input.siren { width: 146px; background: url('/imgs/icons/siren.gif') no-repeat top left #ceceff; padding-left: 33px; text-align: center; }
-input.web { background: url('/imgs/icons/web.gif') no-repeat top left #ceceff; padding-left: 18px; text-align: center; width: 182px; }
+input.tel { width: 80px; background: url('../../../imgs/icons/tel.gif') no-repeat top left #ceceff; padding-left: 17px; text-align: center; word-spacing: -1px; }
+input.fax { width: 79px; background: url('../../../imgs/icons/fax.gif') no-repeat top left #ceceff; padding-left: 20px; text-align: center; word-spacing: -1px; }
+input.email { width: 182px; background: url('../../../imgs/icons/mail.gif') no-repeat top left #ceceff; padding-left: 18px; text-align: center; }
+input.gsm { width: 79px; background: url('../../../imgs/icons/gsm.gif') no-repeat top left #ceceff; padding-left: 15px; text-align: center; word-spacing: -1px; }
+input.tva { width: 182px; background: url('../../../imgs/icons/tva.gif') no-repeat top left #ceceff; padding-left: 18px; text-align: center; }
+input.siren { width: 146px; background: url('../../../imgs/icons/siren.gif') no-repeat top left #ceceff; padding-left: 33px; text-align: center; }
+input.web { background: url('../../../imgs/icons/web.gif') no-repeat top left #ceceff; padding-left: 18px; text-align: center; width: 182px; }
 
 table.mosaique td { border: solid 1px black; padding: 10px; color: black; background: white; }
 
