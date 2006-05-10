@@ -187,6 +187,7 @@ $result = mysql_query("SELECT webcash_operations.id, id_categorie, text, amount,
   or die(mysql_error());
 $nb_webcash = mysql_num_rows($result);
 
+
 mysql_select_db('webfinance');
 mysql_query("TRUNCATE TABLE webfinance_transactions") or die(mysql_error());
 //mysql_query("ALTER TABLE webfinance_transactions DROP INDEX unique_transaction");
@@ -205,10 +206,17 @@ mysql_query("TRUNCATE TABLE webfinance_transactions") or die(mysql_error());
     "file_type='%s', ".
     "file_name='%s' ";
 
-while($webcash_tr = mysql_fetch_assoc($result)){
-  //  print_r($webcash_tr);
-  if($webcash_tr['id_category']<1)
-    $webcash_tr['id_category']=1;
+  //insertion d'une categorie 'unknown' pour les id_categorie=0
+  mysql_query("INSERT INTO webfinance_categories ( name , comment ) VALUES ('Unknown', 'unknown category' )")
+    or die(mysql_error());
+  $id_unknown_categ= mysql_insert_id();
+
+  while($webcash_tr = mysql_fetch_assoc($result)){
+    //  print_r($webcash_tr);
+
+    if($webcash_tr['id_categorie']<1)
+      $webcash_tr['id_categorie']=$id_unknown_categ;
+
   mysql_query(sprintf($q,
 		      $webcash_tr['id'],
 		      $webcash_tr['id_bank'], //<- in webfinance, we don't use the webfinance_banks and webfinance_accounts tables
