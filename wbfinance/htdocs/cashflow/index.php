@@ -301,6 +301,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
      $total_shown = 0;
      $count = 1;
      $prev_date="";
+     $cur_date=$ts_start_date;
 
      while ($tr = mysql_fetch_object($result)) {
        //s�parer les mois
@@ -308,8 +309,10 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
        if(!empty($prev_date)){
 	 if(date("m",$prev_date)!=date("m",$tr->ts_date))
 	   echo "<tr class=\"row_even\"><td colspan='9' align='center'><b>$current_month</b></td></tr>";
-       }else
+       }else{
 	 echo "<tr class=\"row_even\"><td colspan='9' align='center'><b>$current_month</b></td></tr>";
+	 $cur_date=$tr->ts_date;
+       }
 
        $prev_date=$tr->ts_date;
 
@@ -437,15 +440,16 @@ EOF;
      <td><b><?=_('Months')?></b></td>
      <td>
 <?
+
 printf('<a class="pager_link" href="?%s&filter[start_date]=%s&filter[end_date]=%s"> << </a> ',
-$filter_base,
-       date("d/m/Y",mktime(0,0,0,date("n",$prev_date)-1,1,date("Y",$prev_date) ) ) ,
-     date("d/m/Y",mktime(0,0,0,date("n",$prev_date),0,date("Y",$prev_date) ) ) );
-echo $current_month;
+     $filter_base,
+     date("d/m/Y",mktime(0,0,0,date("n",$cur_date)-1,1,date("Y",$cur_date) ) ) ,
+     date("d/m/Y",mktime(0,0,0,date("n",$cur_date),0,date("Y",$cur_date) ) ) );
+echo strftime("%B %Y",$cur_date);
 printf('<a class="pager_link" href="?%s&filter[start_date]=%s&filter[end_date]=%s"> >> </a> ',
-$filter_base,
-       date("d/m/Y",mktime(0,0,0,date("n",$prev_date)+1,1,date("Y",$prev_date) ) ) ,
-     date("d/m/Y",mktime(0,0,0,date("n",$prev_date)+2,0,date("Y",$prev_date) ) ) );
+     $filter_base,
+     date("d/m/Y",mktime(0,0,0,date("n",$cur_date)+1,1,date("Y",$cur_date) ) ) ,
+     date("d/m/Y",mktime(0,0,0,date("n",$cur_date)+2,0,date("Y",$cur_date) ) ) );
 ?>
      </td>
     </tr>
