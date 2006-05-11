@@ -19,6 +19,44 @@ require_once("phplot.php"); //<- this is the newest phplot than the debian packa
 }
 
 
+function getRoundMax($max){
+  if (abs($max) > 0) {
+    $tmp_max = abs($max);
+    $exp = 0;
+    while ($tmp_max > 100) {
+      $tmp_max /= 100;
+      $exp++;
+    }
+    $tmp_max = ceil($tmp_max);
+    while ($exp > 0){
+      $tmp_max *= 100;
+      $exp--;
+    }
+    return $max/abs($max) * $tmp_max;
+  } else {
+    return 0;
+  }
+}
+
+function getRoundMin($min){
+  if (abs($min) > 0) {
+    $tmp_min = abs($min);
+    $exp = 0;
+    while ($tmp_min > 100) {
+      $tmp_min /= 100;
+      $exp++;
+    }
+    $tmp_min = ceil($tmp_min);
+    while ($exp > 0) {
+      $tmp_min *= 100;
+      $exp--;
+    }
+    return $min/abs($min) * $tmp_min;
+  } else {
+    return 0;
+  }
+}
+
 
 /*
  * Evolution de chaque categorie depuis le début
@@ -32,7 +70,6 @@ if(isset($_GET['type']) AND isset($_GET['sign']) AND isset($_GET['plot']) AND $_
 	     */
 
 	  if($_GET['sign']=="positive"){
-
 	    //positive
 	    $query_positive=mysql_query("SELECT ".
 					"UNIX_TIMESTAMP(MIN(date)) as min, ".
@@ -40,7 +77,7 @@ if(isset($_GET['type']) AND isset($_GET['sign']) AND isset($_GET['plot']) AND $_
 					"FROM webfinance_transactions ".
 					"WHERE amount>0 ")
 	      or die(mysql_error());
-	    $res=mysql_fetch_assoc($query_positive);
+	    list($min,$max) = mysql_fetch_array($query_positive);
 
 	  }else if($_GET['sign']=="negative"){
 	      //negative
@@ -50,18 +87,19 @@ if(isset($_GET['type']) AND isset($_GET['sign']) AND isset($_GET['plot']) AND $_
 					  "FROM webfinance_transactions ".
 					  "WHERE amount<0 ")
 		or die(mysql_error());
-	      $res=mysql_fetch_assoc($query_negative);
-	    }
+	      list($min,$max) = mysql_fetch_array($query_negative);
+	  }
+
 	  //Calculer le nom de jours
-	  if(!empty($res['min']) AND !empty($res['max'])){
-	    $end_date= date("Y-m-d",$res['max']);
-	    $start_date=date("Y-m-d",$res['min']);
+	  if(!empty($min) AND !empty($max)){
+	    $end_date= date("Y-m-d",$max);
+	    $start_date=date("Y-m-d",$min);
 	  }else{
 	    $start_date=date("Y-m-d");
 	    $end_date=date("Y-m-d" , mktime(0, 0, 0, date("m")+1, date("d"), date("Y")) );
 
-	    $res['max']=mktime();
-	    $res['min']=mktime(0, 0, 0, date("m")+1, date("d"), date("Y"));
+	    $max=mktime();
+	    $min=mktime(0, 0, 0, date("m")+1, date("d"), date("Y"));
 	  }
 
 	  /*
@@ -95,7 +133,7 @@ if(isset($_GET['type']) AND isset($_GET['sign']) AND isset($_GET['plot']) AND $_
 	  $data_income=array();
 	  $data_outgo=array();
 
-	  if($res['max']>$res['min']){
+	  if($max>$min){
 
 	    $start_ex=explode("-",$start_date);
 	    $end_ex=explode("-",$end_date);
@@ -249,8 +287,7 @@ if(isset($_GET['type']) AND isset($_GET['sign']) AND isset($_GET['plot']) AND $_
 
 	    $graph2->SetYTitle('Amount (Euro)');
 
-	    $graph2->SetYTickIncrement( round($max_income/5,-3) );
-
+	    $graph2->SetYTickIncrement( round($max_income/10,-3) );
 
 	    foreach($categ_income as $category){
 	      $legends[]=$category['name'];
@@ -265,13 +302,20 @@ if(isset($_GET['type']) AND isset($_GET['sign']) AND isset($_GET['plot']) AND $_
 	    //print_r($data_income);
 	    $data=$data_income;
 
+	    $graph2->SetDataValues($data);
+
+	    $graph2->SetPlotAreaWorld(null, null, null,getRoundMax($max_income));
+	    //$graph2->plot_min_y = getRoundMin($min);
+	    //$graph2->plot_max_y = getRoundMax($max_income);
+
+
 	  }else{
 	    //Set titles
 	    $title="Outgo by category / all history";
 
 	    $graph2->SetYTitle('Amount (-Euro)');
 
-	    $graph2->SetYTickIncrement( round($min_outgo/-5,-3) );
+	    $graph2->SetYTickIncrement( round($min_outgo/-10,-3) );
 
 	    foreach($categ_outgo as $category){
 	      $legends[]=$category['name'];
@@ -287,6 +331,10 @@ if(isset($_GET['type']) AND isset($_GET['sign']) AND isset($_GET['plot']) AND $_
 	    //echo "<pre/>";
 	    //print_r($data_outgo);
 	    $data=$data_outgo;
+
+	    $graph2->SetDataValues($data);
+
+
 	  }
 
 			$graph2->SetTitle($title);
@@ -306,7 +354,6 @@ if(isset($_GET['type']) AND isset($_GET['sign']) AND isset($_GET['plot']) AND $_
 
 			$graph2->SetDataType("text-data");
 
-			$graph2->SetDataValues($data);
 
 			//$graph2->SetPlotType("lines");
 			$graph2->SetPlotType("stackedbars");
