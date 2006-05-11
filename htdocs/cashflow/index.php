@@ -437,7 +437,7 @@ EOF;
     </tr>
 
     <tr class="row_even">
-     <td><b><?=_('Months')?></b></td>
+     <td><b><?=_('Month')?></b></td>
      <td>
 <?
 
