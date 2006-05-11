@@ -32,6 +32,44 @@ function cmp_data($array1, $array2){
     		return ($sum1 < $sum2) ? 1 : -1;
 }
 
+function getRoundMax($max){
+  if (abs($max) > 0) {
+    $tmp_max = abs($max);
+    $exp = 0;
+    while ($tmp_max > 10) {
+      $tmp_max /= 10;
+      $exp++;
+    }
+    $tmp_max = ceil($tmp_max);
+    while ($exp > 0){
+      $tmp_max *= 10;
+      $exp--;
+    }
+    return $max/abs($max) * $tmp_max;
+  } else {
+    return 0;
+  }
+}
+
+function getRoundMin($min){
+  if (abs($min) > 0) {
+    $tmp_min = abs($min);
+    $exp = 0;
+    while ($tmp_min > 10) {
+      $tmp_min /= 10;
+      $exp++;
+    }
+    $tmp_min = ceil($tmp_min);
+    while ($exp > 0) {
+      $tmp_min *= 10;
+      $exp--;
+    }
+    return $min/abs($min) * $tmp_min;
+  } else {
+    return 0;
+  }
+}
+
 if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AND isset($_GET['start_date']) AND isset($_GET['end_date']) ){
 	//graph 1
 	if($_GET['type']=="expense" ){
@@ -117,6 +155,8 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 	  }else{
 
 		$data=array();
+		$min=0;
+		$max=0;
 
 		for ($day = 1; $day <= $nb_day ; $day++) {
 			$tmp=array();
@@ -130,6 +170,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 			if(empty($res['sum']))
 				$res['sum']=0;
 			$tmp[]=$res['sum']*1;
+			$min=min($min,$res['sum']);
 
 			//income
 			$query_sum_positive=mysql_query("SELECT SUM(amount) as sum ".
@@ -140,6 +181,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 			if(empty($res['sum']))
 				$res['sum']=0;
 			$tmp[]=$res['sum'];
+			$max=max($max,$res['sum']);
 
 //			$query_sold=mysql_query("SELECT SUM(amount) as sum FROM webfinance_transactions WHERE date<='$year-$month-$day' ".$query_account )
 //			or wf_mysqldie();
@@ -152,14 +194,15 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 		//Set titles
 		$title=sprintf(utf8_decode(_("Outgo & Income : %s-%s")), $year, $month);
 		$graph2->SetDrawXGrid(true);
-
 	   }
 
+		// First verticaly
+		$range = $max + abs($min);
+		$graph2->SetYTickIncrement( round($range/10,-3) );
 
 		$graph2->SetTitle($title);
 		$graph2->SetXTitle(_('Day'));
 		$graph2->SetYTitle(_('Amount'));
-
 
 		# Make a legend for the 2 functions:
 		$graph2->SetLegend(array(utf8_decode(_('Outgo')), utf8_decode(_('Income'))));
@@ -169,6 +212,11 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 		$graph2->SetDataType("text-data");
 
 		$graph2->SetDataValues($data);
+
+
+		$graph2->SetPlotAreaWorld(null, null, null, null);
+		$graph2->plot_min_y = getRoundMin($min);
+		//$graph2->plot_max_y = $tmp_max;
 
 		$graph2->SetPlotType("area");
 
@@ -270,7 +318,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 	    $today=date("d");
 
 	    $max=0;
-
+	    $min=0;
 	    for ($day = 1; $day <= $nb_day ; $day++) {
 	      $tmp=array($day);
 
@@ -284,7 +332,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 		$tmp_val=0;
 	      $tmp[]=$tmp_val;
 	      $max=max($max,mysql_result($query_sold, 0));
-
+	      $min=min($min,mysql_result($query_sold, 0));
 	      // real
 	      if(mktime(0, 0, 0, $month, $day, $year) <= $date_last_real) {
 		$query_sold=mysql_query("SELECT SUM(amount) as sum ".
@@ -296,6 +344,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 		  $tmp_val=0;
 		$tmp[]=$tmp_val;
 		$max=max($max,mysql_result($query_sold, 0));
+		$min=min($min,mysql_result($query_sold, 0));
 	      }else
 		$tmp[]='';
 
@@ -317,8 +366,9 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 
 		$graph2->SetYTitle(_('Amount'));
 
-		if($max>10000)
-			$graph2->SetYTickIncrement( round($max/10,-3) );
+		$range = $max + abs($min);
+		$graph2->SetYTickIncrement(round($range/10,-3));
+		//$graph2->
 
 		$graph2->SetLineStyles(array('solid','solid'));
 //		$graph2->SetLineWidths(array('3','2'));
@@ -331,6 +381,10 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 		$graph2->SetDataType("text-data");
 
 		$graph2->SetDataValues($data);
+
+		$graph2->SetPlotAreaWorld(null, null, null, null);
+		$graph2->plot_min_y = getRoundMin($min);
+		//$graph2->plot_max_y = getRoundMax($max);
 
 		$graph2->SetPlotType("lines");
 
@@ -693,7 +747,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 		$graph2->SetTitle($title);
 		$graph2->SetXTitle('');
 		//$graph2->SetNumXTicks($nb_day/40);
-		$graph2->SetYTitle(_('Amount (Euro)')); 
+		$graph2->SetYTitle(_('Amount (Euro)'));
 
 		if($max>10000)
 			$graph2->SetYTickIncrement( round($max/10,-3) );
