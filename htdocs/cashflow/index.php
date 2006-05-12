@@ -122,9 +122,30 @@ mysql_free_result($result);
 // Setup the default filter if none is given
 extract($_GET);
 
-if ((!count($filter['shown_cat'])) || ($filter['shown_cat']['check_all'] == "on")) {
+if ($filter['shown_cat']['invert'] == "on") {
+  $x=0;
   $result = mysql_query("SELECT id FROM webfinance_categories");
-    $filter['shown_cat'][1] = "on";
+  $nb_categ = mysql_num_rows($result);
+
+  while (list($id) = mysql_fetch_array($result)) {
+    if(isset($filter['shown_cat'][$id]) == "on"){
+      unset($filter['shown_cat'][$id]);
+      $x++;
+    }else
+      $filter['shown_cat'][$id] = "on";
+  }
+  if($x == $nb_categ){
+    $filter['shown_cat'][0] = "on";
+    //$filter['shown_cat'][1] = "on";
+  }
+
+  mysql_free_result($result);
+
+  unset($filter['shown_cat']['invert'] );
+
+ }else if ((!count($filter['shown_cat'])) || ($filter['shown_cat']['check_all'] == "on")) {
+  $result = mysql_query("SELECT id FROM webfinance_categories");
+  //$filter['shown_cat'][1] = "on";
   while (list($id) = mysql_fetch_array($result)) {
     $filter['shown_cat'][$id] = "on";
   }
@@ -522,7 +543,10 @@ printf('<a class="pager_link" href="?%s&filter[start_date]=%s&filter[end_date]=%
     </tr>
     <tr class="row_even">
       <td nowrap><b><?= _('Shown categories :') ?></b></td>
-      <td><input type="checkbox" name="filter[shown_cat][check_all]" /><b><?= _('View all') ?></b></td>
+      <td>
+       <input type="checkbox" name="filter[shown_cat][check_all]" /><b><?= _('View all') ?>
+       <input type="checkbox" name="filter[shown_cat][invert]" /><b><?= _('Invert') ?></b>
+      </td>
     </tr>
     <tr class="row_even">
       <?php
