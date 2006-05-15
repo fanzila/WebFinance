@@ -99,7 +99,9 @@ if($nb_day>0){
             $res=0;
           $tmp[2]=$res;
           $max=max($max,mysql_result($query_sold, 0));
-        }
+        }else{
+	  $tmp[2] = "";
+	}
 
         $data[]=$tmp;
       }
@@ -227,7 +229,7 @@ $graph2->plot_min_y = $tmp_min;
 $graph2->plot_max_y = $tmp_max;
 
 if ($movingaverage) {
-  $graph2->DoMovingAverage(1,$moving_average_blur,FALSE);
+  $graph2->DoMovingAverage(0,$moving_average_blur,FALSE);
 }
 
 if (isset($User->prefs->graphgrid) && $User->prefs->graphgrid == "on") {
