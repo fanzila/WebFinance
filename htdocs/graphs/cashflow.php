@@ -62,49 +62,59 @@ $nb_day=diff_date($start_date,$end_date);
 
 if($nb_day>0){
 
-      $var=explode("-",$start_date);
+  $query_date_last_real=mysql_query("select UNIX_TIMESTAMP(max(date)) from webfinance_transactions where type='real' ". $query_account)
+    or wf_mysqldie();
 
-      // $nb_day = $nb_day+30;
-      $query_date_last_real=mysql_query("select UNIX_TIMESTAMP(max(date)) from webfinance_transactions where type='real' ". $query_account)
-	or wf_mysqldie();
+  $date_last_real=mysql_result($query_date_last_real, 0);
 
-      $date_last_real=mysql_result($query_date_last_real, 0);
+  $q = "SELECT amount, type, date, UNIX_TIMESTAMP(date) as ts_date FROM webfinance_transactions ORDER BY date ";
+  $res = mysql_query($q) or wf_mysqldie();
+  while($row  = mysql_fetch_assoc($res))
+    $trs[] = $row;
+  mysql_free_result($res);
 
-      for($step = 0; $step < $nb_day ; $step++) {
+  $q_real = "SELECT amount, type, date, UNIX_TIMESTAMP(date) as ts_date FROM webfinance_transactions WHERE type='real' ORDER BY date ";
+  $res_real = mysql_query($q_real) or wf_mysqldie();
+  while($row  = mysql_fetch_assoc($res_real))
+    $trs_real[] = $row;
+  mysql_free_result($res_real);
 
-        $current_date=date("Y-m-d" , mktime(0, 0, 0, $var[1],1+$step, $var[0]) );
+  for($step = 0; $step < $nb_day ; $step++ ){
+    $current_date = mktime(0, 0, 0, $var[1],1+$step, $var[0]);
 
-        $date_ex=explode("-",$current_date);
+    $tmp[0]=$current_date;
 
-        $tmp=array();
+    //prev
+    $x=0;
+    $i=0;
+    $sum = 0;
+    foreach($trs as $tr){
+      if($tr['ts_date'] <= $current_date)
+	$sum  = $sum + $tr['amount'];
+    }
+    $tmp[1]=$sum;
+    $max = max($max,$sum);
+    $min = min($min,$sum);
 
-        $tmp[0] = mktime(0, 0, 0, $var[1],1+$step, $var[0]);
-
-        // prevs
-        $query_sold=mysql_query("SELECT SUM(amount) as sum FROM webfinance_transactions WHERE date<='$current_date' ".$query_account )
-          or wf_mysqldie();
-        $res=mysql_result($query_sold, 0);
-        if(empty($res))
-          $res=0;
-        $tmp[1]=$res;
-        $max=max($max,mysql_result($query_sold, 0));
-        $min=min($min,mysql_result($query_sold, 0));
-
-        // real
-        if(mktime(0, 0, 0, $var[1],1+$step, $var[0]) <= $date_last_real) {
-          $query_sold=mysql_query("SELECT SUM(amount) as sum FROM webfinance_transactions WHERE date<='$current_date' AND type='real' ".$query_account )
-            or wf_mysqldie();
-          $res=mysql_result($query_sold, 0);
-          if(empty($res))
-            $res=0;
-          $tmp[2]=$res;
-          $max=max($max,mysql_result($query_sold, 0));
-        }else{
-	  $tmp[2] = "";
-	}
-
-        $data[]=$tmp;
+    //real
+    $x = 0;
+    $i = 0;
+    $sum = 0;
+    if($date_last_real>=$current_date){
+      foreach($trs_real as $tr){
+	if($tr['ts_date'] <= $current_date)
+	  $sum  = $sum + $tr['amount'];
       }
+      $tmp[2]=$sum;
+      $max = max($max,$sum);
+      $min = min($min,$sum);
+
+    }else{
+      $tmp[2]="";
+    }
+    $data[] = $tmp;
+  }
+
 }else{
       $data=array( array('','',''));
 }
