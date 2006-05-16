@@ -62,6 +62,8 @@ $nb_day=diff_date($start_date,$end_date);
 
 if($nb_day>0){
 
+  $var=explode("-",$start_date);
+
   $query_date_last_real=mysql_query("select UNIX_TIMESTAMP(max(date)) from webfinance_transactions where type='real' ". $query_account)
     or wf_mysqldie();
 
