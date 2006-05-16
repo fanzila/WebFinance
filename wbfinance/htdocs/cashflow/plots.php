@@ -782,25 +782,33 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 		$query_account="";
 		$text="";
 		if(!empty($_GET['account'])){
-			$query_account=" AND id_account=".$_GET['account'];
-			$query=mysql_query("SELECT MIN(date) as min , MAX(date) as max FROM webfinance_transactions WHERE id_account=".$_GET['account'] )
-			  or wf_mysqldie();
-		}else
-			$query=mysql_query("SELECT MIN(date) as min , MAX(date) as max FROM webfinance_transactions ")
-			  or wf_mysqldie();
-
-		$res=mysql_fetch_assoc($query);
-		if(!empty($res['min']) AND !empty($res['max'])){
-			$end_date=$res['max'];
-			$start_date=$res['min'];
+		  $query_account=" AND id_account=".$_GET['account'];
+		  $query=mysql_query("SELECT MIN(date) as min , UNIX_TIMESTAMP(MIN(date)) , MAX(date) as max , UNIX_TIMESTAMP(MAX(date)) FROM webfinance_transactions WHERE id_account=".$_GET['account'] )
+		    or wf_mysqldie();
 		}else{
-			$start_date=date("Y-m-d");
-			$end_date=date("Y-m-d" , mktime(0, 0, 0, date("m")+1, date("d"), date("Y")) );
+		  $query=mysql_query("SELECT MIN(date) as min , UNIX_TIMESTAMP(MIN(date)) , MAX(date) as max , UNIX_TIMESTAMP(MAX(date)) FROM webfinance_transactions ")
+		    or wf_mysqldie();
+		}
+
+		list($date_min, $date_min_ts, $date_max, $date_max_ts)=mysql_fetch_array($query);
+
+		if(!empty($date_min) AND !empty($date_max)){
+		  $start_date = $date_min;
+		  $start_date_ts = $date_min_ts;
+
+		  $end_date = $date_max;
+		  $end_date_ts = $date_max_ts;
+		}else{
+		  $start_date = date("Y-m-d");
+		  $start_date_ts = mktime();
+
+		  $end_date=date("Y-m-d" ,  mktime(0, 0, 0, date("m")+1, date("d"), date("Y")) );
+		  $end_date_ts =  mktime(0, 0, 0, date("m")+1, date("d"), date("Y"));
 		}
 
 		if(isset($_GET['end_date']) AND !empty($_GET['end_date'])){
-			if(diff_date($start_date,$_GET['end_date'])>0)
-				$end_date=$_GET['end_date'];
+		  if(diff_date($start_date,$_GET['end_date'])>0)
+		    $end_date=$_GET['end_date'];
 		}
 
 		$data=array();
@@ -810,50 +818,64 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 
 		if($nb_day>0){
 
-			$var=explode("-",$start_date);
+		  $var=explode("-",$start_date);
 
-			$nb_day = ($nb_day/30)+1;
+		  $nb_month = ($nb_day/30)+1;
 
-			$begin_date=date("Y-m-d" , mktime(0, 0, 0, $var[1],1, $var[0]));
+		  $begin_date=date("Y-m-d" , mktime(0, 0, 0, $var[1],1, $var[0]));
+		  $begin_date_ts = mktime(0, 0, 0, $var[1],1, $var[0]);
 
-			for($step = 1; $step < $nb_day ; $step++) {
+		  $q_trs_neg = mysql_query("SELECT amount , UNIX_TIMESTAMP(date) as ts_date FROM webfinance_transactions WHERE amount<0 ")
+		    or die(mysql_error());
+		  while($row = mysql_fetch_assoc($q_trs_neg))
+		    $trs_neg[] = $row;
+		  mysql_free_result($q_trs_neg);
 
-				$end_date=date("Y-m-d" , mktime(0, 0, 0, $var[1]+$step,0, $var[0]) );
+		  $q_trs_pos = mysql_query("SELECT amount , UNIX_TIMESTAMP(date) as ts_date FROM webfinance_transactions WHERE amount>0 ")
+		    or die(mysql_error());
+		  while($row = mysql_fetch_assoc($q_trs_pos))
+		    $trs_pos[] = $row;
+		  mysql_free_result($q_trs_pos);
 
-				$begin=explode("-",$begin_date);
+		  for($step = 0; $step < $nb_month ; $step++ ){
 
-				$tmp=array();
-				$tmp[]=date("M y", mktime(0, 0, 0, $begin[1], 1, $begin[0]) );
-				$query_sum_negative=mysql_query("SELECT SUM(amount) as sum ".
-								"FROM webfinance_transactions ".
-								"WHERE amount<0 ".
-								"AND date BETWEEN '$begin_date' AND '$end_date' ".$query_account )
-				  or wf_mysqldie();
-				$res=mysql_fetch_array($query_sum_negative);
-				$tmp[]=$res['sum']*-1;
-				$max=max($max,$res['sum']*-1);
+		    $end_date=date("Y-m-d" , mktime(0, 0, 0, $var[1]+$step,0, $var[0]) );
+		    $end_date_ts = mktime(0, 0, 0, $var[1]+$step,0, $var[0]);
 
-				$query_sum_positive=mysql_query("SELECT SUM(amount) as sum ".
-								"FROM webfinance_transactions ".
-								"WHERE amount>0 ".
-								"AND date BETWEEN '$begin_date' AND '$end_date' ".$query_account )
-				  or wf_mysqldie();
-				$res=mysql_fetch_array($query_sum_positive);
-				$tmp[]=$res['sum']*1;
-				$max=max($max,$res['sum']);
+		    $begin=explode("-",$begin_date);
 
-//				$query_sold=mysql_query("SELECT SUM(amount) as sum FROM webfinance_transactions WHERE date BETWEEN '$start_date' AND '$end_date' ".$query_account ) or wf_mysqldie();
-//				$res=mysql_fetch_array($query_sold);
-//				$tmp[]=$res['sum'];
+		    $tmp[0]=date("M y", mktime(0, 0, 0, $begin[1], 1, $begin[0]) );
 
-				$data[]=$tmp;
+		    //outgo
+		    $sum = 0;
+		    foreach($trs_neg as $tr){
+		      if($tr['ts_date'] <= $end_date_ts AND $tr['ts_date'] >= $begin_date_ts )
+			$sum  = $sum + $tr['amount'];
+		    }
+		    $tmp[1]= $sum*-1 ;
+		    $max = max($max,$tmp[1]);
+		    $min = min($min,$sum);
 
-				$end=explode("-",$end_date);
-				$begin_date=date("Y-m-d" , mktime(0, 0, 0, $end[1]+1, 1 , $end[0]) );
+		    //income
+		    $sum = 0;
+		    foreach($trs_pos as $tr){
+		      if($tr['ts_date'] <= $end_date_ts AND $tr['ts_date'] >= $begin_date_ts )
+			$sum  = $sum + $tr['amount'];
+		    }
+		    $tmp[2]=$sum*1;
+		    $max = max($max,$sum);
+		    $min = min($min,$sum);
 
-			}
+		    $data[] = $tmp;
+
+		    $end=explode("-",$end_date);
+		    $begin_date=date("Y-m-d" , mktime(0, 0, 0, $end[1]+1, 1 , $end[0]) );
+		    $begin_date_ts=mktime(0, 0, 0, $end[1]+1, 1 , $end[0]);
+
+		  }
+
 		}else{
-			$data=array(array('','',''));
+		  $data=array(array('','',''));
 		}
 
 //		echo "<pre/>";
