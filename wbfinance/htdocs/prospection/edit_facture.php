@@ -227,11 +227,23 @@ function del_ligne() {
         </select>
       </td>
     </tr>
+
     <tr>
-	<td>Prevision</td>
+	<td><?=_('Period')?></td>
+	<td>
+	<select name="period">
+	  <option value="none"><?=_('none')?></option>
+	  <option value="end of month" <?= ($facture->period=="end of month")?"selected":"" ?>><?=_('end of month')?></option>
+	  <option value="end of term" <?= ($facture->period=="end of term")?"selected":"" ?>  ><?= _('end of term')?></option>
+	  <option value="end of year" <?= ($facture->period=="end of year")?"selected":"" ?>  ><?=_('end of year')?></option>
+	</select>
+	</td>
+    </tr>
+    <tr>
+	<td><?=_('Prevision')?></td>
 	<td>
 	<select name="type_prev">
-	  <option value="0"><?=_('None')?></option>
+	  <option value="0"><?=_('Invoice date')?></option>
 	  <option value="1"><?=_('asap')?></option>
 	  <option value="7"><?= _('+ 1 week')?></option>
 	  <option value="14"><?=_('+ 2 weeks')?></option>

@@ -68,88 +68,6 @@ function update_ca() {
 
 }
 
-function update_transaction($id_invoice, $type_prev){
-
-  $Facture = new Facture();
-  if (is_numeric($_POST['id_facture'])){
-    $facture = $Facture->getInfos($id_invoice);
-
-    if($facture->is_paye){
-      $type="real";
-      $date_transaction=date("Y-m-d", $facture->timestamp_date_paiement );
-    }else if($type_prev==1){
-      $type="asap";
-      $date_transaction=date("Y-m-d", mktime(0,0,0,date("m"),date("d")+1, date("Y")) );
-    }else if($type_prev>1){
-      $type="prevision";
-      $date_transaction=date("Y-m-d", ($facture->timestamp_date_facture)+(86400*$type_prev) );
-    }else{
-      $type="prevision";
-       if($facture->timestamp_date_facture < $facture->timestamp_date_paiement )
-	 $date_transaction=date("Y-m-d",$facture->timestamp_date_paiement);
-       else
-	 $date_transaction=date("Y-m-d",$facture->timestamp_date_facture);
-    }
-
-
-    $result=mysql_query("SELECT id, id_category FROM webfinance_transactions WHERE id_invoice=$id_invoice" )
-      or wf_mysqldie();
-    $nb=mysql_num_rows($result);
-
-    $text = "Num fact: $facture->num_facture, Ref contrat:  $facture->ref_contrat";
-    $comment= "$facture->commentaire";
-    $id_category=1;
-
-    if($nb==1){
-      $tr=mysql_fetch_assoc($result);
-      $id_category=$tr['id_category'];
-
-      if($id_category<=1){
-
-	// Dans tous les cas on essaie de retrouver la catégorie de la transaction
-	// automagiquement.
-	$id_categorie = 1;
-	$result = mysql_query("SELECT COUNT(*),id,name
-                         FROM webfinance_categories
-                         WHERE re IS NOT NULL
-                         AND '".addslashes($comment." ".$text )."' RLIKE re
-                         GROUP BY id") or wf_mysqldie();
-	list($nb_matches,$id, $name) = mysql_fetch_array($result);
-	if($nb_matches>0)
-	  $id_category=$id;
-      }
-
-      //update
-      $query = "UPDATE webfinance_transactions SET ".
-	"id_account=%d, ".
-	"id_category=%d, ".
-	"text='%s', ".
-	"amount='%s', ".
-	"type='$type', ".
-	"date='%s', ".
-	"comment='%s' ".
-	"WHERE id_invoice=%d";
-      $q = sprintf($query, $facture->id_compte, $id_category, $text, preg_replace("!,!", ".", $facture->total_ttc),  $date_transaction , $comment, $id_invoice );
-      mysql_query($q) or wf_mysqldie();
-
-
-    }else if($nb<1){
-      //insert
-      $query = "INSERT INTO webfinance_transactions SET ".
-	"id_account=%d, ".
-	"id_category=%d, ".
-	"text='%s', ".
-	"amount='%s', ".
-	"type='$type', ".
-	"date='%s', ".
-	"comment='%s', ".
-	"id_invoice=%d";
-      $q = sprintf($query, $facture->id_compte, $id_category, $text, preg_replace('!,!', '.', $facture->total_ttc), $date_transaction , $comment, $id_invoice );
-      mysql_query($q) or wf_mysqldie();
-    }
-  }
-}
-
 function regenerate($id) {
   mysql_query("UPDATE webfinance_invoices SET date_generated=NULL,facture_file=NULL where id_facture=$id");
 }
@@ -200,9 +118,38 @@ if ($action == "save_facture") {
 //   $date_prev=$facture->timestamp_date_facture+($_POST['type_prev'] * 86400 );
 //   $date_prev=date("Y-m-d",$date_prev);
 
-  $q = sprintf("UPDATE webfinance_invoices SET type_paiement='%s',is_paye=%d,%s ref_contrat='%s', extra_top='%s', extra_bottom='%s', accompte='%s', date_facture='%s', type_doc='%s', commentaire='%s', id_type_presta=%d, id_compte=%d, is_envoye=%d, num_facture='%s'
+  $q = sprintf("UPDATE webfinance_invoices SET ".
+	       "type_paiement='%s', ".
+	       "is_paye=%d, ".
+	       "%s  ".
+	       "ref_contrat='%s', ".
+	       "extra_top='%s', ".
+	       "extra_bottom='%s', ".
+	       "accompte='%s', ".
+	       "date_facture='%s', ".
+	       "type_doc='%s', ".
+	       "commentaire='%s', ".
+	       "id_type_presta=%d, ".
+	       "id_compte=%d, ".
+	       "is_envoye=%d, ".
+	       "period='%s', ".
+	       "num_facture='%s'
                 WHERE id_facture='%d'",
-               $type_paiement, ($is_paye == "on")?1:0, ($is_paye == "on")?"date_paiement=now(), ":"date_paiement='$date_prev' , ", $ref_contrat, $extra_top, $extra_bottom, $accompte, $date_facture, $type_doc, $commentaire, $id_type_presta, $id_compte, ($is_envoye=="on")?1:0, $num_facture,
+               $type_paiement,
+	       ($is_paye == "on")?1:0,
+	       ($is_paye == "on")?"date_paiement=now(), ":"date_paiement='$date_prev' , ",
+	       $ref_contrat,
+	       $extra_top,
+	       $extra_bottom,
+	       $accompte,
+	       $date_facture,
+	       $type_doc,
+	       $commentaire,
+	       $id_type_presta,
+	       $id_compte,
+	       ($is_envoye=="on")?1:0,
+	       $period,
+	       $num_facture,
                $id_facture);
   mysql_query($q) or wf_mysqldie();
 
@@ -247,9 +194,10 @@ if ($action == "save_facture") {
   update_ca();
   regenerate($_POST['id_facture']);
 
-  update_transaction($_POST['id_facture'],$type_prev);
+  $Facture->updateTransaction($_POST['id_facture'],$type_prev);
 
   header("Location: edit_facture.php?id_facture=".$_POST['id_facture']);
+
 } elseif ($action == "delete_facture") {
   // delete_facture
   // Suppression d'une facture
@@ -271,30 +219,17 @@ if ($action == "save_facture") {
 } elseif ($action == "duplicate") {
   extract($_GET);
 
-  $result = mysql_query("SELECT id_client FROM webfinance_invoices WHERE id_facture=$id");
-  list($id_client) = mysql_fetch_array($result);
-  mysql_free_result($result);
+  $Invoice = new Facture();
+  $id_new_facture = $Invoice->duplicate($id);
 
-  mysql_query("INSERT INTO webfinance_invoices (id_client,date_created,date_facture) VALUES($id_client, now(), now())") or wf_mysqldie();
-  $result = mysql_query("SELECT id_facture FROM webfinance_invoices WHERE id_client=$id_client AND date_sub(now(), INTERVAL 2 SECOND)<date_created");
-  list($id_new_facture) = mysql_fetch_array($result);
-  mysql_free_result($result);
+  if($id_new_facture){
+    $Invoice->updateTransaction($id_new_facture);
+    header("Location: edit_facture.php?id_facture=$id_new_facture");
 
-  // On recopie les données de la facture
-  mysql_query("UPDATE webfinance_invoices as f1, webfinance_invoices as f2
-               SET
-                 f1.commentaire=f2.commentaire,
-                 f1.type_paiement=f2.type_paiement,
-                 f1.ref_contrat=f2.ref_contrat,
-                 f1.extra_top=f2.extra_top,
-                 f1.extra_bottom=f2.extra_bottom,
-                 f1.id_type_presta=f2.id_type_presta
-               WHERE f1.id_facture=$id_new_facture
-                 AND f2.id_facture=$id") or wf_mysqldie();
-
-  mysql_query("INSERT INTO webfinance_invoice_rows (id_facture,description,qtt,ordre,prix_ht) SELECT $id_new_facture,description,qtt,ordre,prix_ht FROM webfinance_invoice_rows WHERE id_facture=$id") or wf_mysqldie();
-
-  header("Location: edit_facture.php?id_facture=$id_new_facture");
+  } else {
+    //Error;
+    die("duplicate action failed");
+  }
   die();
 
   }else if($action == "send"){

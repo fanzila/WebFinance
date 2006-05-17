@@ -156,8 +156,11 @@ CREATE TABLE `webfinance_invoices` (
   `id_type_presta` int(11) default '1',
   `id_compte` int(11) NOT NULL default '34',
   `is_envoye` tinyint(4) default '0',
+  `period` enum('none','end of month','end of term','end of year') default 'none',
+  `last_run` timestamp NULL default '0000-00-00 00:00:00',
   PRIMARY KEY  (`id_facture`),
-  UNIQUE KEY `num_facture` (`num_facture`)
+  UNIQUE KEY `num_facture` (`num_facture`),
+  KEY `period` (`period`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=8 ;
 
 DROP TABLE IF EXISTS `webfinance_naf`;
