@@ -304,7 +304,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
      // -------------------------------------------------------------------------------------------------------------
 
 
-     $q = "SELECT t.id,t.amount,t.date,UNIX_TIMESTAMP(t.date) as ts_date, c.name,t.type,t.text,t.comment,c.color,t.id_category,t.file_name,t.id_account
+     $q = "SELECT t.id,t.amount,t.date,UNIX_TIMESTAMP(t.date) as ts_date, c.name,t.type,t.text,t.comment,c.color,t.id_category,t.file_name,t.id_account,t.id_invoice
            FROM webfinance_transactions AS t LEFT JOIN webfinance_categories AS c ON t.id_category=c.id
            HAVING $where_clause
            ORDER BY $order_clause";
@@ -391,7 +391,15 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
       <option value="asap" <? if("asap"==$tr->type) echo "selected";  ?> ><?= _('ASAP') ?></option>
    </select>
   </td>
-  <td width="100%" style="font-size: 9px;"><?=$tr->text?><br/><i><?=$tr->comment?></i>&nbsp;<?=$file?>&nbsp;<a href="expenses.php?id_transaction=<?=$tr->id?>">[expenses]</a></td>
+  <td width="100%" style="font-size: 9px;">
+    <?=$tr->text?><br/>
+    <i><?=$tr->comment?></i>&nbsp;<?=$file?>&nbsp;<a href="expenses.php?id_transaction=<?=$tr->id?>">[expenses]</a>
+<?php
+     if($tr->id_invoice>0){
+       printf('<a href="../prospection/edit_facture.php?id_facture=%d" >[invoice]</a>',$tr->id_invoice);
+     }
+?>
+  </td>
   <td style="text-align: right; font-weight: bold; background: $amount_color" nowrap><?=$fmt_amount?> &euro;</td>
   <td style="text-align: right; background: <?=$balance_color?>;" nowrap><?=$fmt_balance?> &euro;</td>
 </tr>
@@ -403,7 +411,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
 
 	 $globals_query_string=$GLOBALS['_SERVER']['QUERY_STRING'];
 
-       print <<<EOF
+print <<<EOF
  <input type="hidden" name="query" value="$globals_query_string" />
 
 <tr class="$class">
@@ -416,7 +424,13 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
   <td>$fmt_date</td>
   <td style="background: $tr->color; text-align: center;" nowrap><a href="?$filter_base&filter[shown_cat][$tr->id_category]='on'">$tr->name</a></td>
   <td style="text-align: center;">$tr->type</td>
-	 <td width="100%" style="font-size: 9px;">$tr->text<br/><i>$tr->comment</i>&nbsp;$file&nbsp;<a href="expenses.php?id_transaction=$tr->id">[expenses]</a></td>
+	 <td width="100%" style="font-size: 9px;">$tr->text<br/><i>$tr->comment</i>&nbsp;$file&nbsp;<a href="expenses.php?id_transaction=$tr->id">[expenses]</a>
+EOF;
+     if($tr->id_invoice>0){
+       printf('<a href="../prospection/edit_facture.php?id_facture=%d" >[invoice]</a>',$tr->id_invoice);
+     }
+print <<<EOF
+         </td>
   <td style="text-align: right; font-weight: bold; background: $amount_color" nowrap>$fmt_amount &euro;</td>
   <td style="text-align: right; background: $balance_color;" nowrap>$fmt_balance &euro;</td>
 </tr>
@@ -428,13 +442,13 @@ EOF;
      }
      ?>
      <tr class="row_even">
-       <td colspan="2">
+       <td colspan="3">
 <?
        if($count>1){
 	 if($view=="edit")
-	   printf("<input type='submit' value='%s'/>",_('Update'));
+	   printf("<input type='submit' value='%s'/><a href='?%s'>view</a>",_('Update'),preg_replace('/=edit/i','', $old_query_string));
 	 else
-	   printf("<a href='?view=edit&%s'>Edit</a>",$old_query_string);
+	   printf("<a href='?%s&view=edit'>Edit</a>",preg_replace('/&view*&/i','&', $old_query_string));
        }
 ?>
        </td>
