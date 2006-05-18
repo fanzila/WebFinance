@@ -101,6 +101,16 @@ class Facture {
       return false;
   }
 
+  function getTransaction($id_invoice){
+    $r = mysql_query("SELECT id FROM webfinance_transactions WHERE id_invoice=$id_invoice")
+      or wf_mysqldie();
+    if(mysql_num_rows($r)>0){
+      $tr=mysql_fetch_assoc($r);
+      return $tr['id'];
+    }else
+      return 0;
+  }
+
   function duplicate($id){
 
     if(is_numeric($id)){

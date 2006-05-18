@@ -296,7 +296,14 @@ function del_ligne() {
     </tr>
     <tr>
       <td colspan="2" class="liens_boutons">
-      <a href="fiche_prospect.php?id=<?= $facture->id_client ?>">Retour fiche client</a><br/>
+      <a href="fiche_prospect.php?id=<?= $facture->id_client ?>"><?=_('Retour fiche client')?></a><br/>
+<?php
+      $id_tr=$Facture->getTransaction($facture->id_facture);
+      if($id_tr>0){
+	#FIXME put a pop up here or ...
+	printf('<a href="">%s</a><br/>',_('Related Transaction'));
+      }
+?>
       <a href="save_facture.php?id=<?= $facture->id_facture ?>&action=duplicate">Dupliquer <?= $facture->type_doc ?></a><br/>
       <a href="send_facture.php?id=<?= $facture->id_facture ?>"><?= _('Send') ?> <?= $facture->type_doc ?></a><br/>
       <?php
