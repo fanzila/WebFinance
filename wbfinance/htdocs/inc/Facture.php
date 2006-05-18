@@ -200,10 +200,9 @@ class Facture {
 	  "text='%s', ".
 	  "amount='%s', ".
 	  "type='$type', ".
-	  "date='%s', ".
-	  "comment='%s' ".
+	  "date='%s' ".
 	  "WHERE id_invoice=%d";
-	$q = sprintf($query, $facture->id_compte, $id_category, $text, preg_replace("!,!", ".", $facture->total_ttc),  $date_transaction , $comment, $id_invoice );
+	$q = sprintf($query, $facture->id_compte, $id_category, $text, preg_replace("!,!", ".", $facture->total_ttc),  $date_transaction, $id_invoice );
 	mysql_query($q) or wf_mysqldie();
 
 
