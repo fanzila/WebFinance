@@ -300,7 +300,7 @@ function del_ligne() {
 <?php
       $id_tr=$Facture->getTransaction($facture->id_facture);
       if($id_tr>0){
-	printf('<a href="#" onclick="inpagePopup(event, this, 440, 350, \'../tresorerie/fiche_transaction.php?id=%d\');return false;" >%s</a><br/>',$id_tr, _('Related Transaction'));
+	printf('<a href="#" onclick="inpagePopup(event, this, 440, 350, \'../tresorerie/fiche_transaction.php?id=%d\');" >%s</a><br/>',$id_tr, _('Related Transaction'));
       }
 ?>
       <a href="save_facture.php?id=<?= $facture->id_facture ?>&action=duplicate">Dupliquer <?= $facture->type_doc ?></a><br/>

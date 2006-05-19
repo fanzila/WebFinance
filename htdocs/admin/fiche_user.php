@@ -48,7 +48,16 @@ function checkForm(f) {
   <td>Email</td><td><input type="text" size="50" name="email" value="<?=$user->email ?>" /></td>
 </tr>
 <tr>
-  <td clspan="2"><?=_('Password')?></td><td><input type="password" size="20" name="password"/></td>
+  <td><?=_('Password')?></td><td><input type="password" size="20" name="password"/></td>
+  <td>
+<?php
+    if($user->id_user>0){
+      echo _("let it empty if you don't want change");
+    }else{
+      echo _("autogenerate if empty");
+    }
+?>
+  </td>
 </tr>
 <tr>
   <td valign="top" colspan="3">
