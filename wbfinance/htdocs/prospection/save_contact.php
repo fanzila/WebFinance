@@ -31,11 +31,10 @@ $user_data=array(
 		 );
 
 
-
 if ($_POST['action'] == "create") {
 
-  if(strlen($user_data['passwd'])<1 or strlen($user_data['passwd'])>50 )
-    $user_data['passwd']=$User->randomPass;
+  if( empty($user_data['passwd']) )
+    $user_data['passwd']=$User->randomPass();
 
   $id_user = $User->createUser($user_data);
 

@@ -137,12 +137,21 @@ class User {
       $roles = '';
     }
 
-    $q = sprintf("UPDATE webfinance_users SET first_name='%s', last_name='%s', login='%s', email='%s', disabled=%d, role='%s',
+    if(empty($password)){
+      $q = sprintf("UPDATE webfinance_users SET first_name='%s', last_name='%s', login='%s', email='%s', disabled=%d, role='%s',
+                         modification_date=now()
+                  WHERE id_user=%d",
+		   $first_name, $last_name, $login, $email, ($disabled == "on")?1:0, $roles,
+		   $id_user );
+    }else{
+      $q = sprintf("UPDATE webfinance_users SET first_name='%s', last_name='%s', login='%s', email='%s', disabled=%d, role='%s',
                          password=md5('%s'), modification_date=now()
                   WHERE id_user=%d",
+		   $first_name, $last_name, $login, $email, ($disabled == "on")?1:0, $roles, $password,
+		   $id_user );
 
-		 $first_name, $last_name, $login, $email, ($disabled == "on")?1:0, ($admin == "on")?1:0, $roles, $password,
-		 $id_user );
+    }
+
     mysql_query($q) or wf_mysqldie();
     logmessage("Modified user:$id_user");
     $_SESSION['message'] = _("Data saved");
@@ -173,13 +182,15 @@ class User {
       return false;
     }
 
-    $q = sprintf("INSERT INTO webfinance_users (login, first_name, last_name, password, email, role, disabled,  modification_date, creation_date)
-                  VALUES('%s', '%s', '%s', md5('%s'), '%s','%s',  %d, now(), now() )",
-		 $login, $first_name, $last_name, $passwd, $email, $roles, ($disabled == "on")?1:0 );
+    if(empty($password))
+      $password=$this->randomPass();
+
+    $q = sprintf("INSERT INTO webfinance_users (login, first_name, last_name, password, email, role, disabled,  modification_date, creation_date) ".
+		 "VALUES('%s', '%s', '%s', md5('%s'), '%s','%s',  %d, now(), now() )",
+		 $login, $first_name, $last_name, $password, $email, $roles, ($disabled == "on")?1:0 );
     mysql_query($q) or wf_mysqldie();
-    $result = mysql_query("SELECT id_user FROM webfinance_users WHERE creation_date>date_sub(now(), INTERVAL 1 SECOND)");
-    list($new_id_user) = mysql_fetch_array($result);
-    mysql_free_result($result);
+
+    $new_id_user=mysql_insert_id();
 
     logmessage("Created new user:$new_id_user");
     $_SESSION['message'] = _("User added");
