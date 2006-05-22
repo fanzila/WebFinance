@@ -19,9 +19,9 @@ include("nav.php");
 
 <table style="border: solid 1px black;" width="100%" border="0" cellspacing="0" cellpadding="5">
 <tr class="row_header">
- <td>Heure</td>
- <td>&Eacute;v&eacute;nements</Td>
- <td>Qui</td>
+  <td><?=_('Hour') ?></td>
+  <td><?= _('Events') ?></Td>
+  <td><?= _('Who') ?></td>
 </tr>
 <?php
 $result = mysql_query("SELECT id_userlog,log,date,id_user,date_format(date,'%d/%m/%Y %k:%i') as nice_date FROM webfinance_userlog ORDER BY date DESC");

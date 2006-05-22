@@ -52,7 +52,7 @@ function checkForm(f) {
   <td>
 <?php
     if($user->id_user>0){
-      echo _("let it empty if you don't want change");
+      echo _("let it empty if you don't want to change");
     }else{
       echo _("autogenerate if empty");
     }

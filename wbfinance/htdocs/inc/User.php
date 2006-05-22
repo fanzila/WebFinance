@@ -179,7 +179,7 @@ class User {
 
     if($this->existsLogin($login)){
       $_SESSION['message'] =  _("Sorry, this user already exists!");
-      return false;
+      return 0;
     }
 
     if(empty($password))

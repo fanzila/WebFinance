@@ -23,7 +23,7 @@ $user_data=array(
 		 "login"=>$_POST['login'],
 		 "first_name"=>$_POST['prenom'],
 		 "last_name"=>$_POST['nom'],
-		 "passwd"=>$_POST['passwd'],
+		 "password"=>$_POST['password'],
 		 "email"=>$_POST['email'],
 		 "role"=>array("client"),
 		 "disabled"=>"off",
@@ -33,8 +33,8 @@ $user_data=array(
 
 if ($_POST['action'] == "create") {
 
-  if( empty($user_data['passwd']) )
-    $user_data['passwd']=$User->randomPass();
+  if( empty($user_data['password']) )
+    $user_data['password']=$User->randomPass();
 
   $id_user = $User->createUser($user_data);
 
@@ -48,11 +48,12 @@ if ($_POST['action'] == "create") {
   $_SESSION['tmp_message'] .= "<br/>"._("Contact added");
 
   if(isset($_POST['send_info'])){
-    $User->sendInfo($id_user,$user_data['passwd']);
+    $User->sendInfo($id_user,$user_data['password']);
     $_SESSION['tmp_message'] .= "<br/>".$_SESSION['message'];
   }
   $_SESSION['message']=$_SESSION['tmp_message'];
   $_SESSION['tmp_message']="";
+
 
 } elseif ($_POST['action'] == "save") {
 
