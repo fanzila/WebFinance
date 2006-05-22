@@ -406,5 +406,13 @@ ALTER TABLE `webfinance_personne`
 -- ALTER TABLE `webfinance_transactions`
 --   ADD CONSTRAINT `webfinance_transactions_ibfk_1` FOREIGN KEY (`id_account`) REFERENCES `webfinance_accounts` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+-- 
+-- Constraints for table `webfinance_invoice_rows`
+-- 
+ALTER TABLE `webfinance_invoice_rows`
+  ADD CONSTRAINT `webfinance_invoice_rows_ibfk_1` FOREIGN KEY (`id_facture`) REFERENCES `webfinance_invoices` (`id_facture`) ON DELETE CASCADE;
+
+
+
 -- vim: fileencoding=utf8
 -- EOF
