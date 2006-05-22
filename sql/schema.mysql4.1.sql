@@ -194,7 +194,8 @@ CREATE TABLE `webfinance_personne` (
   `note` blob,
   `client` int(11) NOT NULL default '-1',
   PRIMARY KEY  (`id_personne`),
-  KEY `pfk_client` (`client`)
+  KEY `pfk_client` (`client`),
+  KEY `pfk_user` (`id_user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
 
 DROP TABLE IF EXISTS `webfinance_pref`;
@@ -402,7 +403,7 @@ INSERT INTO `webfinance_roles` (`id_role`, `name`, `description`) VALUES (7, 'ma
 -- ALTER TABLE `webfinance_dns`
 --   ADD CONSTRAINT `pfk_domain` FOREIGN KEY (`id_domain`) REFERENCES `webfinance_domain` (`id_domain`) ON DELETE CASCADE;
 ALTER TABLE `webfinance_personne`
-  ADD CONSTRAINT `pfk_client` FOREIGN KEY (`client`) REFERENCES `webfinance_clients` (`id_client`);
+  ADD CONSTRAINT `pfk_client` FOREIGN KEY (`client`) REFERENCES `webfinance_clients` (`id_client`) ON DELETE CASCADE;
 -- ALTER TABLE `webfinance_transactions`
 --   ADD CONSTRAINT `webfinance_transactions_ibfk_1` FOREIGN KEY (`id_account`) REFERENCES `webfinance_accounts` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 

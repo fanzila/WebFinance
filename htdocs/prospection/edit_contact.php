@@ -63,7 +63,7 @@ if (isset($_GET['id_personne'])) {
   <td width="50"><?=_('Login')?></td><td><input type="text" width: 145px;" name="login" value="<?= $personne->login ?>" /></td>
 </tr>
 <tr>
- <td width='50'><?=_('Password')?></td><td><input type='password' style='width: 145px;' name='passwd' /></td>
+ <td width='50'><?=_('Password')?></td><td><input type='password' style='width: 145px;' name='password' /></td>
 </tr>
 <tr>
   <td width="70"><?=_('Send info')?></td><td><input type="checkbox" name="send_info"/></td>
