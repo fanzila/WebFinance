@@ -12,7 +12,7 @@
 <?php
 
 //$Id$
-
+  //echo "<pre>"; print_r($_POST);
 $Facture = new Facture();
 if (is_numeric($_POST['id_facture'])) {
   $facture = $Facture->getInfos($_POST['id_facture']);
@@ -168,7 +168,7 @@ if ($action == "save_facture") {
     if (preg_match("/^line_([0-9]+)$/", $k, $matches)) {
       $q = sprintf("UPDATE webfinance_invoice_rows SET description='%s', prix_ht='%s', qtt='%s' WHERE id_facture_ligne=%d",
                    $_POST['line_'.$matches[1]],
-                   $_POST['prix_ht_'.$matches[1]],
+                   str_replace(' ','',$_POST['prix_ht_'.$matches[1]]),
                    $_POST['qtt_'.$matches[1]],
                    $matches[1] );
       mysql_query($q) or wf_mysqldie();
