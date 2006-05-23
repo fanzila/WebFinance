@@ -22,6 +22,7 @@ if ($_GET['action'] == '_new') {
 //list($_GET['id']) = mysql_fetch_array($result);
   $_GET['id'] = mysql_insert_id();
   $_SESSION['message']= _('New customer created');
+  logmessage(_('Create custumer')." client:".$_GET['id'] );
 }
 
 if (!preg_match("/^[0-9]+$/", $_GET['id'])) {
@@ -150,14 +151,17 @@ var onglet_shown='<?= $shown_tab ?>';
       <?php
         // Affichage des factures existantes pour ce client
         // Affichage par année, avec une séparation lisible
-        $result = mysql_query("SELECT YEAR(f.date_facture) as annee,
-                                 SUM( IF(f.type_doc='facture', fl.qtt*fl.prix_ht, 0)) as ca_ht_total,
-                                 SUM( IF(f.type_doc='facture', IF(f.is_paye=0, fl.qtt*fl.prix_ht, 0), 0)) as du_ht_total
-                               FROM webfinance_invoices f, webfinance_invoice_rows fl
-                               WHERE f.id_client=".$Client->id."
-                               AND f.id_facture=fl.id_facture
-                               GROUP BY YEAR(date_facture)
-                               ORDER BY f.date_facture DESC") or wf_mysqldie();
+			    $q="SELECT YEAR(f.date_facture) as annee, ".
+			    "SUM( IF(f.type_doc='facture', ".
+			    "fl.qtt*fl.prix_ht, 0)) as ca_ht_total, ".
+			    "SUM( IF(f.type_doc='facture', IF(f.is_paye=0, fl.qtt*fl.prix_ht, 0), 0)) as du_ht_total ".
+			    "FROM webfinance_invoices f LEFT JOIN webfinance_invoice_rows fl ON f.id_facture=fl.id_facture ".
+			    "WHERE f.id_client=$Client->id ".
+			    "GROUP BY YEAR(date_facture) ".
+			    "ORDER BY f.date_facture DESC";
+
+        $result = mysql_query($q) or wf_mysqldie();
+
         $Facture = new Facture();
         while ($year = mysql_fetch_object($result)) {
           printf('<tr><td style="border-bottom: solid 1px #777;" colspan="5"><b style="font-size: 16px;">%s</b> - <b><i>Encours %s&euro; HT</i></b> - <i>%s&euro; HT</i></td></tr>', $year->annee, number_format($year->du_ht_total, 2, ',', ' '), number_format($year->ca_ht_total, 2, ',', ' '));
@@ -298,28 +302,26 @@ if ($has_invoices) {
   <td><?= _('Who') ?></td>
 </tr>
 <?php
-$result = mysql_query("SELECT id_userlog,log,date,id_user,date_format(date,'%d/%m/%Y %k:%i') as nice_date FROM webfinance_userlog ORDER BY date DESC");
+$result = mysql_query("SELECT id_userlog,log,date, wf_userlog.id_user,date_format(date,'%d/%m/%Y %k:%i') as nice_date, login ".
+		      "FROM webfinance_userlog wf_userlog, webfinance_users wf_users WHERE wf_users.id_user=wf_userlog.id_user  ORDER BY date DESC")
+  or wf_mysqldie();
+
 $count=1;
 while ($log = mysql_fetch_object($result)) {
-  $class = ($count%2)==0?"odd":"even";
-  $result2 = mysql_query("SELECT login FROM webfinance_users WHERE id_user=".$log->id_user);
-  list($login) = mysql_fetch_array($result2);
-  mysql_free_result($result2);
-
-
-  //  if(){
+  if(preg_match("/client:".$_GET['id']."/",$log->log)){
+    $class = ($count%2)==0?"odd":"even";
     $message = parselogline($log->log);
 
     print <<<EOF
       <tr class="row_$class">
       <td>$log->nice_date</td>
       <td>$message</td>
-      <td>$login</td>
+      <td>$log->login</td>
       </tr>
 EOF;
-    //  }
-  $count++;
 
+    $count++;
+  }
 
 }
 mysql_free_result($result);

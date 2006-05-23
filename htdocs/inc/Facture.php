@@ -33,6 +33,13 @@ class Facture {
     return $total;
   }
 
+  function exists($id_facture){
+    $result = mysql_query("SELECT count(*) FROM webfinance_invoices WHERE id_facture=$id_facture") or wf_mysqldie();
+    list($exists) = mysql_fetch_array($result);
+    return $exists;
+  }
+
+
   function getInfos($id_facture) {
     if (!is_numeric($id_facture)) {
       die("Facture:getInfos no id");
