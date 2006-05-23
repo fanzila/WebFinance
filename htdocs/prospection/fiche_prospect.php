@@ -17,9 +17,11 @@ include("../inc/main.php");
 $roles = "manager,employee,accounting";
 
 if ($_GET['action'] == '_new') {
-  mysql_query("INSERT INTO webfinance_clients (nom,date_created) VALUES('Nouvelle Entreprise', now())");
-  $result = mysql_query("SELECT id_client FROM webfinance_clients WHERE date_sub(now(), INTERVAL 1 SECOND)<=date_created");
-  list($_GET['id']) = mysql_fetch_array($result);
+  mysql_query("INSERT INTO webfinance_clients (nom,date_created) VALUES('Nouvelle Entreprise', now())") or wf_mysqldie();
+//$result = mysql_query("SELECT id_client FROM webfinance_clients WHERE date_sub(now(), INTERVAL 1 SECOND)<=date_created");
+//list($_GET['id']) = mysql_fetch_array($result);
+  $_GET['id'] = mysql_insert_id();
+  $_SESSION['message']= _('New customer created');
 }
 
 if (!preg_match("/^[0-9]+$/", $_GET['id'])) {
@@ -109,10 +111,11 @@ var onglet_shown='<?= $shown_tab ?>';
   <td id="handle_log" onclick="focusOnglet('log');"><?= _('Flollow&nbsp;up') ?></td>
   <td id="handle_other" onclick="focusOnglet('other');"><?= _('Miscellaneous') ?></td>
   <td id="handle_graph" onclick="focusOnglet('graph');"><?= _('Graphics') ?></td>
+  <td id="handle_event" onclick="focusOnglet('event');"><?= _('Events') ?></td>
   <td style="background: none;" width="100%"></td>
 </tr>
 <tr style="vertical-align: top;">
-<td colspan="6" class="onglet_holder">
+<td colspan="7" class="onglet_holder">
 
 <div id="tab_contacts" style="display: none;">
 
@@ -286,6 +289,46 @@ if ($has_invoices) {
 }
 ?>
 </div>
+
+<div style="text-align: center; display: none;" id="tab_event">
+<table style="border: solid 1px black;" width="100%" border="0" cellspacing="0" cellpadding="5">
+<tr class="row_header">
+  <td><?=_('Hour') ?></td>
+  <td><?= _('Events') ?></Td>
+  <td><?= _('Who') ?></td>
+</tr>
+<?php
+$result = mysql_query("SELECT id_userlog,log,date,id_user,date_format(date,'%d/%m/%Y %k:%i') as nice_date FROM webfinance_userlog ORDER BY date DESC");
+$count=1;
+while ($log = mysql_fetch_object($result)) {
+  $class = ($count%2)==0?"odd":"even";
+  $result2 = mysql_query("SELECT login FROM webfinance_users WHERE id_user=".$log->id_user);
+  list($login) = mysql_fetch_array($result2);
+  mysql_free_result($result2);
+
+
+  //  if(){
+    $message = parselogline($log->log);
+
+    print <<<EOF
+      <tr class="row_$class">
+      <td>$log->nice_date</td>
+      <td>$message</td>
+      <td>$login</td>
+      </tr>
+EOF;
+    //  }
+  $count++;
+
+
+}
+mysql_free_result($result);
+?>
+</table>
+
+
+</div>
+
 
 <? // FIN ONGLETS ?>
 </td>

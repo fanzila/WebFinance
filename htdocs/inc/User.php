@@ -153,8 +153,9 @@ class User {
     }
 
     mysql_query($q) or wf_mysqldie();
-    logmessage("Modified user:$id_user");
+    logmessage("Modified user:$id_user ($last_name $first_name)");
     $_SESSION['message'] = _("Data saved");
+    return $id_user;
   }
 
   function existsLogin($login){
@@ -192,7 +193,7 @@ class User {
 
     $new_id_user=mysql_insert_id();
 
-    logmessage("Created new user:$new_id_user");
+    logmessage("Created new user user:$new_id_user ($last_name $first_name)");
     $_SESSION['message'] = _("User added");
 
     return $new_id_user;

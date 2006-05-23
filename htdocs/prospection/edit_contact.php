@@ -16,19 +16,20 @@ include("../top_popup.php");
 
 if ((isset($_GET['id_client'])) && (!preg_match("/^[0-9]+$/", $_GET['id_client']))) {
   die("Wrong parameters");
-} else {
 }
+
 if (isset($_GET['id_personne'])) {
   $action = "save";
 
   $result = mysql_query("SELECT id_personne,id_user,nom,prenom,email,tel,mobile,client,fonction,note FROM webfinance_personne WHERE id_personne=".$_GET['id_personne'])
     or wf_mysqldie();
   $personne = mysql_fetch_object($result);
-  mysql_free_result($result);
 
   $User=new User();
   $user=$User->getInfo($personne->id_user);
   $personne->login=$user->login;
+
+  mysql_free_result($result);
 
 } else {
   $action = "create";
@@ -72,6 +73,7 @@ if (isset($_GET['id_personne'])) {
   }else{
  ?>
 <tr>
+  <input type="hidden" name="login" value="<?= $personne->login ?>" >
   <td width="50"><?=_('Login')?></td><td width="145"><?= $personne->login ?></td>
 </tr>
 <?
