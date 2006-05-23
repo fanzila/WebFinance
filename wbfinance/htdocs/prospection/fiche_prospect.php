@@ -302,13 +302,18 @@ if ($has_invoices) {
   <td><?= _('Who') ?></td>
 </tr>
 <?php
+  $result = mysql_query("SELECT id_user FROM webfinance_personne WHERE client=".$_GET['id'])
+   or wf_mysqldie();
+while( list($id) = mysql_fetch_array($result))
+  $id_users[]=$id;
+
 $result = mysql_query("SELECT id_userlog,log,date, wf_userlog.id_user,date_format(date,'%d/%m/%Y %k:%i') as nice_date, login ".
 		      "FROM webfinance_userlog wf_userlog, webfinance_users wf_users WHERE wf_users.id_user=wf_userlog.id_user  ORDER BY date DESC")
   or wf_mysqldie();
 
 $count=1;
 while ($log = mysql_fetch_object($result)) {
-  if(preg_match("/client:".$_GET['id']."/",$log->log)){
+  if(preg_match("/client:".$_GET['id']."/",$log->log) OR in_array($log->id_user,$id_users)){
     $class = ($count%2)==0?"odd":"even";
     $message = parselogline($log->log);
 
