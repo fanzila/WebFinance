@@ -240,6 +240,9 @@ if ($action == "save_facture") {
   extract($_POST);
   require("/usr/share/php/libphp-phpmailer/class.phpmailer.php");
 
+  $mail_addresses = explode(',',$mails2);
+  $mails = array_merge($mail_addresses,$mails);
+
   if(count($mails)>0){
 
     //récupérer les info sur la société
@@ -281,14 +284,12 @@ if ($action == "save_facture") {
     if(!$mail->Send()){
       echo _("Invoice was not sent");
       echo "Mailer Error: " . $mail->ErrorInfo;
-    }
-    else{
+    } else{
       //mettre à jour l'état de la facture, update sql
       mysql_query("UPDATE webfinance_invoices SET is_envoye=1")
 	or wf_mysqldie();
 
-      logmessage(_("Send invoice")." #$invoice->num_facture fa:$id");
-
+      logmessage(_("Send invoice")." #$invoice->num_facture fa:$id client:$invoice->id_client");
     }
     header("Location: edit_facture.php?id_facture=$id");
     die();

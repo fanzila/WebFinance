@@ -89,6 +89,7 @@ $invoice = $Facture->getInfos($id);
       printf("<input type='checkbox' name='mails[]' checked value='%s' >%s < %s ><br/>",$mail, $name, $mail );
   }
   ?>
+    <input type='text' name='mails2' style='width: 400px;'>
    </td>
   </tr>
   <tr>
