@@ -302,31 +302,45 @@ if ($has_invoices) {
   <td><?= _('Who') ?></td>
 </tr>
 <?php
-  $result = mysql_query("SELECT id_user FROM webfinance_personne WHERE client=".$_GET['id'])
-   or wf_mysqldie();
-while( list($id) = mysql_fetch_array($result))
-  $id_users[]=$id;
+  //client
+  $clause=" log REGEXP 'client:".$_GET['id']."$|client:".$_GET['id']." ' OR";
 
-$result = mysql_query("SELECT id_userlog,log,date, wf_userlog.id_user,date_format(date,'%d/%m/%Y %k:%i') as nice_date, login ".
-		      "FROM webfinance_userlog wf_userlog, webfinance_users wf_users WHERE wf_users.id_user=wf_userlog.id_user  ORDER BY date DESC")
+//user
+  $result = mysql_query("SELECT id_user FROM webfinance_personne WHERE client=".$_GET['id'])
+  or wf_mysqldie();
+while( list($id) = mysql_fetch_array($result))
+  $clause .=" wf_userlog.id_user=$id OR log REGEXP 'user:$id$|user:$id ' OR";
+
+//invoices
+$result = mysql_query("SELECT id_facture FROM webfinance_invoices WHERE id_client=".$_GET['id'])
+  or wf_mysqldie();
+while( list($id) = mysql_fetch_array($result))
+  $clause .=" log REGEXP 'fa:$id$|fa:$id ' OR";
+
+$clause = preg_replace('/OR$/','',$clause);
+
+//echo $clause;
+
+$result = mysql_query("SELECT id_userlog, log, date, wf_userlog.id_user, date_format(date,'%d/%m/%Y %k:%i') as nice_date, login ".
+		      "FROM webfinance_userlog wf_userlog, webfinance_users wf_users WHERE wf_users.id_user=wf_userlog.id_user ".
+		      "AND ($clause) ".
+		      "ORDER BY date DESC")
   or wf_mysqldie();
 
 $count=1;
 while ($log = mysql_fetch_object($result)) {
-  if(preg_match("/client:".$_GET['id']."/",$log->log) OR in_array($log->id_user,$id_users)){
-    $class = ($count%2)==0?"odd":"even";
-    $message = parselogline($log->log);
+  $class = ($count%2)==0?"odd":"even";
+  $message = parselogline($log->log);
 
-    print <<<EOF
-      <tr class="row_$class">
-      <td>$log->nice_date</td>
-      <td>$message</td>
-      <td>$log->login</td>
-      </tr>
+  print <<<EOF
+    <tr class="row_$class">
+    <td>$log->nice_date</td>
+    <td>$message</td>
+    <td>$log->login</td>
+    </tr>
 EOF;
 
     $count++;
-  }
 
 }
 mysql_free_result($result);
