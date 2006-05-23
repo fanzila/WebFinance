@@ -30,7 +30,6 @@ $user_data=array(
 		 "admin"=>"off"
 		 );
 
-
 if ($_POST['action'] == "create") {
 
   if( empty($user_data['password']) )
@@ -53,13 +52,15 @@ if ($_POST['action'] == "create") {
   }
   $_SESSION['message']=$_SESSION['tmp_message'];
   $_SESSION['tmp_message']="";
-
+  logmessage(_('Add contact')." ".$_POST['nom']." ".$_POST['prenom']. " ( user:$id_user - client:".$_POST['client'].")"  );
 
 } elseif ($_POST['action'] == "save") {
 
-  $result = mysql_query("SELECT count(id_user) FROM webfinance_users WHERE id_user=".$_POST['id_user']) or wf_mysqldie();
+  //  echo "<pre/>"; print_r($user_data); exit;
+
+  $result = mysql_query("SELECT count(*) FROM webfinance_users WHERE id_user=".$_POST['id_user']) or wf_mysqldie();
   list($exists) = mysql_fetch_array($result);
-  if(!$exists)
+  if($exists<1)
     $_POST['id_user'] = $User->createUser($user_data);
   else
     $User->saveData($user_data);
@@ -71,8 +72,18 @@ if ($_POST['action'] == "create") {
 
   $_SESSION['message'] .= " <br/>"._("Contact updated");
 
+  $res=mysql_query("SELECT client,id_user FROM webfinance_personne WHERE id_personne=".$_POST['id_personne']);
+  list($client)=mysql_fetch_array($res);
+
+  logmessage(_('Update contact')." ".$_POST['nom']." ".$_POST['prenom']." (user:".$_POST['id_user']."  - client:$client)" );
+
 } elseif ($_POST['action'] == "delete") {
   $User->delete($_POST['id_user']);
+
+  $res=mysql_query("SELECT nom, prenom, client FROM webfinance_personne WHERE id_personne=".$_POST['id_personne']);
+  list($nom, $prenom,$client)=mysql_fetch_array($res);
+  logmessage(_('Delete contact')." ($nom $prenom ) client:$client " );
+
   mysql_query("DELETE FROM webfinance_personne WHERE id_personne=".$_POST['id_personne']);
 
   $_SESSION['message'] .= " <br/>"._("Contact deleted");
