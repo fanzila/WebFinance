@@ -38,6 +38,9 @@ $q = sprintf("UPDATE webfinance_clients SET nom='%s',addr1='%s',addr2='%s',addr3
              $id_client );
 
 mysql_query($q) or wf_mysqldie();
+
+logmessage(_('Update custumer')." client:$id_client ($nom)");
+
 header("Location: fiche_prospect.php?id=$id_client&onglet=".$focused_onglet);
 
 ?>

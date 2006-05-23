@@ -160,7 +160,8 @@ CREATE TABLE `webfinance_invoices` (
   `last_run` timestamp NULL default '0000-00-00 00:00:00',
   PRIMARY KEY  (`id_facture`),
   UNIQUE KEY `num_facture` (`num_facture`),
-  KEY `period` (`period`)
+  KEY `period` (`period`),
+  KEY `id_client` (`id_client`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=8 ;
 
 DROP TABLE IF EXISTS `webfinance_naf`;
@@ -256,7 +257,7 @@ CREATE TABLE `webfinance_transactions` (
   KEY `date` (`date`),
   KEY `id_invoice` (`id_invoice`)
 --  UNIQUE `unique_transaction` (`id_account`, `amount`, `type`, `date`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=52 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
 
 DROP TABLE IF EXISTS `webfinance_type_presta`;
 CREATE TABLE `webfinance_type_presta` (
@@ -413,6 +414,11 @@ ALTER TABLE `webfinance_personne`
 ALTER TABLE `webfinance_invoice_rows`
   ADD CONSTRAINT `webfinance_invoice_rows_ibfk_1` FOREIGN KEY (`id_facture`) REFERENCES `webfinance_invoices` (`id_facture`) ON DELETE CASCADE;
 
+-- 
+-- Constraints for table `webfinance_invoices`
+-- 
+ALTER TABLE `webfinance_invoices`
+  ADD CONSTRAINT `webfinance_invoices_ibfk_1` FOREIGN KEY (`id_client`) REFERENCES `webfinance_clients` (`id_client`) ON DELETE CASCADE;
 
 
 -- vim: fileencoding=utf8

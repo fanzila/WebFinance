@@ -153,7 +153,7 @@ if ($action == "save_facture") {
                $id_facture);
   mysql_query($q) or wf_mysqldie();
 
-  logmessage(_("Save invoice")." (#$num_facture) fa:".$_POST['id_facture']);
+  logmessage(_("Save invoice")." (#$num_facture) fa:".$_POST['id_facture']." client:$facture->id_client");
 
   if ((is_numeric($_POST['prix_ht_new'])) && (is_numeric($_POST['qtt_new'])) && ($_POST['prix_ht_new'] > 0) && !empty($_POST['line_new'])) {
     // Enregistrement d'une nouvelle ligne de facturation pour une facture.
@@ -199,21 +199,24 @@ if ($action == "save_facture") {
   header("Location: edit_facture.php?id_facture=".$_POST['id_facture']);
 
 } elseif ($action == "delete_facture") {
+  $id_client="";
+
   // delete_facture
   // Suppression d'une facture
-  $result = mysql_query("SELECT id_client, num_facture FROM webfinance_invoices WHERE id_facture=".$_GET['id_facture']);
-  list($id_client,$num_facture) = mysql_fetch_array($result);
-  mysql_free_result($result);
+  $Facture = new Facture();
+  if (is_numeric($_GET['id_facture']) AND $Facture->exists($_GET['id_facture'])) {
+    $facture = $Facture->getInfos($_GET['id_facture']);
 
-  logmessage(_("Delete invoice")." #$num_facture for client:$id_client");
-  logmessage(_("Delete invoice")." (#$num_facture) fa:".$_GET['id_facture'] );
+    logmessage(_("Delete invoice")." #$facture->num_facture for client:$facture->id_client");
+    $id_client=$facture->id_client;
 
-  mysql_query("DELETE FROM webfinance_invoices WHERE id_facture=".$_GET['id_facture']);
-  mysql_query("DELETE FROM webfinance_invoice_rows WHERE id_facture=".$_GET['id_facture']);
-  mysql_query("DELETE FROM webfinance_transactions WHERE id_invoice=".$_GET['id_facture']." AND type<>'real'");
+    mysql_query("DELETE FROM webfinance_invoices WHERE id_facture=".$_GET['id_facture']);
+    mysql_query("DELETE FROM webfinance_invoice_rows WHERE id_facture=".$_GET['id_facture']);
+    mysql_query("DELETE FROM webfinance_transactions WHERE id_invoice=".$_GET['id_facture']." AND type<>'real'");
 
-  update_ca();
+    update_ca();
 
+  }
   header("Location: fiche_prospect.php?id=$id_client");
 
 } elseif ($action == "duplicate") {
