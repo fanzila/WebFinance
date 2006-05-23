@@ -2,6 +2,7 @@
 @import url('../onglets.css');
 @import url('../fiche_prospect.css');
 @import url('../calendar.css');
+@import url('../magictree.css');
 
 body {
 font-family: arial, helvetica, sans serif;
