@@ -40,14 +40,14 @@ $data->email = $_POST['email'];
 $data->cp = $_POST['cp'];
 $data->ville = stripslashes($_POST['ville']);
 $data->date_creation = $_POST['date_creation'];
-$data->invoice_top_line1 = $_POST['invoice_top_line1'];
-$data->invoice_top_line2 = $_POST['invoice_top_line2'];
+$data->invoice_top_line1 = stripslashes($_POST['invoice_top_line1']);
+$data->invoice_top_line2 = stripslashes($_POST['invoice_top_line2']);
 
 $data = base64_encode(serialize($data));
 mysql_query("INSERT INTO webfinance_pref (type_pref, value) VALUES('societe', '$data');") or wf_mysqldie();
 
 // Enregistrement compte(s) banquaire(s)
-mysql_query("DELETE FROM webfinance_pref WHERE type_pref='rib'");
+// mysql_query("DELETE FROM webfinance_pref WHERE type_pref='rib'");
 foreach ($_POST as $n=>$v) {
   if (preg_match("/^banque_([0-9]+)$/", $n, $matches)) {
     $num = $matches[1];
@@ -64,7 +64,9 @@ foreach ($_POST as $n=>$v) {
 
     if ($rib->compte != "") {
       $rib = base64_encode(serialize($rib));
-      mysql_query("INSERT INTO webfinance_pref (type_pref, value) VALUES('rib', '$rib')") or wf_mysqldie();
+      mysql_query("UPDATE webfinance_pref SET value='$rib' WHERE type_pref='rib' AND id_pref=$num") or wf_mysqldie();
+    } else {
+      mysql_query("DELETE FROM webfinance_pref WHERE type_pref='rib' AND id_pref=$num") or wf_mysqldie();
     }
   }
 }
