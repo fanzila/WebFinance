@@ -299,14 +299,14 @@ function del_ligne() {
     <tr>
       <td colspan="2" class="liens_boutons">
       <a href="fiche_prospect.php?id=<?= $facture->id_client ?>"><?=_('Retour fiche client')?></a><br/>
-<?php
-      $id_tr=$Facture->getTransaction($facture->id_facture);
-      if($id_tr>0){
-	printf('<a href="#" onclick="inpagePopup(event, this, 440, 350, \'../tresorerie/fiche_transaction.php?id=%d\');" >%s</a><br/>',$id_tr, _('Related Transaction'));
-      }
-?>
       <a href="save_facture.php?id=<?= $facture->id_facture ?>&action=duplicate">Dupliquer <?= $facture->type_doc ?></a><br/>
       <a href="send_facture.php?id=<?= $facture->id_facture ?>"><?= _('Send') ?> <?= $facture->type_doc ?></a><br/>
+<?php
+      $tr_ids = $Facture->getTransactions($facture->id_facture);
+      foreach($tr_ids as $id_tr=>$text){
+	printf('<a href="#" title="%s" onclick="inpagePopup(event, this, 440, 350, \'../tresorerie/fiche_transaction.php?id=%d\');" >%s #%d</a><br/>',$text, $id_tr, _('Transaction'),$id_tr);
+      }
+?>
       <?php
         printf('<a href="gen_facture.php?id=%d">PDF</a><br/>', $facture->id_facture);
         if (! $facture->immuable)

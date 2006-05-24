@@ -108,14 +108,12 @@ class Facture {
       return false;
   }
 
-  function getTransaction($id_invoice){
-    $r = mysql_query("SELECT id FROM webfinance_transactions WHERE id_invoice=$id_invoice")
-      or wf_mysqldie();
-    if(mysql_num_rows($r)>0){
-      $tr=mysql_fetch_assoc($r);
-      return $tr['id'];
-    }else
-      return 0;
+  function getTransactions($id_invoice){
+    $trs=array();
+    $q = mysql_query("SELECT id , text FROM webfinance_transactions WHERE id_invoice=$id_invoice") or wf_mysqldie();
+    while(list($id_tr, $text) = mysql_fetch_array($q))
+      $trs[$id_tr] = $text;
+    return $trs;
   }
 
   function duplicate($id){
