@@ -15,6 +15,7 @@ if (!is_numeric($_GET['id_facture'])) {
   // Création de facture
   mysql_query("INSERT INTO webfinance_invoices (date_created,date_facture,id_client) values(now(), now(), ".$_GET['id_client'].")") or wf_mysqldie();
   $id_facture=mysql_insert_id();
+  $_SESSION['message'] = _('Invoice created');
   logmessage(_('Create invoice')." for client:".$_GET['id_client'] );
   header("Location: edit_facture.php?id_facture=".$id_facture);
   die();
@@ -151,6 +152,8 @@ function del_ligne() {
 }
 
 </script>
+
+<?= $_SESSION['message']; $_SESSION['message']=""; ?>
 
 <map name="facture_row_handle">
 <!-- #$-:Image Map file created by GIMP Imagemap Plugin -->

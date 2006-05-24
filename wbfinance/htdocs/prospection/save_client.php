@@ -23,11 +23,34 @@ if (!$User->isAuthorized("admin,manager")) {
 // die();
 
 if ($_GET['action'] == "delete") {
-  mysql_query("DELETE FROM webfinance_clients WHERE id_client=".$_GET['id']) or wf_mysqldie();
-  $_SESSION['message'] = _('The company, contacts, and invoices has been deleted from the database');
+
+  $Client = new Client($_GET['id']);
+
+  if($Client->exists()){
+
+    $q = mysql_query("SELECT id_facture FROM webfinance_invoices WHERE id_client=".$_GET['id']) or wf_mysqldie();
+    $clause= "WHERE (";
+
+    while(list($id_inv) = mysql_fetch_array($q) )
+      $clause .= " id_invoice=$id_inv OR";
+
+    $clause = preg_replace('/OR$/',") AND type<>'real'",$clause);
+
+    if(mysql_num_rows($q)>0)
+      mysql_query("DELETE FROM webfinance_transactions $clause") or wf_mysqldie();
+    mysql_free_result($q);
+
+    mysql_query("DELETE FROM webfinance_clients WHERE id_client=".$_GET['id']) or wf_mysqldie();
+
+    $_SESSION['message'] = _('The company and related objects have been deleted');
+
+  }else
+    $_SESSION['message'] = _("This client doesn't exist");
+
   header("Location: /prospection/");
   die();
-}
+
+ }
 
 extract($_POST);
 $q = sprintf("UPDATE webfinance_clients SET nom='%s',addr1='%s',addr2='%s',addr3='%s',cp='%s',ville='%s',pays='%s',
@@ -39,6 +62,7 @@ $q = sprintf("UPDATE webfinance_clients SET nom='%s',addr1='%s',addr2='%s',addr3
 
 mysql_query($q) or wf_mysqldie();
 
+$_SESSION['message'] = _('Update custumer');
 logmessage(_('Update custumer')." client:$id_client ($nom)");
 
 header("Location: fiche_prospect.php?id=$id_client&onglet=".$focused_onglet);

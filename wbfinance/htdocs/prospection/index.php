@@ -20,6 +20,11 @@ include("nav.php");
 global $User;
 $User->getInfos();
 
+//msg
+echo $_SESSION['message'];
+$_SESSION['message']="";
+
+
 //scheduled invoices and transactions
 $result = mysql_query("SELECT id_facture, ".
 		      "period, ".
@@ -61,7 +66,7 @@ while( list($id_invoice,$period,$last_run) = mysql_fetch_array($result)){
 
  }
 mysql_free_result($result);
-
+//end
 
 // House keeping : lister les factures inpayées et marquer les clients qui en ont.
 // FIXME : should go in save_facture.php

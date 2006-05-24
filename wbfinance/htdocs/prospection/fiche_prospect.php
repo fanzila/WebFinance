@@ -79,7 +79,7 @@ function submitForm(f) {
 }
 
 function confirmDelete(id) {
-  if (confirm('Voulez-vous vraiment supprimer ce client, tous ses contacts\net toutes les factures/devis associés ?!')) {
+  if (confirm('Voulez-vous vraiment supprimer ce client, tous ses contacts,\n toutes les factures/devis associés et toutes les transactions?!')) {
     window.location = 'save_client.php?action=delete&id='+id;
   }
 }
