@@ -85,8 +85,15 @@ function checkForm(f) {
 </tr>
 <tr>
   <td colspan="4" style="text-align: center;">
-    <img onclick="checkForm(document.forms['userdata']);" src="<?= '/imgs/boutons/'.urlencode(base64_encode("Enregistrer:off")).'.png' ?>" onmouseover="this.src='<?= '/imgs/boutons/'.urlencode(base64_encode("Enregistrer:on")).'.png' ?>';" onmouseout="this.src='<?= '/imgs/boutons/'.urlencode(base64_encode("Enregistrer:off")).'.png' ?>';" />
-    <img onclick="window.location='index.php'" src="<?= '/imgs/boutons/'.urlencode(base64_encode("Annuler:off")).'.png' ?>" onmouseover="this.src='<?= '/imgs/boutons/'.urlencode(base64_encode("Annuler:on")).'.png' ?>';" onmouseout="this.src='<?= '/imgs/boutons/'.urlencode(base64_encode("Annuler:off")).'.png' ?>';" />
+  <?php
+  $save_off = '/imgs/boutons/'.urlencode(base64_encode(_('Save').":off:".$User->prefs->theme)).".png";
+  $save_on = '/imgs/boutons/'.urlencode(base64_encode(_('Save').":on:".$User->prefs->theme)).".png";
+
+  $cancel_off = '/imgs/boutons/'.urlencode(base64_encode(_('Cancel').":off:".$User->prefs->theme)).".png";
+  $cancel_on = '/imgs/boutons/'.urlencode(base64_encode(_('Cancel').":on:".$User->prefs->theme)).".png";
+  ?>
+    <img onclick="checkForm(document.forms['userdata']);" src="<?= $save_off ?>" onmouseover="this.src='<?= $save_on ?>';" onmouseout="this.src='<?= $save_off ?>';" />
+    <img onclick="window.location='index.php'" src="<?= $cancel_off ?>" onmouseover="this.src='<?= $cancel_on ?>';" onmouseout="this.src='<?= $cancel_off ?>';" />
   </td>
 </tr>
 </table>

@@ -148,14 +148,14 @@ while (list($id_pref,$value) = mysql_fetch_array($result)) {
   print <<<EOF
 <tr>
   <td>$check_img</td>
-  <td><input style="width: 100px; text-align: center;" type="text" name="banque_$count" value="$compte->banque" /></td>
-  <td><input style="width: 100px; text-align: center;" type="text" name="domiciliation_$count" value="$compte->domiciliation" /></td>
-  <td><input style="width: 50px; text-align: center;" type="text" name="code_banque_$count" value="$compte->code_banque" /></td>
-  <td><input style="width: 50px; text-align: center;" type="text" name="code_guichet_$count" value="$compte->code_guichet" /></td>
-  <td><input style="width: 70px; text-align: center;" type="text" name="compte_$count" value="$compte->compte" /></td>
-  <td><input style="width: 20px; text-align: center;" type="text" name="clef_$count" value="$compte->clef" /></td>
-  <td><input style="width: 80px; text-align: center;" type="text" name="iban_$count" value="$compte->iban" /></td>
-  <td><input style="width: 50px; text-align: center;" type="text" name="swift_$count" value="$compte->swift" /></td>
+  <td><input style="width: 100px; text-align: center;" type="text" name="banque_$id_pref" value="$compte->banque" /></td>
+  <td><input style="width: 100px; text-align: center;" type="text" name="domiciliation_$id_pref" value="$compte->domiciliation" /></td>
+  <td><input style="width: 50px; text-align: center;" type="text" name="code_banque_$id_pref" value="$compte->code_banque" /></td>
+  <td><input style="width: 50px; text-align: center;" type="text" name="code_guichet_$id_pref" value="$compte->code_guichet" /></td>
+  <td><input style="width: 90px; text-align: center;" type="text" name="compte_$id_pref" value="$compte->compte" /></td>
+  <td><input style="width: 20px; text-align: center;" type="text" name="clef_$id_pref" value="$compte->clef" /></td>
+  <td><input style="width: 80px; text-align: center;" type="text" name="iban_$id_pref" value="$compte->iban" /></td>
+  <td><input style="width: 50px; text-align: center;" type="text" name="swift_$id_pref" value="$compte->swift" /></td>
 </tr>
 EOF;
   $count++;
