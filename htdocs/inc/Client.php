@@ -33,7 +33,7 @@ class Client {
       foreach ($data as $n=>$v) { $this->$n = $v; }
       mysql_free_result($result);
     }
-    
+
     // If user specified data in the siren field it can be either the RCS number
     // (format 9 digits) or the INSEE code (format : same 9 digits + 5 digits for
     // address identifier).
@@ -49,18 +49,18 @@ class Client {
       switch (strlen($this->siren)) {
         case 9: // RCS
           $this->link_societe = sprintf('<a href="http://www.societe.com/cgi-bin/recherche?rncs=%s"><img src="/imgs/icons/societe.com.gif" class="bouton" onmouseover="return escape(\'%s\');" /></a>',
-                                        $this->siren, addslashes( _('See financial info about this company on Societe.com') ) 
+                                        $this->siren, addslashes( _('See financial info about this company on Societe.com') )
                                        );
           $this->siren = preg_replace("!([0-9]{3})([0-9]{3})([0-9]{3})!", '\\1 \\2 \\3', $this->siren);
           break;
         case 14: // INSEE
           $this->link_societe = sprintf('<a href="http://www.societe.com/cgi-bin/recherche?rncs=%s"><img src="/imgs/icons/societe.com.gif" class="bouton" onmouseover="return escape(\'%s\');" /></a>',
-                                        substr($this->siren, 0, 9), addslashes( _('See financial info about this company on Societe.com') ) 
+                                        substr($this->siren, 0, 9), addslashes( _('See financial info about this company on Societe.com') )
                                        );
           $this->siren = preg_replace("!([0-9]{3})([0-9]{3})([0-9]{3})([0-9]{5})!", '\\1 \\2 \\3 \\4', $this->siren);
           break;
       }
-    } 
+    }
   }
 
   function Client($id = null) {
@@ -75,5 +75,14 @@ class Client {
       $this->id = $id;
       $this->_getInfos();
     }
+  }
+
+  function exists($id = null){
+    if($id == null)
+      $id = $this->id;
+
+    $result = mysql_query("SELECT count(*) FROM webfinance_clients WHERE id_client=$id") or wf_mysqldie();
+    list($exists) = mysql_fetch_array($result);
+    return $exists;
   }
 }

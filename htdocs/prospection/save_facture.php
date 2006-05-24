@@ -194,7 +194,11 @@ if ($action == "save_facture") {
   update_ca();
   regenerate($_POST['id_facture']);
 
+  $_SESSION['message'] = _('Invoice updated');
+
   $Facture->updateTransaction($_POST['id_facture'],$type_prev);
+
+  $_SESSION['message'] .=  "<br>"._('Transaction updated');
 
   header("Location: edit_facture.php?id_facture=".$_POST['id_facture']);
 
@@ -210,10 +214,11 @@ if ($action == "save_facture") {
     logmessage(_("Delete invoice")." #$facture->num_facture for client:$facture->id_client");
     $id_client=$facture->id_client;
 
-    mysql_query("DELETE FROM webfinance_invoices WHERE id_facture=".$_GET['id_facture']);
-    mysql_query("DELETE FROM webfinance_invoice_rows WHERE id_facture=".$_GET['id_facture']);
-    mysql_query("DELETE FROM webfinance_transactions WHERE id_invoice=".$_GET['id_facture']." AND type<>'real'");
-
+    mysql_query("DELETE FROM webfinance_invoices WHERE id_facture=".$_GET['id_facture']) or wf_mysqldie();
+    $_SESSION['message'] = _('Invoice deleted');
+    //mysql_query("DELETE FROM webfinance_invoice_rows WHERE id_facture=".$_GET['id_facture']); <- ON DELETE CASCADE
+    mysql_query("DELETE FROM webfinance_transactions WHERE id_invoice=".$_GET['id_facture']." AND type<>'real'") or wf_mysqldie();;
+    $_SESSION['message'] .= "<br/>"._('Transaction deleted');
     update_ca();
 
   }
@@ -227,8 +232,9 @@ if ($action == "save_facture") {
 
   if($id_new_facture){
     $Invoice->updateTransaction($id_new_facture);
+    $_SESSION['message'] = _("Invoice duplicated");
     header("Location: edit_facture.php?id_facture=$id_new_facture");
-
+    die();
   } else {
     //Error;
     die("duplicate action failed");
@@ -282,12 +288,15 @@ if ($action == "save_facture") {
     $mail->AddAttachment("/tmp/$file_name" , $file_name);
 
     if(!$mail->Send()){
+      $_SESSION['message'] = _('Invoice was not sent');
       echo _("Invoice was not sent");
       echo "Mailer Error: " . $mail->ErrorInfo;
     } else{
+      $_SESSION['message'] = _('Invoice sent');
       //mettre à jour l'état de la facture, update sql
       mysql_query("UPDATE webfinance_invoices SET is_envoye=1")
 	or wf_mysqldie();
+      $_SESSION['message'] .= "<br/>"._('Invoice updated');
 
       logmessage(_("Send invoice")." #$invoice->num_facture fa:$id client:$invoice->id_client");
     }
