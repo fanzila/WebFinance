@@ -1,4 +1,4 @@
-- apt-get install php-fpdf libphp-phpmailer
+- apt-get install php-fpdf libphp-phpmailer perlmagick
 
 - create a database
 - insert the SQL dump
@@ -14,5 +14,3 @@
 
 - at http://webfinance.dev.jexiste.org
   login as admin/admin
-
-  zrgônzrg
