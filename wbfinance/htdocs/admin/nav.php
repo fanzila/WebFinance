@@ -15,7 +15,8 @@
 
 $elements = array(_('Users') => array('url' => 'index.php', 'roles'=>'admin,manager'),
                   _('Events') => array('url' => 'events.php', 'roles'=>'admin,manager'),
-                  _('My company') => array('url' => 'societe.php', 'roles'=>'manager,employee')
+                  _('My company') => array('url' => 'societe.php', 'roles'=>'manager,employee'),
+                  _('Preferences') => array('url' => 'preferences.php', 'roles'=>'admin,manager')
                  );
 
 foreach ($elements as $elname=>$data) {
