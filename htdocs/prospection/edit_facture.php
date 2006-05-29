@@ -300,7 +300,7 @@ function del_ligne() {
       <td colspan="2" class="liens_boutons">
       <a href="fiche_prospect.php?id=<?= $facture->id_client ?>"><?=_('Retour fiche client')?></a><br/>
       <a href="save_facture.php?id=<?= $facture->id_facture ?>&action=duplicate">Dupliquer <?= $facture->type_doc ?></a><br/>
-      <a href="send_facture.php?id=<?= $facture->id_facture ?>"><?= _('Send') ?> <?= $facture->type_doc ?></a><br/>
+      <a href="gen_facture.php?dest=file&id=<?= $facture->id_facture ?>"><?= _('Send') ?> <?= $facture->type_doc ?></a><br/>
 <?php
       $tr_ids = $Facture->getTransactions($facture->id_facture);
       foreach($tr_ids as $id_tr=>$text){
