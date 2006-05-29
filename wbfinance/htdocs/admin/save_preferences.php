@@ -14,17 +14,18 @@
 
 include("../inc/main.php");
 
-if($_POST['action']=="mail_user"){
+if(preg_match('/^mail_/',$_POST['action']) ){
   // Enregistrement adresse et raison sociale
-  mysql_query("DELETE FROM webfinance_pref WHERE type_pref='mail_user'");
+  mysql_query("DELETE FROM webfinance_pref WHERE type_pref='".$_POST['action']."'");
 
   $data = new stdClass();
   $data->body = $_POST['body'];
+  $data->subject = $_POST['subject'];
 
   $data = base64_encode(serialize($data));
-  mysql_query("INSERT INTO webfinance_pref (type_pref, value) VALUES('mail_user', '$data')") or wf_mysqldie();
+  mysql_query("INSERT INTO webfinance_pref (type_pref, value) VALUES('".$_POST['action']."', '$data')") or wf_mysqldie();
 
-  $_SESSION['message']=_('Mail user info updated');
+  $_SESSION['message']=_('Preference saved');
  }
 
 

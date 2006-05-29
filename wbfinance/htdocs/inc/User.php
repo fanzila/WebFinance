@@ -285,15 +285,21 @@ class User {
     mysql_free_result($result);
     $societe = unserialize(base64_decode($value));
 
-    //sujet
-    $subject= $societe->raison_sociale.": "._('your account informations');
-
     $result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='mail_user'") or wf_mysqldie();
     list($data) = mysql_fetch_array($result);
     $pref = unserialize(base64_decode($data));
+
+    $patterns=array('/%%COMPANY%%/' , '/%%FIRST_NAME%%/' , '/%%LAST_NAME%%/' , '/%%LOGIN%%/' , '/%%PASSWORD%%/');
+    $replacements=array($societe->raison_sociale , $user->first_name, $user->last_name, $user->login, $passwd );
+
+    //subject
+    if(isset($pref->subject) && !empty($pref->body)){
+      $subject = preg_replace($patterns, $replacements,  $pref->subject);
+    }else
+      $subject= $societe->raison_sociale.": "._('your account informations');
+
+    //body
     if(isset($pref->body) AND !empty($pref->body) ){
-      $patterns=array('/%%FIRST_NAME%%/' , '/%%LAST_NAME%%/' , '/%%LOGIN%%/' , '/%%PASSWORD%%/');
-      $replacements=array($user->first_name, $user->last_name, $user->login, $passwd );
       $body = preg_replace($patterns, $replacements,  $pref->body);
     }else{
       $body = _('You receive this mail because you have an account ...')."\n";
@@ -301,6 +307,7 @@ class User {
       $body .= _('Login').": ".$user->login."\n";
       $body .= _('Password').": ".$passwd."\n";
     }
+
     //compléter l'entête de l'email
     $mail = new PHPMailer();
     if(preg_match('/^[A-z0-9][\w.-]*@[A-z0-9][\w\-\.]+\.[A-Za-z]{2,4}$/',$societe->email) )
