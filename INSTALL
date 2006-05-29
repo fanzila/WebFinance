@@ -12,5 +12,8 @@
 - cp dbconnect.php.skel dbconnect.php
 - modify dbconnect.php
 
+- add an every day task with with the script 'webfinance/htdocs/inc/scheduler.php'
+echo '30 7  * * *  www-data  php /path/to/webfinance/htdocs/inc/scheduler.php' > /etc/cron.d/webfinance
+
 - at http://webfinance.dev.jexiste.org
   login as admin/admin

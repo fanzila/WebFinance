@@ -84,6 +84,11 @@ cp dbconnect.php.skel dbconnect.php
 modify dbconnect.php
 </pre>
 
+<li>Add the script scheduler.php to a daily task with cron</li>
+<pre class="shell">
+echo '30 7  * * *  www-data  php /path/to/webfinance/htdocs/inc/scheduler.php' > /etc/cron.d/webfinance
+</pre>
+
 <li>Go to <a href="http://webfinance/">http://webfinance/</a> and login as administrator
   : login = admin, password = admin<br/><br/>
 
