@@ -229,8 +229,15 @@ $pdf->SetSubject(ucfirst($facture->type_doc)." n° ".$facture->num_facture." pour
 $pdf->SetTitle(ucfirst($facture->type_doc)." n° ".$facture->num_facture);
 
 if(isset($_GET['dest']) AND $_GET['dest']=="file"){
-  $pdf->Output("/tmp/".ucfirst($facture->type_doc)."_".$facture->num_facture."_".preg_replace("/[ ]/", "_", $facture->nom_client).".pdf", "F");
+  $filename=ucfirst($facture->type_doc)."_".$facture->num_facture."_".preg_replace("/[ ]/", "_", $facture->nom_client).".pdf";
+  $path="/tmp/".$filename;
+
+  if(file_exists($path))
+    unlink($path);
+
+  $pdf->Output($path, "F");
   $pdf->Close();
+
 }else
   $pdf->Output(ucfirst($facture->type_doc)."_".$facture->num_facture."_".preg_replace("/[ ]/", "_", $facture->nom_client).".pdf", "D");
 
