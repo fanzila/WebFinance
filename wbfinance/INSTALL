@@ -1,4 +1,4 @@
-- apt-get install php-fpdf libphp-phpmailer perlmagick
+- apt-get install php-fpdf libphp-phpmailer perlmagick ttf-freefont
 
 - create a database
 - insert the SQL dump
