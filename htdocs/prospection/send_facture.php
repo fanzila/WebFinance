@@ -92,14 +92,36 @@ $invoice = $Facture->getInfos($id);
     <input type='text' name='mails2' style='width: 400px;'>
    </td>
   </tr>
+<?php
+$result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='mail_invoice'") or wf_mysqldie();
+list($data) = mysql_fetch_array($result);
+$pref = unserialize(base64_decode($data));
+
+$patterns=array('/%%NUM_INVOICE%%/' , '/%%CLIENT_NAME%%/');
+$replacements=array($invoice->num_facture , $invoice->nom_client );
+
+if(isset($pref->subject) && !empty($pref->body)){
+  $subject = preg_replace($patterns, $replacements,  $pref->subject);
+ }else
+  $subject = ucfirst($invoice->type_doc)." #".$invoice->num_facture." pour ".$invoice->nom_client;
+
+?>
   <tr>
    <td><?=_('Subject')?></td>
-   <td><input type="text" name="subject" style="width: 400px;" value="<?= ucfirst($invoice->type_doc)." n&deg; ".$invoice->num_facture." pour ".$invoice->nom_client ?>"></td>
+   <td><input type="text" name="subject" style="width: 400px;" value="<?=$subject?>"></td>
   </tr>
-
 <tr>
   <td>Body</td>
-  <td><textarea name="body" style="width: 400px; height: 200px; border: solid 1px #ccc;"><?= _('Hello') ?>,</textarea></td>
+  <td>
+<textarea name="body" style="width: 400px; height: 200px; border: solid 1px #ccc;">
+<?
+  if(isset($pref->body) AND !empty($pref->body) )
+    echo preg_replace($patterns, $replacements, $pref->body);
+  else
+    echo _('Hello').",";
+?>
+</textarea>
+  </td>
 </tr>
 <tr>
 <td style="text-align: center;" colspan="2">
