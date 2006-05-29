@@ -285,21 +285,35 @@ if ($action == "save_facture") {
 
     //attach the invoice file
     $file_name=ucfirst($invoice->type_doc)."_".$invoice->num_facture."_".preg_replace("/[ ]/", "_", $invoice->nom_client).".pdf";
-    $mail->AddAttachment("/tmp/$file_name" , $file_name);
+    $path="/tmp/".$file_name;
 
-    if(!$mail->Send()){
-      $_SESSION['message'] = _('Invoice was not sent');
-      echo _("Invoice was not sent");
-      echo "Mailer Error: " . $mail->ErrorInfo;
-    } else{
-      $_SESSION['message'] = _('Invoice sent');
-      //mettre à jour l'état de la facture, update sql
-      mysql_query("UPDATE webfinance_invoices SET is_envoye=1")
-	or wf_mysqldie();
-      $_SESSION['message'] .= "<br/>"._('Invoice updated');
+    if(file_exists($path)){
+      $mail->AddAttachment($path , $file_name);
 
-      logmessage(_("Send invoice")." #$invoice->num_facture fa:$id client:$invoice->id_client");
+      if(!$mail->Send()){
+	$_SESSION['message'] = _('Invoice was not sent');
+	echo _("Invoice was not sent");
+	echo "Mailer Error: " . $mail->ErrorInfo;
+
+      } else{
+	$_SESSION['message'] = _('Invoice sent');
+	//mettre à jour l'état de la facture, update sql
+	mysql_query("UPDATE webfinance_invoices SET is_envoye=1")
+	  or wf_mysqldie();
+	$_SESSION['message'] .= "<br/>"._('Invoice updated');
+
+	logmessage(_("Send invoice")." #$invoice->num_facture fa:$id client:$invoice->id_client");
+      }
+
+      //delete the file generated
+      unlink($path);
+
+    }else{
+      $_SESSION['message'] = _('Invoice file doesn\'t exist!');
+      $_SESSION['message'] .= "<br/>"._('Invoice was not sent');
+      echo _("The attachment doesn't exist!");
     }
+
     header("Location: edit_facture.php?id_facture=$id");
     die();
 
