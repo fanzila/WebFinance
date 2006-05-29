@@ -280,8 +280,8 @@ if ($action == "save_facture") {
     $mail->WordWrap = 80;
 
     //générer la facture en pdf
-    $fp = fopen("http://".$_SERVER['SERVER_NAME']."/prospection/gen_facture.php?dest=file&id=$id","r");
-    fclose($fp);
+    //$fp = fopen("http://".$_SERVER['SERVER_NAME']."/prospection/gen_facture.php?dest=file&id=$id","r");
+    //fclose($fp);
 
     //attach the invoice file
     $file_name=ucfirst($invoice->type_doc)."_".$invoice->num_facture."_".preg_replace("/[ ]/", "_", $invoice->nom_client).".pdf";

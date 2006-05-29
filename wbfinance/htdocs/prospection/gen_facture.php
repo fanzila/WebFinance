@@ -238,6 +238,8 @@ if(isset($_GET['dest']) AND $_GET['dest']=="file"){
   $pdf->Output($path, "F");
   $pdf->Close();
 
+  header("Location: send_facture.php?id=".$_GET['id']);
+
 }else
   $pdf->Output(ucfirst($facture->type_doc)."_".$facture->num_facture."_".preg_replace("/[ ]/", "_", $facture->nom_client).".pdf", "D");
 
