@@ -12,53 +12,53 @@ if (!isset($legend)) { $legend = 1; } // By default show legend
 if (!isset($movingaverage)) { $movingaverage = 0; } // By default hide movingaverage
 if (!isset($hidetitle)) { $hidetitle = 0; } // By default hide hidetitle
 
-/*
- * return positive if $start_date < $end_date
- */
-function diff_date( $start_date,$end_date){
-
-	$tmp=explode("-",$start_date);
-	$date2 = mktime(0, 0, 0, $tmp[1], $tmp[2], $tmp[0]);
-
-	$tmp=explode("-",$end_date);
-	$date = mktime(0, 0, 0, $tmp[1], $tmp[2], $tmp[0]);
-
-	return floor(($date - $date2) / (3600 * 24));
-}
-
 $query_account="";
 $text="";
 if(!empty($_GET['account'])){
-$query_account=" AND id_account=".$_GET['account'];
-$query=mysql_query("SELECT MIN(date) as min , MAX(date) as max ".
-       "FROM webfinance_transactions ".
-       "WHERE id_account=".$_GET['account'] )
-  or wf_mysqldie();
+  $query_account=" AND id_account=".$_GET['account'];
+  $query=mysql_query("SELECT MIN(date) as min , MAX(date) as max, UNIX_TIMESTAMP(MIN(date)) as ts_min, UNIX_TIMESTAMP(MAX(date)) as ts_max ".
+		     "FROM webfinance_transactions ".
+		     "WHERE id_account=".$_GET['account'] )
+    or wf_mysqldie();
 }else
-$query=mysql_query("SELECT MIN(date) as min , MAX(date) as max FROM webfinance_transactions ") or wf_mysqldie();
+  $query=mysql_query("SELECT MIN(date) as min , MAX(date) as max, UNIX_TIMESTAMP(MIN(date)) as ts_min, UNIX_TIMESTAMP(MAX(date)) as ts_max ".
+		     "FROM webfinance_transactions ")
+    or wf_mysqldie();
 
 $res=mysql_fetch_assoc($query);
-if(!empty($res['min']) AND !empty($res['max'])){
-      $end_date=$res['max'];
-      $start_date=$res['min'];
+if($res['ts_min']>0 AND $res['ts_max']>0 ){
+  $end_date=$res['max'];
+  $end_date_ts=$res['ts_max'];
+  $start_date=$res['min'];
+  $start_date_ts=$res['ts_min'];
 }else{
-      $start_date=date("Y-m-d");
-      $end_date=date("Y-m-d" , mktime(0, 0, 0, date("m")+1, date("d"), date("Y")) );
+  $start_date=date("Y-m-d");
+  $start_date_ts=mktime();
+  $end_date_ts=mktime(0, 0, 0, date("m")+1, date("d"), date("Y"));
+  $end_date=date("Y-m-d" , $end_date_ts );
 }
 
 if(isset($_GET['end_date']) AND !empty($_GET['end_date'])){
-  if(diff_date($end_date,$_GET['end_date'])>0)
+  $tmp=explode("-",$_GET['end_date']);
+
+  if( mktime(0, 0, 0, $tmp[1], $tmp[2], $tmp[0]) < $end_date_ts){
     $end_date=$_GET['end_date'];
+    $end_date_ts=mktime(0, 0, 0, $tmp[1], $tmp[2], $tmp[0]);
+  }
 }
 if(isset($_GET['start_date']) AND !empty($_GET['start_date'])){
-  if(diff_date($start_date,$_GET['start_date'])>0)
-    $start_date=$_GET['start_date'];
+  $tmp=explode("-",$_GET['start_date']);
+
+  if( mktime(0, 0, 0, $tmp[1], $tmp[2], $tmp[0]) > $start_date_ts ){
+    $start_date = $_GET['start_date'];
+    $start_date_ts = mktime(0, 0, 0, $tmp[1], $tmp[2], $tmp[0]);
+  }
 }
 
 $data=array();
 $max=0;
 $min=0;
-$nb_day=diff_date($start_date,$end_date);
+$nb_day = ($end_date_ts - $start_date_ts) / (3600 * 24) ;
 
 if($nb_day>0){
 
