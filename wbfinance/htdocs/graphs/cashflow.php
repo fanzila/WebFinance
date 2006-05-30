@@ -26,7 +26,7 @@ if(!empty($_GET['account'])){
     or wf_mysqldie();
 
 $res=mysql_fetch_assoc($query);
-if($res['ts_min']>0 AND $res['ts_max']>0 ){
+if($res['ts_min']>0 AND $res['ts_max']>0 AND ($res['ts_max'] - $res['ts_min'])>=(3600 * 24) ){
   $end_date=$res['max'];
   $end_date_ts=$res['ts_max'];
   $start_date=$res['min'];
@@ -34,9 +34,11 @@ if($res['ts_min']>0 AND $res['ts_max']>0 ){
 }else{
   $start_date=date("Y-m-d");
   $start_date_ts=mktime();
-  $end_date_ts=mktime(0, 0, 0, date("m")+1, date("d"), date("Y"));
+  $end_date_ts=mktime(0, 0, 0, date("m")+1,0, date("Y"));
   $end_date=date("Y-m-d" , $end_date_ts );
 }
+
+//echo "s_d: $start_date e_d: $end_date";
 
 if(isset($_GET['end_date']) AND !empty($_GET['end_date'])){
   $tmp=explode("-",$_GET['end_date']);
@@ -58,7 +60,9 @@ if(isset($_GET['start_date']) AND !empty($_GET['start_date'])){
 $data=array();
 $max=0;
 $min=0;
-$nb_day = ($end_date_ts - $start_date_ts) / (3600 * 24) ;
+$nb_day =  ($end_date_ts - $start_date_ts) / (3600 * 24);
+
+//echo $nb_day;
 
 if($nb_day>0){
 
@@ -71,6 +75,7 @@ if($nb_day>0){
 
   $q = "SELECT amount, type, date, UNIX_TIMESTAMP(date) as ts_date FROM webfinance_transactions ORDER BY date ";
   $res = mysql_query($q) or wf_mysqldie();
+  $trs=array();
   while($row  = mysql_fetch_assoc($res))
     $trs[] = $row;
   mysql_free_result($res);
@@ -81,8 +86,8 @@ if($nb_day>0){
     $trs_real[] = $row;
   mysql_free_result($res_real);
 
-  for($step = 0; $step < $nb_day ; $step++ ){
-    $current_date = mktime(0, 0, 0, $var[1],1+$step, $var[0]);
+  for($step = 0; $step <= $nb_day ; $step++ ){
+    $current_date = mktime(0, 0, 0, $var[1], $var[2]+$step, $var[0]);
 
     $tmp[0]=$current_date;
 
@@ -90,13 +95,17 @@ if($nb_day>0){
     $x=0;
     $i=0;
     $sum = 0;
-    foreach($trs as $tr){
-      if($tr['ts_date'] <= $current_date)
-	$sum  = $sum + $tr['amount'];
+    if(count($trs)>0){
+      foreach($trs as $tr){
+	if($tr['ts_date'] <= $current_date)
+	  $sum  = $sum + $tr['amount'];
+      }
+      $tmp[1]=$sum;
+      $max = max($max,$sum);
+      $min = min($min,$sum);
+    }else{
+      $tmp[1]="";
     }
-    $tmp[1]=$sum;
-    $max = max($max,$sum);
-    $min = min($min,$sum);
 
     //real
     $x = 0;
@@ -119,10 +128,13 @@ if($nb_day>0){
 
 }else{
       $data=array( array('','',''));
+      $max=1;
+      $min=0;
+      $nb_day=1;
 }
 
-// echo "<pre/>";
-// print_r($data);
+//echo "<pre/>";
+//print_r($data);
 
 //Define the object
 $graph2=& new PHPlot_Data($width,$height);
@@ -139,61 +151,69 @@ if ($hidetitle) {
 $graph2->SetTitle($title);
 $graph2->SetXTitle('');
 
+
+
 // NB : Calculate the density of tick horizontaly and verticaly to not "flood"
 // the graph. Try to be clever : take into account the width & height of the
 // image, and the range of values.
 //
 // First verticaly
 $range = $max + abs($min);
-$ratioy = 1000*$height/$range; // $ratioy = nb of pixels per 1000 euro
-if ($ratioy > 20) {
-  $graph2->SetYTickIncrement( 1000 );
-} else if ($ratioy > 9) {
-  $graph2->SetYTickIncrement( 5000 );
-} else if ($ratioy > 5) {
-  $graph2->SetYTickIncrement( 10000 );
-} else {
-  $graph2->SetYTickIncrement( 15000 );
-}
+
+if($range != 0 AND abs($range)>1000 ){
+  $ratioy = 1000*$height/$range; // $ratioy = nb of pixels per 1000 euro
+  if ($ratioy > 20) {
+    $graph2->SetYTickIncrement( 1000 );
+  } else if ($ratioy > 9) {
+    $graph2->SetYTickIncrement( 5000 );
+  } else if ($ratioy > 5) {
+    $graph2->SetYTickIncrement( 10000 );
+  } else if($ratioy > 2) {
+    $graph2->SetYTickIncrement( 15000 );
+  }
+ }
 
 // Then horizontaly
-$ratiox = ($width / $nb_day);
-if ($ratiox > 15) {
-  // 30 pixels per day is plenty to show the grid at day level. Labels are the
-  // day date ex "2 feb 06"
-  $moving_average_blur = 7; // Week
-  $graph2->SetXTickIncrement( 1 );
-  $graph2->SetXLabelAngle(60); // <-- this is possible only with TTF fonts
-  for ($i=0 ; $i<count($data) ; $i++) {
-    $data[$i][0] = strftime("%e %b %y", $data[$i][0]);
-  }
-} elseif ($ratiox > 7) {
-  // 7 pixels is enough to show the grid at week level
-  $graph2->SetXTickIncrement( 7 );
-  $moving_average_blur = 15; // 2 Weeks
-  $graph2->SetXLabelAngle(30); // <-- this is possible only with TTF fonts
+if($nb_day>0){
+  $ratiox = ($width / $nb_day);
+  if ($ratiox > 15) {
+    // 30 pixels per day is plenty to show the grid at day level. Labels are the
+    // day date ex "2 feb 06"
+    $moving_average_blur = 7; // Week
+    $graph2->SetXTickIncrement( 1 );
+    $graph2->SetXLabelAngle(60); // <-- this is possible only with TTF fonts
+    for ($i=0 ; $i<count($data) ; $i++) {
+      $data[$i][0] = strftime("%e %b %y", $data[$i][0]);
+    }
+  } elseif ($ratiox > 7) {
+    // 7 pixels is enough to show the grid at week level
+    $graph2->SetXTickIncrement( 7 );
+    $moving_average_blur = 15; // 2 Weeks
+    $graph2->SetXLabelAngle(30); // <-- this is possible only with TTF fonts
 
-  for ($i=0 ; $i<count($data) ; $i++) {
-    if ($i%7 == 0)
-      $data[$i][0] = strftime(_("Week #%W"), $data[$i][0]); // Week number + year
-    else
-      $data[$i][0] = "";
-  }
-} else { // Under 7 pixels per day we show the grid at month level
-  $graph2->SetXTickIncrement( 30 );
-  $old_ts = $data[0][0] - 86400*60; // Make sur we wrap to print the first label
-  $moving_average_blur = 20; // 20 days
-  $graph2->SetXLabelAngle(90); // <-- this is possible only with TTF fonts
-  for ($i=0 ; $i<count($data) ; $i++) {
-    if (strftime("%m%Y", $old_ts) != strftime("%m%Y", $data[$i][0])) {
-      $old_ts = $data[$i][0];
-      $data[$i][0] = utf8_decode(ucfirst(strftime("%b %Y", $data[$i][0])));
-    } else {
-      $old_ts = $data[$i][0];
-      $data[$i][0] = "";
+    for ($i=0 ; $i<count($data) ; $i++) {
+      if ($i%7 == 0)
+	$data[$i][0] = strftime(_("Week #%W"), $data[$i][0]); // Week number + year
+      else
+	$data[$i][0] = "";
+    }
+  } else { // Under 7 pixels per day we show the grid at month level
+    $graph2->SetXTickIncrement( 30 );
+    $old_ts = $data[0][0] - 86400*60; // Make sur we wrap to print the first label
+    $moving_average_blur = 20; // 20 days
+    $graph2->SetXLabelAngle(90); // <-- this is possible only with TTF fonts
+    for ($i=0 ; $i<count($data) ; $i++) {
+      if (strftime("%m%Y", $old_ts) != strftime("%m%Y", $data[$i][0])) {
+	$old_ts = $data[$i][0];
+	$data[$i][0] = utf8_decode(ucfirst(strftime("%b %Y", $data[$i][0])));
+      } else {
+	$old_ts = $data[$i][0];
+	$data[$i][0] = "";
+      }
     }
   }
-}
+
+ }
 
 # Make a legend for the 2 functions:
 //		$graph2->SetLineWidths(array('1','1'));
@@ -236,9 +256,11 @@ if (abs($min) > 0) {
   $tmp_min = 0;
 }
 
-$graph2->SetPlotAreaWorld(null, null, null, null);
-$graph2->plot_min_y = $tmp_min;
-$graph2->plot_max_y = $tmp_max;
+if($tmp_min != $tmp_max ){
+  $graph2->SetPlotAreaWorld(null, null, null, null);
+  $graph2->plot_min_y = $tmp_min;
+  $graph2->plot_max_y = $tmp_max;
+}
 
 if ($movingaverage) {
   $graph2->DoMovingAverage(0,$moving_average_blur,FALSE);
