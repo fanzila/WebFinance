@@ -239,6 +239,9 @@ function del_ligne() {
 	  <option value="end of term" <?= ($facture->period=="end of term")?"selected":"" ?>  ><?= _('end of term')?></option>
 	  <option value="end of year" <?= ($facture->period=="end of year")?"selected":"" ?>  ><?=_('end of year')?></option>
 	</select>
+	  <img src="/imgs/icons/help.png"
+	      onmouseover="return escape('Cette option permet de dupliquer la facture p&eacute;riodiquement');" />
+
 	</td>
     </tr>
     <tr>
@@ -251,10 +254,12 @@ function del_ligne() {
 	  <option value="14"><?=_('+ 2 weeks')?></option>
 	  <option value="30"><?=_('+ 1 month')?></option>
 	</select>
+        <img src="/imgs/icons/help.png"
+              onmouseover="return escape('Cette option permet de d&eacute;caler la date de la transaction par rapport &agrave; la date de la facture');" />
 	</td>
     </tr>
     <tr>
-      <td nowrap>Compte</td>
+      <td nowrap><?=_('Account')?></td>
       <td>
         <select name="id_compte" style="width: 100px;">
         <?php

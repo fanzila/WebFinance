@@ -219,7 +219,7 @@ var onglet_shown='<?= $shown_tab ?>';
       ?>
     </table>
     </div>
-    <center><a href="edit_facture.php?id_facture=new&id_client=<?= $Client->id ?>">Créer facture/devis</a></center>
+    <center><a href="edit_facture.php?id_facture=new&id_client=<?= $Client->id ?>"><?=_('Create invoice/estimate')?></a></center>
 </div>
 
 <div style="display: none;" id="tab_other">

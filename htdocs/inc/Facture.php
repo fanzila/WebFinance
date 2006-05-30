@@ -74,7 +74,10 @@ class Facture {
     $facture->total_ttc = $total*1.196;
     $facture->nice_total_ht = sprintf("%.2f", $facture->total_ht);
     $facture->nice_total_ttc = sprintf("%.2f", $facture->total_ttc);
-    $facture->immuable = $facture->is_paye || $facture->is_sent;
+    //$facture->immuable = $facture->is_paye || $facture->is_sent;
+    //We can always modify invoice
+    //Can be in preference #FIXME
+    $facture->immuable = false;
 
 //     print "<pre>";
 //     print_r($facture);
