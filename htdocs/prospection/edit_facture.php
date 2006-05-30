@@ -288,12 +288,14 @@ function del_ligne() {
       </td>
       <?php } // FIN CAS FACTURE/DEVIS ?>
     </tr>
+<!--
     <tr>
       <td colspan="2">
         <input type="checkbox" name="is_comptabilise" <?= $facture->is_comptabilise?"checked":"" ?> />&nbsp;Comptabilisé
         <?= ($facture->date_comptabilise!="")?"le ".$facture->nice_date_comptabilise:"" ?>
       </td>
     </tr>
+-->
     <tr>
       <td colspan="2">
         Commentaire : <br/>
