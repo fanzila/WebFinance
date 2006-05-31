@@ -1,13 +1,21 @@
-<?php 
-// 
+<?php
+//
 // This file is part of « Webfinance »
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
-// 
+//
 // You can use and redistribute this file under the term of the GNU GPL v2.0
 //
 ?>
+<script type="text/javascript">
+function confirmAddCompany(txt) {
+  if (confirm(txt)) {
+    window.location = 'fiche_prospect.php?action=_new';
+  }
+}
+</script>
+
 <div>
 <?php
 
@@ -15,7 +23,7 @@
 
 $elements = array( _('Customers') => array( 'url' => 'index.php?q=1', 'roles' => 'manager,accounting,employee' ),
                    _('Targets') => array( 'url' => 'index.php?q=2', 'roles' => 'manager,accounting,employee' ),
-                  _('Add company') => array( 'url' => 'fiche_prospect.php?action=_new', 'roles' => 'manager' ),
+		   _('Add company') => array( 'url' => 'javascript:confirmAddCompany(\'Do you really want to add a new company?\');', 'roles' => 'manager' ),
                   _('Billing') => array( 'url' => 'facturation.php', 'roles' => 'manager,accounting' )
                  );
 global $User;
