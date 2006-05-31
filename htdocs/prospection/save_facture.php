@@ -118,6 +118,11 @@ if ($action == "save_facture") {
 //   $date_prev=$facture->timestamp_date_facture+($_POST['type_prev'] * 86400 );
 //   $date_prev=date("Y-m-d",$date_prev);
 
+  $res = mysql_query("SELECT count(*) FROM webfinance_invoices WHERE num_facture='$num_facture' AND id_facture<>$id_facture ")
+    or wf_mysqldie();
+  list($dup_num_inv) = mysql_fetch_array($res);
+  mysql_free_result($res);
+
   $q = sprintf("UPDATE webfinance_invoices SET ".
 	       "type_paiement='%s', ".
 	       "is_paye=%d, ".
@@ -132,9 +137,9 @@ if ($action == "save_facture") {
 	       "id_type_presta=%d, ".
 	       "id_compte=%d, ".
 	       "is_envoye=%d, ".
-	       "period='%s', ".
-	       "num_facture='%s'
-                WHERE id_facture='%d'",
+	       "period='%s' ".
+	       "%s ".
+	       "WHERE id_facture='%d'",
                $type_paiement,
 	       ($is_paye == "on")?1:0,
 	       ($is_paye == "on")?"date_paiement=now(), ":"date_paiement='$date_prev' , ",
@@ -149,8 +154,9 @@ if ($action == "save_facture") {
 	       $id_compte,
 	       ($is_envoye=="on")?1:0,
 	       $period,
-	       $num_facture,
+	       ($dup_num_inv==0)?",num_facture='$num_facture' ":"" ,
                $id_facture);
+
   mysql_query($q) or wf_mysqldie();
 
   logmessage(_("Save invoice")." (#$num_facture) fa:".$_POST['id_facture']." client:$facture->id_client");
@@ -160,7 +166,7 @@ if ($action == "save_facture") {
     $q = sprintf("INSERT INTO webfinance_invoice_rows (id_facture,description,prix_ht,qtt) VALUES(%d, '%s', '%s', '%s')",
                  $_POST['id_facture'], $_POST['line_new'], $_POST['prix_ht_new'], $_POST['qtt_new'] );
     $result = mysql_query($q) or wf_mysqldie();
-    mysql_query("UPDATE webfinance_invoices SET date_generated=NULL WHERE id_facture=".$_POST['id_facture']);
+    mysql_query("UPDATE webfinance_invoices SET date_generated=NULL WHERE id_facture=".$_POST['id_facture']) or wf_mysqldie();
   }
 
   // Enregistrement des lignes existantes
@@ -194,7 +200,10 @@ if ($action == "save_facture") {
   update_ca();
   regenerate($_POST['id_facture']);
 
-  $_SESSION['message'] = _('Invoice updated');
+  if($dup_num_inv)
+    $_SESSION['message'] = _('Duplicate invoice number')."<br/>"._('Invoice updated') ;
+  else
+    $_SESSION['message'] = _('Invoice updated');
 
   $Facture->updateTransaction($_POST['id_facture'],$type_prev);
 
