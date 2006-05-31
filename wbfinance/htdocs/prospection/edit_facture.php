@@ -151,6 +151,15 @@ function del_ligne() {
   f.submit();
 }
 
+function ask_confirmation(txt) {
+  resultat = confirm(txt);
+  if(resultat=="1"){
+      return true;
+  } else {
+      return false;
+  }
+}
+
 </script>
 
 <?= $_SESSION['message']; $_SESSION['message']=""; ?>
@@ -306,8 +315,8 @@ function del_ligne() {
     <tr>
       <td colspan="2" class="liens_boutons">
       <a href="fiche_prospect.php?id=<?= $facture->id_client ?>"><?=_('Retour fiche client')?></a><br/>
-      <a href="save_facture.php?id=<?= $facture->id_facture ?>&action=duplicate">Dupliquer <?= $facture->type_doc ?></a><br/>
-      <a href="gen_facture.php?dest=file&id=<?= $facture->id_facture ?>"><?= _('Send') ?> <?= $facture->type_doc ?></a><br/>
+      <a href="save_facture.php?id=<?= $facture->id_facture ?>&action=duplicate"><?=_('Duplicate')?></a><br/>
+      <a href="gen_facture.php?dest=file&id=<?= $facture->id_facture ?>"><?= _('Send') ?></a><br/>
 <?php
       $tr_ids = $Facture->getTransactions($facture->id_facture);
       foreach($tr_ids as $id_tr=>$text){
@@ -317,7 +326,7 @@ function del_ligne() {
       <?php
         printf('<a href="gen_facture.php?id=%d">PDF</a><br/>', $facture->id_facture);
         if (! $facture->immuable)
-          printf('<a href="save_facture.php?id_facture=%d&action=delete_facture">Supprimer</a><br/>', $facture->id_facture);
+          printf('<a href="save_facture.php?id_facture=%d&action=delete_facture" onclick="return ask_confirmation(\'%s\');">%s</a><br/>', $facture->id_facture,_('Do you really want to delete it ?'), _('Delete'));
       ?>
       </td>
     </tr>
