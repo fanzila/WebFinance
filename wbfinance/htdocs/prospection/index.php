@@ -106,6 +106,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w+\\&*+/", "", $GLOBA
 <table border="0" width="500" cellspacing=0 cellpadding=3 class="framed">
 <tr class="row_header" style="text-align: center;">
   <td><a href="?sort=du&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>">&euro</a></td>
+  <td><?=_('Invoice')?></td>
   <td width="200"><a href="?sort=nom&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Company name') ?></a></td>
   <td><a href="?sort=ca_total_ht&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Total Income') ?></a></td>
   <td><a href="?sort=ca_total_ht_year&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Year Income') ?></a></td>
@@ -146,12 +147,15 @@ while ($found = mysql_fetch_object($result)) {
   $client->ca_total_ht_year = ($client->ca_total_ht_year==0)?"-&nbsp;&nbsp;":number_format($client->ca_total_ht_year, 0, ',', ' ')."&euro; HT";
 
   print "<tr align=center class=row_".(($count%2 == 0)?"even":"odd").">\n"
-       ."  <td><img src=\"/imgs/icons/".(($client->has_unpaid)?"not_paid":(($client->has_devis)?"paid_orange":"paid")).".gif\" /></td>\n"
-       ."  <td><a href=fiche_prospect.php?id=".$client->id_client.">".$client->nom."</a></td>\n"
-       ."  <td style=\"text-align: right;\">".$client->ca_total_ht."</td>\n"
-       ."  <td style=\"text-align: right;\">".$client->ca_total_ht_year."</td>\n"
-       ."  <td style=\"text-align: right;\">".$client->total_du_ht."</td>\n"
-       ."</tr>\n";
+    ."  <td><a href=fiche_prospect.php?id=".$client->id_client."&onglet=facturation>"
+    ."<img src=\"/imgs/icons/".(($client->has_unpaid)?"not_paid":(($client->has_devis)?"paid_orange":"paid")).".gif\" /></a></td>\n"
+    ."  <td><a href=edit_facture.php?id_facture=new&id_client=".$client->id_client."><img src=\"/imgs/icons/add.png\"></a></td>\n"
+    ."  <td><a href=fiche_prospect.php?id=".$client->id_client.">".$client->nom."</a>".
+    "</td>\n"
+    ."  <td style=\"text-align: right;\">".$client->ca_total_ht."</td>\n"
+    ."  <td style=\"text-align: right;\">".$client->ca_total_ht_year."</td>\n"
+    ."  <td style=\"text-align: right;\">".$client->total_du_ht."</td>\n"
+    ."</tr>\n";
 }
 mysql_free_result($result);
 
