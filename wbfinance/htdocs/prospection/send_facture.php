@@ -97,8 +97,49 @@ $result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='mail_i
 list($data) = mysql_fetch_array($result);
 $pref = unserialize(base64_decode($data));
 
-$patterns=array('/%%NUM_INVOICE%%/' , '/%%CLIENT_NAME%%/');
-$replacements=array($invoice->num_facture , $invoice->nom_client );
+// RIB
+$result = mysql_query("SELECT value FROM webfinance_pref WHERE id_pref=".$invoice->id_compte) or wf_mysqldie();
+list($cpt) = mysql_fetch_array($result);
+mysql_free_result($result);
+$cpt = unserialize(base64_decode($cpt));
+if (!is_object($cpt)) {
+  die("Impossible de generer la facture. Vous devez saisir au moins un compte bancaire dans les options pour emettre des factures");
+}
+foreach ($cpt as $n=>$v) {
+  $cpt->$n = utf8_decode($cpt->$n);
+}
+
+//Company
+$result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='societe' AND owner=-1");
+if (mysql_num_rows($result) != 1) { die(_("You didn't setup your company address and name. Go to 'Admin' and 'My company'")); }
+list($value) = mysql_fetch_array($result);
+mysql_free_result($result);
+$societe = unserialize(base64_decode($value));
+foreach ($societe as $n=>$v) {
+  $societe->$n = preg_replace("/\xE2\x82\xAC/", "EUROSYMBOL", $societe->$n );
+  $societe->$n = utf8_decode($societe->$n); // FPDF ne support pas l'UTF-8
+  $societe->$n = preg_replace("/EUROSYMBOL/", chr(128), $societe->$n );
+  $societe->$n = preg_replace("/\\\\EUR\\{([0-9.,]+)\\}/", "\\1 ".chr(128), $societe->$n );
+}
+
+$patterns=array(
+		'/%%NUM_INVOICE%%/' ,
+		'/%%CLIENT_NAME%%/',
+		'/%%DELAY%%/',
+		'/%%AMOUNT%%/',
+		'/%%BANK%%/',
+		'/%%RIB%%/',
+		'/%%COMPANY%%/',
+		);
+$replacements=array(
+		    $invoice->num_facture ,
+		    $invoice->nom_client,
+		    ' ',
+		    $invoice->nice_total_ttc,
+		    $cpt->banque,
+		    $cpt->code_banque."".$cpt->code_guichet." ".$cpt->compte." ".$cpt->clef." ",
+		    $societe->raison_sociale
+		    );
 
 if(isset($pref->subject) && !empty($pref->body)){
   $subject = preg_replace($patterns, $replacements,  $pref->subject);
@@ -116,7 +157,7 @@ if(isset($pref->subject) && !empty($pref->body)){
 <textarea name="body" style="width: 400px; height: 200px; border: solid 1px #ccc;">
 <?
   if(isset($pref->body) AND !empty($pref->body) )
-    echo preg_replace($patterns, $replacements, $pref->body);
+    echo stripslashes(preg_replace($patterns, $replacements, $pref->body));
   else
     echo _('Hello').",";
 ?>
