@@ -28,7 +28,44 @@ if(preg_match('/^mail_/',$_POST['action']) ){
   $_SESSION['message']=_('Preference saved');
  }
 
+//type presta
+//echo "<pre/>";
+//print_r($_POST);
 
-header("Location: preferences.php");
+if ($_GET['action'] == "type_presta_delete") {
+  mysql_query("DELETE FROM webfinance_type_presta WHERE id_type_presta=".$_GET['id']);
+  $_SESSION['message'] = _('Type presta deleted');
+  header("Location: preferences.php");
+}
+
+if($_POST['action'] == "type_presta"){
+  foreach ($_POST['cat'] as $id=>$data) {
+    if ($id == "new") {
+      if ($data['nom'] != "") {
+	$q = "INSERT INTO webfinance_type_presta ";
+	$f = "(";
+	$values = "VALUES(";
+	foreach ($data as $n=>$v) {
+	  $f .= sprintf("%s,", $n);
+	  $values .= sprintf("'%s',", $v);
+	}
+	$f = preg_replace("!,$!", ") ", $f);
+	$values = preg_replace("!,$!", ") ", $values);
+	$q .= $f.$values;
+      }
+    } else {
+      $q = "UPDATE webfinance_type_presta SET ";
+      foreach ($data as $n=>$v) {
+	$q .= sprintf("%s='%s',", $n, $v);
+      }
+      $q = preg_replace("!,$!", " WHERE id_type_presta=$id", $q);
+    }
+    //    echo $q; exit;
+    mysql_query($q) or wf_mysqldie();
+  }
+
+  header("Location: preferences.php");
+
+ }
 
 ?>
