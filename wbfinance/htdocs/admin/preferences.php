@@ -30,8 +30,8 @@ $pref = unserialize(base64_decode($data));
 <table border="0" cellspacing="7" cellpadding="0">
 <tr>
 <?php
-  $subject="Invoice #%%NUM_INVOICE%%";
-  if(isset($pref->subject))
+  $subject="Facture #%%NUM_INVOICE%% pour %%CLIENT_NAME%%";
+ if(isset($pref->subject) AND !empty($pref->subject))
     $subject=$pref->subject;
 ?>
   <td>
