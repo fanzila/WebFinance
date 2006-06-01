@@ -297,7 +297,7 @@ if ($action == "save_facture") {
     $path="/tmp/".$file_name;
 
     if(file_exists($path)){
-      $mail->AddAttachment($path , $file_name);
+      $mail->AddAttachment($path , $file_name,'base64','application/pdf');
 
       if(!$mail->Send()){
 	$_SESSION['message'] = _('Invoice was not sent');
