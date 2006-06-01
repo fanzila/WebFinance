@@ -17,6 +17,15 @@ $roles = "admin,manager,employee";
 include("../top.php");
 include("nav.php");
 ?>
+
+<script type="text/javascript">
+function confirmDeleteType(id, txt) {
+  if (confirm(txt)) {
+    window.location = 'save_preferences.php?action=type_presta_delete&id='+id;
+  }
+}
+</script>
+
 <?= $_SESSION['message']; $_SESSION['message'] = ""; ?>
 
 <h2><?=_('Send invoice') ?></h2>
@@ -123,4 +132,43 @@ Password: %%PASSWORD%%
   </td>
 </tr>
 </table>
+</form>
+
+
+<!-- Type presta -->
+  <h2><?=_('Type presta')?></h2>
+
+<form action="save_preferences.php" id="main_form" method="post">
+<input type="hidden" name="action" value="type_presta"/>
+<table border="0" cellspacing="0" cellpadding="3" class="framed">
+<tr style="text-align: center;" class="row_header">
+  <td><?= _('Name') ?></td>
+  <td><?= _('Actions') ?></td>
+</tr>
+<?php
+
+$result = mysql_query("SELECT id_type_presta, nom
+                       FROM webfinance_type_presta
+                       ORDER BY nom") or wf_mysqldie();
+while ($c = mysql_fetch_assoc($result)) {
+  extract($c);
+
+  $txt=_("Do you really want to delete it?");
+  print <<<EOF
+<tr class="row_even">
+  <td><input type="text" name="cat[$id_type_presta][nom]" value="$nom" style="width: 150px;" /></td>
+  <td align="center"><a href="javascript:confirmDeleteType($id_type_presta,'$txt');"><img src="/imgs/icons/delete.gif" /></a>
+</tr>
+EOF;
+}
+
+?>
+<tr style="background: #ceffce;">
+  <td><input type="text" name="cat[new][nom]" value="" style="width: 150px;" /></td>
+  <td></td>
+</tr>
+<tr class="row_even">
+  <td style="text-align: center;" colspan="3"><input type="submit" value="<?= _('Save') ?>" /></td>
+</table>
+
 </form>
