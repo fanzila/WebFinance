@@ -283,8 +283,8 @@ if ($action == "save_facture") {
     foreach($mails as $address)
       $mail->AddAddress($address);
 
-    $mail->Subject = $subject;
-    $mail->Body = $body;
+    $mail->Subject = stripslashes(utf8_decode($subject)) ;
+    $mail->Body = stripslashes(utf8_decode($body)) ;
 
     $mail->WordWrap = 80;
 
