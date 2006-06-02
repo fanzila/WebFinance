@@ -23,9 +23,15 @@ if(preg_match('/^mail_/',$_POST['action']) ){
   $data->subject = $_POST['subject'];
 
   $data = base64_encode(serialize($data));
-  mysql_query("INSERT INTO webfinance_pref (type_pref, value) VALUES('".$_POST['action']."', '$data')") or wf_mysqldie();
+  mysql_query("INSERT INTO webfinance_pref (type_pref, value) VALUES ('".$_POST['action']."', '$data')") or wf_mysqldie();
 
   $_SESSION['message']=_('Preference saved');
+
+  if(preg_match('/invoice/i',$_POST['action']))
+    header("Location: preferences.php?tab=Mail_invoice");
+  else
+    header("Location: preferences.php?tab=Mail_user");
+  die();
  }
 
 //type presta
@@ -35,7 +41,8 @@ if(preg_match('/^mail_/',$_POST['action']) ){
 if ($_GET['action'] == "type_presta_delete") {
   mysql_query("DELETE FROM webfinance_type_presta WHERE id_type_presta=".$_GET['id']);
   $_SESSION['message'] = _('Type presta deleted');
-  header("Location: preferences.php");
+  header("Location: preferences.php?tab=Type_presta");
+  die();
 }
 
 if($_POST['action'] == "type_presta"){
@@ -64,8 +71,8 @@ if($_POST['action'] == "type_presta"){
     mysql_query($q) or wf_mysqldie();
   }
 
-  header("Location: preferences.php");
-
+  header("Location: preferences.php?tab=Type_presta");
+  die();
  }
 
 ?>
