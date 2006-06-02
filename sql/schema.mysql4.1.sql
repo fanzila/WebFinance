@@ -74,7 +74,8 @@ CREATE TABLE `webfinance_clients` (
   `siren` varchar(50) default NULL,
   `total_du_ht` decimal(20,4) default NULL,
   `id_company_type` int(11) NOT NULL default '1',
-  PRIMARY KEY  (`id_client`)
+  PRIMARY KEY  (`id_client`),
+  KEY `id_company_type` (`id_company_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
 
 DROP TABLE IF EXISTS `webfinance_company_types`;
@@ -160,8 +161,10 @@ CREATE TABLE `webfinance_invoices` (
   `last_run` timestamp NULL default '0000-00-00 00:00:00',
   PRIMARY KEY  (`id_facture`),
   UNIQUE KEY `num_facture` (`num_facture`),
-  KEY `period` (`period`),
-  KEY `id_client` (`id_client`)
+  KEY `id_compte` (`id_compte`),
+  KEY `id_client` (`id_client`),
+  KEY `date_facture` (`date_facture`),
+  KEY `id_type_presta` (`id_type_presta`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=8 ;
 
 DROP TABLE IF EXISTS `webfinance_naf`;
@@ -252,7 +255,7 @@ CREATE TABLE `webfinance_transactions` (
   `lettrage` tinyint default 0, -- 0 si transaction "perdue" 1 si liée à une facture, commande, fournisseur ...
   `id_invoice` int(11) default '0',
   PRIMARY KEY  (`id`),
-  KEY `id_account` (`id_account`,`id_category`),
+  KEY `id_account` (`id_account`),
   KEY `id_category` (`id_category`),
   KEY `date` (`date`),
   KEY `id_invoice` (`id_invoice`)
@@ -263,7 +266,8 @@ DROP TABLE IF EXISTS `webfinance_type_presta`;
 CREATE TABLE `webfinance_type_presta` (
   `id_type_presta` int(11) NOT NULL auto_increment,
   `nom` varchar(255) default NULL,
-  PRIMARY KEY  (`id_type_presta`)
+  PRIMARY KEY  (`id_type_presta`),
+  UNIQUE KEY `nom` (`nom`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
 
 DROP TABLE IF EXISTS `webfinance_type_suivi`;
@@ -288,7 +292,8 @@ CREATE TABLE `webfinance_userlog` (
   `log` blob,
   `date` datetime default NULL,
   `id_user` int(11) default NULL,
-  PRIMARY KEY  (`id_userlog`)
+  PRIMARY KEY  (`id_userlog`),
+  KEY `id_user` (`id_user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 DROP TABLE IF EXISTS `webfinance_users`;
