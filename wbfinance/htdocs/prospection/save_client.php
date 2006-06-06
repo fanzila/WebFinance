@@ -53,11 +53,24 @@ if ($_GET['action'] == "delete") {
  }
 
 extract($_POST);
+
+$emails = "";
+
+$email = array_unique($email);
+
+
+foreach($email as $mail){
+  if(check_email($mail))
+    $emails .= $mail.",";
+}
+$emails = preg_replace('/,$/', '', $emails);
+
+
 $q = sprintf("UPDATE webfinance_clients SET nom='%s',addr1='%s',addr2='%s',addr3='%s',cp='%s',ville='%s',pays='%s',
                                 tel='%s',fax='%s',email='%s',vat_number='%s',siren='%s', id_company_type='%d'
               WHERE id_client=%d",
 
-             $nom, $addr1, $addr2, $addr3, $cp, $ville, $pays, $tel, $fax, $email, $vat_number, $siren, $id_company_type,
+             $nom, $addr1, $addr2, $addr3, $cp, $ville, $pays, $tel, $fax, $emails, $vat_number, $siren, $id_company_type,
              $id_client );
 
 mysql_query($q) or wf_mysqldie();

@@ -42,13 +42,20 @@ $result = mysql_query("SELECT webfinance_invoices.id_client, email, nom ".
 $client=mysql_fetch_assoc($result);
 mysql_free_result($result);
 
-if(preg_match('/^[A-z0-9][\w.-]*@[A-z0-9][\w\-\.]+\.[A-Za-z]{2,4}$/',$client['email']))
-  $mails[$client['nom']]=$client['email'];
+if(!empty($client['email'])){
+  $emails = explode(',',$client['email']);
+  $i = 1;
+  foreach($emails as $email){
+    $mails[$i." - ".$client['nom']] = $email;
+    $i++;
+  }
+ }
+
 $result = mysql_query("SELECT email, nom, prenom FROM webfinance_personne WHERE client=".$client['id_client'])
   or wf_mysqldie();
 
 while($person=mysql_fetch_assoc($result)){
-  if(!in_array($person['email'],$mails) AND preg_match('/^[A-z0-9][\w.-]*@[A-z0-9][\w\-\.]+\.[A-Za-z]{2,4}$/',$person['email']))
+  if( !in_array($person['email'],$mails) AND check_email($person['email']) )
       $mails[$person['prenom']." ".$person['nom']] = $person['email'];
  }
 mysql_free_result($result);
