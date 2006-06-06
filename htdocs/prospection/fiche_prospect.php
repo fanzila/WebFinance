@@ -129,8 +129,17 @@ var onglet_shown='<?= $shown_tab ?>';
   <input type="text" name="pays" value="<?= preg_replace('/"/', '\\"', $Client->pays) ?>" style="color: #666; width: 80px; text-align: center;" /><br/>
   <b><?= _('Phone and URL :') ?></b><br/>
   <input type="text" name="tel" value="<?= addslashes($Client->tel) ?>" class="tel" /><input type="text" name="fax" value="<?= $Client->fax ?>" class="fax" /><br/>
-  <input type="text" name="email" value="<?= addslashes($Client->email) ?>" class="email" /><br/>
   <input type="text" name="web" value="<?= addslashes($Client->web) ?>" class="web" /><br/>
+<?php
+
+  $mails = explode(',', $Client->email);
+
+  foreach($mails as $mail)
+   echo '<input type="text" name="email[]" value="'.$mail.'" class="email" /><br/>';
+
+?>
+  <input type="text" name="email[]" class="email" /><br/>
+
   <br/>
   <?= $Client->link_societe ?>
   </td><td width="100%">

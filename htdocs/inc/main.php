@@ -108,13 +108,18 @@ function wf_mysqldie($message="") {
     print "Page : ".$GLOBALS['_SERVER']['SCRIPT_NAME']."\n";
     print "Message : $message\n";
     print "Mysql error : \n";
-    print mysql_error(); 
+    print mysql_error();
     if (headers_sent()) {
       print '</pre></div>';
     }
   }
   die();
 }
+
+function check_email($param){
+  return preg_match('/^[A-z0-9][\w.-]*@[A-z0-9][\w\-\.]+\.[A-Za-z]{2,4}$/',$param);
+}
+
 
 header("Content-Type: text/html; charset=utf-8");
 
