@@ -12,7 +12,7 @@ require("nav.php");
 
 <img src="../graphs/cashflow.php?account=&end_date=&width=800&height=400&movingaverage=0" />
 
-<img src="plots.php?account=&width=800&height=400"/>
+<img src="../graphs/income_outgo_all.php?account=&width=800&height=400"/>
 
 <img src="./plots_all_history.php?type=category&sign=positive&plot=piecharts"/>
 
