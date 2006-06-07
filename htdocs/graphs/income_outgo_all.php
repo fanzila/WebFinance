@@ -75,7 +75,7 @@ if($nb_day>0){
 
   $var=explode("-",$start_date);
 
-  $nb_month = ceil($nb_day/30);
+  $nb_month = ($nb_day/30) + 1;
 
   $begin_date=date("Y-m-d" , mktime(0, 0, 0, $var[1],1, $var[0]));
   $begin_date_ts = mktime(0, 0, 0, $var[1],1, $var[0]);
