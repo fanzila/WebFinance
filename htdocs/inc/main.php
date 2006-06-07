@@ -29,7 +29,7 @@ function parselogline($str) {
           if (empty($num_facture)) {
             $str = preg_replace("/".$matches[0]."/", "<i>"._('invoice deleted')."</i>", $str);
           } else {
-            $str = preg_replace("/".$matches[0]."/", '<a href="/prospection/edit_facture.php?id_facture='.$matches[2].'">'.$num_facture.'</a> <a href="/prospection/getfacture.php?id='.$matches[2].'"><img src="/imgs/icons/pdf.png" valign="bottom"></a>', $str);
+            $str = preg_replace("/".$matches[0]."/", '<a href="/prospection/edit_facture.php?id_facture='.$matches[2].'">'.$num_facture.'</a> <a href="/prospection/gen_facture.php?id='.$matches[2].'"><img src="/imgs/icons/pdf.png" valign="bottom"></a>', $str);
           }
           break;
         case "user":
