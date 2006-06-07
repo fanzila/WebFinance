@@ -18,6 +18,7 @@ $roles="manager,accounting";
 require("../top.php");
 require("nav.php");
 
+$Invoice = new Facture();
 $User = new User();
 
 $user = $User->getInfos($_SESSION['id_user']);
@@ -395,7 +396,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
     <?=$tr->text?><br/>
     <i><?=$tr->comment?></i>&nbsp;<?=$file?>&nbsp;<a href="expenses.php?id_transaction=<?=$tr->id?>">[expenses]</a>
 <?php
-     if($tr->id_invoice>0){
+     if($Invoice->exists($tr->id_invoice)){
        printf('<a href="../prospection/edit_facture.php?id_facture=%d" >[invoice]</a>',$tr->id_invoice);
      }
 ?>
@@ -426,7 +427,7 @@ print <<<EOF
   <td style="text-align: center;">$tr->type</td>
 	 <td width="100%" style="font-size: 9px;">$tr->text<br/><i>$tr->comment</i>&nbsp;$file&nbsp;<a href="expenses.php?id_transaction=$tr->id">[expenses]</a>
 EOF;
-     if($tr->id_invoice>0){
+     if($Invoice->exists($tr->id_invoice)){
        printf('<a href="../prospection/edit_facture.php?id_facture=%d" >[invoice]</a>',$tr->id_invoice);
      }
 print <<<EOF
