@@ -35,114 +35,80 @@ if(!empty($_GET['account'])){
  }
 
 $res=mysql_fetch_assoc($query);
-if($res['ts_min']>0 AND $res['ts_max']>0 AND ($res['ts_max'] - $res['ts_min'])>=(3600 * 24) ){
-  $end_date=$res['max'];
-  $end_date_ts=$res['ts_max'];
-  $start_date=$res['min'];
-  $start_date_ts=$res['ts_min'];
-}else{
-  $start_date=date("Y-m-d");
-  $start_date_ts=mktime();
-  $end_date_ts=mktime(0, 0, 0, date("m")+1,0, date("Y"));
-  $end_date=date("Y-m-d" , $end_date_ts );
-}
+
+if($res['ts_min'] == 0){
+  $res['ts_min'] == mktime();
+ }
+if($res['ts_max'] == 0){
+  $res['ts_max'] == mktime();
+ }
+
+$start_date_ts = mktime(0,0,0,date("m",$res['ts_min']) , 1 , date("Y",$res['ts_min'])  );
+$start_date = date("Y-m-d", $start_date_ts );
+
+$end_date_ts = mktime(0,0,0,date("m",$res['ts_max'])+1 , 0 , date("Y",$res['ts_max']) );
+$end_date=date("Y-m-d", $end_date_ts );
 
 //echo "s_d: $start_date e_d: $end_date";
 
-if(isset($_GET['end_date']) AND !empty($_GET['end_date'])){
-  $tmp=explode("-",$_GET['end_date']);
-
-  if( mktime(0, 0, 0, $tmp[1], $tmp[2], $tmp[0]) < $end_date_ts){
-    $end_date=$_GET['end_date'];
-    $end_date_ts=mktime(0, 0, 0, $tmp[1], $tmp[2], $tmp[0]);
-  }
-}
-if(isset($_GET['start_date']) AND !empty($_GET['start_date'])){
-  $tmp=explode("-",$_GET['start_date']);
-
-  if( mktime(0, 0, 0, $tmp[1], $tmp[2], $tmp[0]) > $start_date_ts ){
-    $start_date = $_GET['start_date'];
-    $start_date_ts = mktime(0, 0, 0, $tmp[1], $tmp[2], $tmp[0]);
-  }
-}
-
 $data=array();
-$max=1;
-$min=-1;
-$nb_day =  ($end_date_ts - $start_date_ts) / (3600 * 24);
+$max=0;
 
-if($nb_day>0){
+$nb_month = date("Y",$end_date_ts)*12 + date("m",$end_date_ts) - date("Y",$start_date_ts)*12 - date("m", $start_date_ts) + 1;
 
-  $var=explode("-",$start_date);
-
-  $nb_month = ($nb_day/30) + 1;
-
-  $begin_date=date("Y-m-d" , mktime(0, 0, 0, $var[1],1, $var[0]));
-  $begin_date_ts = mktime(0, 0, 0, $var[1],1, $var[0]);
-
-  $q_trs_neg = mysql_query("SELECT amount , ".
+$q_trs_neg = mysql_query("SELECT amount , ".
 			   "UNIX_TIMESTAMP(date) as ts_date ".
 			   "FROM webfinance_transactions WHERE amount<0 ")
-    or die(mysql_error());
+  or die(mysql_error());
 
-  $trs_neg = array();
-  while($row = mysql_fetch_assoc($q_trs_neg))
-    $trs_neg[] = $row;
-  mysql_free_result($q_trs_neg);
+$trs_neg = array();
+while($row = mysql_fetch_assoc($q_trs_neg))
+  $trs_neg[] = $row;
+mysql_free_result($q_trs_neg);
 
-  $q_trs_pos = mysql_query("SELECT amount , ".
-			   "UNIX_TIMESTAMP(date) as ts_date ".
-			   "FROM webfinance_transactions WHERE amount>0 ")
-    or die(mysql_error());
+$q_trs_pos = mysql_query("SELECT amount , ".
+			 "UNIX_TIMESTAMP(date) as ts_date ".
+			 "FROM webfinance_transactions WHERE amount>0 ")
+  or die(mysql_error());
 
-  $trs_pos = array();
-  while($row = mysql_fetch_assoc($q_trs_pos))
-    $trs_pos[] = $row;
-  mysql_free_result($q_trs_pos);
+$trs_pos = array();
+while($row = mysql_fetch_assoc($q_trs_pos))
+  $trs_pos[] = $row;
+mysql_free_result($q_trs_pos);
 
-  for($step = 0; $step < $nb_month ; $step++ ){
-    $end_date=date("Y-m-d" , mktime(0, 0, 0, $var[1]+$step,0, $var[0]) );
-    $end_date_ts = mktime(0, 0, 0, $var[1]+$step,0, $var[0]);
+for($step = 0; $step < $nb_month ; $step++ ){
 
-    $begin=explode("-",$begin_date);
+  $s_date_ts = mktime(0,0,0,date("m",$start_date_ts)+$step, 1, date("Y",$start_date_ts) );
+  $e_date_ts = mktime(0,0,0,date("m",$s_date_ts)+1, 0, date("Y",$s_date_ts) );
 
-    $tmp[0]=date("M y", mktime(0, 0, 0, $begin[1], 1, $begin[0]) );
+  $tmp=array();
 
-    //outgo
-    $sum = 0;
-    foreach($trs_neg as $tr){
-      if($tr['ts_date'] <= $end_date_ts AND $tr['ts_date'] >= $begin_date_ts )
-	$sum  = $sum + $tr['amount'];
-    }
-    $tmp[1]= $sum*-1 ;
-    $max = max($max,$tmp[1]);
-    $min = min($min,$sum);
+  $tmp[0]=date("M y", $s_date_ts );
 
-    //income
-    $sum = 0;
-    foreach($trs_pos as $tr){
-      if($tr['ts_date'] <= $end_date_ts AND $tr['ts_date'] >= $begin_date_ts )
-	$sum  = $sum + $tr['amount'];
-    }
-    $tmp[2]=$sum*1;
-    $max = max($max,$sum);
-    $min = min($min,$sum);
-
-    $data[] = $tmp;
-
-    $end=explode("-",$end_date);
-    $begin_date=date("Y-m-d" , mktime(0, 0, 0, $end[1]+1, 1 , $end[0]) );
-    $begin_date_ts=mktime(0, 0, 0, $end[1]+1, 1 , $end[0]);
+  //outgo
+  $sum = 0;
+  foreach($trs_neg as $tr){
+    if($tr['ts_date'] <= $e_date_ts AND $tr['ts_date'] >= $s_date_ts )
+      $sum  = $sum + $tr['amount'];
   }
+  $tmp[1] = $sum*-1 ;
+  $max = max($max,$tmp[1]);
 
- }else{
-  $data=array(array('','',''));
+  //income
+  $sum = 0;
+  foreach($trs_pos as $tr){
+    if($tr['ts_date'] <= $e_date_ts AND $tr['ts_date'] >= $s_date_ts )
+      $sum  = $sum + $tr['amount'];
+  }
+  $tmp[2] = $sum*1;
+  $max = max($max,$tmp[2]);
+
+  $data[] = $tmp;
+
  }
 
 //Define the object
 $graph2=& new PHPlot_Data($width,$height);
-
-//Set titles
 
 //Set titles
 if ($hidetitle) {
@@ -157,7 +123,7 @@ if ($hidetitle) {
 $graph2->SetTitle($title);
 $graph2->SetXTitle('');
 
-$graph2->SetNumXTicks($nb_day);
+$graph2->SetNumXTicks($nb_month);
 
 
 // NB : Calculate the density of tick horizontaly and verticaly to not "flood"
