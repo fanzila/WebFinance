@@ -294,6 +294,7 @@ foreach ($fonts as $object=>$fontdata) {
   $graph2->$object = $fontdata;
 }
 $graph2->use_ttf = TRUE;
+
 $graph2->DrawGraph();
 
 // vim: sw=2 ts=2

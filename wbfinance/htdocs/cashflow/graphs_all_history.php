@@ -18,9 +18,9 @@ require("nav.php");
 
 <img src="plots_all_history.php?type=category&sign=negative&plot=piecharts"/>
 
-<img src="plots_all_history.php?type=category&sign=positive&plot=bars"/>
+<img src="../graphs/categ_all.php?type=category&sign=positive&plot=bars"/>
 
-<img src="plots_all_history.php?type=category&sign=negative&plot=bars"/>
+<img src="../graphs/categ_all.php?type=category&sign=negative&plot=bars"/>
 
 <?
 $Revision = '$Revision$';
