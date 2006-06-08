@@ -12,7 +12,7 @@ if (!isset($width))
 if (!isset($height))
   $height = 400;
 if (!isset($hidetitle))
-  $hidetitle = 1;
+  $hidetitle = 0;
 
 $query_account="";
 $text="";
@@ -133,7 +133,7 @@ $graph2->SetNumXTicks($nb_month);
 // First verticaly
 $range = $max;
 
-if($range != 0 AND abs($range)>100 ){
+if($range != 0 AND abs($range)>1000 ){
   $ratioy = 1000*$height/$range; // $ratioy = nb of pixels per 1000 euro
   if ($ratioy > 20 ) {
     $graph2->SetYTickIncrement( 1000 );
@@ -163,6 +163,22 @@ $graph2->SetPlotType("bars");
 
 $graph2->SetXTickIncrement(0.5);
 
+
+// NB : Find the vertical range and extend it for positive and negative values
+// to the next "round" number so that the horizontal ticks fall on nice odd
+// numbers.
+if (abs($max) > 0) {
+  $tmp_max = abs($max);
+  $exp = 0;
+  while ($tmp_max > 10) { $tmp_max /= 10; $exp++; }
+  $tmp_max = ceil($tmp_max);
+  while ($exp > 0) { $tmp_max *= 10; $exp--; }
+  $tmp_max = $max/abs($max) * $tmp_max;
+
+  $graph2->SetPlotAreaWorld(null, null, null, null);
+  $graph2->plot_max_y = $tmp_max;
+
+}
 
 // NB : Base apearance fonts : use TTF for unicode support and nice looks.
 //
