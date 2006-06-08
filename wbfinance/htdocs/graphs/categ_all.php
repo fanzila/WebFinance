@@ -3,6 +3,8 @@ require("../inc/main.php");
 //require_once("/usr/share/phplot/phplot.php");
 require_once("phplot_cvs.php"); //<- this is the newest phplot than the debian package (stackedbars support)
 
+$ttf_dir = "/usr/share/fonts/truetype/freefont";
+
 if (!isset($width))
   $width = 900;
 if (!isset($height))
@@ -405,13 +407,6 @@ if( isset($_GET['sign']) AND isset($_GET['plot']) ){
 
     $graph2->SetPlotType("stackedbars");
 
-    // NB : Base apearance fonts : use TTF for unicode support and nice looks.
-    //
-    // This is a hack around crippled phplot's object interface that makes it
-    // impossible to specify a correct filepath for the fonts used with it's
-    // getter/setter methods. We access directly the object's internal properties
-    // just before rendering.
-    $ttf_dir = "/usr/share/fonts/truetype/freefont";
     $fonts = array(
 		   'title_font' => array('size' => 13, 'font'=>$GLOBALS['_SERVER']['DOCUMENT_ROOT']."/css/themes/".$User->prefs->theme."/buttonfont.ttf"),
 		   'legend_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSansBold.ttf'),
@@ -430,7 +425,6 @@ if( isset($_GET['sign']) AND isset($_GET['plot']) ){
     $graph2->DrawGraph();
 
   }else if($_GET['plot']=="piecharts"){
-
 
     $query_categories=mysql_query("SELECT id FROM webfinance_categories ORDER BY name") or die(mysql_error());
 
@@ -453,8 +447,6 @@ if( isset($_GET['sign']) AND isset($_GET['plot']) ){
     if($res['sum']!=0)
       $tmp_categ[1][]=array('unknown',$res['sum'],'peru');
 
-
-
     while($category=mysql_fetch_assoc($query_categories)){
       $query_sum_category=mysql_query("SELECT SUM(amount) as sum , webfinance_categories.name as name, webfinance_categories.color as color ".
 				      "FROM webfinance_categories LEFT JOIN webfinance_transactions ON webfinance_categories.id=webfinance_transactions.id_category ".
@@ -463,19 +455,14 @@ if( isset($_GET['sign']) AND isset($_GET['plot']) ){
 	or die(mysql_error());
       $res=mysql_fetch_assoc($query_sum_category);
       if(!empty($res['sum']) AND $res['sum']<0){
-	$tmp_categ[0][]=array($res['name'],$res['sum'],$res['color']);
+	$tmp_categ[0][]=array(utf8_decode($res['name']),$res['sum'],$res['color']);
       }else if(!empty($res['sum']) AND $res['sum']>0){
-	$tmp_categ[1][]=array($res['name'],$res['sum'],$res['color']);
+	$tmp_categ[1][]=array(utf8_decode($res['name']),$res['sum'],$res['color']);
       }
     }
-    //			echo "<pre/>";
-    //			print_r($tmp_categ);
 
     usort($tmp_categ[0],"cmp_data");
     usort($tmp_categ[1],"cmp_data");
-
-    //			echo "<hr/>";
-    //			print_r($tmp_categ);
 
     //positive values
     $nb_categ=count($tmp_categ[1]);
@@ -532,7 +519,7 @@ if( isset($_GET['sign']) AND isset($_GET['plot']) ){
 
     if(isset($_GET['sign']) AND $_GET['sign']=="negative"){
       $plot->SetDataValues($data_negative);
-      $plot->SetTitle("Outgo by category / all history");
+      $plot->SetTitle(utf8_decode(_("Outgo by category / all history")));
       $legend=array();
       foreach ($data_negative as $row){
 	$sum=array_sum($row);
@@ -543,7 +530,7 @@ if( isset($_GET['sign']) AND isset($_GET['plot']) ){
 	$colors[]=$row[2];
     }else{
       $plot->SetDataValues($data_positive);
-      $plot->SetTitle("Income by category / all history");
+      $plot->SetTitle(utf8_decode(_("Income by category / all history")));
       $legend=array();
       //legend
       foreach ($data_positive as $row){
@@ -557,6 +544,22 @@ if( isset($_GET['sign']) AND isset($_GET['plot']) ){
     }
     $plot->SetDataColors($colors);
     $plot->SetLegend($legend);
+
+    $fonts = array(
+		   'title_font' => array('size' => 13, 'font'=>$GLOBALS['_SERVER']['DOCUMENT_ROOT']."/css/themes/".$User->prefs->theme."/buttonfont.ttf"),
+		   'legend_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSansBold.ttf'),
+		   'generic_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSansBold.ttf'),
+		   'x_label_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSans.ttf'),
+		   'y_label_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSans.ttf'),
+		   'x_title_font' => array('size' => 10, 'font'=>$ttf_dir.'/FreeSansBold.ttf'),
+		   'y_title_font' => array('size' => 10, 'font'=>$ttf_dir.'/FreeSansBold.ttf')
+		   );
+    foreach ($fonts as $object=>$fontdata) {
+      $plot->$object = $fontdata;
+    }
+
+    $plot->use_ttf = TRUE;
+
     $plot->DrawGraph();
 
   }

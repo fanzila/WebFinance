@@ -14,9 +14,9 @@ require("nav.php");
 
 <img src="../graphs/income_outgo_all.php?account=&width=800&height=400"/>
 
-<img src="./plots_all_history.php?type=category&sign=positive&plot=piecharts"/>
+<img src="../graphs/categ_all.php?type=category&sign=positive&plot=piecharts"/>
 
-<img src="plots_all_history.php?type=category&sign=negative&plot=piecharts"/>
+<img src="../graphs/categ_all.php?type=category&sign=negative&plot=piecharts"/>
 
 <img src="../graphs/categ_all.php?type=category&sign=positive&plot=bars"/>
 
