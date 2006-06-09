@@ -461,89 +461,93 @@ if( isset($_GET['sign']) AND isset($_GET['plot']) ){
       }
     }
 
-    usort($tmp_categ[0],"cmp_data");
-    usort($tmp_categ[1],"cmp_data");
-
-    //positive values
-    $nb_categ=count($tmp_categ[1]);
-    $pos=1;
-    $sum_positive=0;
-    foreach($tmp_categ[1] as $row){
-      $tmp=array($row[0]);
-      for($i=1;$i<=$nb_categ;$i++)
-	$tmp[]=0;
-      $tmp[$pos]=$row[1];
-      $data_positive[]=$tmp;
-      $pos++;
-      $sum_positive=$row[1]+$sum_positive;
-    }
-
-    //negative values
-    $nb_categ=count($tmp_categ[0]);
-    $pos=1;
-    $sum_negative=0;
-    foreach($tmp_categ[0] as $row){
-      $tmp=array($row[0]);
-      for($i=1;$i<=$nb_categ;$i++)
-	$tmp[]=0;
-      $tmp[$pos]=$row[1];
-      $data_negative[]=$tmp;
-      $pos++;
-      $sum_negative=$row[1]+$sum_negative;
-    }
-
     $plot =& new PHPlot(900,450);
-    //$plot->SetImageBorderType('plain');
-    //$plot->SetShading(0);
-
-    /*
-     * $plot->SetPlotAreaPixels($x1, $y1, $x2, $y2)
-     * $plot->SetPlotAreaWorld([$xmin], [$ymin], [$xmax], [$ymax])
-     */
-    //$plot->SetPlotAreaPixels(1, 40, 40 ,300 );
-    //$plot->SetPlotAreaWorld(10, 40, 40 ,300);
-
-
-    /*
-     * $plot->SetLegendPixels($x, $y)
-     */
-    //$plot->SetLegendPixels(830, 40);
-
-
     $plot->SetDataType('text-data');
     $plot->SetPlotType('pie');
 
-    $plot->SetLabelScalePosition(0.37);
 
-    $colors=array();
+      $plot->SetLabelScalePosition(0.37);
 
-    if(isset($_GET['sign']) AND $_GET['sign']=="negative"){
-      $plot->SetDataValues($data_negative);
-      $plot->SetTitle(utf8_decode(_("Outgo by category / all history")));
-      $legend=array();
-      foreach ($data_negative as $row){
-	$sum=array_sum($row);
-	$legend[]=$row[0]." : ".sprintf("%01.2f", $sum);
-      }
-      //color
-      foreach($tmp_categ[0] as $row)
-	$colors[]=$row[2];
-    }else{
-      $plot->SetDataValues($data_positive);
-      $plot->SetTitle(utf8_decode(_("Income by category / all history")));
-      $legend=array();
-      //legend
-      foreach ($data_positive as $row){
-	$sum=array_sum($row);
-	$legend[]=$row[0]." : ".sprintf("%01.2f", $sum);
-      }
-      //color
-      foreach($tmp_categ[1] as $row)
-	$colors[]=$row[2];
+      $colors=array();
 
+      if(isset($_GET['sign']) AND $_GET['sign']=="negative" AND isset($tmp_categ[0])){
+
+	usort($tmp_categ[0],"cmp_data");
+
+	//negative values
+	$nb_categ=count($tmp_categ[0]);
+	$pos=1;
+	$sum_negative=0;
+	foreach($tmp_categ[0] as $row){
+	  $tmp=array($row[0]);
+	  for($i=1;$i<=$nb_categ;$i++)
+	    $tmp[]=0;
+	  $tmp[$pos]=$row[1];
+	$data_negative[]=$tmp;
+	$pos++;
+	$sum_negative=$row[1]+$sum_negative;
+	}
+
+	$plot->SetDataValues($data_negative);
+	$plot->SetTitle(utf8_decode(_("Outgo by category / all history")));
+	$legend=array();
+	foreach ($data_negative as $row){
+	  $sum=array_sum($row);
+	  $legend[]=$row[0]." : ".sprintf("%01.2f", $sum);
+	}
+	//color
+	if(isset($tmp_categ[0]))
+	  foreach($tmp_categ[0] as $row)
+	    $colors[]=$row[2];
+
+	$plot->SetDataColors($colors);
+	$plot->SetLegend($legend);
+
+
+      }else if(isset($tmp_categ[1])){
+
+	usort($tmp_categ[1],"cmp_data");
+
+	//positive values
+	$nb_categ=count($tmp_categ[1]);
+	$pos=1;
+	$sum_positive=0;
+	foreach($tmp_categ[1] as $row){
+	  $tmp=array($row[0]);
+	  for($i=1;$i<=$nb_categ;$i++)
+	    $tmp[]=0;
+	  $tmp[$pos]=$row[1];
+	  $data_positive[]=$tmp;
+	$pos++;
+	$sum_positive=$row[1]+$sum_positive;
+	}
+
+	$plot->SetDataValues($data_positive);
+	$plot->SetTitle(utf8_decode(_("Income by category / all history")));
+	$legend=array();
+	//legend
+	foreach ($data_positive as $row){
+	  $sum=array_sum($row);
+	  $legend[]=$row[0]." : ".sprintf("%01.2f", $sum);
+	}
+	//color
+	if(isset($tmp_categ[1]))
+	  foreach($tmp_categ[1] as $row)
+	    $colors[]=$row[2];
+
+	$plot->SetDataColors($colors);
+	$plot->SetLegend($legend);
+
+      }else{
+	if(isset($_GET['sign']) AND $_GET['sign']=="negative")
+	  $plot->SetTitle(utf8_decode(_("Outgo by category / all history")));
+	else
+	  $plot->SetTitle(utf8_decode(_("Income by category / all history")));
+	$data=array(array('',100));
+	$plot->SetDataValues($data);
+	$plot->SetDataColors(array('white'));
+	$plot->SetLegend(array(_('Nothing')));
     }
-    $plot->SetDataColors($colors);
-    $plot->SetLegend($legend);
 
     $fonts = array(
 		   'title_font' => array('size' => 13, 'font'=>$GLOBALS['_SERVER']['DOCUMENT_ROOT']."/css/themes/".$User->prefs->theme."/buttonfont.ttf"),
