@@ -17,7 +17,7 @@ use DBI;
 $db = $ARGV[0]||"webfinance";
 $host = $ARGV[1]||"localhost";
 $verbose = $ARGV[2]||0;
-$pid =  $$;
+$pid =  42;
 
 $dsn = "DBI:mysql:database=$db;host=$host";
 $dbh = DBI->connect($dsn, $login, $pass) or die("Can't connect $host $db $login $pass");
@@ -64,53 +64,56 @@ if (! -f "logfile") {
 $current_file = "";
 $current_revision = "";
 
+my @binary_extensions = (
+    '.dia', '.doc', '.gif', '.jpg', '.ods', '.png', '.ps',
+    '.psd', '.svgz', '.txt', '.xls', '.gz', '.bz2');
+
 open(LOG, "logfile");
 while ($ligne = <LOG>) {
   chomp($ligne);
 
+  my $is_binary = 0;
 
   if ($ligne =~ m!Working file: (.*)!) {
     $current_file = $1;
     $files{$current_file} = 1;
     printf("Working on : %-80s", $current_file) if ($verbose);
+    $is_binary = 0;
+    for $ext (@binary_extensions) {
+      if ($current_file =~ m!$ext$!) { $is_binary = 1; }
+    }
   }
 
-  if ($ligne =~ m!revision ([0-9.]+)!) {
-    $current_revision = $1;
-    print "." if ($verbose);
-  } elsif ($ligne =~ m!date: ([^;]+);  author: (\w+);  state: (Exp);  lines: ([+0-9-]+) ([+0-9-]+)!) {
-    ($date, $author, $state, $added, $deleted) = ($1, $2, $3, $4, $5);
-    $query = "INSERT INTO cvslog (file, date, author, added, deleted, state, revision) values('$current_file', '$date', '$author', '$added', '$deleted', '$state', '$current_revision');";
+  unless ($is_binary) {
+    if ($ligne =~ m!revision ([0-9.]+)!) {
+      $current_revision = $1;
+      print "." if ($verbose);
+    } elsif ($ligne =~ m!date: ([^;]+);  author: (\w+);  state: (Exp);  lines: ([+0-9-]+) ([+0-9-]+)!) {
+      ($date, $author, $state, $added, $deleted) = ($1, $2, $3, $4, $5);
+      $query = "INSERT INTO cvslog (file, date, author, added, deleted, state, revision) values('$current_file', '$date', '$author', '$added', '$deleted', '$state', '$current_revision');";
 
-    $s = $dbh->prepare($query);
-    $s->execute();
-  }  elsif ($ligne =~ m!date: ([^;]+);  author: (\w+);  state: (\w+);$!) {
-    # Find number of lines of very first commit (not shown in cvs log)
-    # FIXME : exclude binary files from this 
-    ($date, $author, $state) = ($1, $2, $3);
+      $s = $dbh->prepare($query);
+      $s->execute();
+    }  elsif ($ligne =~ m!date: ([^;]+);  author: (\w+);  state: (\w+);$!) {
+      # Find number of lines of very first commit (not shown in cvs log)
+      # FIXME : exclude binary files from this 
+      ($date, $author, $state) = ($1, $2, $3);
 
-    $orig_lines = qx{ wc -l $current_file };
-    $orig_lines =~ m!^([0-9]+)!;
-    $lines = $1;
+      $orig_lines = qx{ wc -l $current_file };
+      $orig_lines =~ m!^([0-9]+)!;
+      $lines = $1;
 
-    $query = "INSERT INTO cvslog (file, date, author, added, deleted, state, revision) values('$current_file', '$date', '$author', '$lines', 0, '$state', '$current_revision')";
-    $s = $dbh->prepare($query);
-    $s->execute();
+      $query = "INSERT INTO cvslog (file, date, author, added, deleted, state, revision) values('$current_file', '$date', '$author', '$lines', 0, '$state', '$current_revision')";
+      $s = $dbh->prepare($query);
+      $s->execute();
 
-    print "Initial release for $current_file counted $lines lines\n" if ($verbose);
-  } else {
+      print "Initial release for $current_file counted $lines lines\n" if ($verbose);
+    } else {
 #     print "$ligne\n";
+    }
   }
 }
 
-my @binary_extensions = (
-    '.dia', '.doc', '.gif', '.jpg', '.ods', '.png', '.ps',
-    '.psd', '.svgz', '.txt', '.xls', '.gz', '.bz2');
-
-for $ext (@binary_extensions) {
-  $s = $dbh->prepare("DELETE FROM cvslog WHERE file LIKE '\%$ext'");
-  $s->execute();
-}
 
 chdir("/tmp");
-system("rm -rf cvslog2sql.$pid");
+# system("rm -rf cvslog2sql.$pid");
