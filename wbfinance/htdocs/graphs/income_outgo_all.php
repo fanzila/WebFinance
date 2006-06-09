@@ -43,11 +43,28 @@ if($res['ts_max'] == 0){
   $res['ts_max'] == mktime();
  }
 
-$start_date_ts = mktime(0,0,0,date("m",$res['ts_min']) , 1 , date("Y",$res['ts_min'])  );
-$start_date = date("Y-m-d", $start_date_ts );
+if(isset($_GET['end_date']) AND isset($_GET['start_date'])){
+  $end_date=$_GET['end_date'];
+  $start_date=$_GET['start_date'];
 
-$end_date_ts = mktime(0,0,0,date("m",$res['ts_max'])+1 , 0 , date("Y",$res['ts_max']) );
-$end_date=date("Y-m-d", $end_date_ts );
+  list($start_year,$start_month, $start_day) = explode("-",$start_date);
+  list($end_year,$end_month, $end_day) = explode("-",$end_date);
+
+  $start_date_ts = mktime(0,0,0, $start_month , $start_day , $start_year  );
+  $start_date = date("Y-m-d", $start_date_ts );
+
+  $end_date_ts = mktime(0,0,0, $end_month , $end_day , $end_year );
+  $end_date=date("Y-m-d", $end_date_ts );
+
+ }else{
+
+  $start_date_ts = mktime(0,0,0,date("m",$res['ts_min']) , 1 , date("Y",$res['ts_min'])  );
+  $start_date = date("Y-m-d", $start_date_ts );
+
+  $end_date_ts = mktime(0,0,0,date("m",$res['ts_max'])+1 , 0 , date("Y",$res['ts_max']) );
+  $end_date=date("Y-m-d", $end_date_ts );
+
+ }
 
 //echo "s_d: $start_date e_d: $end_date";
 

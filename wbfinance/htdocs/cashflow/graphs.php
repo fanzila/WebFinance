@@ -81,7 +81,7 @@ if(isset($_GET['account']) AND !empty($_GET['account']))
 					<?
 		      		while ($acc=mysql_fetch_assoc($result_accounts)) {
                 $cpt = unserialize(base64_decode($acc['value']));
-                printf('<option value="%d"%s>Compte %s n°%s</option>', 
+                printf('<option value="%d"%s>Compte %s n°%s</option>',
                        $acc['id_pref'], ($acc['id_pref']==$account)?" selected":"",
                        $cpt->banque, $cpt->compte );
               }
@@ -108,13 +108,12 @@ if(isset($_GET['account']) AND !empty($_GET['account']))
    	 navigation($account,$start_date_ex,$end_date_ex);
 	?>
   </div>
-				  <img src="plots.php?width=600&height=300&type=expense_amount&start_date=<?=$start_date?>&end_date=<?=$end_date?>&account=<?=$account?>"/>
-				  <img src="plots.php?width=600&height=300&type=expense&start_date=<?=$start_date?>&end_date=<?=$end_date?>&account=<?=$account?>"/>
+ <img src="../graphs/cashflow.php?account=&end_date=&width=600&height=300&movingaverage=0&start_date=<?=$start_date?>&end_date=<?=$end_date?>" />
+ <img src="../graphs/income_outgo_all.php?width=600&height=300&type=expense&start_date=<?=$start_date?>&end_date=<?=$end_date?>&account=<?=$account?>" />
 
           <br/>
-
-				  <img src="plots.php?width=400&height=400&type=category&start_date=<?=$start_date?>&end_date=<?=$end_date?>&account=<?=$account?>&sign=positive"/>
-				  <img src="plots.php?width=400&height=400&type=category&start_date=<?=$start_date?>&end_date=<?=$end_date?>&account=<?=$account?>&sign=negative"/>
+ <img src="plots.php?width=400&height=400&type=category&start_date=<?=$start_date?>&end_date=<?=$end_date?>&account=<?=$account?>&sign=positive"/>
+ <img src="plots.php?width=400&height=400&type=category&start_date=<?=$start_date?>&end_date=<?=$end_date?>&account=<?=$account?>&sign=negative"/>
 
 				  <!--<img src="plots_all_history.php?type=category&sign=positive&plot=piecharts"/> -->
 				  <!--<img src="plots_all_history.php?type=category&sign=negative&plot=piecharts"/> -->

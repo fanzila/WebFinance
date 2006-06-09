@@ -222,7 +222,7 @@ $graph2->SetLineStyles(array('solid','solid'));
 
 if ($legend != 0) {
   $graph2->SetLegend(array(utf8_decode(_('prev')), utf8_decode(_('real')) ));
-  $graph2->SetLegendPixels(82, $height-100);
+  //$graph2->SetLegendPixels(82, $height-100);
 }
 
 $graph2->SetDataColors(array( 'red' ,'blue', 'green'));
