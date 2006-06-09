@@ -7,33 +7,332 @@ $roles = 'manager,admin';
 require("../top.php");
 //require("nav.php");
 
-$db_selected = mysql_select_db('webcash');
-if (!$db_selected) {
-    die ('Can\'t use WEBCASH DB : ' . mysql_error());
- }else{
-
 ?>
-
 <script type="text/javascript">
 
-function ask_confirmation(txt) {
+  function ask_confirmation(txt) {
   resultat = confirm(txt);
   if(resultat=="1"){
-      return true;
+    return true;
   } else {
-      return false;
+    return false;
   }
 }
 </script>
-
-<form method="post">
-<input type="hidden" value="migrate" name="action"/>
-<input type="submit" value="migrate Webcash"  onclick="return ask_confirmation('Do you really want to migrate webcash?');"/>
-</form>
-<br/>
 <?
 
+extract($_POST);
+
+if(isset($_POST['action']) AND $_POST['action']=="connect"){
+  //test db
+  $link = mysql_connect($host, $username, $pass);
+
+  if (!$link) {
+    echo "Could not connect: $host $username " . mysql_error();
+    echo '<a href="migrate_webcash.php">try again</a>';
+  }else{
+    mysql_close($link);
+    $_SESSION['webcash_pass'] = $pass;
+    echo 'Connected successfully<br/>';
+    formMigrate($host,$username,$db);
+  }
+
+
+ }else if(isset($_POST['action']) AND $_POST['action']=="migrate"){
+  //migrate
+  migrate($host,$username,$_SESSION['webcash_pass'],$db);
+
+  unset($_SESSION['webcash_pass']);
+
+ }else{
+  formTestDB();
  }
+
+
+function formMigrate($host,$username,$db){
+  ?>
+  <form method="post">
+    <input type="hidden" value="migrate" name="action"/>
+    <input type="hidden" name="host" value="<?=$host?>" />
+    <input type="hidden" name="username" value="<?=$username?>" />
+    <input type="hidden" name="db" value="<?=$db?>" />
+
+    <table>
+    <tr>
+    <td colspan="2"><input type="submit" value="migrate Webcash"  onclick="return ask_confirmation('Do you really want to migrate webcash?');"/></td>
+    </tr>
+    </table>
+    </form>
+    <?
+    }
+
+
+function formTestDB(){
+  ?>
+
+  <!-- test DB -->
+
+    <form method="post">
+    <input type="hidden" value="connect" name="action"/>
+    <table>
+    <tr>
+    <td>host</td>
+    <td><input type="text" name="host" value="127.0.0.1"/></td>
+    </tr>
+    <tr>
+    <td>username</td>
+    <td><input type="text" name="username"/></td>
+    </tr>
+    <tr>
+    <td>pass</td>
+    <td><input type="password" name="pass"/></td>
+    </tr>
+    <tr>
+    <td>db</td>
+    <td><input type="text" name="db" value="webcash"/></td>
+    </tr>
+    <tr>
+    <td colspan="2"><input type="submit" value="test Webcash db"  onclick="return ask_confirmation('Confirm ?');"/></td>
+    </tr>
+    </table>
+    </form>
+
+    <?
+    }
+
+
+function migrate($host,$username,$pass,$db){
+
+  $link = mysql_connect($host, $username, $pass);
+  $db_selected = mysql_select_db($db,$link);
+  if (!$db_selected) {
+    die("Can\'t use $db DB : " . mysql_error());
+
+  }else{
+
+    //Import categories
+    $result = mysql_query("SELECT id, name, comment, color FROM webcash_categories") or die(mysql_error());
+
+    $nb_webcash = mysql_num_rows($result);
+    mysql_select_db('webfinance');
+    mysql_query("TRUNCATE TABLE webfinance_categories") or die(mysql_error());
+    while($webcash_categ = mysql_fetch_assoc($result)){
+      // print_r($webcash_categ);
+      list($r, $g, $b) = color_hex($webcash_categ['color']);
+      //  echo $r.":".$g.":".$b."<br/>";
+      $color = "#".dechex($r)."".dechex($g)."".dechex($b);
+      //echo $color."<br/>";
+
+      $q="INSERT INTO webfinance_categories ".
+	"( id , name , comment , re , plan_comptable , color ) ".
+	"VALUES ".
+	"(%d , '%s', '%s' ,  NULL , NULL , '%s')";
+      $query = sprintf($q,
+		       $webcash_categ['id'],
+		       $webcash_categ['name'],
+		       $webcash_categ['comment'],
+		       $color);
+      mysql_query($query) or die(mysql_error());
+    }
+    mysql_free_result($result);
+
+    $q = mysql_query("SELECT COUNT(*) FROM webfinance_categories") or die(mysql_error());
+    list($nb_wf)=mysql_fetch_array($q);
+    mysql_free_result($q);
+
+    echo "categories importation: ";
+    if($nb_webcash == $nb_wf){
+      echo "OK";
+    }else{
+      echo "FAILED";
+      exit;
+    }
+    echo "<br/>";
+
+    //Import banks
+    mysql_select_db('webcash',$link);
+    $result = mysql_query("SELECT webcash_banks.id, name, account, phone, mail ".
+			  "FROM webcash_banks LEFT JOIN webcash_accounts ON  webcash_banks.id=webcash_accounts.id_bank")
+      or die(mysql_error());
+    $nb_webcash = mysql_num_rows($result);
+
+    mysql_select_db('webfinance');
+    mysql_query("DELETE FROM webfinance_pref WHERE type_pref='rib'") or die(mysql_error());
+    // mysql_query("TRUNCATE TABLE webfinance_accounts") or die(mysql_error());
+    // mysql_query("TRUNCATE TABLE webfinance_banks") or die(mysql_error());
+    while($webcash_banks = mysql_fetch_assoc($result)){
+      //  print_r($webcash_banks);
+      $rib = new stdClass();
+      $rib->id = $webcash_banks['id'];
+      $rib->banque = $webcash_banks['name'];
+      $rib->domiciliation = "";
+      $rib->code_banque = "";
+      $rib->code_guichet = "";
+      $rib->compte = $webcash_banks['account'];
+      $rib->clef = "";
+      $rib->iban = "";
+      $rib->swift = "";
+
+      $rib = base64_encode(serialize($rib));
+      mysql_query("INSERT INTO webfinance_pref (id_pref, type_pref, value) VALUES(".$webcash_banks['id'].", 'rib', '$rib')")
+	or die(mysql_error());
+
+      //   mysql_query(sprintf("INSERT INTO webfinance_banks SET id=%d, name='%s', short_name='%s', phone='%s', mail='%s', comment='%s'",
+      // 		      $webcash_banks['id'],
+      // 		      $webcash_banks['name'],
+      // 		      $webcash_banks['short_name'],
+      // 		      $webcash_banks['phone'],
+      // 		      $webcash_banks['mail'],
+      // 		      $webcash_banks['comment']))
+      //     or die(mysql_error());
+    }
+    mysql_free_result($result);
+
+    $q = mysql_query("SELECT COUNT(*) FROM webfinance_pref WHERE type_pref='rib'") or die(mysql_error());
+    list($nb_wf1)=mysql_fetch_array($q);
+    mysql_free_result($q);
+
+    // $q = mysql_query("SELECT COUNT(*) FROM webfinance_banks") or die(mysql_error());
+    // list($nb_wf2)=mysql_fetch_array($q);
+    // mysql_free_result($q);
+
+    echo "banks importation: ";
+    if($nb_webcash == $nb_wf1){
+      echo "OK";
+    }else{
+      echo "FAILED";
+      exit;
+    }
+    echo "<br/>";
+
+    //import transactions
+    mysql_select_db('webcash',$link);
+    $result = mysql_query("SELECT webcash_operations.id, id_categorie, text, amount, webcash_operations.type, document, date, date_update, webcash_operations.comment, file, file_type, file_name, id_bank ".
+			  "FROM webcash_accounts LEFT JOIN webcash_operations ON webcash_accounts.id=webcash_operations.id_account  ")
+      or die(mysql_error());
+    $nb_webcash = mysql_num_rows($result);
+
+
+    mysql_select_db('webfinance');
+    mysql_query("TRUNCATE TABLE webfinance_transactions") or die(mysql_error());
+    //mysql_query("ALTER TABLE webfinance_transactions DROP INDEX unique_transaction");
+    $q="INSERT INTO webfinance_transactions SET ".
+      "id=%d, ".
+      "id_account=%d, ".
+      "id_category=%d, ".
+      "text='%s', ".
+      "amount=%s, ".
+      "type='%s', ".
+      "document='%s', ".
+      "date='%s', ".
+      "date_update='%s', ".
+      "comment='%s', ".
+      "file='%s', ".
+      "file_type='%s', ".
+      "file_name='%s' ";
+
+    //insertion d'une categorie 'unknown' pour les id_categorie=0
+    mysql_query("INSERT INTO webfinance_categories ( name , comment ) VALUES ('Unknown', 'unknown category' )")
+      or die(mysql_error());
+    $id_unknown_categ= mysql_insert_id();
+
+    while($webcash_tr = mysql_fetch_assoc($result)){
+      //  print_r($webcash_tr);
+
+      if($webcash_tr['id_categorie']<1)
+	$webcash_tr['id_categorie']=$id_unknown_categ;
+
+      mysql_query(sprintf($q,
+			  $webcash_tr['id'],
+			  $webcash_tr['id_bank'], //<- in webfinance, we don't use the webfinance_banks and webfinance_accounts tables
+			  $webcash_tr['id_categorie'],
+			  addslashes($webcash_tr['text']),
+			  $webcash_tr['amount'],
+			  $webcash_tr['type'],
+			  $webcash_tr['document'],
+			  $webcash_tr['date'],
+			  $webcash_tr['date_update'],
+			  $webcash_tr['comment'],
+			  addslashes($webcash_tr['file']),
+			  $webcash_tr['file_type'],
+			  $webcash_tr['file_name']))
+	or die(mysql_error());
+    }
+    mysql_free_result($result);
+
+    $q = mysql_query("SELECT COUNT(*) FROM webfinance_transactions ") or die(mysql_error());
+    list($nb_wf)=mysql_fetch_array($q);
+
+
+    //mysql_query("ALTER TABLE webfinance_transactions ADD UNIQUE unique_transaction (id_account, amount, type, date)");
+
+    echo "transactions importation: ";
+    echo $nb_webcash." - ".$nb_wf." ";
+    if($nb_webcash == $nb_wf){
+      echo "OK";
+    }else{
+      echo "FAILED";
+      exit;
+    }
+    echo "<br/>";
+
+    //Import expenses_details
+    mysql_select_db('webcash',$link);
+
+    $result = mysql_query("SELECT COUNT(*) FROM webcash_expense_details") or die(mysql_error());
+    list($nb_webcash1)= mysql_fetch_array($result);
+
+    $result = mysql_query("SELECT * FROM webcash_expenses  LEFT JOIN webcash_expense_details ON  webcash_expenses.id=webcash_expense_details.id_expense")
+      or die(mysql_error());
+    $nb_webcash2 = mysql_num_rows($result);
+
+
+
+    mysql_select_db('webfinance');
+    mysql_query("TRUNCATE TABLE webfinance_expenses") or die(mysql_error());
+
+
+    $q="INSERT INTO webfinance_expenses SET ".
+      "id=%d, ".
+      "id_user=%d, ".
+      "id_transaction=%d, ".
+      "amount='%s', ".
+      "comment='%s', ".
+      "date_update='%s', ".
+      "file='%s', ".
+      "file_type='%s', ".
+      "file_name='%s'";
+
+    while($webcash_exp = mysql_fetch_assoc($result)){
+      //  print_r($webcash_exp);
+      mysql_query(sprintf($q,
+			  $webcash_exp['id'],
+			  $webcash_exp['id_user'],
+			  $webcash_exp['id_transaction'],
+			  $webcash_exp['amount'],
+			  $webcash_exp['comment'],
+			  $webcash_exp['date_update'],
+			  $webcash_exp['file'],
+			  $webcash_exp['file_type'],
+			  $webcash_exp['file_name']))
+	or die(mysql_error());
+    }
+    mysql_free_result($result);
+
+    $q = mysql_query("SELECT COUNT(*) FROM webfinance_expenses ") or die(mysql_error());
+    list($nb_wf)=mysql_fetch_array($q);
+
+    echo "expenses importation: ";
+    if($nb_webcash1 == $nb_wf AND $nb_webcash2 == $nb_wf){
+      echo "OK";
+    }else{
+      echo "FAILED";
+      exit;
+    }
+    echo "<br/>";
+  }
+
+}
 
 
 function color_hex($color_string){
@@ -83,231 +382,6 @@ function color_hex($color_string){
 
 }
 
-if(isset($_POST['action']) AND $_POST['action']=="migrate"){
-
-//Import categories
-$result = mysql_query("SELECT id, name, comment, color FROM webcash_categories") or die(mysql_error());
-
-$nb_webcash = mysql_num_rows($result);
-mysql_select_db('webfinance');
-mysql_query("TRUNCATE TABLE webfinance_categories") or die(mysql_error());
-while($webcash_categ = mysql_fetch_assoc($result)){
-  // print_r($webcash_categ);
-  list($r, $g, $b) = color_hex($webcash_categ['color']);
-  //  echo $r.":".$g.":".$b."<br/>";
-  $color = "#".dechex($r)."".dechex($g)."".dechex($b);
-  //echo $color."<br/>";
-
-  $q="INSERT INTO webfinance_categories ".
-    "( id , name , comment , re , plan_comptable , color ) ".
-    "VALUES ".
-    "(%d , '%s', '%s' ,  NULL , NULL , '%s')";
-  $query = sprintf($q,
-		   $webcash_categ['id'],
-		   $webcash_categ['name'],
-		   $webcash_categ['comment'],
-		   $color);
-  mysql_query($query) or die(mysql_error());
- }
-mysql_free_result($result);
-
-$q = mysql_query("SELECT COUNT(*) FROM webfinance_categories") or die(mysql_error());
-list($nb_wf)=mysql_fetch_array($q);
-mysql_free_result($q);
-
-echo "categories importation: ";
-if($nb_webcash == $nb_wf){
-    echo "OK";
- }else{
-  echo "FAILED";
-  exit;
- }
-echo "<br/>";
-
-//Import banks
-mysql_select_db('webcash');
-$result = mysql_query("SELECT webcash_banks.id, name, account, phone, mail ".
-		      "FROM webcash_banks LEFT JOIN webcash_accounts ON  webcash_banks.id=webcash_accounts.id_bank")
-  or die(mysql_error());
-$nb_webcash = mysql_num_rows($result);
-
-mysql_select_db('webfinance');
-mysql_query("DELETE FROM webfinance_pref WHERE type_pref='rib'") or die(mysql_error());
-// mysql_query("TRUNCATE TABLE webfinance_accounts") or die(mysql_error());
-// mysql_query("TRUNCATE TABLE webfinance_banks") or die(mysql_error());
-while($webcash_banks = mysql_fetch_assoc($result)){
-  //  print_r($webcash_banks);
-  $rib = new stdClass();
-  $rib->id = $webcash_banks['id'];
-  $rib->banque = $webcash_banks['name'];
-  $rib->domiciliation = "";
-  $rib->code_banque = "";
-  $rib->code_guichet = "";
-  $rib->compte = $webcash_banks['account'];
-  $rib->clef = "";
-  $rib->iban = "";
-  $rib->swift = "";
-
-  $rib = base64_encode(serialize($rib));
-  mysql_query("INSERT INTO webfinance_pref (id_pref, type_pref, value) VALUES(".$webcash_banks['id'].", 'rib', '$rib')")
-    or die(mysql_error());
-
-//   mysql_query(sprintf("INSERT INTO webfinance_banks SET id=%d, name='%s', short_name='%s', phone='%s', mail='%s', comment='%s'",
-// 		      $webcash_banks['id'],
-// 		      $webcash_banks['name'],
-// 		      $webcash_banks['short_name'],
-// 		      $webcash_banks['phone'],
-// 		      $webcash_banks['mail'],
-// 		      $webcash_banks['comment']))
-//     or die(mysql_error());
- }
-mysql_free_result($result);
-
-$q = mysql_query("SELECT COUNT(*) FROM webfinance_pref WHERE type_pref='rib'") or die(mysql_error());
-list($nb_wf1)=mysql_fetch_array($q);
-mysql_free_result($q);
-
-// $q = mysql_query("SELECT COUNT(*) FROM webfinance_banks") or die(mysql_error());
-// list($nb_wf2)=mysql_fetch_array($q);
-// mysql_free_result($q);
-
-echo "banks importation: ";
-if($nb_webcash == $nb_wf1){
-    echo "OK";
- }else{
-  echo "FAILED";
-  exit;
- }
-echo "<br/>";
-
-//import transactions
-mysql_select_db('webcash');
-$result = mysql_query("SELECT webcash_operations.id, id_categorie, text, amount, webcash_operations.type, document, date, date_update, webcash_operations.comment, file, file_type, file_name, id_bank ".
-		      "FROM webcash_accounts LEFT JOIN webcash_operations ON webcash_accounts.id=webcash_operations.id_account  ")
-  or die(mysql_error());
-$nb_webcash = mysql_num_rows($result);
-
-
-mysql_select_db('webfinance');
-mysql_query("TRUNCATE TABLE webfinance_transactions") or die(mysql_error());
-//mysql_query("ALTER TABLE webfinance_transactions DROP INDEX unique_transaction");
-  $q="INSERT INTO webfinance_transactions SET ".
-    "id=%d, ".
-    "id_account=%d, ".
-    "id_category=%d, ".
-    "text='%s', ".
-    "amount=%s, ".
-    "type='%s', ".
-    "document='%s', ".
-    "date='%s', ".
-    "date_update='%s', ".
-    "comment='%s', ".
-    "file='%s', ".
-    "file_type='%s', ".
-    "file_name='%s' ";
-
-  //insertion d'une categorie 'unknown' pour les id_categorie=0
-  mysql_query("INSERT INTO webfinance_categories ( name , comment ) VALUES ('Unknown', 'unknown category' )")
-    or die(mysql_error());
-  $id_unknown_categ= mysql_insert_id();
-
-  while($webcash_tr = mysql_fetch_assoc($result)){
-    //  print_r($webcash_tr);
-
-    if($webcash_tr['id_categorie']<1)
-      $webcash_tr['id_categorie']=$id_unknown_categ;
-
-  mysql_query(sprintf($q,
-		      $webcash_tr['id'],
-		      $webcash_tr['id_bank'], //<- in webfinance, we don't use the webfinance_banks and webfinance_accounts tables
-		      $webcash_tr['id_categorie'],
-		      addslashes($webcash_tr['text']),
-		      $webcash_tr['amount'],
-		      $webcash_tr['type'],
-		      $webcash_tr['document'],
-		      $webcash_tr['date'],
-		      $webcash_tr['date_update'],
-		      $webcash_tr['comment'],
-		      addslashes($webcash_tr['file']),
-		      $webcash_tr['file_type'],
-		      $webcash_tr['file_name']))
-    or die(mysql_error());
-}
-mysql_free_result($result);
-
-$q = mysql_query("SELECT COUNT(*) FROM webfinance_transactions ") or die(mysql_error());
-list($nb_wf)=mysql_fetch_array($q);
-
-
-//mysql_query("ALTER TABLE webfinance_transactions ADD UNIQUE unique_transaction (id_account, amount, type, date)");
-
-echo "transactions importation: ";
-echo $nb_webcash." - ".$nb_wf." ";
-if($nb_webcash == $nb_wf){
-    echo "OK";
- }else{
-  echo "FAILED";
-  exit;
- }
-echo "<br/>";
-
-//Import expenses_details
-mysql_select_db('webcash');
-
-$result = mysql_query("SELECT COUNT(*) FROM webcash_expense_details") or die(mysql_error());
-list($nb_webcash1)= mysql_fetch_array($result);
-
-$result = mysql_query("SELECT * FROM webcash_expenses  LEFT JOIN webcash_expense_details ON  webcash_expenses.id=webcash_expense_details.id_expense")
-  or die(mysql_error());
-$nb_webcash2 = mysql_num_rows($result);
-
-
-
-mysql_select_db('webfinance');
-mysql_query("TRUNCATE TABLE webfinance_expenses") or die(mysql_error());
-
-
-  $q="INSERT INTO webfinance_expenses SET ".
-    "id=%d, ".
-    "id_user=%d, ".
-    "id_transaction=%d, ".
-    "amount='%s', ".
-    "comment='%s', ".
-    "date_update='%s', ".
-    "file='%s', ".
-    "file_type='%s', ".
-    "file_name='%s'";
-
-while($webcash_exp = mysql_fetch_assoc($result)){
-  //  print_r($webcash_exp);
-  mysql_query(sprintf($q,
-		      $webcash_exp['id'],
-		      $webcash_exp['id_user'],
-		      $webcash_exp['id_transaction'],
-		      $webcash_exp['amount'],
-		      $webcash_exp['comment'],
-		      $webcash_exp['date_update'],
-		      $webcash_exp['file'],
-		      $webcash_exp['file_type'],
-		      $webcash_exp['file_name']))
-    or die(mysql_error());
-}
-mysql_free_result($result);
-
-$q = mysql_query("SELECT COUNT(*) FROM webfinance_expenses ") or die(mysql_error());
-list($nb_wf)=mysql_fetch_array($q);
-
-echo "expenses importation: ";
-if($nb_webcash1 == $nb_wf AND $nb_webcash2 == $nb_wf){
-    echo "OK";
- }else{
-  echo "FAILED";
-  exit;
- }
-echo "<br/>";
-
-
- }
 
 $Revision = '$Revision$';
 include("../bottom.php");
