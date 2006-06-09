@@ -40,9 +40,11 @@ if ($s->rows == 0) {
            KEY(author),
           PRIMARY KEY  (id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
-  $s = $dbh->prepare($q);
-  $s->execute() or die("Could not create table cvslog in $db at $host\n");
+  my $s2 = $dbh->prepare($q);
+  $s2->execute() or die("Could not create table cvslog in $db at $host\n");
+  $s2->finish();
 } 
+$s->finish();
 
 mkdir("/tmp/cvslog2sql.$pid");
 system("cp -a CVS /tmp/cvslog2sql.$pid");
@@ -72,15 +74,13 @@ open(LOG, "logfile");
 while ($ligne = <LOG>) {
   chomp($ligne);
 
-  my $is_binary = 0;
-
   if ($ligne =~ m!Working file: (.*)!) {
     $current_file = $1;
     $files{$current_file} = 1;
     printf("Working on : %-80s", $current_file) if ($verbose);
     $is_binary = 0;
     for $ext (@binary_extensions) {
-      if ($current_file =~ m!$ext$!) { $is_binary = 1; }
+      if ($current_file =~ m/$ext$/) { $is_binary = 1; print "-- $current_file is binary !\n"; }
     }
   }
 
