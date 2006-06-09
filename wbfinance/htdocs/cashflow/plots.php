@@ -2,6 +2,8 @@
 require("../inc/main.php");
 require_once("/usr/share/phplot/phplot.php");
 
+$ttf_dir = "/usr/share/fonts/truetype/freefont";
+
 extract($_GET);
 if (!isset($width)) { $width = 500; }
 if (!isset($height)) { $height = 400; }
@@ -463,11 +465,11 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
       $colors=array();
       $legends=array();
 
-      $plot =& new PHPlot($width,$height);
+      //      $plot =& new PHPlot($width,$height);
+      $plot =& new PHPlot(800,400);
       //$plot->SetImageBorderType('plain');
       $plot->SetDataType('text-data');
       $plot->SetPlotType('pie');
-
 
       if(count($tmp_categ)>1){
 
@@ -512,7 +514,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 
 	if(isset($_GET['sign']) AND $_GET['sign']=="negative"){
 	  $plot->SetDataValues($data_negative);
-	  $plot->SetTitle(utf8_decode(sprintf(_("Outgo by category\n%s\nfrom %s to %s"), $name, $start_date, $end_date)));
+	  $plot->SetTitle(utf8_decode(sprintf(_("Outgo by category %s\nfrom %s to %s"), $name, $start_date, $end_date)));
 	  foreach ($data_negative as $row){
 	    $sum=array_sum($row);
 	    $legends[]=$row[0]." : ".sprintf("%01.2f", $sum);
@@ -522,7 +524,7 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 	    $colors[]=$row[2];
 	}else{
 	  $plot->SetDataValues($data_positive);
-	  $plot->SetTitle(utf8_decode(sprintf(_("Income by category\n%s\nfrom %s to %s"),$name, $start_date, $end_date)));
+	  $plot->SetTitle(utf8_decode(sprintf(_("Income by category %s\nfrom %s to %s"),$name, $start_date, $end_date)));
 
 	  foreach ($data_positive as $row){
 	    $sum=array_sum($row);
@@ -534,16 +536,32 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 	}
 
 	$plot->SetDataColors($colors);
-	$plot->SetLegend	($legends);
+	$plot->SetLegend($legends);
 
       }else{
 	$data=array(array('',100));
 	$plot->SetDataValues($data);
 	$plot->SetDataColors(array('white'));
-	$plot->SetLegend	(array(_('Nothing')));
+	$plot->SetLegend(array(_('Nothing')));
       }
 
-      $plot->DrawGraph();
+    $fonts = array(
+		   'title_font' => array('size' => 13, 'font'=>$GLOBALS['_SERVER']['DOCUMENT_ROOT']."/css/themes/".$User->prefs->theme."/buttonfont.ttf"),
+		   'legend_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSansBold.ttf'),
+		   'generic_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSansBold.ttf'),
+		   'x_label_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSans.ttf'),
+		   'y_label_font' => array('size' => 7, 'font'=>$ttf_dir.'/FreeSans.ttf'),
+		   'x_title_font' => array('size' => 10, 'font'=>$ttf_dir.'/FreeSansBold.ttf'),
+		   'y_title_font' => array('size' => 10, 'font'=>$ttf_dir.'/FreeSansBold.ttf')
+		   );
+    foreach ($fonts as $object=>$fontdata) {
+      $plot->$object = $fontdata;
+    }
+
+    $plot->use_ttf = TRUE;
+
+
+    $plot->DrawGraph();
 
     }else{
 
@@ -818,19 +836,21 @@ if(isset($_GET['type']) AND isset($_GET['account']) AND !empty($_GET['type']) AN
 
     $var=explode("-",$start_date);
 
-    $nb_month = ($nb_day/30)+1;
+    $nb_month = ceil($nb_day/30);
 
     $begin_date=date("Y-m-d" , mktime(0, 0, 0, $var[1],1, $var[0]));
     $begin_date_ts = mktime(0, 0, 0, $var[1],1, $var[0]);
 
     $q_trs_neg = mysql_query("SELECT amount , UNIX_TIMESTAMP(date) as ts_date FROM webfinance_transactions WHERE amount<0 ")
       or die(mysql_error());
+    $trs_neg = array();
     while($row = mysql_fetch_assoc($q_trs_neg))
       $trs_neg[] = $row;
     mysql_free_result($q_trs_neg);
 
     $q_trs_pos = mysql_query("SELECT amount , UNIX_TIMESTAMP(date) as ts_date FROM webfinance_transactions WHERE amount>0 ")
       or die(mysql_error());
+    $trs_pos = array();
     while($row = mysql_fetch_assoc($q_trs_pos))
       $trs_pos[] = $row;
     mysql_free_result($q_trs_pos);
