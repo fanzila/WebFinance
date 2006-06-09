@@ -14,20 +14,44 @@
 
 use DBI;
 
-$db = $ARGV[1] || "webfinance";
-$host = $ARGV[2] || "localhost";
+$db = $ARGV[0]||"webfinance";
+$host = $ARGV[1]||"localhost";
+$verbose = $ARGV[2]||0;
 $pid =  $$;
+
+$dsn = "DBI:mysql:database=$db;host=$host";
+$dbh = DBI->connect($dsn, $login, $pass) or die("Can't connect $host $db $login $pass");
+
+# Check existence of cvslog table
+$s = $dbh->prepare("SHOW TABLES LIKE 'cvslog'");
+$s->execute();
+if ($s->rows == 0) {
+  print "Table cvslog does not exist in $db at $host, creating\n";
+  $q = "CREATE TABLE cvslog (
+          id int(11) NOT NULL auto_increment,
+          file varchar(255),
+          date datetime,
+          added int(11) NOT NULL default '0',
+          deleted int(11) NOT NULL default '0',
+          state varchar(50),
+          author varchar(100),
+          revision varchar(100),
+           KEY(file),
+           KEY(author),
+          PRIMARY KEY  (id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
+  $s = $dbh->prepare($q);
+  $s->execute() or die("Could not create table cvslog in $db at $host\n");
+} 
 
 mkdir("/tmp/cvslog2sql.$pid");
 system("cp -a CVS /tmp/cvslog2sql.$pid");
 chdir("/tmp/cvslog2sql.$pid");
 
-print "Getting first release of each file...\n";
+print "Getting first release of each file (this might take some time in Madagascar)...\n";
 system("cvs up -r 1.1 -d > /dev/null 2>&1 ");
 
-$dsn = "DBI:mysql:database=$db;host=$host";
-$dbh = DBI->connect($dsn, $login, $pass) or die("Can't connect $host $db $login $pass");
-
+# Should UPDATE table /me jumps
 print "Truncating table\n";
 $s = $dbh->prepare("TRUNCATE TABLE cvslog");
 $s->execute();
@@ -40,20 +64,6 @@ if (! -f "logfile") {
 $current_file = "";
 $current_revision = "";
 
-# FIXME check existence of table cvslog and create it if necessary
-# 
-# CREATE TABLE `cvslog` (
-#   `id` int(11) NOT NULL auto_increment,
-#   `file` varchar(255) default NULL,
-#   `date` datetime default NULL,
-#   `added` int(11) NOT NULL default '0',
-#   `deleted` int(11) NOT NULL default '0',
-#   `state` varchar(50) default NULL,
-#   `author` varchar(100) default NULL,
-#   `revision` varchar(100) default NULL,
-#   PRIMARY KEY  (`id`)
-# ) ENGINE=InnoDB DEFAULT CHARSET=utf8
-
 open(LOG, "logfile");
 while ($ligne = <LOG>) {
   chomp($ligne);
@@ -62,11 +72,12 @@ while ($ligne = <LOG>) {
   if ($ligne =~ m!Working file: (.*)!) {
     $current_file = $1;
     $files{$current_file} = 1;
+    printf("Working on : %-80s", $current_file) if ($verbose);
   }
 
   if ($ligne =~ m!revision ([0-9.]+)!) {
     $current_revision = $1;
-    print "Current revision : $current_revision\n";
+    print "." if ($verbose);
   } elsif ($ligne =~ m!date: ([^;]+);  author: (\w+);  state: (Exp);  lines: ([+0-9-]+) ([+0-9-]+)!) {
     ($date, $author, $state, $added, $deleted) = ($1, $2, $3, $4, $5);
     $query = "INSERT INTO cvslog (file, date, author, added, deleted, state, revision) values('$current_file', '$date', '$author', '$added', '$deleted', '$state', '$current_revision');";
@@ -86,11 +97,19 @@ while ($ligne = <LOG>) {
     $s = $dbh->prepare($query);
     $s->execute();
 
-    print "Initial release for $current_file : $lines lignes\n";
+    print "Initial release for $current_file counted $lines lines\n" if ($verbose);
   } else {
 #     print "$ligne\n";
   }
+}
 
+my @binary_extensions = (
+    '.dia', '.doc', '.gif', '.jpg', '.ods', '.png', '.ps',
+    '.psd', '.svgz', '.txt', '.xls', '.gz', '.bz2');
+
+for $ext (@binary_extensions) {
+  $s = $dbh->prepare("DELETE FROM cvslog WHERE file LIKE '\%$ext'");
+  $s->execute();
 }
 
 chdir("/tmp");
