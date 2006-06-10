@@ -15,7 +15,7 @@ require("../inc/main.php");
 if ($_GET['action'] == "delete") {
   mysql_query("DELETE FROM webfinance_roles WHERE id_role=".$_GET['id']);
   $_SESSION['message'] = _('Role deleted');
-  header("Location: index.php");
+  header("Location: preferences.php?tab=Role");
 }
 
 foreach ($_POST['cat'] as $id=>$data) {
@@ -31,6 +31,7 @@ foreach ($_POST['cat'] as $id=>$data) {
       $f = preg_replace("!,$!", ") ", $f);
       $values = preg_replace("!,$!", ") ", $values);
       $q .= $f.$values;
+      $_SESSION['message'] = _('Role added');
     }
   } else {
     $q = "UPDATE webfinance_roles SET ";
@@ -38,12 +39,13 @@ foreach ($_POST['cat'] as $id=>$data) {
       $q .= sprintf("%s='%s',", $n, $v);
     }
     $q = preg_replace("!,$!", " WHERE id_role=$id", $q);
+    $_SESSION['message'] = _('Role updated');
   }
   //  echo $q;
   mysql_query($q) or wf_mysqldie();
 }
 
-header("Location: index.php");
+header("Location: preferences.php?tab=Role");
 
 
 ?>

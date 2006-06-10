@@ -67,8 +67,6 @@ function focusOnglet(id) {
 function mainFormChanged(f) {
   f.save_button.className = 'unsaved_button';
 }
-
-
 </script>
 
 <?= $_SESSION['message']; $_SESSION['message']=""; ?>
