@@ -26,7 +26,7 @@ $dbh = DBI->connect($dsn, $login, $pass) or die("Can't connect $host $db $login 
 $s = $dbh->prepare("SHOW TABLES LIKE 'cvslog'");
 $s->execute();
 if ($s->rows == 0) {
-  print "Table cvslog does not exist in $db at $host, creating\n";
+  print "Table cvslog does not exist in $db at $host, creating\n" if ($verbose);
   $q = "CREATE TABLE cvslog (
           id int(11) NOT NULL auto_increment,
           file varchar(255),
@@ -50,16 +50,16 @@ mkdir("/tmp/cvslog2sql.$pid");
 system("cp -a CVS /tmp/cvslog2sql.$pid");
 chdir("/tmp/cvslog2sql.$pid");
 
-print "Getting first release of each file (this might take some time in Madagascar)...\n";
+print "Getting first release of each file (this might take some time in Madagascar)...\n" if ($verbose);
 system("cvs up -r 1.1 -d > /dev/null 2>&1 ");
 
 # Should UPDATE table /me jumps
-print "Truncating table\n";
+print "Truncating table\n" if ($verbose);
 $s = $dbh->prepare("TRUNCATE TABLE cvslog");
 $s->execute();
 
 if (! -f "logfile") {
-  print "Getting output of CVS log\n";
+  print "Getting output of CVS log\n" if ($verbose);
   system("cvs log > logfile 2>/dev/null");
 }
 %files = ();
@@ -80,7 +80,7 @@ while ($ligne = <LOG>) {
     printf("Working on : %-80s", $current_file) if ($verbose);
     $is_binary = 0;
     for $ext (@binary_extensions) {
-      if ($current_file =~ m/$ext$/) { $is_binary = 1; print "-- $current_file is binary !\n"; }
+      if ($current_file =~ m/$ext$/) { $is_binary = 1; }
     }
   }
 
