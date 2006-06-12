@@ -19,13 +19,18 @@ if(isset($_POST['login'])){
 	or wf_mysqldie();
       list($id_user,$email)=mysql_fetch_array($q);
       if(is_numeric($id_user)){
-	$pass = $User->random_password();
+	$client_res = mysql_query("SELECT password FROM webfinance_clients WHERE id_user=".$id_user) or wf_mysqldie();
+	if(mysql_num_rows($client_res)==1){
+	  list($pass) = mysql_fetch_array($client_res);
+	}else{
+	  $pass = $User->random_password();
+	}
 	if($User->setPass($id_user,$pass)){
 	  $_SESSION['id_user'] = $id_user;
 	  $User->sendInfo($id_user,$pass);
 	  $_SESSION['id_user'] = -1;
 	  echo _("User information sent to")." ".$email;
-      }else{
+	}else{
 	  echo _("Set new password: fails");
 	}
       }else{

@@ -170,7 +170,7 @@ $replacements=array(
 		    );
 
 if(isset($pref->subject) && !empty($pref->body)){
-  $subject = preg_replace($patterns, $replacements,  $pref->subject);
+  $subject = preg_replace($patterns, $replacements, stripslashes(utf8_decode($pref->subject))  );
  }else
   $subject = ucfirst($invoice->type_doc)." #".$invoice->num_facture." pour ".$invoice->nom_client;
 
@@ -188,7 +188,7 @@ if(isset($pref->subject) && !empty($pref->body)){
 <textarea name="body" style="width: 400px; height: 300px; border: solid 1px #ccc;">
 <?
   if(isset($pref->body) AND !empty($pref->body) )
-    echo stripslashes(preg_replace($patterns, $replacements, $pref->body));
+    echo stripslashes(preg_replace($patterns, $replacements, stripslashes(utf8_decode($pref->body)) ));
   else
     echo _('Hello').",";
 ?>
