@@ -25,6 +25,8 @@ class Client {
                                   c.has_devis, c.has_unpaid, c.ca_total_ht, c.ca_total_ht_year, c.total_du_ht,
                                   c.vat_number, c.siren,
                                   c.id_company_type,
+                                  c.id_user,
+                                  c.password,
                                   ct.nom as type_name
                            FROM webfinance_clients as c, webfinance_company_types as ct
                            WHERE id_client=".$this->id) or wf_mysqldie("Client::_getInfos");
@@ -61,6 +63,15 @@ class Client {
           break;
       }
     }
+
+    $this->login = "";
+    if($this->id_user>0){
+      $login_res = mysql_query("SELECT login FROM webfinance_users WHERE id_user=".$this->id_user) or wf_mysqldie();
+      if(mysql_num_rows($login_res)>0)
+	list($this->login) = mysql_fetch_array($login_res);
+    }
+
+
   }
 
   function Client($id = null) {

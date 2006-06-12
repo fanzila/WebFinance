@@ -16,7 +16,7 @@ if ($GLOBALS['HTTP_SERVER_VARS']['REQUEST_METHOD'] != "POST") {
   die();
 }
 
-$User = new User();
+$UserContact = new User();
 
 $user_data=array(
 		 "id_user"=>$_POST['id_user'],
@@ -33,9 +33,9 @@ $user_data=array(
 if ($_POST['action'] == "create") {
 
   if( empty($user_data['password']) )
-    $user_data['password']=$User->randomPass();
+    $user_data['password']=$UserContact->randomPass();
 
-  $id_user = $User->createUser($user_data);
+  $id_user = $UserContact->createUser($user_data);
 
   $_SESSION['tmp_message'] = $_SESSION['message'];
 
@@ -47,7 +47,7 @@ if ($_POST['action'] == "create") {
   $_SESSION['tmp_message'] .= "<br/>"._("Contact added");
 
   if(isset($_POST['send_info'])){
-    $User->sendInfo($id_user,$user_data['password']);
+    $UserContact->sendInfo($id_user,$user_data['password']);
     $_SESSION['tmp_message'] .= "<br/>".$_SESSION['message'];
   }
   $_SESSION['message']=$_SESSION['tmp_message'];
@@ -61,9 +61,9 @@ if ($_POST['action'] == "create") {
   $result = mysql_query("SELECT count(*) FROM webfinance_users WHERE id_user=".$_POST['id_user']) or wf_mysqldie();
   list($exists) = mysql_fetch_array($result);
   if($exists<1)
-    $_POST['id_user'] = $User->createUser($user_data);
+    $_POST['id_user'] = $UserContact->createUser($user_data);
   else
-    $User->saveData($user_data);
+    $UserContact->saveData($user_data);
 
   $q = sprintf("UPDATE webfinance_personne SET id_user=%d, nom='%s',prenom='%s',email='%s',tel='%s',mobile='%s',fonction='%s',note='%s' WHERE id_personne=%d",
                $_POST['id_user'], $_POST['nom'], $_POST['prenom'], $_POST['email'], $_POST['tel'], $_POST['mobile'], $_POST['fonction'], $_POST['note'], $_POST['id_personne']);
@@ -78,7 +78,7 @@ if ($_POST['action'] == "create") {
   logmessage(_('Update contact')." ".$_POST['nom']." ".$_POST['prenom']." (user:".$_POST['id_user']." client:$client)" );
 
 } elseif ($_POST['action'] == "delete") {
-  $User->delete($_POST['id_user']);
+  $UserContact->delete($_POST['id_user']);
 
   $res=mysql_query("SELECT nom, prenom, client FROM webfinance_personne WHERE id_personne=".$_POST['id_personne']);
   list($nom, $prenom,$client)=mysql_fetch_array($res);
