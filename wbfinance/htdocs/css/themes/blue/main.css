@@ -57,6 +57,8 @@ input.gsm { width: 79px; background: url('../../../imgs/icons/gsm.gif') no-repea
 input.tva { width: 182px; background: url('../../../imgs/icons/tva.gif') no-repeat top left #ccf; padding-left: 18px; text-align: center; }
 input.siren { width: 146px; background: url('../../../imgs/icons/siren.gif') no-repeat top left #ccf; padding-left: 33px; text-align: center; }
 input.web { background: url('../../../imgs/icons/web.gif') no-repeat top left #ccf; padding-left: 18px; text-align: center; width: 182px; }
+input.person { background: url('../../../imgs/icons/person.png') no-repeat top left white; padding-left: 18px; text-align: center; width: 100px; }
+input.keyring { background: url('../../../imgs/icons/keyring.png') no-repeat top left white; padding-left: 18px; text-align: center; width: 100px; }
 
 table.mosaique td { border: solid 1px black; padding: 10px; color: black; background: white; }
 
@@ -69,7 +71,7 @@ display: none;
 div.post_message{
   background: url('/imgs/icons/help.gif') no-repeat 5px 5px #ccf;
   border: dashed 2px #aaf;
-  position: absolute; 
+  position: absolute;
   right: 30px;
   top: 30px;
   padding: 20px;
@@ -78,7 +80,7 @@ div.post_message{
   padding-left: 30px;
 }
 
-tr.onglets td.focus { 
+tr.onglets td.focus {
  padding: 0px;
  background: #6060ff;
  padding-left: 8px;
@@ -89,7 +91,7 @@ tr.onglets td.focus {
  white-space: nowrap;
  border-collapse: collapse;
 }
-tr.onglets td { 
+tr.onglets td {
  background: #ceceff;
  padding-right: 8px;
  padding-left: 8px;
