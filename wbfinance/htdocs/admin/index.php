@@ -38,11 +38,12 @@ function confirmDeleteUser(id) {
   <td>Actions</td>
 </tr>
 <?php
-$result = mysql_query("SELECT first_name,last_name,id_user,email,login,date_format(last_login,'%d/%m/%Y') as nice_last_login
+$result = mysql_query("SELECT first_name,last_name,id_user,email,login, role, date_format(last_login,'%d/%m/%Y') as nice_last_login
                        FROM webfinance_users ORDER by last_login DESC");
 $count=1;
 while ($user = mysql_fetch_object($result)) {
   $rowclass = ($count%2)==0?"odd":"even";
+  if($user->role!='client'){
   print <<<EOF
 <tr class="row_$rowclass">
   <td style="text-align: center">$user->login</td>
@@ -56,6 +57,8 @@ while ($user = mysql_fetch_object($result)) {
 </tr>
 EOF;
   $count++;
+
+  }
 }
 mysql_free_result($result);
 
