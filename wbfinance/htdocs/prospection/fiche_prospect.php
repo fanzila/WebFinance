@@ -93,6 +93,7 @@ var onglet_shown='<?= $shown_tab ?>';
 
 <input type="hidden" name="focused_onglet" value="<?= $_GET['focused_onglet'] ?>" />
 <input type="hidden" name="id_client" value="<?= $Client->id ?>" />
+<input type="hidden" name="id_user" value="<?= $Client->id_user ?>" />
 
 <table width="740" border="0" cellspacing="5" cellpadding="0" class="fiche_prospect">
 <tr>
@@ -126,7 +127,10 @@ var onglet_shown='<?= $shown_tab ?>';
   <input type="text" name="addr2" value="<?= preg_replace('/"/', '\\"', $Client->addr2) ?>" style="color: #666; width: 200px" /><br/>
   <input type="text" name="addr3" value="<?= preg_replace('/"/', '\\"', $Client->addr3) ?>" style="color: #666; width: 200px" /><br/>
   <input type="text" name="cp" value="<?= preg_replace('/"/', '\\"', $Client->cp) ?>" style="text-align: center; color: #666; width: 48px" /><input type="text" name="ville" value="<?= $Client->ville ?>" style="color: #666; width: 148px" /><br/>
-  <input type="text" name="pays" value="<?= preg_replace('/"/', '\\"', $Client->pays) ?>" style="color: #666; width: 80px; text-align: center;" /><br/>
+  <input type="text" name="pays" value="<?= preg_replace('/"/', '\\"', $Client->pays) ?>" style="color: #666; width: 80px; text-align: center;" /><br/
+  <b><?= _('Login and password:') ?></b><br/>
+  <input type="text" name="login" value="<?= $Client->login ?>" class="person" /><br/>
+  <input type="text" name="password" value="<?= $Client->password ?>" class="keyring" /><br/>
   <b><?= _('Phone and URL :') ?></b><br/>
   <input type="text" name="tel" value="<?= addslashes($Client->tel) ?>" class="tel" /><input type="text" name="fax" value="<?= $Client->fax ?>" class="fax" /><br/>
   <input type="text" name="web" value="<?= addslashes($Client->web) ?>" class="web" /><br/>

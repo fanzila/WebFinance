@@ -137,31 +137,41 @@ class User {
       $roles = '';
     }
 
-    if(empty($password)){
-      $q = sprintf("UPDATE webfinance_users SET first_name='%s', last_name='%s', login='%s', email='%s', disabled=%d, role='%s',
+    if( !($this->existsLogin($login)) OR ($this->existsLogin($login) == $id_user) ){
+
+      if(empty($password)){
+	$q = sprintf("UPDATE webfinance_users SET first_name='%s', last_name='%s', login='%s', email='%s', disabled=%d, role='%s',
                          modification_date=now()
                   WHERE id_user=%d",
-		   $first_name, $last_name, $login, $email, ($disabled == "on")?1:0, $roles,
-		   $id_user );
-    }else{
-      $q = sprintf("UPDATE webfinance_users SET first_name='%s', last_name='%s', login='%s', email='%s', disabled=%d, role='%s',
+		     $first_name, $last_name, $login, $email, ($disabled == "on")?1:0, $roles,
+		     $id_user );
+      }else{
+	$q = sprintf("UPDATE webfinance_users SET first_name='%s', last_name='%s', login='%s', email='%s', disabled=%d, role='%s',
                          password=md5('%s'), modification_date=now()
                   WHERE id_user=%d",
-		   $first_name, $last_name, $login, $email, ($disabled == "on")?1:0, $roles, $password,
-		   $id_user );
+		     $first_name, $last_name, $login, $email, ($disabled == "on")?1:0, $roles, $password,
+		     $id_user );
+      }
+      mysql_query($q) or wf_mysqldie();
+      logmessage("Modified user:$id_user ($last_name $first_name)");
+      $_SESSION['message'] = _("Data saved");
 
+    }else{
+      $_SESSION['message'] =  _("Sorry, this user already exists!");
     }
-
-    mysql_query($q) or wf_mysqldie();
-    logmessage("Modified user:$id_user ($last_name $first_name)");
-    $_SESSION['message'] = _("Data saved");
     return $id_user;
+
   }
 
   function existsLogin($login){
-    $result = mysql_query("SELECT count(id_user) FROM webfinance_users WHERE login='$login'") or wf_mysqldie();
-    list($exists) = mysql_fetch_array($result);
-    return $exists;
+    $result = mysql_query("SELECT id_user FROM webfinance_users WHERE login='$login'") or wf_mysqldie();
+    if(mysql_num_rows($result)>0){
+      list($exists) = mysql_fetch_array($result);
+      return $exists;
+    }else{
+      return 0;
+    }
+
   }
 
   function exists($id_user){
@@ -180,23 +190,24 @@ class User {
 
     if($this->existsLogin($login)){
       $_SESSION['message'] =  _("Sorry, this user already exists!");
-      return 0;
+      return -1;
+    }else{
+
+      if(empty($password))
+	$password=$this->randomPass();
+
+      $q = sprintf("INSERT INTO webfinance_users (login, first_name, last_name, password, email, role, disabled,  modification_date, creation_date) ".
+		   "VALUES('%s', '%s', '%s', md5('%s'), '%s','%s',  %d, now(), now() )",
+		   $login, $first_name, $last_name, $password, $email, $roles, ($disabled == "on")?1:0 );
+      mysql_query($q) or wf_mysqldie();
+
+      $new_id_user=mysql_insert_id();
+
+      logmessage("Created new user user:$new_id_user ($last_name $first_name)");
+      $_SESSION['message'] = _("User added");
+
+      return $new_id_user;
     }
-
-    if(empty($password))
-      $password=$this->randomPass();
-
-    $q = sprintf("INSERT INTO webfinance_users (login, first_name, last_name, password, email, role, disabled,  modification_date, creation_date) ".
-		 "VALUES('%s', '%s', '%s', md5('%s'), '%s','%s',  %d, now(), now() )",
-		 $login, $first_name, $last_name, $password, $email, $roles, ($disabled == "on")?1:0 );
-    mysql_query($q) or wf_mysqldie();
-
-    $new_id_user=mysql_insert_id();
-
-    logmessage("Created new user user:$new_id_user ($last_name $first_name)");
-    $_SESSION['message'] = _("User added");
-
-    return $new_id_user;
   }
 
   function delete($id_user) {
