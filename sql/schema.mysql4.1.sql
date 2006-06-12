@@ -74,8 +74,11 @@ CREATE TABLE `webfinance_clients` (
   `siren` varchar(50) default NULL,
   `total_du_ht` decimal(20,4) default NULL,
   `id_company_type` int(11) NOT NULL default '1',
+  `id_user` int(11) NOT NULL default '0',
+  `password` varchar(100) default NULL,
   PRIMARY KEY  (`id_client`),
-  KEY `id_company_type` (`id_company_type`)
+  KEY `id_company_type` (`id_company_type`),
+  KEY `id_user` (`id_user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
 
 DROP TABLE IF EXISTS `webfinance_company_types`;
