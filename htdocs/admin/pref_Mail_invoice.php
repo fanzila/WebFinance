@@ -11,7 +11,8 @@ $pref = unserialize(base64_decode($data));
 <?php
   $subject="Facture #%%NUM_INVOICE%% pour %%CLIENT_NAME%%";
  if(isset($pref->subject) AND !empty($pref->subject))
-    $subject=$pref->subject;
+   $subject = stripslashes(utf8_decode($pref->subject));
+
 ?>
   <td>
    <input type="text" name="subject" style="width: 500px;" value="<?=$subject?>">
@@ -23,7 +24,7 @@ $pref = unserialize(base64_decode($data));
 <textarea name="body" style="width: 500px; height: 350px; border: solid 1px #ccc;">
 <?
   if(isset($pref->body) AND !empty($pref->body) )
-    echo stripslashes($pref->body);
+    echo stripslashes(utf8_decode($pref->body));
   else{
 
     print("Bonjour,

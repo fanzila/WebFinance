@@ -56,7 +56,7 @@ class User {
     } else {
       return 0;
     }
-  }
+ }
 
   function logout($url = "") {
     logmessage("Disconnect");
@@ -305,13 +305,13 @@ class User {
 
     //subject
     if(isset($pref->subject) && !empty($pref->body)){
-      $subject = preg_replace($patterns, $replacements,  $pref->subject);
+      $subject = preg_replace($patterns, $replacements, stripslashes(utf8_decode($pref->subject)) );
     }else
       $subject= $societe->raison_sociale.": "._('your account informations');
 
     //body
     if(isset($pref->body) AND !empty($pref->body) ){
-      $body = preg_replace($patterns, $replacements,  $pref->body);
+      $body = preg_replace($patterns, $replacements,  stripslashes(utf8_decode($pref->body)) );
     }else{
       $body = _('You receive this mail because you have an account ...')."\n";
       $body .= _('Name').": ".$user->first_name." ".$user->last_name."\n";

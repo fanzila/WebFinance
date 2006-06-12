@@ -11,20 +11,27 @@ $pref = unserialize(base64_decode($data));
 <?php
   $subject="%%COMPANY%%: "._('your account informations');
 if(isset($pref->subject))
-    $subject=$pref->subject;
+  $subject = stripslashes(utf8_decode($pref->subject));
 ?>
   <td>
    <input type="text" name="subject" style="width: 500px;" value="<?=$subject?>">
   </td>
 </tr>
+<?
+  $help = "My company: %%COMPANY%%".
+  "<br/>Firstname: %%FIRST_NAME%% ".
+  "<br/>Lastname: %%LAST_NAME%% ".
+  "<br/>Login: %%LOGIN%% ".
+  "<br/>Password: %%PASSWORD%%";
+?>
 
 <tr>
-  <td><?=_('Body')?></td>
+  <td><?=_('Body')?><img src="/imgs/icons/help.png" onmouseover="return escape('<?=$help?>');"/></td>
   <td>
 <textarea name="body" style="width: 500px; height: 350px; border: solid 1px #ccc;">
 <?
   if(isset($pref->body) AND !empty($pref->body) ){
-    echo $pref->body;
+    echo stripslashes(utf8_decode($pref->body));
   }else{
 ?>
 You receive this mail because you have an account ...
@@ -38,6 +45,7 @@ Password: %%PASSWORD%%
   }
 ?>
 </textarea>
+
   </td>
 </tr>
 <tr>

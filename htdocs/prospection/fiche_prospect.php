@@ -83,8 +83,14 @@ function confirmDelete(id) {
     window.location = 'save_client.php?action=delete&id='+id;
   }
 }
+
 var onglet_shown='<?= $shown_tab ?>';
 
+function confirmSendInfo(id_client,txt) {
+  if (confirm(txt)) {
+    window.location = 'save_client.php?action=send_info&id='+id_client;
+  }
+}
 </script>
 
 <?= $_SESSION['message']; $_SESSION['message']=""; ?>
@@ -130,7 +136,8 @@ var onglet_shown='<?= $shown_tab ?>';
   <input type="text" name="pays" value="<?= preg_replace('/"/', '\\"', $Client->pays) ?>" style="color: #666; width: 80px; text-align: center;" /><br/
   <b><?= _('Login and password:') ?></b><br/>
   <input type="text" name="login" value="<?= $Client->login ?>" class="person" /><br/>
-  <input type="text" name="password" value="<?= $Client->password ?>" class="keyring" /><br/>
+  <input type="text" name="password" value="<?= $Client->password ?>" class="keyring" />
+  <a href="javascript:confirmSendInfo(<?=$Client->id?>,'<?=_('Send info to client?')?>');"><img src="../imgs/icons/mail-send.png" title="<?=_('Send informations')?>" /></a><br/>
   <b><?= _('Phone and URL :') ?></b><br/>
   <input type="text" name="tel" value="<?= addslashes($Client->tel) ?>" class="tel" /><input type="text" name="fax" value="<?= $Client->fax ?>" class="fax" /><br/>
   <input type="text" name="web" value="<?= addslashes($Client->web) ?>" class="web" /><br/>

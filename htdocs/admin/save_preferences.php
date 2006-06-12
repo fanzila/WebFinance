@@ -19,8 +19,8 @@ if(preg_match('/^mail_/',$_POST['action']) ){
   mysql_query("DELETE FROM webfinance_pref WHERE type_pref='".$_POST['action']."'");
 
   $data = new stdClass();
-  $data->body = $_POST['body'];
-  $data->subject = $_POST['subject'];
+  $data->body = utf8_encode($_POST['body']);
+  $data->subject = utf8_encode($_POST['subject']);
 
   $data = base64_encode(serialize($data));
   mysql_query("INSERT INTO webfinance_pref (type_pref, value) VALUES ('".$_POST['action']."', '$data')") or wf_mysqldie();

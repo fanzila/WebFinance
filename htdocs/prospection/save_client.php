@@ -54,6 +54,29 @@ if ($_GET['action'] == "delete") {
 
  }
 
+if($_GET['action'] == "send_info"){
+
+  extract($_GET);
+
+  $UserClient = new User();
+
+  $Client = new Client($id);
+
+  if($Client->id_user>0 AND $UserClient->exists($Client->id_user)){
+    $UserClient->sendInfo($Client->id_user,$Client->password);
+    $_SESSION['tmp_message'] .= "<br/>".$_SESSION['message'];
+
+    $_SESSION['message']=$_SESSION['tmp_message'];
+    $_SESSION['tmp_message']="";
+    logmessage(_('Send info ')." ".$client.":".$id );
+  }else{
+    $_SESSION['message'] = _('Login isn\'t correct!');
+  }
+  header("Location: /prospection/fiche_prospect.php?id=$id");
+  die();
+
+ }
+
 extract($_POST);
 
 $emails = "";
