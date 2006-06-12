@@ -326,6 +326,8 @@ class User {
     else
       $mail->From = $societe->email;
 
+    $mail->CharSet = "UTF-8";
+
     $mail->FromName = $societe->raison_sociale;
 
     $mail->AddAddress($user->email, $user->first_name." ".$user->last_name );
