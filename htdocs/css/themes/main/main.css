@@ -83,6 +83,8 @@ input.gsm { width: 79px; background: url('../../../imgs/icons/gsm.gif') no-repea
 input.tva { width: 182px; background: url('../../../imgs/icons/tva.gif') no-repeat top left white; padding-left: 18px; text-align: center; }
 input.siren { width: 146px; background: url('../../../imgs/icons/siren.gif') no-repeat top left white; padding-left: 33px; text-align: center; }
 input.web { background: url('../../../imgs/icons/web.gif') no-repeat top left white; padding-left: 18px; text-align: center; width: 182px; }
+input.person { background: url('../../../imgs/icons/person.png') no-repeat top left white; padding-left: 18px; text-align: center; width: 100px; }
+input.keyring { background: url('../../../imgs/icons/keyring.png') no-repeat top left white; padding-left: 18px; text-align: center; width: 100px; }
 
 select { font-size: 11px; padding: 0px; }
 
@@ -96,7 +98,7 @@ img.help_icon { vertical-align: bottom; }
 
 div#advanced_search {
 border: solid 1px #ddd;
-padding: 5px; 
+padding: 5px;
 background: #eee;
 }
 
@@ -106,7 +108,7 @@ input.amount_field {
 
 div#revision {
   left: 35px;
-  top: 500px; 
+  top: 500px;
   width: 100px;
   text-align: center;
   position: absolute;
@@ -116,7 +118,7 @@ div#revision {
 div.post_message{
   background: url('/imgs/icons/help.gif') no-repeat 5px 5px #ccf;
   border: dashed 2px #aaf;
-  position: absolute; 
+  position: absolute;
   right: 30px;
   top: 30px;
   padding: 20px;
