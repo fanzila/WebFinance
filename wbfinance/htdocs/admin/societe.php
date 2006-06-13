@@ -50,6 +50,10 @@ $societe = unserialize(base64_decode($value));
   <td><input type="text" name="addr3" value="<?= $societe->addr3 ?>" /></td>
 </tr>
 <tr>
+  <td><?= _('WF url') ?></td>
+  <td><input type="text" name="wf_url" value="<?= $societe->wf_url ?>" /></td>
+</tr>
+<tr>
   <td><?= _('Email') ?></td>
   <td><input type="text" name="email" value="<?= $societe->email ?>" /></td>
 </tr>
@@ -106,15 +110,15 @@ $count = 1;
 while (list($id_pref,$value) = mysql_fetch_array($result)) {
   $compte = unserialize(base64_decode($value));
 
-  // Check account number. 
+  // Check account number.
   //
   // Algorythm is : take the bank code (5 digits) + desk
   // code (5 digits) + account number (10 digits or letters). You get à 19 char
   // long "number" (which may contain letters). Replace letters in the following way :
   // A,J => 1 / B,K,S => 2 / C,L,T => 3 / D,M,U => 4 / E,N,V => 5, F,O,W => 6 /
-  // G,P,X => 7 / H,Q,Y => 8 / I,R,Z => 9. Add 00 to the 19 char number. 
+  // G,P,X => 7 / H,Q,Y => 8 / I,R,Z => 9. Add 00 to the 19 char number.
   //   Checksum number  = 97 - ((21 digit number) % 97)
-  // 
+  //
   // PHP cannot do this calculus with normal functions (number is too big)
   // MySQL can. So we use a query for that.
   $bignum = $compte->code_banque.$compte->code_guichet.$compte->compte."00";
@@ -141,7 +145,7 @@ while (list($id_pref,$value) = mysql_fetch_array($result)) {
   }
   $check_img = sprintf('<img src="/imgs/icons/%s.gif" onmouseover="return escape(\'%s\');" />',
                        $img, $hover_text );
-                       
+
 
   // End check account number
 

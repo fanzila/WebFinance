@@ -19,6 +19,7 @@ if(isset($pref->subject))
 </tr>
 <?
   $help = "My company: %%COMPANY%%".
+  "<br/>Url: %%URL_COMPANY%% ".
   "<br/>Firstname: %%FIRST_NAME%% ".
   "<br/>Lastname: %%LAST_NAME%% ".
   "<br/>Login: %%LOGIN%% ".
@@ -35,6 +36,7 @@ if(isset($pref->subject))
   }else{
 ?>
 You receive this mail because you have an account ...
+URL: %%URL_COMPANY%%
 Name: %%FIRST_NAME%% %%LAST_NAME%%
 User name: %%LOGIN%%
 Password: %%PASSWORD%%

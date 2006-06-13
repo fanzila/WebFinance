@@ -36,6 +36,7 @@ $data->siren = $_POST['siren'];
 $data->addr1 = $_POST['addr1'];
 $data->addr2 = $_POST['addr2'];
 $data->addr3 = $_POST['addr3'];
+$data->wf_url = $_POST['wf_url'];
 $data->email = $_POST['email'];
 $data->cp = $_POST['cp'];
 $data->ville = stripslashes($_POST['ville']);

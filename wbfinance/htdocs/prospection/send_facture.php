@@ -35,12 +35,14 @@ extract($_GET);
 $mails=array();
 
 //Récupérer les adresses mails:
-$result = mysql_query("SELECT webfinance_invoices.id_client, email, nom ".
+$result = mysql_query("SELECT webfinance_invoices.id_client as id_client, email, nom ".
 		      "FROM webfinance_clients LEFT JOIN webfinance_invoices ON (webfinance_clients.id_client = webfinance_invoices.id_client) ".
 		      "WHERE id_facture=$id")
   or wf_mysqldie();
 $client=mysql_fetch_assoc($result);
 mysql_free_result($result);
+
+$Client = new Client($client['id_client']);
 
 if(!empty($client['email'])){
   $emails = explode(',',$client['email']);
@@ -151,6 +153,9 @@ mysql_free_result($result);
 
 
 $patterns=array(
+		'/%%LOGIN%%/',
+		'/%%PASSWORD%%/',
+		'/%%URL_COMPANY%%/' ,
 		'/%%NUM_INVOICE%%/' ,
 		'/%%CLIENT_NAME%%/',
 		'/%%DELAY%%/',
@@ -160,6 +165,9 @@ $patterns=array(
 		'/%%COMPANY%%/',
 		);
 $replacements=array(
+		    $Client->login,
+		    $Client->password,
+		    $societe->wf_url,
 		    $invoice->num_facture ,
 		    $invoice->nom_client,
 		    $delay,
@@ -170,7 +178,7 @@ $replacements=array(
 		    );
 
 if(isset($pref->subject) && !empty($pref->body)){
-  $subject = preg_replace($patterns, $replacements, stripslashes(utf8_decode($pref->subject))  );
+  $subject = preg_replace($patterns, $replacements, stripslashes(utf8_decode($pref->subject)) );
  }else
   $subject = ucfirst($invoice->type_doc)." #".$invoice->num_facture." pour ".$invoice->nom_client;
 
