@@ -52,7 +52,7 @@ while ($user = mysql_fetch_object($result)) {
   <td>$user->nice_last_login</td>
   <td>
     <a href="javascript:confirmDeleteUser($user->id_user);"><img src="/imgs/icons/delete.png" alt="<?= _('Delete')?>" /></a>
-    <a href="fiche_user.php?id=$user->id_user"><img src="/imgs/icons/edit.png" alt="Modifier" /></a>
+    <a href="#" onclick="inpagePopup(event, this, 280, 260, 'edit_user.php?id=$user->id_user');" ><img src="/imgs/icons/edit.png" alt="Modifier" /></a>
   </td>
 </tr>
 EOF;
@@ -62,13 +62,9 @@ EOF;
 }
 mysql_free_result($result);
 
-
-$help_rights=addslashes("Les valeurs possible sont: client,manager,accounting,employee.");
-
 ?>
 </table><br/>
-<a href="fiche_user.php?id=-1"><?= _('Créer un utilisateur') ?></a>
-
+<a href="#" onclick="inpagePopup(event, this, 280, 260, 'edit_user.php?id=-1');"><?= _('Add a user') ?></a>
 
 <?php
 
