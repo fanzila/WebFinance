@@ -40,6 +40,12 @@ Nous acceptons les r&egrave;glements :
 Pour visualiser et imprimer cette facture (au format PDF) vous pouvez utiliser \"Adobe Acrobat Reader\" disponible &agrave; l'adresse suivante :
 http://www.adobe.com/products/acrobat/readstep2.html
 
+Nous vous rapellons que vous pouvez consulter et r&eacute;gler vos factures en ligne &agrave; cette adresse :
+
+%%URL_COMPANY%%
+Login : %%LOGIN%%
+Mot de passe : %%PASSWORD%%
+
 Cordialement,
 L'&eacute;quipe %%COMPANY%%.
 ");
