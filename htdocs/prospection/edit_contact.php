@@ -21,13 +21,9 @@ if ((isset($_GET['id_client'])) && (!preg_match("/^[0-9]+$/", $_GET['id_client']
 if (isset($_GET['id_personne'])) {
   $action = "save";
 
-  $result = mysql_query("SELECT id_personne,id_user,nom,prenom,email,tel,mobile,client,fonction,note FROM webfinance_personne WHERE id_personne=".$_GET['id_personne'])
+  $result = mysql_query("SELECT id_personne,nom,prenom,email,tel,mobile,client,fonction,note FROM webfinance_personne WHERE id_personne=".$_GET['id_personne'])
     or wf_mysqldie();
   $personne = mysql_fetch_object($result);
-
-  $User=new User();
-  $user=$User->getInfo($personne->id_user);
-  $personne->login=$user->login;
 
   mysql_free_result($result);
 
@@ -35,8 +31,6 @@ if (isset($_GET['id_personne'])) {
   $action = "create";
   $personne = new stdClass();
   $personne->client = $_GET['id_client'];
-  $personne->id_user = -1;
-  $personne->login="";
 
   $title = "Ajout d'un contact pour $nom_client";
 }
@@ -45,7 +39,6 @@ if (isset($_GET['id_personne'])) {
 <input type="hidden" name="action" value="<?= $action ?>">
 <input type="hidden" name="client" value="<?= $personne->client ?>">
 <input type="hidden" name="id_personne" value="<?= $personne->id_personne ?>">
-<input type="hidden" name="id_user" value="<?= $personne->id_user ?>">
 
 <table align="center" border="0" cellspacing="5" cellpadding="0">
 <tr>
@@ -57,28 +50,6 @@ if (isset($_GET['id_personne'])) {
 <tr>
   <td>Fonction</td><td><input type="text" style="width: 145px;" name="fonction" value="<?= $personne->fonction ?>" /></td>
 </tr>
-<?
-  if( !($User->exists($personne->id_user)) ){
-?>
-<tr>
-  <td width="50"><?=_('Login')?></td><td><input type="text" width: 145px;" name="login" value="<?= $personne->login ?>" /></td>
-</tr>
-<tr>
- <td width='50'><?=_('Password')?></td><td><input type='password' style='width: 145px;' name='password' /></td>
-</tr>
-<tr>
-  <td width="70"><?=_('Send info')?></td><td><input type="checkbox" name="send_info"/></td>
-</tr>
-<?
-  }else{
- ?>
-<tr>
-  <input type="hidden" name="login" value="<?= $personne->login ?>" >
-  <td width="50"><?=_('Login')?></td><td width="145"><?= $personne->login ?></td>
-</tr>
-<?
-  }
-?>
 <tr>
   <td colspan="2"><input class="email" type="text" size="20" name="email" value="<?= $personne->email ?>" /></td>
 </tr>
@@ -131,10 +102,6 @@ function checkForm(f) {
   }
   if ((f.nom.value == '') && (f.prenom.value == '')) {
     alert('Il faut au moins un nom ou un prénom');
-    return false;
-  }
-  if (f.login.value == '') {
-    alert('login is required!');
     return false;
   }
 

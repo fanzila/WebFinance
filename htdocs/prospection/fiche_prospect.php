@@ -162,7 +162,7 @@ function confirmSendInfo(id_client,txt) {
 
   <b><?= _('Contacts :') ?></b><br/>
   <?include "contact_entreprise.php" ?>
-  <div style="text-align: center;"><a href="#" onclick="inpagePopup(event, this, 240, 300, 'edit_contact.php?id=_new&id_client=<?= $Client->id ?>');"><?= _('Add a new contact') ?></a></div>
+  <div style="text-align: center;"><a href="#" onclick="inpagePopup(event, this, 240, 220, 'edit_contact.php?id=_new&id_client=<?= $Client->id ?>');"><?= _('Add a new contact') ?></a></div>
   </td>
 
   </table>
@@ -329,12 +329,6 @@ if ($has_invoices) {
 <?php
   //client
   $clause=" log REGEXP 'client:".$_GET['id']."$|client:".$_GET['id']." ' OR";
-
-//user
-  $result = mysql_query("SELECT id_user FROM webfinance_personne WHERE client=".$_GET['id'])
-  or wf_mysqldie();
-while( list($id) = mysql_fetch_array($result))
-  $clause .=" wf_userlog.id_user=$id OR log REGEXP 'user:$id$|user:$id ' OR";
 
 //invoices
 $result = mysql_query("SELECT id_facture FROM webfinance_invoices WHERE id_client=".$_GET['id'])
