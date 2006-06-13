@@ -28,8 +28,6 @@ if ($_GET['action'] == "delete") {
 
   if($Client->exists()){
 
-    $UserClient = new User();
-
     $q = mysql_query("SELECT id_facture FROM webfinance_invoices WHERE id_client=".$_GET['id']) or wf_mysqldie();
     $clause= "WHERE (";
 
@@ -44,7 +42,7 @@ if ($_GET['action'] == "delete") {
 
     mysql_query("DELETE FROM webfinance_clients WHERE id_client=".$_GET['id']) or wf_mysqldie();
 
-    $UserClient->delete($Client->id_user);
+    $User->delete($Client->id_user);
 
     $_SESSION['message'] = _('The company and related objects have been deleted');
 
@@ -60,12 +58,10 @@ if($_GET['action'] == "send_info"){
 
   extract($_GET);
 
-  $UserClient = new User();
-
   $Client = new Client($id);
 
-  if($Client->id_user>0 AND $UserClient->exists($Client->id_user)){
-    $UserClient->sendInfo($Client->id_user,$Client->password);
+  if($Client->id_user>0 AND $User->exists($Client->id_user)){
+    $User->sendInfo($Client->id_user,$Client->password);
     $_SESSION['tmp_message'] .= "<br/>".$_SESSION['message'];
 
     $_SESSION['message']=$_SESSION['tmp_message'];
@@ -96,10 +92,8 @@ $emails = preg_replace('/,$/', '', $emails);
 
 if(!empty($login)){
 
-  $UserClient = new User();
-
   if(empty($password)){
-    $password = $UserClient->randomPass();
+    $password = $User->randomPass();
   }
 
   $user_data=array(
@@ -114,10 +108,10 @@ if(!empty($login)){
 		 "admin"=>"off"
 		 );
 
-  if($UserClient->exists($id_user)){
-    $UserClient->saveData($user_data);
+  if($User->exists($id_user)){
+    $User->saveData($user_data);
   }else{
-    $id_user = $UserClient->createUser($user_data);
+    $id_user = $User->createUser($user_data);
   }
 
  }
