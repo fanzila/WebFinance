@@ -181,7 +181,6 @@ CREATE TABLE `webfinance_naf` (
 DROP TABLE IF EXISTS `webfinance_personne`;
 CREATE TABLE `webfinance_personne` (
   `id_personne` int(11) NOT NULL auto_increment,
-  `id_user` int(11) NOT NULL default '0',
   `nom` varchar(100) default NULL,
   `prenom` varchar(100) default NULL,
   `date_created` datetime default NULL,
@@ -202,7 +201,6 @@ CREATE TABLE `webfinance_personne` (
   `client` int(11) NOT NULL default '-1',
   PRIMARY KEY  (`id_personne`),
   KEY `pfk_client` (`client`),
-  KEY `pfk_user` (`id_user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
 
 DROP TABLE IF EXISTS `webfinance_pref`;
