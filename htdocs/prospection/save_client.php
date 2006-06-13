@@ -16,7 +16,7 @@ global $User;
 $user = $User->getInfos();
 if (!$User->isAuthorized("admin,manager")) {
   $_SESSION['message'] = _('You are not allowed to modify this information');
-  header("Location: fiche_prospect.php?id=".$_POST['id_client']);
+  header("Location: /prospection/fiche_prospect.php?id=".$_POST['id_client']);
   die();
 }
 // print_r($User->getInfos());
@@ -27,6 +27,8 @@ if ($_GET['action'] == "delete") {
   $Client = new Client($_GET['id']);
 
   if($Client->exists()){
+
+    $UserClient = new User();
 
     $q = mysql_query("SELECT id_facture FROM webfinance_invoices WHERE id_client=".$_GET['id']) or wf_mysqldie();
     $clause= "WHERE (";
@@ -42,7 +44,7 @@ if ($_GET['action'] == "delete") {
 
     mysql_query("DELETE FROM webfinance_clients WHERE id_client=".$_GET['id']) or wf_mysqldie();
 
-    $User->delete($Client->id_user);
+    $UserClient->delete($Client->id_user);
 
     $_SESSION['message'] = _('The company and related objects have been deleted');
 
@@ -137,6 +139,6 @@ mysql_query($q) or wf_mysqldie();
 $_SESSION['message'] .= "<br/>"._('Update custumer');
 logmessage(_('Update custumer')." client:$id_client ($nom)");
 
-header("Location: fiche_prospect.php?id=$id_client&onglet=".$focused_onglet);
+header("Location: /prospection/fiche_prospect.php?id=$id_client&onglet=".$focused_onglet);
 
 ?>
