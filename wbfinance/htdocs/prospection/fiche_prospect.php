@@ -137,7 +137,12 @@ function confirmSendInfo(id_client,txt) {
   <b><?= _('Login and password:') ?></b><br/>
   <input type="text" name="login" value="<?= $Client->login ?>" class="person" /><br/>
   <input type="text" name="password" value="<?= $Client->password ?>" class="keyring" />
-  <a href="javascript:confirmSendInfo(<?=$Client->id?>,'<?=_('Send info to client?')?>');"><img src="../imgs/icons/mail-send.png" title="<?=_('Send informations')?>" /></a><br/>
+<?php
+   if(!empty($Client->email)){
+     printf('<a href="javascript:confirmSendInfo(%d,\'%s\');"><img src="../imgs/icons/mail-send.png" title="%s" /></a>',$Client->id,_('Send info to client?'),_('Send informations'));
+   }
+  ?>
+<br/>
   <b><?= _('Phone and URL :') ?></b><br/>
   <input type="text" name="tel" value="<?= addslashes($Client->tel) ?>" class="tel" /><input type="text" name="fax" value="<?= $Client->fax ?>" class="fax" /><br/>
   <input type="text" name="web" value="<?= addslashes($Client->web) ?>" class="web" /><br/>
