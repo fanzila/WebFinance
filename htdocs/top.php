@@ -19,6 +19,12 @@ global $roles;
 $User = new User();
 
 if (! $User->isLogued()) {
+  if($_SESSION['debug']==1){
+    echo 'Not logged. Debug mode, please <a href="/login.php">log in</a>';
+    include("bottom.php");
+    die();
+  }
+
   header("Location: /login.php");
   die();
 }
@@ -37,7 +43,7 @@ $css_theme = "/css/themes/".$User->prefs->theme."/main.css";
 if (! file_exists($GLOBALS['_SERVER']['DOCUMENT_ROOT'].$css_theme)) {
   $css_theme = "/css/themes/main/main.css"; // Historic default
   $User->prefs->theme = "main";
-} 
+}
 
 $search_button = '/imgs/boutons/'.urlencode(base64_encode(_('Search').":off:".$User->prefs->theme)).'.png';
 $search_button_on = '/imgs/boutons/'.urlencode(base64_encode(_('Search').":on:".$User->prefs->theme)).'.png';
