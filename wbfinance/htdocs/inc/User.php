@@ -300,8 +300,20 @@ class User {
     list($data) = mysql_fetch_array($result);
     $pref = unserialize(base64_decode($data));
 
-    $patterns=array('/%%COMPANY%%/' , '/%%FIRST_NAME%%/' , '/%%LAST_NAME%%/' , '/%%LOGIN%%/' , '/%%PASSWORD%%/');
-    $replacements=array($societe->raison_sociale , $user->first_name, $user->last_name, $user->login, $passwd );
+    $patterns=array(
+		    '/%%COMPANY%%/' ,
+		    '/%%URL_COMPANY%%/',
+		    '/%%FIRST_NAME%%/' ,
+		    '/%%LAST_NAME%%/' ,
+		    '/%%LOGIN%%/' ,
+		    '/%%PASSWORD%%/');
+    $replacements=array(
+			$societe->raison_sociale ,
+			$societe->wf_url,
+			$user->first_name,
+			$user->last_name,
+			$user->login,
+			$passwd );
 
     //subject
     if(isset($pref->subject) && !empty($pref->body)){
