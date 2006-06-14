@@ -330,9 +330,9 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
        $current_month=ucfirst(strftime("%B %Y",$tr->ts_date));
        if(!empty($prev_date)){
 	 if(date("m",$prev_date)!=date("m",$tr->ts_date))
-	   echo "<tr class=\"row_even\"><td colspan='9' align='center'><b>$current_month</b></td></tr>";
+	   echo "<tr class=\"row_even\"><td colspan='8' align='center'><b>$current_month</b></td></tr>";
        }else{
-	 echo "<tr class=\"row_even\"><td colspan='9' align='center'><b>$current_month</b></td></tr>";
+	 echo "<tr class=\"row_even\"><td colspan='8' align='center'><b>$current_month</b></td></tr>";
 	 $cur_date=$tr->ts_date;
        }
 
@@ -455,7 +455,6 @@ EOF;
        </td>
        <td colspan="4" style="text-align: right; font-weight: bold;"><?= _('Total amount of shown transactions') ?></td>
        <td nowrap style="text-align: right; font-weight: bold;"><?= number_format($total_shown, 2, ',', ' ') ?> &euro;</td>
-       <td></td>
      </tr>
     </table>
     </form> <? // End of checkboxes form ?>
