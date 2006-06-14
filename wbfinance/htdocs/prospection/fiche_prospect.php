@@ -320,7 +320,7 @@ if ($has_invoices) {
 </div>
 
 <div style="text-align: center; display: none;" id="tab_event">
-<table style="border: solid 1px black;" width="100%" border="0" cellspacing="0" cellpadding="5">
+<table width="100%" border="0" cellspacing="0" cellpadding="5">
 <tr class="row_header">
   <td><?=_('Hour') ?></td>
   <td><?= _('Events') ?></Td>
