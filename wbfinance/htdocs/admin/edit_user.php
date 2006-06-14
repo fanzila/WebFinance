@@ -78,7 +78,8 @@ function confirmCancel(txt) {
 <?
    $result=mysql_query("SELECT id_role, name FROM webfinance_roles") or wf_mysqldie();
    while($role=mysql_fetch_assoc($result)){
-     printf("<input type='checkbox' name='role[]' %s value='%s' >%s",($User->hasRole($role['name'] , $user->id_user )>0)?"checked":"",$role['name'],$role['name'] );
+     if($role['name']!="client")
+       printf("<input type='checkbox' name='role[]' %s value='%s' >%s",($User->hasRole($role['name'] , $user->id_user )>0)?"checked":"",$role['name'],$role['name'] );
    }
 ?>
  </td>
