@@ -59,6 +59,7 @@ CREATE TABLE `webfinance_clients` (
   `date_created` datetime default NULL,
   `tel` varchar(15) default NULL,
   `fax` varchar(200) default NULL,
+  `web` varchar(100) default 'http://',
   `addr1` varchar(255) default NULL,
   `cp` varchar(10) default NULL,
   `ville` varchar(100) default NULL,

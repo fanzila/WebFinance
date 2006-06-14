@@ -20,7 +20,7 @@ class Client {
     $result = mysql_query("SELECT c.id_client as id,
                                   c.id_client, c.nom,
                                   c.date_created,
-                                  c.tel, c.fax,
+                                  c.tel, c.fax, c.web,
                                   c.addr1, c.addr2, c.addr3, c.cp, c.ville, c.pays, c.email, left(cp, 2) as departement,
                                   c.has_devis, c.has_unpaid, c.ca_total_ht, c.ca_total_ht_year, c.total_du_ht,
                                   c.vat_number, c.siren,
