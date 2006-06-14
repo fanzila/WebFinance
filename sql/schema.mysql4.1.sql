@@ -200,7 +200,7 @@ CREATE TABLE `webfinance_personne` (
   `note` blob,
   `client` int(11) NOT NULL default '-1',
   PRIMARY KEY  (`id_personne`),
-  KEY `pfk_client` (`client`),
+  KEY `pfk_client` (`client`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
 
 DROP TABLE IF EXISTS `webfinance_pref`;
