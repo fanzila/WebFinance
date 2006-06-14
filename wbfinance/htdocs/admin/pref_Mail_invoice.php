@@ -18,8 +18,20 @@ $pref = unserialize(base64_decode($data));
    <input type="text" name="subject" style="width: 500px;" value="<?=$subject?>">
   </td>
 </tr>
+<?
+  $help = "My company: %%COMPANY%%".
+   "<br/>Client: %%CLIENT_NAME%%".
+  "<br/>Url: %%URL_COMPANY%% ".
+  "<br/>Login: %%LOGIN%% ".
+  "<br/>Password: %%PASSWORD%%".
+   "<br/>Invoice: %%NUM_INVOICE%%".
+   "<br/>Delay: %%DELAY%%".
+   "<br/>Amount: %%AMOUNT%%".
+   "<br/>Bank: %%BANK%% ".
+   "<br/>RIB: %%RIB%%";
+?>
 <tr>
-   <td><?=_('Body')?></td>
+   <td><?=_('Body')?><img src="/imgs/icons/help.png" onmouseover="return escape('<?=$help?>');"/></td>
   <td>
 <textarea name="body" style="width: 500px; height: 350px; border: solid 1px #ccc;">
 <?
