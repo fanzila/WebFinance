@@ -39,5 +39,4 @@ if ($User->login($_POST)) {
     </form>
 </div>
 <center><a href="passwd.php"><?= _("Forgot password")?></a></center>
-</body>
-</html>
+<? include("bottom.php");?>
