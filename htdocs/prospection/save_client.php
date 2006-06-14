@@ -118,12 +118,14 @@ if(!empty($login)){
 
 $q = sprintf("UPDATE webfinance_clients SET ".
 	     "nom='%s' , addr1='%s' , addr2='%s' , addr3='%s' , cp='%s' , ".
-	     "ville='%s' , pays='%s', tel='%s' , fax='%s' , email='%s', ".
+	     "ville='%s' , pays='%s', tel='%s' , fax='%s' , web='%s', ".
+	     " email='%s', ".
 	     "vat_number='%s', siren='%s' , id_company_type='%d' , id_user='%d' , password='%s'
               WHERE id_client=%d",
 
              $nom, $addr1, $addr2, $addr3, $cp,
-	     $ville, $pays, $tel, $fax, $emails,
+	     $ville, $pays, $tel, $fax, $web,
+	     $emails,
 	     $vat_number, $siren, $id_company_type, $id_user , $password,
              $id_client );
 
