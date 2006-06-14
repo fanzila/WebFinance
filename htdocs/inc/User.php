@@ -124,7 +124,7 @@ class User {
     if (!is_array($data))
       return false;
 
-    if (! $this->isAuthorized('admin') ) {
+    if (! $this->isAuthorized('admin,manager') ) {
       $_SESSION['message'] = _('Sorry, you are not administrator');
       return false;
     }
@@ -181,7 +181,7 @@ class User {
   }
 
   function createUser($data=null) {
-    if (! $this->isAuthorized('admin')) {
+    if (! $this->isAuthorized('admin,manager') ) {
       $_SESSION['message'] = _("You aren't the Administrator");
       return false;
     }
@@ -211,8 +211,8 @@ class User {
   }
 
   function delete($id_user) {
-    if (! $this->isAuthorized('admin')) {
-      $_SESSION['message'] = "Vous n'Ãªtes pas administrateur";
+    if (! $this->isAuthorized('admin,manager')) {
+      $_SESSION['message'] =  _("You aren't the Administrator");
       return false;
     }
     $result = mysql_query("SELECT login,first_name,last_name FROM webfinance_users WHERE id_user=$id_user");
