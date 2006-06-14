@@ -38,7 +38,7 @@ if ($_GET['action'] == "cancel") {
     $User->saveData($_POST);
     //  header("Location: fiche_user.php?id=".$_POST['id_user']);
   } else {
-    $id = $User->createUser($_POST);
+    $User->createUser($_POST);
     //  header("Location: fiche_user.php?id=$id");
   }
 
