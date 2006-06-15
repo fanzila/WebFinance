@@ -103,7 +103,7 @@ if ($action == "save_facture") {
   preg_match("/([0-9]{2})\/([0-9]{2})\/([0-9]{4})/", $date_facture, $matches);
   $date_facture = $matches[3]."-".$matches[2]."-".$matches[1];
 
-  if (($facture->is_envoye == 0) && ($is_envoye == "on")) {
+  if( ($facture->is_envoye == 0) && ($is_envoye == "on") && empty($num_facture) ) {
     $result = mysql_query("SELECT count(*) FROM webfinance_invoices
                            WHERE num_facture!=''
                            AND year(date_facture)=year('".$facture->date_facture."')") or wf_mysqldie();
@@ -114,6 +114,7 @@ if ($action == "save_facture") {
     $nb = sprintf("%04d", $nb);
     $num_facture = strftime("%y-$nb", $facture->timestamp_date_facture);
   }
+
   //date prev
 //   $date_prev=$facture->timestamp_date_facture+($_POST['type_prev'] * 86400 );
 //   $date_prev=date("Y-m-d",$date_prev);
