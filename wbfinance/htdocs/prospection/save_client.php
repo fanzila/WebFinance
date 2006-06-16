@@ -16,6 +16,7 @@ global $User;
 $user = $User->getInfos();
 if (!$User->isAuthorized("admin,manager")) {
   $_SESSION['message'] = _('You are not allowed to modify this information');
+  $_SESSION['error'] = 1;
   header("Location: /prospection/fiche_prospect.php?id=".$_POST['id_client']);
   die();
 }
@@ -69,6 +70,7 @@ if($_GET['action'] == "send_info"){
     logmessage(_('Send info ')." ".$client.":".$id );
   }else{
     $_SESSION['message'] = _('Login isn\'t correct!');
+    $_SESSION['error'] = 1;
   }
   header("Location: /prospection/fiche_prospect.php?id=$id");
   die();
