@@ -282,21 +282,42 @@ function ask_confirmation(txt) {
         </select>
       </td>
     </tr>
-    <tr>
+
       <?php
       if ($facture->type_doc == "devis") { // CAS DEVIS  ?>
+      <tr>
       <td colspan="2">
         <input type="checkbox" name="is_paye" <?= $facture->is_paye?"checked":"" ?> />&nbsp;Devis Accepté
         <?= ($facture->date_paiement!="")?"le ".$facture->nice_date_paiement:"" ?>
       </td>
+      </tr>
       <?php } elseif ($facture->type_doc == "facture") { // CAS FACTURE ?>
-      <td colspan="2">
-        <input type="checkbox" name="is_envoye" <?= $facture->is_envoye?"checked":"" ?> />&nbsp;Facture Envoyée<br/>
-        <input type="checkbox" name="is_paye" <?= $facture->is_paye?"checked":"" ?> />&nbsp;Facture Payée
-        <?= ($facture->date_paiement!="")?"le ".$facture->nice_date_paiement:"" ?><br/>
-      </td>
+      </tr>
+      <tr>
+       <td><input type="checkbox" name="is_envoye" <?= $facture->is_envoye?"checked":"" ?> />&nbsp;<?=_('Sent')?></td>
+       <td><?
+          if(empty($facture->timestamp_date_sent)){
+	    makeDateField('date_sent', mktime());
+	  }else{
+	    makeDateField('date_sent', $facture->timestamp_date_sent);
+	  }
+           ?>
+       </td>
+      </tr>
+
+      <tr>
+       <td><input type="checkbox" name="is_paye" <?=$facture->is_paye?"checked":""?> />&nbsp;<?=_('Paid')?></td>
+       <td><?
+	  if(empty($facture->timestamp_date_paiement) or $facture->timestamp_date_paiement < $facture->timestamp_date_facture){
+	    makeDateField('date_paiement', mktime());
+	  }else{
+	    makeDateField('date_paiement', $facture->timestamp_date_paiement);
+	  }
+           ?>
+       </td>
+
       <?php } // FIN CAS FACTURE/DEVIS ?>
-    </tr>
+
 <!--
     <tr>
       <td colspan="2">
