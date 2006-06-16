@@ -244,7 +244,7 @@ if ($action == "save_facture") {
     update_ca();
 
   }
-  header("Location: fiche_prospect.php?id=$id_client");
+  header("Location: fiche_prospect.php?onglet=facturation&id=$id_client");
 
 } elseif ($action == "duplicate") {
   extract($_GET);
