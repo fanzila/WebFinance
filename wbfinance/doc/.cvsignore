@@ -1,0 +1,11 @@
+*.html
+*.png
+*.gif 
+*.css
+*.map
+*.md5
+graph_legend.dot
+installdox
+search.idx
+search.php
+

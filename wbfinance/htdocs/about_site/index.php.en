@@ -92,7 +92,20 @@ echo '30 7  * * *  www-data  php /path/to/webfinance/htdocs/inc/scheduler.php' >
 <li>Go to <a href="http://webfinance/">http://webfinance/</a> and login as administrator
   : login = admin, password = admin<br/><br/>
 
-  You probably want to start by adding some users and configure your data</li>
+  You probably want to start by adding some users and configure your data<br/><br/>
+</li>
+
+<li>Optional : if you want to generate <a href="http://www.stack.nl/~dimitri/doxygen/index.html">Doxygen</a>
+    documentation for <i>Webfinance</i> classes, you will need to install
+    doxygen and preferably <a href="http://www.graphviz.org/">Graphviz</a> too. Then use the makefile in /doc
+
+    <pre class="shell">
+    apt-get install doxygen graphviz
+    cd /path/to/webfinance/doc
+    make 
+    </pre>
+    </li>
+
 </ul>
 
 <h2>Community</h2>
