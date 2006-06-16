@@ -20,6 +20,7 @@ if ($GLOBALS['_SERVER']['REQUEST_METHOD'] == "POST") {
   if ($action == "changepass") {
     if ($new_pass1 != $new_pass2) {
       $_SESSION['message'] = _("The passwords don't match");
+      $_SESSION['error'] = 1;
       header("Location: index.php");
       die();
     }

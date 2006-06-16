@@ -213,9 +213,10 @@ if ($action == "save_facture") {
   update_ca();
   regenerate($_POST['id_facture']);
 
-  if($dup_num_inv)
+  if($dup_num_inv){
     $_SESSION['message'] = _('Duplicate invoice number')."<br/>"._('Invoice updated') ;
-  else
+    $_SESSION['error'] = 1;
+  } else
     $_SESSION['message'] = _('Invoice updated');
 
   $Facture->updateTransaction($_POST['id_facture'],$type_prev);
@@ -314,6 +315,7 @@ if ($action == "save_facture") {
 
       if(!$mail->Send()){
 	$_SESSION['message'] = _('Invoice was not sent');
+	$_SESSION['error'] = 1;
 	echo _("Invoice was not sent");
 	echo "Mailer Error: " . $mail->ErrorInfo;
 
@@ -333,6 +335,7 @@ if ($action == "save_facture") {
     }else{
       $_SESSION['message'] = _('Invoice file doesn\'t exist!');
       $_SESSION['message'] .= "<br/>"._('Invoice was not sent');
+      $_SESSION['error'] = 1;
       echo _("The attachment doesn't exist!");
     }
 
