@@ -25,7 +25,11 @@ extract($_POST);
 
 if(isset($_POST['action']) AND $_POST['action']=="connect"){
   //test db
-  $link = mysql_connect($host, $username, $pass);
+  if($conf=="on"){
+    $link = $dbi;
+  }else{
+    $link = mysql_connect($host, $username, $pass);
+  }
 
   if (!$link) {
     echo "Could not connect: $host $username " . mysql_error();
@@ -34,13 +38,13 @@ if(isset($_POST['action']) AND $_POST['action']=="connect"){
     mysql_close($link);
     $_SESSION['webcash_pass'] = $pass;
     echo 'Connected successfully<br/>';
-    formMigrate($host,$username,$db);
+    formMigrate($host,$username,$db,$conf);
   }
 
 
  }else if(isset($_POST['action']) AND $_POST['action']=="migrate"){
   //migrate
-  migrate($host,$username,$_SESSION['webcash_pass'],$db);
+  migrate($host,$username,$_SESSION['webcash_pass'],$db,$conf);
 
   unset($_SESSION['webcash_pass']);
 
@@ -49,13 +53,14 @@ if(isset($_POST['action']) AND $_POST['action']=="connect"){
  }
 
 
-function formMigrate($host,$username,$db){
+function formMigrate($host,$username,$db,$conf){
   ?>
   <form method="post">
     <input type="hidden" value="migrate" name="action"/>
     <input type="hidden" name="host" value="<?=$host?>" />
     <input type="hidden" name="username" value="<?=$username?>" />
     <input type="hidden" name="db" value="<?=$db?>" />
+    <input type="hidden" name="conf" value="<?=$conf?>" />
 
     <table>
     <tr>
@@ -77,7 +82,7 @@ function formTestDB(){
     <table>
     <tr>
     <td>host</td>
-    <td><input type="text" name="host" value="127.0.0.1"/></td>
+    <td><input type="text" name="host"/></td>
     </tr>
     <tr>
     <td>username</td>
@@ -87,6 +92,8 @@ function formTestDB(){
     <td>pass</td>
     <td><input type="password" name="pass"/></td>
     </tr>
+    <tr><td colspan="2"><center>OR</center></td></tr>
+    <tr><td colspan="2"><input type="checkbox" name="conf" checked />&nbsp;Use the same</td></tr>
     <tr>
     <td>db</td>
     <td><input type="text" name="db" value="webcash"/></td>
@@ -101,10 +108,17 @@ function formTestDB(){
     }
 
 
-function migrate($host,$username,$pass,$db){
+function migrate($host,$username,$pass,$db,$conf){
 
-  $link = mysql_connect($host, $username, $pass);
-  $db_selected = mysql_select_db($db,$link);
+  if($conf=="on"){
+    echo "ON";
+    $link = $dbi;
+    $db_selected = mysql_select_db($db);
+  }else{
+    $link = mysql_connect($host, $username, $pass);
+    $db_selected = mysql_select_db($db,$link);
+  }
+
   if (!$db_selected) {
     die("Can\'t use $db DB : " . mysql_error());
 
@@ -150,7 +164,11 @@ function migrate($host,$username,$pass,$db){
     echo "<br/>";
 
     //Import banks
-    mysql_select_db('webcash',$link);
+    if($conf=="on"){
+      mysql_select_db('webcash');
+    }else{
+      mysql_select_db('webcash',$link);
+    }
     $result = mysql_query("SELECT webcash_banks.id, name, account, phone, mail ".
 			  "FROM webcash_banks LEFT JOIN webcash_accounts ON  webcash_banks.id=webcash_accounts.id_bank")
       or die(mysql_error());
@@ -206,7 +224,12 @@ function migrate($host,$username,$pass,$db){
     echo "<br/>";
 
     //import transactions
-    mysql_select_db('webcash',$link);
+    if($conf=="on"){
+      mysql_select_db('webcash');
+    }else{
+      mysql_select_db('webcash',$link);
+    }
+
     $result = mysql_query("SELECT webcash_operations.id, id_categorie, text, amount, webcash_operations.type, document, date, date_update, webcash_operations.comment, file, file_type, file_name, id_bank ".
 			  "FROM webcash_accounts LEFT JOIN webcash_operations ON webcash_accounts.id=webcash_operations.id_account  ")
       or die(mysql_error());
@@ -277,7 +300,11 @@ function migrate($host,$username,$pass,$db){
     echo "<br/>";
 
     //Import expenses_details
-    mysql_select_db('webcash',$link);
+    if($conf=="on"){
+      mysql_select_db('webcash');
+    }else{
+      mysql_select_db('webcash',$link);
+    }
 
     $result = mysql_query("SELECT COUNT(*) FROM webcash_expense_details") or die(mysql_error());
     list($nb_webcash1)= mysql_fetch_array($result);
