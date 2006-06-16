@@ -1,6 +1,6 @@
 <?php
 //
-// This file is part of « Webfinance »
+// This file is part of Â« Webfinance Â»
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
@@ -36,7 +36,12 @@ if(!$User->isAuthorized($roles)){
 }
 
 if ($_SESSION['message'] != "") {
-  $_SESSION['message'] = '<div class="post_message">'.$_SESSION['message']."</div>";
+  if($_SESSION['error'] == "1"){
+    $_SESSION['message'] = '<div class="post_error">'.$_SESSION['message']."</div>";
+    $_SESSION['error'] = "";
+  }else{
+    $_SESSION['message'] = '<div class="post_message">'.$_SESSION['message']."</div>";
+  }
 }
 
 $css_theme = "/css/themes/".$User->prefs->theme."/main.css";

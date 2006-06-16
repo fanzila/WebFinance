@@ -71,7 +71,7 @@ display: none;
 div.post_message{
   background: url('/imgs/icons/help.gif') no-repeat 5px 5px #ccf;
   border: dashed 2px #aaf;
-  position: absolute; 
+  position: absolute;
   right: 30px;
   top: 30px;
   padding: 20px;
@@ -80,7 +80,19 @@ div.post_message{
   padding-left: 30px;
 }
 
-tr.onglets td.focus { 
+div.post_error{
+  background: url('/imgs/icons/warning.png') no-repeat 5px 5px #FFCCCC;
+  border: dashed 2px #FF6666;
+  position: absolute;
+  right: 30px;
+  top: 30px;
+  padding: 20px;
+  padding-top: 5px;
+  font-style: italic;
+  padding-left: 30px;
+}
+
+tr.onglets td.focus {
  padding: 0px;
  background: #6060ff;
  padding-left: 8px;
@@ -91,7 +103,7 @@ tr.onglets td.focus {
  white-space: nowrap;
  border-collapse: collapse;
 }
-tr.onglets td { 
+tr.onglets td {
  background: #ceceff;
  padding-right: 8px;
  padding-left: 8px;
