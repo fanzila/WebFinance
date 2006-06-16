@@ -85,3 +85,15 @@ div.post_message{
   font-style: italic;
   padding-left: 30px;
 }
+
+div.post_error{
+  background: url('/imgs/icons/warning.png') no-repeat 5px 5px #FFCCCC;
+  border: dashed 2px #FF6666;
+  position: absolute;
+  right: 30px;
+  top: 30px;
+  padding: 20px;
+  padding-top: 5px;
+  font-style: italic;
+  padding-left: 30px;
+}
