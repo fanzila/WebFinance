@@ -100,8 +100,17 @@ if ($action == "save_facture") {
   extract($_POST);
 
   // Enregistrement des paramètres facture
-  preg_match("/([0-9]{2})\/([0-9]{2})\/([0-9]{4})/", $date_facture, $matches);
-  $date_facture = $matches[3]."-".$matches[2]."-".$matches[1];
+  preg_match("/([0-9]{2})\/([0-9]{2})\/([0-9]{4})/", $date_facture, $ma);
+  $date_facture = $ma[3]."/".$ma[2]."/".$ma[1];
+  $date_facture_ts = mktime(0,0,0,$ma[2],$ma[1],$ma[3]);
+
+  preg_match("/([0-9]{2})\/([0-9]{2})\/([0-9]{4})/", $date_paiement, $ma);
+  $date_paiement_ts = mktime(0,0,0,$ma[2],$ma[1],$ma[3])+(86400*$type_prev);
+  $date_paiement = date("Y/m/d",$date_paiement_ts );
+
+  preg_match("/([0-9]{2})\/([0-9]{2})\/([0-9]{4})/", $date_sent, $ma);
+  $date_sent = $ma[3]."/".$ma[2]."/".$ma[1];
+  $date_sent_ts = mktime(0,0,0,$ma[2],$ma[1],$ma[3]);
 
   if( ($facture->is_envoye == 0) && ($is_envoye == "on") && empty($num_facture) ) {
     $result = mysql_query("SELECT count(*) FROM webfinance_invoices
@@ -128,6 +137,8 @@ if ($action == "save_facture") {
 	       "type_paiement='%s', ".
 	       "is_paye=%d, ".
 	       "%s  ".
+	       "is_envoye=%d, ".
+	       "%s  ".
 	       "ref_contrat='%s', ".
 	       "extra_top='%s', ".
 	       "extra_bottom='%s', ".
@@ -142,8 +153,10 @@ if ($action == "save_facture") {
 	       "%s ".
 	       "WHERE id_facture='%d'",
                $type_paiement,
-	       ($is_paye == "on")?1:0,
-	       ($is_paye == "on")?"date_paiement=now(), ":"date_paiement='$date_prev' , ",
+	       ($is_paye=="on")?1:0,
+	       ($is_paye=="on"  || $type_prev>0)?"date_paiement='$date_paiement', ":"date_paiement='$date_facture' , ",
+	       ($is_envoye=="on")?1:0,
+	       ($is_envoye=="on")?"date_sent='$date_sent', ":"date_sent='$date_facture' , ",
 	       $ref_contrat,
 	       $extra_top,
 	       $extra_bottom,
@@ -159,7 +172,6 @@ if ($action == "save_facture") {
                $id_facture);
 
   mysql_query($q) or wf_mysqldie();
-
   logmessage(_("Save invoice")." (#$num_facture) fa:".$_POST['id_facture']." client:$facture->id_client");
 
   if ((is_numeric($_POST['prix_ht_new'])) && (is_numeric($_POST['qtt_new'])) && !empty($_POST['line_new'])) {
