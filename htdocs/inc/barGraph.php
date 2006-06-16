@@ -10,6 +10,28 @@
 // $Id$
 
 
+/**
+  * barGraph produces PNG bargraphs. By default, it will render each bar in a
+  * gradient of the choosen color. Several getter/setter methods are available
+  * to change the general look of the graph (display grid or not in the
+  * background ...)
+  * 
+  * Typical usage can look like this
+  * <pre>
+
+  $bars = new BarGraph(600, 300);
+  for ($i=0 ; $i<10 ; $i++) 
+    $bars->addValue( $i, $i, "Sample $i");
+  }
+  $bars->realise();
+  
+  </pre>
+  *
+  * This class uses directly PHP's GD functions instead of some wrapper around
+  * them like phplot
+  *
+  * @author Nicolas Bouthors <nbouthors@nbi.fr>
+  */
 class barGraph {
   var $format = "png";
   var $im;
@@ -26,6 +48,9 @@ class barGraph {
   var $ttf_font = "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf";
   var $draw_grid = 1;
 
+  /**
+    * Internal method : converts a HTML triplet color like #ff0000 for red into a GD color
+    */
   function _htmlColorToGD($html) {
     $html = preg_replace("/^0x/", "", $html);
     preg_match("/(..)(..)(..)/", $html, $matches);
@@ -35,6 +60,11 @@ class barGraph {
     $color = ImageColorAllocate($this->im, $bincolor[0], $bincolor[1], $bincolor[2]);
     return $color;
   }
+
+  /**
+   * Setup the initial colors of the graph. Default is black/white for axis ans
+   * blue for bars
+   */
   function _initColors() {
     $this->C_bar = $this->_htmlColorToGd("FF0000");
     $this->C_barframe = $this->_htmlColorToGd("000000");
@@ -44,7 +74,14 @@ class barGraph {
     $this->C_average = ImageColorAllocateAlpha($this->im, 64, 192, 64, 20 );
   }
 
-  /* Constructeur */
+  /**
+    * Constructor.
+    *
+    * Params :
+    *  $width : int Width in pixel of the generated PNG. Default is 300 pixels.
+    *  $height : int Height in pixel. Default is 500
+    *  $draw_grid : boolean, wether to draw the grid in the background or not
+    */
   function barGraph($width=300, $height=500, $draw_grid=1) {
     $this->width = $width;
     $this->height = $height;
@@ -58,6 +95,16 @@ class barGraph {
     $this->_initColors();
   }
 
+  /* 
+   * Adds a value to the pool. Use it in a loop when building your barGraph
+   *
+   * Params :
+   *  $value int (or float) value of the new bar 
+   *  $label is the X axis label. It will be rendered in a small font under the axis.
+   *  $barlabel is the label to draw inside the bar itself. Il will be drawn in
+   *            a larger font verticaly. If label is small it's drawn inside
+   *            the bar, otherwise it's drawn on top of the bar
+   */
   function addValue($value, $label="", $barlabel="") {
     if ($value > $this->max)
       $this->max = $value;
@@ -67,8 +114,9 @@ class barGraph {
     array_push($this->barlabels, $barlabel);
   }
 
-  /* Chage les couleurs des barres */
-  // function setBarColor($html_color) { $this->C_bar = $this->_htmlColorToGd($html_color); }
+  /** 
+    * Chages the main color for the bars. Gradient will be calculated from this base color 
+    */
   function setBarColor($red, $green, $blue) {
     $this->RVB_bar = array($red, $green, $blue);
     $this->shadecolors = array();
@@ -81,6 +129,9 @@ class barGraph {
   function setBarFrameColor($html_color) { $this->C_barframe = $this->_htmlColorToGd($html_color); }
   function setTextColor($html_color) { $this->C_text = $this->_htmlColorToGd($html_color); }
 
+  /* 
+   * This function will build the graph and output the resulting PNG file to the browser
+   */
   function realise() {
     header("Content-type: image/png");
     header("Pragma: no-cache");
@@ -171,6 +222,9 @@ class barGraph {
     imagedestroy($this->im);
   }
 
+  /**
+   * Choose the TrueType font file to use to display values and legend information
+   */ 
   function setFont($fontfile) {
     if (!file_exists($fontfile)) {
       return FALSE;

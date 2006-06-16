@@ -7,4 +7,5 @@
 		ServerName webfinance.dev.jexiste.org
 		ServerAlias www.webfinance.dev.jexiste.org
 		AddDefaultCharset off
+    Alias /doc/ /home/thierry/workspace/webfinance/doc/
 </VirtualHost>
