@@ -126,6 +126,7 @@ class User {
 
     if (! $this->isAuthorized('admin,manager') ) {
       $_SESSION['message'] = _('Sorry, you are not administrator');
+      $_SESSION['error'] = 1;
       return false;
     }
 
@@ -158,6 +159,7 @@ class User {
 
     }else{
       $_SESSION['message'] =  _("Sorry, this user already exists!");
+      $_SESSION['error'] = 1;
     }
     return $id_user;
 
@@ -183,6 +185,7 @@ class User {
   function createUser($data=null) {
     if (! $this->isAuthorized('admin,manager') ) {
       $_SESSION['message'] = _("You aren't the Administrator");
+      $_SESSION['error'] = 1;
       return false;
     }
     extract($data);
@@ -190,6 +193,7 @@ class User {
 
     if($this->existsLogin($login)){
       $_SESSION['message'] =  _("Sorry, this user already exists!");
+      $_SESSION['error'] = 1;
       return -1;
     }else{
 
@@ -213,6 +217,7 @@ class User {
   function delete($id_user) {
     if (! $this->isAuthorized('admin,manager')) {
       $_SESSION['message'] =  _("You aren't the Administrator");
+      $_SESSION['error'] = 1;
       return false;
     }
     $result = mysql_query("SELECT login,first_name,last_name FROM webfinance_users WHERE id_user=$id_user");
@@ -247,6 +252,7 @@ class User {
       $_SESSION['message'] = _('Password changed');
     } else {
       $_SESSION['message'] = _('Wrong password');
+      $_SESSION['error'] = 1;
       return false;
     }
   }
@@ -353,6 +359,7 @@ class User {
       echo _("User information was not sent");
       echo "Mailer Error: " . $mail->ErrorInfo;
       $_SESSION['message']=_('User information was not sent');
+      $_SESSION['error'] = 1;
     }else
       $_SESSION['message']=_('User information sent');
 
