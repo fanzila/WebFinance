@@ -150,7 +150,7 @@ echo '30 7  * * *  www-data  php /path/to/webfinance/htdocs/inc/scheduler.php' >
   <li>Nicolas Bouthors &lt;nbouthors@nbi.fr&gt; <i>Initial developpement for client, clientlog, contacts, and invoice managing, gettext french translation</i></li>
   <li>Pierre Doleans &lt;pierre@isvtec.com&gt; <i>Bug reports, feature requests</i></li>
   <li>Thierry Randrianiriana &lt;thierry@isvtec.com&gt; <i>A lot of code, bugfixes and features</i></li>
-  <li>Cedric Ravier &lt;cravier@nbi.fr&gt;<i>Some icons, logo, and other graphical stuff</i></li>
+  <li>Cedric Ravier &lt;cravier@nbi.fr&gt; <i>Some icons, logo, and other graphical stuff</i></li>
 </ul>
 
 <i>$Id$</i>
