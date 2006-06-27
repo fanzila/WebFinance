@@ -39,7 +39,7 @@ class User {
 
   // nbi_login
   function login($data) {
-    if ((preg_match("/^[a-zA-Z0-9]+$/", $data['login'])) && (preg_match("/^[a-zA-Z0-9]+$/", $data['password']))) {
+    if ((preg_match("/^[a-zA-Z0-9]+$/", $data['login'])) && (preg_match("/^[a-zA-Z0-9/\.\-]+$/", $data['password']))) {
       $result = mysql_query("SELECT count(id_user) FROM webfinance_users WHERE login='".$data['login']."' AND md5('".$data['password']."')=password AND disabled=0");
       list($exists) = mysql_fetch_array($result);
       mysql_free_result($result);
