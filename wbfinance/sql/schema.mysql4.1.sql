@@ -149,7 +149,7 @@ CREATE TABLE `webfinance_invoices` (
   `date_paiement` datetime default NULL,
   `is_paye` tinyint(4) default '0',
   `num_facture` varchar(10) default NULL,
-  `type_paiement` varchar(255) default 'Ã€ rÃ©ception de cette facture',
+  `type_paiement` varchar(255) default 'À réception de cette facture',
   `ref_contrat` varchar(255) default NULL,
   `extra_top` blob,
   `facture_file` varchar(255) default NULL,
