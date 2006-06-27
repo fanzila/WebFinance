@@ -62,6 +62,7 @@ switch ($_GET['sort']) {
 </tr>
 <?php
 $total_ca_ht = 0;
+$total_ca_tcc = 0;
 $result = mysql_query("SELECT f.id_facture
                        FROM webfinance_invoices f , webfinance_clients as c
                        WHERE type_doc='facture'
@@ -77,6 +78,7 @@ while (list($id_facture) = mysql_fetch_array($result)) {
   $class = ($count%2 == 0)?"even":"odd";
   $icon = $fa->is_paye?"paid":"not_paid";
   $total_ca_ht += $fa->total_ht;
+  $total_ca_ttc += $fa->total_ttc;
   $mois[$fa->mois_facture]++;
 
    $description = "";
@@ -118,7 +120,7 @@ EOF;
   <td>Total CA</td>
   <td>
     <b><?= number_format($total_ca_ht, 2, ',', ' ') ?>&euro; HT</b> /
-    <b><?= number_format(1.196*$total_ca_ht, 2, ',', ' ') ?>&euro; TTC</b>
+    <b><?= number_format($total_ca_ttc, 2, ',', ' ') ?>&euro; TTC</b>
   </td>
 </tr>
 <tr>

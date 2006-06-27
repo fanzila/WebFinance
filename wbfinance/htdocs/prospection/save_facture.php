@@ -149,6 +149,7 @@ if ($action == "save_facture") {
 	       "id_type_presta=%d, ".
 	       "id_compte=%d, ".
 	       "is_envoye=%d, ".
+	       "tax='%s', ".
 	       "period='%s' ".
 	       "%s ".
 	       "WHERE id_facture='%d'",
@@ -167,6 +168,7 @@ if ($action == "save_facture") {
 	       $id_type_presta,
 	       $id_compte,
 	       ($is_envoye=="on")?1:0,
+	       $tax,
 	       $period,
 	       ($dup_num_inv==0)?",num_facture='$num_facture' ":"" ,
                $id_facture);

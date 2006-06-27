@@ -55,7 +55,7 @@ class Facture {
                                   date_format(f.date_facture, '%Y%m') as mois_facture,
                                   UPPER(LEFT(f.type_doc, 2)) AS code_type_doc,
                                   date_sent<now() as is_sent,
-                                  f.type_paiement, f.is_paye, f.ref_contrat, f.extra_top, f.extra_bottom, f.num_facture, f.period, f.*
+                                  f.type_paiement, f.is_paye, f.ref_contrat, f.extra_top, f.extra_bottom, f.num_facture, f.period, f.tax, f.*
                            FROM webfinance_clients as c, webfinance_invoices as f
                            WHERE f.id_client=c.id_client
                            AND f.id_facture=$id_facture") or wf_mysqldie();
@@ -71,9 +71,11 @@ class Facture {
       $count++;
     }
     mysql_free_result($result);
+    $facture->taxe = $facture->tax;
     $facture->nb_lignes = $count;
     $facture->total_ht = $total;
-    $facture->total_ttc = $total*1.196;
+    //$facture->total_ttc = $total*1.196;
+    $facture->total_ttc = $total+($total*$facture->taxe)/100;
     $facture->nice_total_ht = sprintf("%.2f", $facture->total_ht);
     $facture->nice_total_ttc = sprintf("%.2f", $facture->total_ttc);
     //$facture->immuable = $facture->is_paye || $facture->is_sent;
