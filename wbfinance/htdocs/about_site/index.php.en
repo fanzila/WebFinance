@@ -102,7 +102,7 @@ echo '30 7  * * *  www-data  php /path/to/webfinance/htdocs/inc/scheduler.php' >
     <pre class="shell">
     apt-get install doxygen graphviz
     cd /path/to/webfinance/doc
-    make 
+    make
     </pre>
     </li>
 
@@ -113,6 +113,7 @@ echo '30 7  * * *  www-data  php /path/to/webfinance/htdocs/inc/scheduler.php' >
 <ul>
   <li>Report a bug through <a href="http://ovh.isvtec.com/mantis/">Mantis</a>
   <li>Send us a mail : <a href="mailto:webfinance@nbi.fr">webfinance@nbi.fr</a>
+  <li>Join us on IRC channel at #webfinance on irc.freenode.net</li>
 </ul>
 
 <a name="roadmap"></a><h2>Roadmap</h2>
