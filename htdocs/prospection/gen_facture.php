@@ -160,14 +160,14 @@ $pdf->Ln();
 
 // TVA
 $pdf->Cell(130, 6,  "" );
-$pdf->Cell(30, 6, "TVA 19,6%", "", 0, "R");
-$pdf->Cell(30, 6, preg_replace("/\./", ",", sprintf("%.2f".EURO, 0.196*$total_ht)), "", 0, "R");
+$pdf->Cell(30, 6, "TVA ".str_replace('.', ',',$facture->taxe)."%", "", 0, "R");
+$pdf->Cell(30, 6, preg_replace("/\./", ",", sprintf("%.2f".EURO, ($facture->taxe/100)*$total_ht)), "", 0, "R");
 $pdf->Ln();
 
 // Total TTC
 $pdf->Cell(130, 6,  "" );
 $pdf->Cell(30, 6, "Total", "", 0, "R");
-$pdf->Cell(30, 6, preg_replace("/\./", ",", sprintf("%.2f".EURO, 1.196*$total_ht)), "", 0, "R");
+$pdf->Cell(30, 6, preg_replace("/\./", ",", sprintf("%.2f".EURO, (1+($facture->taxe/100))*$total_ht)), "", 0, "R");
 $pdf->Ln();
 
 // Accompte
@@ -180,7 +180,7 @@ $pdf->Ln();
 $pdf->SetFont('Arial', 'B', '11');
 $pdf->Cell(130, 6,  "" );
 $pdf->Cell(30, 6, "Solde à régler", "", 0, "R");
-$pdf->Cell(30, 6, preg_replace("/\./", ",", sprintf("%.2f".EURO,1.196*$total_ht - $facture->accompte )), "", 0, "R");
+$pdf->Cell(30, 6, preg_replace("/\./", ",", sprintf("%.2f".EURO,(1+($facture->taxe/100))*$total_ht - $facture->accompte )), "", 0, "R");
 $pdf->Ln();
 
 // Extra data

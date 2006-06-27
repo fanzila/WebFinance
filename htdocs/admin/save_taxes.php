@@ -14,7 +14,7 @@ require("../inc/main.php");
 
 if ($_GET['action'] == "delete") {
   mysql_query("DELETE FROM webfinance_pref WHERE id_pref=".$_GET['id']);
-  $_SESSION['message'] = _('Taxe deleted');
+  $_SESSION['message'] = _('Tax deleted');
   header("Location: preferences.php?tab=Taxes");
 }
 
@@ -22,11 +22,11 @@ foreach ($_POST['taxes'] as $id=>$data) {
   if ($id == "new") {
     if (!empty($data['taxe']) ) {
       $q = sprintf("INSERT INTO webfinance_pref SET type_pref='taxe_%s', value='%s'" , $data['taxe'], $data['value']);
-      $_SESSION['message'] = _('Taxe added');
+      $_SESSION['message'] = _('Tax added');
     }
   } else {
     $q = sprintf("UPDATE webfinance_pref SET type_pref='taxe_%s', value='%s' WHERE id_pref=%d " , $data['taxe'], $data['value'] , $id );
-    $_SESSION['message'] = _('Taxe updated');
+    $_SESSION['message'] = _('Tax updated');
   }
   if(isset($q) AND !empty($q))
     mysql_query($q) or wf_mysqldie();

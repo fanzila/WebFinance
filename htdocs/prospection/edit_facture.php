@@ -13,7 +13,12 @@ include("../inc/main.php");
 
 if (!is_numeric($_GET['id_facture'])) {
   // Création de facture
-  mysql_query("INSERT INTO webfinance_invoices (date_created,date_facture,id_client) values(now(), now(), ".$_GET['id_client'].")") or wf_mysqldie();
+  $result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='taxe_TVA' OR type_pref='taxe_tva' ");
+  list($tva) = mysql_fetch_array($result);
+  if(!is_numeric($tva))
+    $tva=19.6;
+
+  mysql_query("INSERT INTO webfinance_invoices (date_created,date_facture,id_client,tax) values(now(), now(), ".$_GET['id_client'].",$tva)") or wf_mysqldie();
   $id_facture=mysql_insert_id();
   $_SESSION['message'] = _('Invoice created');
   logmessage(_('Create invoice')." for client:".$_GET['id_client'] );
@@ -85,9 +90,12 @@ function number_format(v, precision, thousands, coma) {
   return v;
 }
 
-function updateTotal() {
+function updateTotal(tva) {
   changedData(null);
+  var t = tva/100;
+  var f = 1 + t;
   var total_ht = 0;
+
   for (i=0 ; i<id_lignes.length ; i++) {
     id = id_lignes[i];
 
@@ -105,26 +113,26 @@ function updateTotal() {
   ht = document.getElementById('total_ht');
   ht.value = number_format(total_ht, 2, ' ', ',');
   ttc = document.getElementById('total_ttc');
-  ttc.value = number_format(total_ht*1.196, 2, ' ', ',');
+  ttc.value = number_format(total_ht*f, 2, ' ', ',');
   tva = document.getElementById('tva');
-  tva.value = number_format(total_ht*0.196, 2, ' ', ',');
+  tva.value = number_format(total_ht*t, 2, ' ', ',');
 }
-function addQtt(id) {
+function addQtt(id,tva) {
   qtt = document.getElementById('qtt_'+id);
   val = parseInt(qtt.value);
   val++;
   qtt.value = val;
 
-  updateTotal();
+  updateTotal(tva);
 }
-function subQtt(id) {
+function subQtt(id,tva) {
   qtt = document.getElementById('qtt_'+id);
   val = parseInt(qtt.value);
   val--;
   if (val < 1) { val = 1; }
   qtt.value = val;
 
-  updateTotal();
+  updateTotal(tva);
 }
 
 var id_facture_ligne = 0;
@@ -283,6 +291,13 @@ function ask_confirmation(txt) {
       </td>
     </tr>
 
+    <tr>
+      <td nowrap><?=_('TVA')?></td>
+      <td>
+	  <input style="width:45px; text-align: center;" type="text" name="tax" value="<?=$facture->taxe?>"/>%
+      </td>
+    </tr>
+
       <?php
       if ($facture->type_doc == "devis") { // CAS DEVIS  ?>
       <tr>
@@ -387,13 +402,13 @@ foreach ($facture->lignes as $l) {
     <table border="0" cellspacing="0" cellpadding="0">
       <tr><td><input type="text" id="qtt_$l->id_facture_ligne" name="qtt_$l->id_facture_ligne" style="width: 40px; text-align: center" value="$l->qtt" /></td>
           <td style="line-height: 9px;">
-            <a href="javascript:addQtt('$l->id_facture_ligne');"><img style="padding: 0px; margin: 0px;" src="/imgs/icons/plus.gif"/></a><br/>
-            <a href="javascript:subQtt('$l->id_facture_ligne');"><img style="padding: 0px; margin: 0px;" src="/imgs/icons/moins.gif" onclick="subQtt()" /></a>
+            <a href="javascript:addQtt('$l->id_facture_ligne','$facture->taxe');"><img style="padding: 0px; margin: 0px;" src="/imgs/icons/plus.gif"/></a><br/>
+            <a href="javascript:subQtt('$l->id_facture_ligne','$facture->taxe');"><img style="padding: 0px; margin: 0px;" src="/imgs/icons/moins.gif" onclick="subQtt()" /></a>
           </td>
       </tr>
     </table>
   </td>
-  <td nowrap style="text-align: center;"><input type="text" onkeyup="updateTotal();" name="prix_ht_$l->id_facture_ligne" id="prix_ht_$l->id_facture_ligne" style="width: 50px; text-align: center" value="$prix" />&euro; HT</td>
+  <td nowrap style="text-align: center;"><input type="text" onkeyup="updateTotal('$facture->taxe');" name="prix_ht_$l->id_facture_ligne" id="prix_ht_$l->id_facture_ligne" style="width: 50px; text-align: center" value="$prix" />&euro; HT</td>
   <td nowrap><input type="text" id="total_$l->id_facture_ligne" name="total_$l->id_facture_ligne" onfocus="blur();" style="background: none; border: none; width: 40px; text-align: right" value="$total_ligne" />&nbsp;&euro; HT</td>
 </tr>
 EOF;
@@ -408,13 +423,13 @@ if (! $facture->immuable) { // Début ajout une ligne
     <table border="0" cellspacing="0" cellpadding="0">
       <tr><td><input type="text" id="qtt_new" name="qtt_new" style="width: 40px; text-align: center" value="1" /></td>
           <td style="line-height: 9px;">
-            <a href="javascript:addQtt('new');"><img style="padding: 0px; margin: 0px;" src="/imgs/icons/plus.gif"/></a><br/>
-            <a href="javascript:subQtt('new');"><img style="padding: 0px; margin: 0px;" src="/imgs/icons/moins.gif" onclick="subQtt()" /></a>
+            <a href="javascript:addQtt('new','<?=$facture->taxe?>');"><img style="padding: 0px; margin: 0px;" src="/imgs/icons/plus.gif"/></a><br/>
+            <a href="javascript:subQtt('new','<?=$facture->taxe?>');"><img style="padding: 0px; margin: 0px;" src="/imgs/icons/moins.gif" onclick="subQtt()" /></a>
           </td>
       </tr>
     </table>
   </td>
-  <td nowrap style="text-align: center;"><input type="text" onkeyup="updateTotal();" name="prix_ht_new" id="prix_ht_new" style="width: 50px; text-align: center" value="0" />&nbsp;&euro; HT</td>
+  <td nowrap style="text-align: center;"><input type="text" onkeyup="updateTotal('<?= $facture->taxe?>');" name="prix_ht_new" id="prix_ht_new" style="width: 50px; text-align: center" value="0" />&nbsp;&euro; HT</td>
   <td nowrap><input type="text" id="total_new" name="total_new" onfocus="blur();" style="background: none; border: none; width: 40px; text-align: right" value="0" />&nbsp;&euro; HT</td>
 </tr>
 <?php

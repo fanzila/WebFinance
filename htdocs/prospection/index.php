@@ -159,30 +159,30 @@ while ($found = mysql_fetch_object($result)) {
 mysql_free_result($result);
 
 // CA total sur l'année N-2
-$result = mysql_query("SELECT sum(fl.qtt*prix_ht)
+$result = mysql_query("SELECT sum(fl.qtt*prix_ht), sum((1+tax/100)*prix_ht*fl.qtt)
                        FROM webfinance_invoice_rows fl, webfinance_invoices f
                        WHERE f.id_facture=fl.id_facture
                        AND f.type_doc='facture'
                        AND year(f.date_facture) = year(now()) - 2") or wf_mysqldie();
-list($ca_total_ht_annee_nmoisun) = mysql_fetch_array($result);
+list($ca_total_ht_annee_nmoisun,$ca_total_ttc_annee_nmoisun) = mysql_fetch_array($result);
 mysql_free_result($result);
 
 // CA total sur l'année N-1
-$result = mysql_query("SELECT sum(fl.qtt*prix_ht)
+$result = mysql_query("SELECT sum(fl.qtt*prix_ht), sum((1+tax/100)*prix_ht*fl.qtt)
                        FROM webfinance_invoice_rows fl, webfinance_invoices f
                        WHERE f.id_facture=fl.id_facture
                        AND f.type_doc='facture'
                        AND year(f.date_facture) = year(now()) - 1") or wf_mysqldie();
-list($ca_total_ht_annee_precedente) = mysql_fetch_array($result);
+list($ca_total_ht_annee_precedente, $ca_total_ttc_annee_precedente) = mysql_fetch_array($result);
 mysql_free_result($result);
 
 // CA Total sur année en cours
-$result = mysql_query("SELECT sum(fl.qtt*prix_ht)
+$result = mysql_query("SELECT sum(fl.qtt*prix_ht), sum((1+tax/100)*prix_ht*fl.qtt)
                        FROM webfinance_invoice_rows fl, webfinance_invoices f
                        WHERE f.id_facture=fl.id_facture
                        AND f.type_doc='facture'
                        AND year(f.date_facture) = year(now())") or wf_mysqldie();
-list($ca_total_ht_annee_encours) = mysql_fetch_array($result);
+list($ca_total_ht_annee_encours,$ca_total_ttc_annee_encours) = mysql_fetch_array($result);
 mysql_free_result($result);
 
 // Trésorerie : total des transactions effectives
@@ -203,11 +203,11 @@ mysql_free_result($result);
 <table border=0 cellspacing=0 cellpadding=3 class="bordered" style="margin-left: 10px; width: 300px; background: white; color: black;">
 <tr>
   <td><b><?= strftime(_("Total income %Y"), time()); ?></b></td>
-  <td><?= number_format($ca_total_ht_annee_encours, 0, ',', ' ') ?>&euro; HT / <?= number_format($ca_total_ht_annee_encours*1.196, 0, ',', ' ') ?>&euro; TTC </td>
+  <td><?= number_format($ca_total_ht_annee_encours, 0, ',', ' ') ?>&euro; HT / <?= number_format($ca_total_ttc_annee_encours, 0, ',', ' ') ?>&euro; TTC </td>
 </tr>
 <tr>
   <td><b><?= strftime(_("Total income %Y"), time()-365*86400); ?></b></td>
-  <td><?= number_format($ca_total_ht_annee_precedente, 0, ',', ' ') ?>&euro; HT / <?= number_format($ca_total_ht_annee_precedente*1.196, 0, ',', ' ') ?>&euro; TTC </td>
+  <td><?= number_format($ca_total_ht_annee_precedente, 0, ',', ' ') ?>&euro; HT / <?= number_format($ca_total_ttc_annee_precedente, 0, ',', ' ') ?>&euro; TTC </td>
 </tr>
 <tr>
   <td><b><?= _("Income 12 months") ?></b></td>

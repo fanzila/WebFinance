@@ -163,6 +163,7 @@ CREATE TABLE `webfinance_invoices` (
   `is_envoye` tinyint(4) default '0',
   `period` enum('none','end of month','end of term','end of year') default 'none',
   `last_run` timestamp NULL default '0000-00-00 00:00:00',
+  `tax` float NOT NULL default '19.6',
   PRIMARY KEY  (`id_facture`),
   UNIQUE KEY `num_facture` (`num_facture`),
   KEY `id_compte` (`id_compte`),
