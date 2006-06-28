@@ -37,16 +37,16 @@ if (isset($_GET['mois']) AND $_GET['mois'] != "") {
 if (isset($_GET['type']) AND $_GET['type']!="") {
   switch ($_GET['type']) {
     case "unpaid" : $where_clause .= " AND is_paye=0"; break;
-    case "paid" : $where_clause .= " AND is_paye=2"; break;
+    case "paid" : $where_clause .= " AND is_paye=1"; break;
   }
 }
 
 $w_clause="";
-if($user->admin<1 AND count($roles)==1 AND in_array($client_role,$roles) ) {
-  $is_client=true;
-  $w_clause=" AND webfinance_personne.id_user=$user->id_user ";
-  $where_clause .= $w_clause;
- }
+ if($user->admin<1 AND count($roles)==1 AND in_array($client_role,$roles) ) {
+   $is_client=true;
+   $w_clause=" AND webfinance_clients.id_user=$user->id_user ";
+   $where_clause .= $w_clause;
+  }
 
 $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w+\\&*+/", "", $GLOBALS['_SERVER']['QUERY_STRING']);
 
@@ -79,11 +79,10 @@ switch ($_GET['sort']) {
 $total_ca_ht = 0;
 
 $q="SELECT webfinance_invoices.id_facture ".
-  "FROM webfinance_personne, webfinance_users, webfinance_clients, webfinance_invoices ".
+  "FROM webfinance_users, webfinance_clients, webfinance_invoices ".
   "WHERE ".
   "( ".
-  "webfinance_personne.id_user = webfinance_users.id_user ".
-  "AND webfinance_clients.id_client = webfinance_personne.client ".
+  "webfinance_clients.id_user = webfinance_users.id_user ".
   "AND webfinance_clients.id_client = webfinance_invoices.id_client ".
   " ) ".
   "AND webfinance_invoices.type_doc='facture' ".
@@ -170,10 +169,9 @@ while (list($id_facture) = mysql_fetch_array($result)) {
 <?php
 
 $q="SELECT DISTINCT webfinance_clients.id_client, webfinance_clients.nom ".
-  "FROM webfinance_clients, webfinance_invoices, webfinance_personne ".
+  "FROM webfinance_clients, webfinance_invoices ".
   "WHERE ".
   "webfinance_clients.id_client = webfinance_invoices.id_client ".
-  "AND webfinance_personne.client = webfinance_clients.id_client ".
   "AND webfinance_invoices.type_doc='facture' ".
   " $w_clause ".
   "ORDER BY webfinance_clients.nom ASC";

@@ -30,7 +30,7 @@ if ($_GET['mois'] != "") {
 if ($_GET['type']!="") {
   switch ($_GET['type']) {
     case "unpaid" : $where_clause .= " AND f.is_paye=0"; break;
-    case "paid" : $where_clause .= " AND f.is_paye=2"; break;
+    case "paid" : $where_clause .= " AND f.is_paye=1"; break;
   }
 }
 
