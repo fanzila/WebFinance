@@ -17,7 +17,7 @@ use DBI;
 $db = $ARGV[0]||"webfinance";
 $host = $ARGV[1]||"localhost";
 $verbose = $ARGV[2]||0;
-$pid =  42;
+$pid =  $$;
 
 $dsn = "DBI:mysql:database=$db;host=$host";
 $dbh = DBI->connect($dsn, $login, $pass) or die("Can't connect $host $db $login $pass");
@@ -116,4 +116,4 @@ while ($ligne = <LOG>) {
 
 
 chdir("/tmp");
-# system("rm -rf cvslog2sql.$pid");
+system("rm -rf cvslog2sql.$pid");
