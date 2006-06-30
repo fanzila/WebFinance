@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 #
 # This file is part of « Webfinance »
-# 
+#
 # Copyright (c) 2004-2006 NBI SARL
 # Author : Nicolas Bouthors <nbouthors@nbi.fr>
-# 
+#
 # You can use and redistribute this file under the term of the GNU GPL v2.0
 #
 # $Id$
@@ -17,6 +17,7 @@ use DBI;
 $db = $ARGV[0]||"webfinance";
 $host = $ARGV[1]||"localhost";
 $verbose = $ARGV[2]||0;
+$login = $ARGV[3]||'root';
 $pid =  $$;
 
 $dsn = "DBI:mysql:database=$db;host=$host";
@@ -43,7 +44,7 @@ if ($s->rows == 0) {
   my $s2 = $dbh->prepare($q);
   $s2->execute() or die("Could not create table cvslog in $db at $host\n");
   $s2->finish();
-} 
+}
 $s->finish();
 
 mkdir("/tmp/cvslog2sql.$pid");
@@ -96,7 +97,7 @@ while ($ligne = <LOG>) {
       $s->execute();
     }  elsif ($ligne =~ m!date: ([^;]+);  author: (\w+);  state: (\w+);$!) {
       # Find number of lines of very first commit (not shown in cvs log)
-      # FIXME : exclude binary files from this 
+      # FIXME : exclude binary files from this
       ($date, $author, $state) = ($1, $2, $3);
 
       $orig_lines = qx{ wc -l $current_file };
