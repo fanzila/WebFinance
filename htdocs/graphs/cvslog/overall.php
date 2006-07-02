@@ -1,13 +1,4 @@
 <?php
-//
-// This file is part of « Webfinance »
-//
-// Copyright (c) 2004-2006 NBI SARL and otheres
-// Author : Cyril Gantin <cgantin@nbi.fr>
-//
-// You can use and redistribute this file under the term of the GNU GPL v2.0
-//
-// $Id$
 
 include("../../inc/main.php");
 require_once("/usr/share/phplot/phplot_data.php");
@@ -27,45 +18,102 @@ $plot =& new PHPlot($width, $height);
 $path = (isset($_GET['path']))?$_GET['path']:"htdocs/";
 
 // Who's done it ?
-$result = mysql_query("SELECT DISTINCT author FROM cvslog WHERE file like '$path%' AND date>=date_sub(NOW(), INTERVAL $deltatime DAY)") or die(mysql_error());
+// We ORDER by contribution here, so that logic below builds the $data array in the right order for series to apear stacked
+$result = mysql_query("SELECT DISTINCT author, SUM(added)-SUM(deleted) as total_contribution
+                               FROM cvslog 
+                               WHERE file like '$path%'
+                               GROUP BY author 
+                               ORDER BY total_contribution DESC");
 while (list($codeur) = mysql_fetch_array($result)) {
   $codeurs[] = $codeur;
+  $current_values[$codeur] = 0;
 }
 mysql_free_result($result);
 
 // Get bounds
-$result = mysql_query("SELECT UNIX_TIMESTAMP(DATE(MIN(date))), UNIX_TIMESTAMP(DATE(MAX(date))) FROM cvslog WHERE file like '$path%' AND date>=date_sub(NOW(), INTERVAL $deltatime DAY)") or die(mysql_error());
+$result = mysql_query("SELECT UNIX_TIMESTAMP(DATE(MIN(date))), UNIX_TIMESTAMP(DATE(MAX(date))) FROM cvslog WHERE file like '$path%' AND date>=date_sub(NOW(), INTERVAL $deltatime DAY)");
 list($start_date, $end_date) = mysql_fetch_array($result);
 mysql_free_result($result);
 
-$max = 0;
+$initial_row = array();
+$current_values[] = strftime("%d %B", $start_date);
+$current_values[] = $start_date;
+
+$t = 0;
+$row = array();
+$row[] = strftime("%e %B", $start_date);
+$row[] = $start_date;
+$total = 0;
+foreach ($codeurs as $id=>$c) {
+  $res = mysql_query("SELECT SUM(added)+SUM(deleted) FROM cvslog WHERE UNIX_TIMESTAMP(date) < $start_date AND file LIKE '$path%' AND author='$c'");
+  while (list($delta) = mysql_fetch_array($res)) {
+    if ($delta == "") { $delta = 0; }
+    $total += $delta;
+    $current_values[$c] += $delta;
+    $row[] = $total;
+    $t += $total;
+  }
+}
+$data[] = $row;
+// print_r($current_score);
+
+$max = $t;
+$min = 0;
 $cur_date = $start_date;
 $count=0;
+$cur_date += 86400; // Start counting at d+1
 while ($cur_date <= $end_date) {
   $row = array();
   if ($count++ % 5 == 0) {
-    $row[0] = strftime("%d/%m/%Y", $cur_date);
+    $row[0] = strftime("%e %B", $cur_date);
   } else {
     $row[0] = "";
+    $row[0] = strftime("%e %B", $cur_date); //TODEL
   }
   $row[1] = $cur_date;
 
   $dt = strftime("%Y-%m-%d", $cur_date);
+  $added_all = 0;
+  $deleted_all = 0;
+
+  // Positive lines (total)
+  $day_total = 0;
   foreach ($codeurs as $id=>$codeur) {
-    $result = mysql_query("SELECT sum(added), sum(deleted), sum(added)+sum(deleted) FROM cvslog WHERE DATE(date) = '$dt' AND author='$codeur'") or die(mysql_error());
-    $t = mysql_fetch_array($result);
-    if ($t[2] == "") $t[2] = 0; 
-    $row[] = $t[2];
-    $max = max($t[2], $max);
+    $result = mysql_query("SELECT sum(added)+sum(deleted) FROM cvslog WHERE DATE(date) = '$dt' AND author='$codeur' AND file LIKE '$path%'");
+    list($delta) = mysql_fetch_array($result);
+    if ($delta == "") $delta = 0; // SUM returns null when no row matches
+
+    $current_values[$codeur] += $delta;
+    $day_total += $current_values[$codeur];
+    $row[] = $day_total;
+    $max = max($day_total, $max);
   }
 
   $data[] = $row;
   $cur_date += 86400; // Tomorow is a good day
 }
-
 // print "<pre>";
-// print "Max $max\n";
 // print_r($data);
+// DIe();
+
+$plot->SetDataType('data-data');
+$plot->SetDataValues($data);
+if (abs($max) > 0) {
+  $tmp_max = 0;
+  if (abs($max) > 0) {
+    $tmp_max = abs($max);
+    $exp = 0;
+    while ($tmp_max > 10) { $tmp_max /= 10; $exp++; }
+    $tmp_max = ceil($tmp_max);
+    while ($exp > 0) { $tmp_max *= 10; $exp--; }
+    $tmp_max = $max/abs($max) * $tmp_max;
+  }
+
+  $plot->SetPlotAreaWorld(null, 0, null, null);
+  $plot->plot_max_y = $tmp_max;
+  $plot->plot_min_y = 0;
+} 
+
 
 $plot->SetDataType('data-data');
 $plot->SetDataValues($data);
@@ -83,8 +131,13 @@ if (abs($max) > 0) {
   $plot->plot_min_y = 0;
   $plot->plot_max_y = $tmp_max;
 } 
-$plot->SetPlotType('area');
-$plot->SetDataColors(array("#ceffce", "#6785c3", "#ffce90", "#ffff60" )); // Lime, NBI blue, salmon, and yellow
+$plot->SetPlotType('lines');
+$colors_defined = array("thierry" => "#ffce90", "cyril" => "#ceffce", "nico" => "#6785c3", "cyb" => "#ffff60" );
+$colors_used = array();
+foreach ($codeurs as $id=>$c) {
+  $colors_used[] = $colors_defined[$c];
+}
+$plot->SetDataColors($colors_used); // Lime, NBI blue, salmon, and yellow
 $plot->SetLegend($codeurs);
 $plot->SetLegendPixels( 50, 30 );
 $plot->SetXLabelAngle(90);
