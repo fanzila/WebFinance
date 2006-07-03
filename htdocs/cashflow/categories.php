@@ -1,10 +1,10 @@
-<?php 
-// 
+<?php
+//
 // This file is part of « Webfinance »
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
-// 
+//
 // You can use and redistribute this file under the term of the GNU GPL v2.0
 //
 ?>
@@ -45,13 +45,13 @@ function confirmDelete(id) {
 <?php
 
 $order_clause = "color";
-if (isset($_GET['sort'])) { 
+if (isset($_GET['sort'])) {
   switch ($_GET['sort']) {
-    case 'color' : 
-      // Sort by color is complicated since we store HTML colors like #ff0000 
+    case 'color' :
+      // Sort by color is complicated since we store HTML colors like #ff0000
       $order_clause = "HEX(MID(color, 1,2)),HEX(MID(color,3,2)),HEX(MID(color,5,2))";
       break;
-    default: $order_clause = $_GET['sort']; 
+    default: $order_clause = $_GET['sort'];
   }
 }
 
@@ -68,9 +68,9 @@ while ($c = mysql_fetch_assoc($result)) {
 
   print <<<EOF
 <tr class="row_$class">
-  <td><input type="text" name="cat[$id][name]" value="$name" style="width: 80px;" /></td>
-  <td><input type="text" name="cat[$id][re]" value="$re" style="width: 200px;" /></td>
-  <td><input type="text" name="cat[$id][comment]" value="$comment" style="width: 200px;" /></td>
+  <td><input type="text" name="cat[$id][name]" value="$name" style="width: 130px;" /></td>
+  <td><input type="text" name="cat[$id][re]" value="$re" style="width: 175px;" /></td>
+  <td><input type="text" name="cat[$id][comment]" value="$comment" style="width: 175px;" /></td>
   <td><input type="text" name="cat[$id][plan_comptable]" value="$plan_comptable" style="text-align: center; width: 40px;" /></td>
   <td>$color_picker</td>
   <td><a href="javascript:confirmDelete($id);"><img src="/imgs/icons/delete.gif" /></a> <a href="index.php?filter[shown_cat][$id]='on'"><img src="/imgs/icons/zoom.gif" /></a></td>
@@ -80,9 +80,9 @@ EOF;
 
 ?>
 <tr style="background: #ceffce;">
-  <td><input type="text" name="cat[new][name]" value="" style="width: 80px;" /></td>
-  <td><input type="text" name="cat[new][re]" value="" style="width: 200px;" /></td>
-  <td><input type="text" name="cat[new][comment]" value="" style="width: 200px;" /></td>
+  <td><input type="text" name="cat[new][name]" value="" style="width: 130px;" /></td>
+  <td><input type="text" name="cat[new][re]" value="" style="width: 175px;" /></td>
+  <td><input type="text" name="cat[new][comment]" value="" style="width: 175px;" /></td>
   <td><input type="text" name="cat[new][plan_comptable]" value="" style="text-align: center; width: 40px;" /></td>
   <td></td>
   <td></td>
