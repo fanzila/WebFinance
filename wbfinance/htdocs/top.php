@@ -35,14 +35,13 @@ if(!$User->isAuthorized($roles)){
   header("Location: /welcome.php");
 }
 
-if ($_SESSION['message'] != "") {
-  if($_SESSION['error'] == "1"){
+if (isset($_SESSION['message']) AND $_SESSION['message'] != "") {
+  if(isset($_SESSION['error']) AND $_SESSION['error'] == 1){
     $_SESSION['message'] = '<div class="post_error">'.$_SESSION['message']."</div>";
-    $_SESSION['error'] = "";
-  }else{
+    unset($_SESSION['error']);
+  }else if(!preg_match('/^<div/',$_SESSION['message']))
     $_SESSION['message'] = '<div class="post_message">'.$_SESSION['message']."</div>";
-  }
-}
+ }
 
 $css_theme = "/css/themes/".$User->prefs->theme."/main.css";
 if (! file_exists($GLOBALS['_SERVER']['DOCUMENT_ROOT'].$css_theme)) {
