@@ -110,8 +110,12 @@ function formTestDB(){
 
 function migrate($host,$username,$pass,$db,$conf){
 
+  /*
+   * On vide les tables wf_categories, wf_transactions et wf_expenses.
+   */
+
   if($conf=="on"){
-    echo "ON";
+    echo "ON <br/>";
     $link = $dbi;
     $db_selected = mysql_select_db($db);
   }else{
@@ -126,16 +130,34 @@ function migrate($host,$username,$pass,$db,$conf){
 
     //Import categories
     $result = mysql_query("SELECT id, name, comment, color FROM webcash_categories") or die(mysql_error());
-
     $nb_webcash = mysql_num_rows($result);
+
     mysql_select_db('webfinance');
-    mysql_query("TRUNCATE TABLE webfinance_categories") or die(mysql_error());
+    //mysql_query("TRUNCATE TABLE webfinance_categories") or die(mysql_error());
+    $res = mysql_query("SELECT COUNT(*) FROM webfinance_categories") or die(mysql_error());
+    list($res) = mysql_fetch_array($res);
+    $nb_webcash = $res + $nb_webcash;
+
     while($webcash_categ = mysql_fetch_assoc($result)){
       // print_r($webcash_categ);
       list($r, $g, $b) = color_hex($webcash_categ['color']);
       //  echo $r.":".$g.":".$b."<br/>";
       $color = "#".dechex($r)."".dechex($g)."".dechex($b);
       //echo $color."<br/>";
+
+      mysql_query("DELETE FROM webfinance_categories WHERE name='".$webcash_categ['name']."'") or die(mysql_error());
+      $nb_webcash = $nb_webcash - mysql_affected_rows();
+
+      $res = mysql_query("SELECT COUNT(*) FROM webfinance_categories WHERE id=".$webcash_categ['id'])
+	or die(mysql_error());
+      list($res) = mysql_fetch_array($res);
+      if($res==1){
+	$res = mysql_query("SELECT MAX(id) FROM webfinance_categories") or die(mysql_error());
+	list($max) = mysql_fetch_array($res);
+	$max++;
+        mysql_query("UPDATE webfinance_categories SET id=$max  WHERE id=".$webcash_categ['id']) or die(mysql_error());
+	mysql_free_result($res);
+      }
 
       $q="INSERT INTO webfinance_categories ".
 	"( id , name , comment , re , plan_comptable , color ) ".
@@ -254,10 +276,16 @@ function migrate($host,$username,$pass,$db,$conf){
       "file_type='%s', ".
       "file_name='%s' ";
 
-    //insertion d'une categorie 'unknown' pour les id_categorie=0
-    mysql_query("INSERT INTO webfinance_categories ( name , comment ) VALUES ('Unknown', 'unknown category' )")
-      or die(mysql_error());
-    $id_unknown_categ= mysql_insert_id();
+    $res = mysql_query("SELECT id FROM webfinance_categories WHERE name='Unknown'") or mysql_query();
+    if(mysql_num_rows($res)==1){
+      list($id_unknown_categ)=mysql_fetch_array($res);
+      mysql_free_result($res);
+    }else{
+      //insertion d'une categorie 'unknown' pour les id_categorie=0
+      mysql_query("INSERT INTO webfinance_categories ( name , comment ) VALUES ('Unknown', 'unknown category' )")
+	or die(mysql_error());
+      $id_unknown_categ= mysql_insert_id();
+    }
 
     while($webcash_tr = mysql_fetch_assoc($result)){
       //  print_r($webcash_tr);
