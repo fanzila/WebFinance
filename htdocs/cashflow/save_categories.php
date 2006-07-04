@@ -14,23 +14,26 @@ require("../inc/main.php");
 
 if ($_GET['action'] == "delete") {
   mysql_query("DELETE FROM webfinance_categories WHERE id=".$_GET['id']);
-  $_SESSION['message'] = _('Category deleted');
-  header("Location: categories.php");
+  if(mysql_affected_rows()==1)
+    $_SESSION['message'] = _('Category deleted');
+  else{
+    $_SESSION['message'] = _('Category doesn\'t exist');
+    $_SESSION['error'] = 1;
+  }
+  header("Location: categories.php?sort=".$_GET['sort']);
+  exit;
 }
+//echo "<pre/>";
+//print_r($_POST);
 
 foreach ($_POST['cat'] as $id=>$data) {
   if ($id == "new") {
     if ($data['name'] != "") {
-      $q = "INSERT INTO webfinance_categories ";
-      $f = "(";
-      $values = "VALUES(";
-      foreach ($data as $n=>$v) {
-        $f .= sprintf("%s,", $n);
-        $values .= sprintf("'%s',", $v);
-      }
-      $f = preg_replace("!,$!", ") ", $f);
-      $values = preg_replace("!,$!", ") ", $values);
-      $q .= $f.$values;
+      $max_id = mysql_query("SELECT MAX(id) FROM webfinance_categories") or wf_mysqldie();
+      list($max_id) = mysql_fetch_array($max_id);
+      $q = sprintf("INSERT INTO webfinance_categories (id, name,re,comment,plan_comptable) ".
+		  "VALUES (%d, '%s','%s','%s','%s')",
+		   $max_id+1, $data['name'],$data['re'],$data['comment'],$data['plan_comptable']);
     }
   } else {
     $q = "UPDATE webfinance_categories SET ";
@@ -39,10 +42,12 @@ foreach ($_POST['cat'] as $id=>$data) {
     }
     $q = preg_replace("!,$!", " WHERE id=$id", $q);
   }
+  echo $q."<br/>";
   mysql_query($q) or wf_mysqldie();
+  $_SESSION['message'] = _('Categories updated');
 }
 
-header("Location: categories.php");
+header("Location: categories.php?sort=".$_POST['sort']);
 
 
 ?>
