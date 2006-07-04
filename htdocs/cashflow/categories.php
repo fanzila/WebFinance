@@ -46,7 +46,7 @@ $help_pcg = addslashes("Numéro de référence dans le plan comptable général.
 
 $order_clause = "color";
 $sort = "color";
-if (isset($_GET['sort'])) {
+if (isset($_GET['sort']) and !empty($_GET['sort'])) {
   $sort = $_GET['sort'];
   switch ($_GET['sort']) {
     case 'color' :
