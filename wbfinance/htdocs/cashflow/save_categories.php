@@ -23,8 +23,6 @@ if ($_GET['action'] == "delete") {
   header("Location: categories.php?sort=".$_GET['sort']);
   exit;
 }
-//echo "<pre/>";
-//print_r($_POST);
 
 foreach ($_POST['cat'] as $id=>$data) {
   if ($id == "new") {
@@ -42,7 +40,6 @@ foreach ($_POST['cat'] as $id=>$data) {
     }
     $q = preg_replace("!,$!", " WHERE id=$id", $q);
   }
-  echo $q."<br/>";
   mysql_query($q) or wf_mysqldie();
   $_SESSION['message'] = _('Categories updated');
 }
