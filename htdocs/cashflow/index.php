@@ -434,9 +434,15 @@ print <<<EOF
   </td>
   <td>$fmt_date</td>
   <td style="background: $tr->color; text-align: center;" nowrap><a href="?$filter_base&filter[shown_cat][$tr->id_category]='on'">$tr->name</a></td>
-  <td style="text-align: center;">$tr->type</td>
-	 <td width="100%" style="font-size: 9px;">$tr->text<br/><i>$tr->comment</i>&nbsp;$file&nbsp;<a href="expenses.php?id_transaction=$tr->id">[expenses]</a>
 EOF;
+?>
+  <td style="text-align: center;">
+<?
+     printf("%s%s%s", ($tr->type!="real")?"<span style='background-color: rgb(255, 255, 102);'>":"" , $tr->type , ($tr->type!="real")?"</span>":"" );
+?>
+  </td>
+  <td width="100%" style="font-size: 9px;"><?= $tr->text ?><br/><i><?= $tr->comment ?></i>&nbsp;<?=$file?>&nbsp;<a href="expenses.php?id_transaction=<?=$tr->id?>">[expenses]</a>
+<?
      if($Invoice->exists($tr->id_invoice)){
        printf('<a href="../prospection/edit_facture.php?id_facture=%d" >[invoice]</a>',$tr->id_invoice);
      }
