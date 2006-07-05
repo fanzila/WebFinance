@@ -91,9 +91,19 @@ function confirmSendInfo(id_client,txt) {
     window.location = 'save_client.php?action=send_info&id='+id_client;
   }
 }
+
+function ask_confirmation(txt) {
+  resultat = confirm(txt);
+  if(resultat=="1"){
+      return true;
+  } else {
+      return false;
+  }
+}
+
 </script>
 
-<?= $_SESSION['message']; $_SESSION['message']=""; ?>
+<?= $_SESSION['message']; unset($_SESSION['message']); ?>
 
 <form onchange="formChanged();" id="main_form" action="save_client.php" method="post">
 
@@ -244,7 +254,7 @@ function confirmSendInfo(id_client,txt) {
       ?>
     </table>
     </div>
-    <center><a href="edit_facture.php?id_facture=new&id_client=<?= $Client->id ?>"><?=_('Create invoice/estimate')?></a></center>
+    <center><a href="edit_facture.php?id_facture=new&id_client=<?= $Client->id ?>" onclick="return ask_confirmation('<?=_('Confirm ?')?>');" ><?=_('Create invoice/estimate')?></a></center>
 </div>
 
 <div style="display: none;" id="tab_other">

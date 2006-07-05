@@ -170,7 +170,7 @@ function ask_confirmation(txt) {
 
 </script>
 
-<?= $_SESSION['message']; $_SESSION['message']=""; ?>
+<?= $_SESSION['message']; unset($_SESSION['message']); ?>
 
 <map name="facture_row_handle">
 <!-- #$-:Image Map file created by GIMP Imagemap Plugin -->
