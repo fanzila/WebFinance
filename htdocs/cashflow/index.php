@@ -119,6 +119,8 @@ while ($cat = mysql_fetch_assoc($result)) {
 }
 mysql_free_result($result);
 
+//echo "<pre/>";
+//print_r($_GET);
 
 // Setup the default filter if none is given
 extract($_GET);
@@ -254,6 +256,14 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
        $where_clause .= " (";
        foreach ($filter['shown_cat'] as $catid=>$dummy) {
          $where_clause .= "id_category=$catid OR ";
+       }
+       $where_clause = preg_replace("/ OR $/", ")", $where_clause);
+     }
+
+     if(count($filter['shown_type'])){
+       $where_clause .= " AND (";
+       foreach($filter['shown_type'] as $type_name=>$dummy){
+	 $where_clause .= " type='$type_name' OR ";
        }
        $where_clause = preg_replace("/ OR $/", ")", $where_clause);
      }
@@ -555,6 +565,18 @@ printf('<a class="pager_link" href="?%s&filter[start_date]=%s&filter[end_date]=%
       <td nowrap><b><?= _('End date :') ?></b></td>
       <td><?php makeDateField("filter[end_date]", $ts_end_date, 1, 'end_date_criteria', 'width: 114px'); ?><img src="/imgs/icons/delete.gif" onmouseover="return escape('<?= _('Click to suppress this filter criteria') ?>');" onclick="fld = document.getElementById('end_date_criteria'); fld.value = ''; fld.form.submit();" /></td>
     </tr>
+
+    <tr class="row_even">
+      <td nowrap><b><?= _('Shown types :') ?></b></td>
+      <td>
+       <?
+	printf('<input type="checkbox" name="filter[shown_type][real]" %s /><b>%s</b>', ($filter['shown_type']['real'])?"checked":"" ,_('real'));
+	printf('<input type="checkbox" name="filter[shown_type][prevision]" %s /><b>%s</b>', ($filter['shown_type']['prevision'])?"checked":"" ,_('prev'));
+	printf('<input type="checkbox" name="filter[shown_type][asap]" %s /><b>%s</b>', ($filter['shown_type']['asap'])?"checked":"" ,_('asap'));
+       ?>
+      </td>
+    </tr>
+
     <tr class="row_even">
       <td nowrap><b><?= _('Shown categories :') ?></b></td>
       <td>
