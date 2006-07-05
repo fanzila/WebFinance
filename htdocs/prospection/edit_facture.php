@@ -257,7 +257,7 @@ function ask_confirmation(txt) {
 	  <option value="end of year" <?= ($facture->period=="end of year")?"selected":"" ?>  ><?=_('end of year')?></option>
 	</select>
 	  <img src="/imgs/icons/help.png"
-	      onmouseover="return escape('<?= _('This option allows to periodically dupplicate an invoice') ?>';" />
+	      onmouseover="return escape('<?= addslashes(_('This option allows to periodically dupplicate an invoice')) ?>');" />
 
 	</td>
     </tr>
