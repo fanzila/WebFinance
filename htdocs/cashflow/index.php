@@ -486,15 +486,24 @@ EOF;
      <td>
 <?
 
-printf('<a class="pager_link" href="?%s&filter[start_date]=%s&filter[end_date]=%s"> << </a> ',
-     $filter_base,
-     date("d/m/Y",mktime(0,0,0,date("n",$cur_date)-1,1,date("Y",$cur_date) ) ) ,
-     date("d/m/Y",mktime(0,0,0,date("n",$cur_date),0,date("Y",$cur_date) ) ) );
+printf('<a class="pager_link" href="?%s&filter[start_date]=%s&filter[end_date]=%s%s%s%s"> << </a> ',
+       $filter_base,
+       date("d/m/Y",mktime(0,0,0,date("n",$cur_date)-1,1,date("Y",$cur_date) ) ) ,
+       date("d/m/Y",mktime(0,0,0,date("n",$cur_date),0,date("Y",$cur_date) ) ) ,
+       ($filter['shown_type']['real'])?"&filter[shown_type][real]=on":"" ,
+       ($filter['shown_type']['prevision'])?"&filter[shown_type][prevision]=on":"" ,
+       ($filter['shown_type']['asap'])?"&filter[shown_type][asap]=on":""
+       ) ;
+
 echo strftime("%B %Y",$cur_date);
-printf('<a class="pager_link" href="?%s&filter[start_date]=%s&filter[end_date]=%s"> >> </a> ',
-     $filter_base,
-     date("d/m/Y",mktime(0,0,0,date("n",$cur_date)+1,1,date("Y",$cur_date) ) ) ,
-     date("d/m/Y",mktime(0,0,0,date("n",$cur_date)+2,0,date("Y",$cur_date) ) ) );
+printf('<a class="pager_link" href="?%s&filter[start_date]=%s&filter[end_date]=%s%s%s%s"> >> </a> ',
+       $filter_base,
+       date("d/m/Y",mktime(0,0,0,date("n",$cur_date)+1,1,date("Y",$cur_date) ) ) ,
+       date("d/m/Y",mktime(0,0,0,date("n",$cur_date)+2,0,date("Y",$cur_date) ) ) ,
+       ($filter['shown_type']['real'])?"&filter[shown_type][real]=on":"" ,
+       ($filter['shown_type']['prevision'])?"&filter[shown_type][prevision]=on":"" ,
+       ($filter['shown_type']['asap'])?"&filter[shown_type][asap]=on":""
+  ) ;
 ?>
      </td>
     </tr>
