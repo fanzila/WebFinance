@@ -58,7 +58,8 @@ function compare_invoices_transaction($op){
 	print "<b style=\"color: green;\">La facture correspondante à ce virement a été trouvée, elle est marquée « payée »</b><br/>";
 	printf("<input type='hidden' name='date_tr[%d]' value='%s'>",$invoice['id_facture'],$op->date);
 	printf("<input type='checkbox' name='invoices[]'  value='%d' >",$invoice['id_facture']);
-	printf("#%s : %s : %s&euro; : %s <br/>", $invoice['num_facture'],$invoice['ref_contrat'],round($invoice['total_facture'],3), strftime($invoice['date_facture']) ) ;
+	printf("<span style='background-color: rgb(255, 102, 102);'>#%s : %s : %s&euro; : %s </span><br/>",
+	       $invoice['num_facture'],$invoice['ref_contrat'],round($invoice['total_facture'],3), strftime($invoice['date_facture']) ) ;
 	$indic=true;
       }
     }
