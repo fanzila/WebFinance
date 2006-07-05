@@ -95,7 +95,7 @@ class barGraph {
     $this->_initColors();
   }
 
-  /* 
+  /**
    * Adds a value to the pool. Use it in a loop when building your barGraph
    *
    * Params :
@@ -129,7 +129,7 @@ class barGraph {
   function setBarFrameColor($html_color) { $this->C_barframe = $this->_htmlColorToGd($html_color); }
   function setTextColor($html_color) { $this->C_text = $this->_htmlColorToGd($html_color); }
 
-  /* 
+  /**
    * This function will build the graph and output the resulting PNG file to the browser
    */
   function realise() {
