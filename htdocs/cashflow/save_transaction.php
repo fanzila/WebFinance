@@ -48,16 +48,18 @@ if($_POST['action']=="update_transactions" AND is_array($_POST['categ'])){
   die();
  }
 
-if($_POST['action']=="update_invoices" AND is_array($_POST['invoices'])){
+if($_POST['action']=="update_invoices" ){
 
-  foreach($_POST['invoices'] as $id_invoice){
-    mysql_query("UPDATE webfinance_invoices SET is_paye=1,date_paiement=STR_TO_DATE('".$date_tr[$id_invoice]."', '%d/%m/%Y') WHERE id_facture=$id_invoice")
-      or wf_mysqldie();
+  if(is_array($_POST['invoices'])){
+
+    foreach($_POST['invoices'] as $id_invoice){
+      mysql_query("UPDATE webfinance_invoices SET is_paye=1,date_paiement=STR_TO_DATE('".$date_tr[$id_invoice]."', '%d/%m/%Y') WHERE id_facture=$id_invoice")
+	or wf_mysqldie();
+    }
   }
-  header("Location: index.php");
+  header("Location: ./");
   die();
  }
-
 
 
 $fq="";

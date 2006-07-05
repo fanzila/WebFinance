@@ -105,7 +105,10 @@ foreach ($transactions as $op) {
 print count($transactions)." opérations trouvées dans le fichier.<br/>";
 
 if($indic){
-  printf("<br/><input type='submit' value='%s'>",_("Update"));
+  $help =  _("Webfinance a d&eacute;tect&eacute; des factures qui peuvent avoir des relations avec les transaction import&eacute;es.<br/>".
+	     "Ici, vous pouvez mettre &agrave; jour les factures et les transactions en les cochant puis en validant dans le bouton ci-dessous.");
+  echo "<br/>".$help."<br/>";
+  printf("<input type='submit' value='%s'>",_("Update"));
  }
 print "</form><br/>";
 
