@@ -18,7 +18,7 @@ if (!is_numeric($_GET['id_facture'])) {
   if(!is_numeric($tva))
     $tva=19.6;
 
-  mysql_query("INSERT INTO webfinance_invoices (date_created,date_facture,id_client,tax) values(now(), now(), ".$_GET['id_client'].",$tva)") or wf_mysqldie();
+  mysql_query("INSERT INTO webfinance_invoices (date_created,date_facture,id_client,tax) values(now(), now(), ".$_GET['id_client'].",'$tva')") or wf_mysqldie();
   $id_facture=mysql_insert_id();
   $_SESSION['message'] = _('Invoice created');
   logmessage(_('Create invoice')." for client:".$_GET['id_client'] );
