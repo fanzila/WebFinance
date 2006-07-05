@@ -21,8 +21,8 @@ function confirmAddCompany(txt) {
 
 //$Id$
 
-$elements = array( _('Customers') => array( 'url' => 'index.php?q=1', 'roles' => 'manager,accounting,employee' ),
-                   _('Targets') => array( 'url' => 'index.php?q=2', 'roles' => 'manager,accounting,employee' ),
+$elements = array( _('Customers') => array( 'url' => './?q=1', 'roles' => 'manager,accounting,employee' ),
+                   _('Targets') => array( 'url' => './?q=2', 'roles' => 'manager,accounting,employee' ),
 		   _('Add company') => array( 'url' => 'javascript:confirmAddCompany(\'Do you really want to add a new company?\');', 'roles' => 'manager' ),
                   _('Billing') => array( 'url' => 'facturation.php', 'roles' => 'manager,accounting' )
                  );

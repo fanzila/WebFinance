@@ -1,6 +1,6 @@
 <?php
 //
-// This file is part of « Webfinance »
+// This file is part of Â« Webfinance Â»
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
@@ -23,39 +23,39 @@ mysql_free_result($result);
 $societe = unserialize(base64_decode($value));
 ?>
 
-<h1>Ma société</h1>
+<h1><?=_('My Company')?></h1>
 
 <form id="main_form" action="save_societe.php" method="post" enctype="multipart/form-data">
 <table class="bordered" border="0" cellspacing="5" cellpadding="0">
 <tr>
   <td>Raison sociale</td>
-  <td><input type="text" name="raison_sociale" value="<?= $societe->raison_sociale ?>" /></td>
+  <td><input style="width: 200px;" type="text" name="raison_sociale" value="<?= $societe->raison_sociale ?>" /></td>
 </tr>
 <tr>
   <td>TVA intracommunautaire</td>
-  <td><input type="text" name="tva_intracommunautaire" value="<?= $societe->tva_intracommunautaire ?>" /></td>
+  <td><input style="width: 200px;" type="text" name="tva_intracommunautaire" value="<?= $societe->tva_intracommunautaire ?>" /></td>
 </tr>
 <tr>
   <td>Siren</td>
-  <td><input type="text" name="siren" value="<?= $societe->siren ?>" /></td>
+  <td><input style="width: 200px;" type="text" name="siren" value="<?= $societe->siren ?>" /></td>
 </tr>
 <tr>
   <td valign="top" rowspan="3">Adresse</td>
-  <td><input type="text" name="addr1" value="<?= $societe->addr1 ?>" /></td>
+  <td><input style="width: 200px;" type="text" name="addr1" value="<?= $societe->addr1 ?>" /></td>
 </tr>
 <tr>
-  <td><input type="text" name="addr2" value="<?= $societe->addr2 ?>" /></td>
+  <td><input style="width: 200px;" type="text" name="addr2" value="<?= $societe->addr2 ?>" /></td>
 </tr>
 <tr>
-  <td><input type="text" name="addr3" value="<?= $societe->addr3 ?>" /></td>
+  <td><input style="width: 200px;" type="text" name="addr3" value="<?= $societe->addr3 ?>" /></td>
 </tr>
 <tr>
   <td><?= _('WF url') ?></td>
-  <td><input type="text" name="wf_url" value="<?= $societe->wf_url ?>" /></td>
+  <td><input style="width: 200px;" type="text" name="wf_url" value="<?= $societe->wf_url ?>" /></td>
 </tr>
 <tr>
   <td><?= _('Email') ?></td>
-  <td><input type="text" name="email" value="<?= $societe->email ?>" /></td>
+  <td><input style="width: 200px;" type="text" name="email" value="<?= $societe->email ?>" /></td>
 </tr>
 <tr>
   <td>CP/Ville</td>
@@ -65,14 +65,14 @@ $societe = unserialize(base64_decode($value));
   </td>
 </tr>
 <tr>
-  <td>Date de création</td>
-  <td><input type="text" name="date_creation" value="<?= $societe->date_creation ?>" />
+  <td>Date de cr&eacute;ation</td>
+  <td><input style="width: 137px;" type="text" name="date_creation" value="<?= $societe->date_creation ?>" />
 </tr>
 <tr>
   <td colspan="2">
   Invoice top line <br/>
-  <input style="width: 300px;" type="text" name="invoice_top_line1" value="<?= $societe->invoice_top_line1 ?>" /><br/>
-  <input style="width: 300px;" type="text" name="invoice_top_line2" value="<?= $societe->invoice_top_line2 ?>" /><br/>
+  <input style="width: 400px;" type="text" name="invoice_top_line1" value="<?= $societe->invoice_top_line1 ?>" /><br/>
+  <input style="width: 400px;" type="text" name="invoice_top_line2" value="<?= $societe->invoice_top_line2 ?>" />
   </td>
 </tr>
 </table>
@@ -91,15 +91,16 @@ if (mysql_num_rows($result)) {
 ?>
 Changer le logo <input type="file" name="logo" /> <b>(ONLY PNG)</b>
 
-<h1>Compte(s) banquaire(s)</h1>
-<table style="text-align: center;" class="framed" cellspacing="0" cellpadding="4">
+  <h1><?=_('Bank Accounts')?></h1>
+<table style="text-align: center;" class="framed" cellspacing="0" cellpadding="3">
 <tr class="row_header">
   <td></td>
-  <td>Banque</td>
+  <td><?=_('Bank')?></td>
   <td>Domiciliation</td>
+  <td><?=_('Currency')?></td>
   <td>Code banque</td>
   <td>Code guichet</td>
-  <td>N° compte</td>
+  <td>N&deg; compte</td>
   <td>Clef</td>
   <td>IBAN</td>
   <td>SWIFT/BIC</td>
@@ -113,7 +114,7 @@ while (list($id_pref,$value) = mysql_fetch_array($result)) {
   // Check account number.
   //
   // Algorythm is : take the bank code (5 digits) + desk
-  // code (5 digits) + account number (10 digits or letters). You get à 19 char
+  // code (5 digits) + account number (10 digits or letters). You get Ã  19 char
   // long "number" (which may contain letters). Replace letters in the following way :
   // A,J => 1 / B,K,S => 2 / C,L,T => 3 / D,M,U => 4 / E,N,V => 5, F,O,W => 6 /
   // G,P,X => 7 / H,Q,Y => 8 / I,R,Z => 9. Add 00 to the 19 char number.
@@ -154,6 +155,7 @@ while (list($id_pref,$value) = mysql_fetch_array($result)) {
   <td>$check_img</td>
   <td><input style="width: 100px; text-align: center;" type="text" name="banque_$id_pref" value="$compte->banque" /></td>
   <td><input style="width: 100px; text-align: center;" type="text" name="domiciliation_$id_pref" value="$compte->domiciliation" /></td>
+  <td><input style="width: 30px; text-align: center;" type="text" name="currency_$id_pref" value="$compte->currency" /></td>
   <td><input style="width: 50px; text-align: center;" type="text" name="code_banque_$id_pref" value="$compte->code_banque" /></td>
   <td><input style="width: 50px; text-align: center;" type="text" name="code_guichet_$id_pref" value="$compte->code_guichet" /></td>
   <td><input style="width: 90px; text-align: center;" type="text" name="compte_$id_pref" value="$compte->compte" /></td>
@@ -169,15 +171,16 @@ EOF;
   <td></td>
   <td><input style="width: 100px; text-align: center;" type="text" name="banque_new" value="" /></td>
   <td><input style="width: 100px; text-align: center;" type="text" name="domiciliation_new" value="" /></td>
+  <td><input style="width: 30px; text-align: center;" type="text" name="currency_new" value="€" /></td>
   <td><input style="width: 50px; text-align: center;" type="text" name="code_banque_new" value="" /></td>
   <td><input style="width: 50px; text-align: center;" type="text" name="code_guichet_new" value="" /></td>
-  <td><input style="width: 70px; text-align: center;" type="text" name="compte_new" value="" /></td>
+  <td><input style="width: 90px; text-align: center;" type="text" name="compte_new" value="" /></td>
   <td><input style="width: 20px; text-align: center;" type="text" name="clef_new" value="" /></td>
   <td><input style="width: 80px; text-align: center;" type="text" name="iban_new" value="" /></td>
   <td><input style="width: 50px; text-align: center;" type="text" name="swift_new" value="" /></td>
 </tr>
 </table>
-<i>Nota : pour supprimer un compte banquaire, positionner le numéro de compte à vide</i><br/>
+<i>Nota : pour supprimer un compte banquaire, positionner le num&eacute;ro de compte &agrave; vide</i><br/>
   <input type="submit" value=<?= _("Save") ?> />
 </form>
 

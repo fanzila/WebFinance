@@ -22,7 +22,7 @@ $User->getInfos();
 
 //msg
 echo $_SESSION['message'];
-$_SESSION['message']="";
+unset($_SESSION['message']);
 
 
 //scheduled invoices and transactions

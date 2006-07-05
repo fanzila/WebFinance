@@ -69,7 +69,7 @@ function mainFormChanged(f) {
 }
 </script>
 
-<?= $_SESSION['message']; $_SESSION['message']=""; ?>
+<?= $_SESSION['message']; unset($_SESSION['message']); ?>
 
 <table width="600" border="0" cellspacing="0" cellpadding="0" class="fiche_prospect">
 <tr class="onglets">
