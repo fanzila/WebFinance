@@ -236,7 +236,7 @@ function ask_confirmation(txt) {
     <tr>
       <td nowrap>Type presta</td>
       <td>
-        <select name="id_type_presta" style="width: 100px;">
+        <select name="id_type_presta" style="width: 120px;">
         <?php
         $result = mysql_query("SELECT id_type_presta, nom FROM webfinance_type_presta ORDER BY nom");
         while (list($id, $type) = mysql_fetch_array($result)) {
@@ -248,23 +248,23 @@ function ask_confirmation(txt) {
     </tr>
 
     <tr>
-	<td><?=_('Period')?></td>
-	<td>
-	<select name="period">
-	  <option value="none"><?=_('none')?></option>
+	<td><?=_('Periodicity')?></td>
+	<td nowrap>
+	<select name="period" style="width: 120px;">
+	  <option value="none"><?=_("doesn't repeat")?></option>
 	  <option value="end of month" <?= ($facture->period=="end of month")?"selected":"" ?>><?=_('end of month')?></option>
 	  <option value="end of term" <?= ($facture->period=="end of term")?"selected":"" ?>  ><?= _('end of term')?></option>
 	  <option value="end of year" <?= ($facture->period=="end of year")?"selected":"" ?>  ><?=_('end of year')?></option>
 	</select>
 	  <img src="/imgs/icons/help.png"
-	      onmouseover="return escape('Cette option permet de dupliquer la facture p&eacute;riodiquement');" />
+	      onmouseover="return escape(<?= _('This option allows to periodically dupplicate an invoice') ?>';" />
 
 	</td>
     </tr>
     <tr>
-	<td><?=_('Prevision')?></td>
+	<td nowrap><?=_('Payment expected')?></td>
 	<td>
-	<select name="type_prev">
+	<select name="type_prev" style="width: 120px;">
 	  <option value="0"><?=_('Invoice date')?></option>
 	  <option value="1"><?=_('asap')?></option>
 	  <option value="7"><?= _('+ 1 week')?></option>
@@ -278,7 +278,7 @@ function ask_confirmation(txt) {
     <tr>
       <td nowrap><?=_('Account')?></td>
       <td>
-        <select name="id_compte" style="width: 100px;">
+        <select name="id_compte" style="width: 120px;">
         <?php
         $result = mysql_query("SELECT id_pref,value FROM webfinance_pref WHERE type_pref='rib'") or wf_mysqldie();
         while ($cpt = mysql_fetch_object($result)) {

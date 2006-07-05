@@ -351,3 +351,28 @@ msgstr "Facture"
 
 msgid "Week #%W"
 msgstr "Semaine %W"
+
+# Periodicity of an invoice
+msgid "Periodicity"
+msgstr "Périodicité"
+
+msgid "doesn't repeat"
+msgstr "ne se répète pas"
+
+msgid "end of month"
+msgstr "fin de mois"
+
+msgid "end of term"
+msgstr "fin de trimestrie"
+
+msgid "end of year"
+msgstr "fin d'année"
+
+msgid "This option allows to periodically dupplicate an invoice"
+msgstr "Cette option permet de dupliquer la facture périodiquement"
+
+msgid "Payment expected"
+msgstr "Prévision paiement"
+
+msgid "Document type"
+msgstr "Type de document"
