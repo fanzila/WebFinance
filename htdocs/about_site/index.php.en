@@ -79,9 +79,9 @@ echo '127.0.0.1 webfinance' &gt;&gt; /etc/hosts
 
 <li>Adapt the connections params for the application</li>
 <pre class="shell">
-cd /path/to/webfinance/htdocs/inc
-cp dbconnect.php.skel dbconnect.php
-modify dbconnect.php
+cd /path/to/webfinance/etc/
+cp wf.conf.skel wf.conf
+modify wf.conf
 </pre>
 
 <li>Add the script scheduler.php to a daily task with cron</li>
