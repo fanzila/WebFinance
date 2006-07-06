@@ -12,6 +12,7 @@
 session_start();
 
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/dbconnect.php");
+require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/WFO.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/User.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/Facture.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/Client.php");

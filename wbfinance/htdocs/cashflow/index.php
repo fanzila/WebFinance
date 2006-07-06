@@ -113,7 +113,7 @@ function checkAll(c) {
 
 // Find the categories names and colors
 $categories = array();
-$result = mysql_query("SELECT id,name,color FROM webfinance_categories ORDER BY id");
+$result = WFO::SQL("SELECT id,name,color FROM webfinance_categories ORDER BY id");
 while ($cat = mysql_fetch_assoc($result)) {
   array_push($categories, $cat);
 }
@@ -127,7 +127,7 @@ extract($_GET);
 
 if ($filter['shown_cat']['invert'] == "on") {
   $x=0;
-  $result = mysql_query("SELECT id FROM webfinance_categories");
+  $result = WFO::SQL("SELECT id FROM webfinance_categories");
   $nb_categ = mysql_num_rows($result);
 
   while (list($id) = mysql_fetch_array($result)) {
@@ -147,7 +147,7 @@ if ($filter['shown_cat']['invert'] == "on") {
   unset($filter['shown_cat']['invert'] );
 
  }else if ((!count($filter['shown_cat'])) || ($filter['shown_cat']['check_all'] == "on")) {
-  $result = mysql_query("SELECT id FROM webfinance_categories");
+  $result = WFO::SQL("SELECT id FROM webfinance_categories");
   //$filter['shown_cat'][1] = "on";
   while (list($id) = mysql_fetch_array($result)) {
     $filter['shown_cat'][$id] = "on";
@@ -161,7 +161,7 @@ if ($filter['shown_cat']['invert'] == "on") {
 
 // Calculate balance for each transaction
 if ($filter['id_account'] != 0) { $w = "WHERE id_account=".$filter['id_account']; }
-$req=mysql_query("SELECT id, amount FROM webfinance_transactions $w ORDER BY date") or wf_mysqldie();
+$req=WFO::SQL("SELECT id, amount FROM webfinance_transactions $w ORDER BY date");
 $balance_yesterday=0;
 $balance_lines=array();
 while ($row=mysql_fetch_assoc($req)) {
@@ -193,7 +193,7 @@ if (($filter['start_date'] != "") && ($filter['end_date'] == "")) {
 if (($filter['start_date'] == "") && ($filter['end_date'] != "")) {
   // If end_date is given and NOT start_date then we show transaction from the
   // start of the company to end_date
-  $result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='societe' AND owner=-1");
+  $result = WFO::SQL("SELECT value FROM webfinance_pref WHERE type_pref='societe' AND owner=-1");
   list($value) = mysql_fetch_array($result);
   mysql_free_result($result);
   $company = unserialize(base64_decode($value));
@@ -320,16 +320,16 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
            HAVING $where_clause
            ORDER BY $order_clause";
      // Get number of total pages for this filter :
-     $result = mysql_query($q) or wf_mysqldie();
+     $result = WFO::SQL($q);
      $nb_transactions = mysql_num_rows($result);
      mysql_free_result($result);
 
      $q .= $limit_clause;
-     $result = mysql_query($q) or wf_mysqldie();
+     $result = WFO::SQL($q);
 
      $filter_base = sprintf("sort=%d&filter[start_date]=%s&filter[end_date]=%s&filter[textsearch]=%s&filter[amount]=%s",
                             $_GET['sort'], $filter[start_date], $filter[end_date], $filter[textsearch], $filter[amount] );
-     $result = mysql_query($q) or wf_mysqldie();
+     $result = WFO::SQL($q);
      $total_shown = 0;
      $count = 1;
      $prev_date="";
@@ -459,17 +459,18 @@ EOF;
      }
      ?>
      <tr class="row_even">
-       <td colspan="3">
+       <td colspan="4">
 <?
        if($count>1){
 	 if($view=="edit")
-	   printf("<input type='submit' value='%s'/><a href='?%s'>view</a>",_('Update'),preg_replace('/=edit/i','', $old_query_string));
+	   printf('<input type="submit" value="%s" /><input type="button" onclick="window.location=\'?%s\'" value="%s" />',
+         _('Save'),preg_replace('/=edit/i','', $old_query_string), _('Normal view'));
 	 else
-	   printf("<a href='?%s&view=edit'>Edit</a>",preg_replace('/&view*&/i','&', $old_query_string));
+	   printf('<input type="button" onclick="window.location=\'?%s&view=edit\';" value="%s" />',preg_replace('/&view*&/i','&', $old_query_string), _('Stow view'));
        }
 ?>
        </td>
-       <td colspan="4" style="text-align: right; font-weight: bold;"><?= _('Total amount of shown transactions') ?></td>
+       <td colspan="2" style="text-align: right; font-weight: bold;"><?= _('Total amount of shown transactions') ?></td>
        <td nowrap style="text-align: right; font-weight: bold;"><?= number_format($total_shown, 2, ',', ' ') ?> &euro;</td>
      </tr>
     </table>
@@ -556,7 +557,7 @@ printf('<a class="pager_link" href="?%s&filter[start_date]=%s&filter[end_date]=%
       <td><select name="filter[id_account]" style="width: 150px;">
         <option value="0"><?= _('-- All accounts --') ?></option>
       <?php
-      $result = mysql_query("SELECT id_pref,value FROM webfinance_pref WHERE owner=-1 AND type_pref='rib'");
+      $result = WFO::SQL("SELECT id_pref,value FROM webfinance_pref WHERE owner=-1 AND type_pref='rib'");
       while (list($id_cpt,$cpt) = mysql_fetch_array($result)) {
         $cpt = unserialize(base64_decode($cpt));
         printf(_('        <option value="%d"%s>%s #%s</option>')."\n", $id_cpt, ($filter['id_account']==$id_cpt)?" selected":"", $cpt->banque, $cpt->compte );
@@ -602,7 +603,7 @@ printf('<a class="pager_link" href="?%s&filter[start_date]=%s&filter[end_date]=%
     <tr class="row_even">
       <?php
       $count = 0;
-      $result = mysql_query("SELECT id,name,color FROM webfinance_categories ORDER BY name");
+      $result = WFO::SQL("SELECT id,name,color FROM webfinance_categories ORDER BY name");
       while ($cat = mysql_fetch_object($result)) {
         printf('<td nowrap><input type="checkbox" name="filter[shown_cat][%d]" %s>&nbsp;%s</td>', $cat->id, ($filter['shown_cat'][$cat->id])?"checked":"", $cat->name );
         $count++;
@@ -640,7 +641,7 @@ printf('<a class="pager_link" href="?%s&filter[start_date]=%s&filter[end_date]=%
       <div id="action_change_account" style="display: none;">
         <div style="display: block; float: left; width: 90px;"><?= _('To account ') ?></div>&nbsp;<select name="action[id_account]" style="width: 150px;">
         <?php
-        $result = mysql_query("SELECT id_pref,value FROM webfinance_pref WHERE owner=-1 AND type_pref='rib'");
+        $result = WFO::SQL("SELECT id_pref,value FROM webfinance_pref WHERE owner=-1 AND type_pref='rib'");
         while (list($id_cpt,$cpt) = mysql_fetch_array($result)) {
           $cpt = unserialize(base64_decode($cpt));
           printf(_('        <option value="%d"%s>%s #%s</option>')."\n", $id_cpt, ($filter['id_account']==$id_cpt)?" selected":"", $cpt->banque, $cpt->compte );
@@ -652,7 +653,7 @@ printf('<a class="pager_link" href="?%s&filter[start_date]=%s&filter[end_date]=%
         <div style="display: block; float: left; width: 90px;"><?= _('Category is') ?></div>&nbsp;<select name="action[id_category]">
         <option value="1"><?= _('-- Choose --') ?></option>
         <?php
-        $result = mysql_query("SELECT id,name,color FROM webfinance_categories ORDER BY name");
+        $result = WFO::SQL("SELECT id,name,color FROM webfinance_categories ORDER BY name");
         while ($cat = mysql_fetch_object($result)) {
           printf('<option value="%d">%s</option>', $cat->id, $cat->name );
         }
