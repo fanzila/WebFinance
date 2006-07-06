@@ -1,8 +1,0 @@
-<?php
-
-if (!isset($db_host)) { $db_host = "localhost"; }
-
-$dbi = mysql_pconnect($db_host, "backoffice", "%%DB_PASSWORD%%") or die("Could not connect to mysql");
-mysql_select_db("backoffice") or die("Could not select database");
-
-?>
