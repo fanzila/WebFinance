@@ -126,37 +126,25 @@ mysql_free_result($result);
 extract($_GET);
 
 if ($filter['shown_cat']['invert'] == "on") {
-  $x=0;
   $result = WFO::SQL("SELECT id FROM webfinance_categories");
-  $nb_categ = mysql_num_rows($result);
 
   while (list($id) = mysql_fetch_array($result)) {
-    if(isset($filter['shown_cat'][$id]) == "on"){
+    if(isset($filter['shown_cat'][$id]) == "on")
       unset($filter['shown_cat'][$id]);
-      $x++;
-    }else
+    else
       $filter['shown_cat'][$id] = "on";
-  }
-  if($x == $nb_categ){
-    $filter['shown_cat'][0] = "on";
-    //$filter['shown_cat'][1] = "on";
   }
 
   mysql_free_result($result);
-
-  unset($filter['shown_cat']['invert'] );
 
  }else if ((!count($filter['shown_cat'])) || ($filter['shown_cat']['check_all'] == "on")) {
   $result = WFO::SQL("SELECT id FROM webfinance_categories");
-  //$filter['shown_cat'][1] = "on";
-  while (list($id) = mysql_fetch_array($result)) {
+
+  while (list($id) = mysql_fetch_array($result))
     $filter['shown_cat'][$id] = "on";
-  }
-  //affichage des transactions non catégorisées
-    $filter['shown_cat'][0] = "on";
+
   mysql_free_result($result);
 
-  unset($filter['shown_cat']['check_all'] );
 }
 
 // Calculate balance for each transaction
@@ -253,9 +241,17 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
      // Begin where clause
      // Filter on type of transaction
      if (count($filter['shown_cat'])) {
-       $where_clause .= " (";
+       $res = WFO::SQL("SELECT count(*) FROM webfinance_categories WHERE id=1");
+       list($res) = mysql_fetch_array($res);
+
+       if($res != 1)
+	 $where_clause .= " (id_category=1 OR ";
+       else
+	 $where_clause .= " (";
+
        foreach ($filter['shown_cat'] as $catid=>$dummy) {
-         $where_clause .= "id_category=$catid OR ";
+	 if(is_numeric($catid))
+	   $where_clause .= "id_category=$catid OR ";
        }
        $where_clause = preg_replace("/ OR $/", ")", $where_clause);
      }
@@ -297,6 +293,9 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
          $where_clause .= " AND (abs(amount*1.10) >= ".$filter['amount']." AND abs(amount*0.9) <= ".$filter['amount'].") ";
        }
      }
+
+     $where_clause = preg_replace("/^ AND /", "", $where_clause);
+
      // End where clause
      // -------------------------------------------------------------------------------------------------------------
 

@@ -14,7 +14,7 @@
 //$Id$
 
 $elements = array(
-                  _('Transactions') => array('url'=>'index.php', 'roles'=>'manager,accounting'),
+                  _('Transactions') => array('url'=>'./', 'roles'=>'manager,accounting'),
                   _('Graphics') => array('url'=>'graphs.php', 'roles'=>'manager,accounting'),
                   _('Graphics All') => array('url'=>'graphs_all_history.php', 'roles'=>'manager,accounting'),
                   _('Categories') => array('url' => 'categories.php', 'roles' => 'manager,accounting'),
