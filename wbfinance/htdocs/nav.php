@@ -18,7 +18,7 @@ require_once("inc/main.php");
 $elements = array(_('Home') => array( 'url' => '/', 'roles' => 'any' ),
                   _('My invoices') => array( 'url' => '/client/', 'roles' => 'client' ),
                   _('Companies') => array( 'url' => '/prospection/?q=1', 'roles' => 'manager,employee,accounting' ),
-                  _('Cashflow') => array( 'url' => '/tresorerie/', 'roles' => 'manager,accounting' ),
+                  _('Cashflow') => array( 'url' => '/cashflow/', 'roles' => 'manager,accounting' ),
                   _('My account') => array( 'url' => '/moncompte/', 'roles' => 'any' ),
                   _('Administration') => array( 'url' => '/admin/', 'roles' => 'manager,admin' ),
                   _('Logout') => array( 'url' => '/logout.php', 'roles' => 'any' ),
