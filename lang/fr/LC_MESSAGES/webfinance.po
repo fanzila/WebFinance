@@ -172,6 +172,9 @@ msgstr "Le nom contient"
 msgid "Sort companies by"
 msgstr "Trier les entreprises par"
 
+msgid "Default focused tab in company view"
+msgstr "Onglet par défaut dans la vue entreprise"
+
 msgid "Transactions"
 msgstr "Opérations"
 
@@ -310,6 +313,9 @@ msgstr " n°"
 msgid "Show grids in graphs"
 msgstr "Afficher la grille dans les graphiques"
 
+msgid "Skin"
+msgstr "Thème graphique"
+
 msgid "My password"
 msgstr "Mon mot de passe"
 
@@ -376,3 +382,21 @@ msgstr "Prévision paiement"
 
 msgid "Document type"
 msgstr "Type de document"
+
+msgid "Old password"
+msgstr "Ancien mot de passe"
+
+msgid "New password"
+msgstr "Nouveau mot de passe"
+
+msgid "Repeat"
+msgstr "Répetter"
+
+msgid "Stow view"
+msgstr "Vue classement"
+
+msgid "Normal view"
+msgstr "Vue normale"
+
+msgid "Total amount of shown transactions"
+msgstr "Total des mouvements affichées"
