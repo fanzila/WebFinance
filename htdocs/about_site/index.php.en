@@ -101,8 +101,7 @@ echo '30 7  * * *  www-data  php /path/to/webfinance/htdocs/inc/scheduler.php' >
 
     <pre class="shell">
     apt-get install doxygen graphviz
-    cd /path/to/webfinance/doc
-    make
+    make -C /path/to/webfinance/doc
     </pre>
     </li>
 
