@@ -1,0 +1,6 @@
+SQL_HOST=localhost
+SQL_BASE=webfinance
+SQL_LOGIN=root
+SQL_PASS=
+
+DEBUG=0
