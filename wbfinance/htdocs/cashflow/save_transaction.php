@@ -51,16 +51,16 @@ if($_POST['action']=="update_transactions" AND is_array($_POST['categ'])){
 if($_POST['action']=="update_invoices" ){
 
   if(is_array($_POST['invoices'])){
-
     foreach($_POST['invoices'] as $id_invoice){
       mysql_query("UPDATE webfinance_invoices SET is_paye=1,date_paiement=STR_TO_DATE('".$date_tr[$id_invoice]."', '%d/%m/%Y') WHERE id_facture=$id_invoice")
 	or wf_mysqldie();
+      mysql_query("UPDATE webfinance_transactions SET id_invoice=$id_invoice WHERE id=".$id_tr[$id_invoice]) or wf_mysqldie();
     }
   }
+
   header("Location: ./");
   die();
- }
-
+}
 
 $fq="";
 if (isset($_FILES['file']) && is_uploaded_file($_FILES['file']['tmp_name'])) {

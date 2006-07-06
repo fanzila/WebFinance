@@ -38,7 +38,7 @@ while(!feof($fp)) {
     }
   }
  }
-
+fclose($fp);
 
 // Toutes les opérations sont dans $transactions, essayons maintenant de faire
 // quelque chose d'intelligen avec :
@@ -54,17 +54,14 @@ print "<form action='save_transaction.php' method='post'>";
 print "<input type='hidden' name='action' value='update_invoices'>";
 
 foreach ($transactions as $op) {
-  printf("Transaction de <b>%s&euro;</b> du <b>%s</b> intitulée <i>%s</i><div style=\"font-size: 10px; border-left: solid 4px #ceceff; margin-left: 10px; padding-left: 10px;\">\n", $op->montant, $op->date, $op->desc );
+  printf("Transaction de <b>%s&euro;</b> du <b>%s</b> intitulée <i>%s</i><div style=\"font-size: 10px; border-left: solid 4px #ceceff; margin-left: 10px; padding-left: 10px;\">\n",
+	 $op->montant, $op->date, $op->desc );
 
-  if ($op->montant > 0) {
-    if(compare_invoices_transaction($op))
-      $indic=true;
-  } else {
-    // S'il s'agit d'un débit, le lier à un fournisseur ? à un bon de commande ?
-  }
 
   // Dans tous les cas on essaie de retrouver la catégorie de la transaction
   // automagiquement.
+
+  //default id category
   $id_categorie = 1;
   $result = mysql_query("SELECT COUNT(*),id,name
                          FROM webfinance_categories
@@ -79,7 +76,6 @@ foreach ($transactions as $op) {
              $id_categorie = $id;
              break;
     default : print "<b style=\"color: orange;\">Plus d'une catégorie correspond, classement automatique impossible</b><br/>";
-
   }
 
   // Insertion de la transaction
@@ -88,21 +84,30 @@ foreach ($transactions as $op) {
                 VALUES('%s', %d, '%s', 'real', STR_TO_DATE('%s', '%%d/%%m/%%Y'), %d, '%s')",
 	       $op->desc, $id_account, preg_replace("/,/", ".", preg_replace("/ +/", "", $op->montant)), $op->date, $id_categorie ,"ref: ".$op->ref." ".$op->comment );
   mysql_query($q) or $erreur=1;
+  $op->id = mysql_insert_id();
+
   if ($erreur) {
     $errstr = mysql_error();
     if (preg_match("/Duplicate entry.*for key/", $errstr)) {
-      print '<b style="color: red;">Cette transaction à déjà été importée !!</b>';
+      print '<b style="color: red;">Cette transaction à déjà été importée !!</b><br/>';
     } else {
-      print '<b style="color: red;">Erreur lors de l\'insertion : '.mysql_error().'</b>';
+      print '<b style="color: red;">Erreur lors de l\'insertion : '.mysql_error().'</b><br/>';
     }
   } else {
-    print '<b style="color: green;">Import réussi</b>';
+    print '<b style="color: green;">Import réussi</b><br/>';
+  }
+
+  if ($op->montant > 0) {
+    if(compare_invoices_transaction($op))
+      $indic=true;
+  } else {
+    // S'il s'agit d'un débit, le lier à un fournisseur ? à un bon de commande ?
   }
 
   print "</div>";
 }
 
-print count($transactions)." opérations trouvées dans le fichier.<br/>";
+print count($transactions)." "._('transactions found in the file').".<br/>";
 
 if($indic){
   $help =  _("Webfinance a d&eacute;tect&eacute; des factures qui peuvent avoir des relations avec les transaction import&eacute;es.<br/>".
@@ -112,6 +117,6 @@ if($indic){
  }
 print "</form><br/>";
 
-
+unlink($tmp_name);
 
 ?>
