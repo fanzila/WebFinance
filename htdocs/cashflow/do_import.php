@@ -14,11 +14,16 @@ $roles = 'manager,admin';
 require("../top.php");
 require("nav.php");
 
+
 function compare_invoices_transaction($op){
   $indic=false;
   $amount=str_replace(',','.',$op->montant);
-  $min = ($amount/1.196)-0.1;
-  $max = ($amount/1.196)+0.1;
+
+  $tva = getTVA();
+  $f = 1 + ($tva/100) ;
+
+  $min = ( $amount/$f )-0.1;
+  $max = ( $amount/$f )+0.1;
   // S'il s'agit d'un crédit, tenter de retrouver la facture correspondante
 
   //    $q = "SELECT id_facture, is_paye, date_facture, num_facture, ref_contrat, total_facture_ht, 1.196*total_facture_ht as total_facture FROM wf_view_invoices ".
@@ -31,7 +36,7 @@ function compare_invoices_transaction($op){
     "num_facture, ".
     "ref_contrat, ".
     "SUM(qtt * prix_ht) as total_facture_ht, ".
-    "1.196*SUM(qtt * prix_ht) as total_facture ".
+    "$f*SUM(qtt * prix_ht) as total_facture ".
     "FROM webfinance_invoices wf_in , webfinance_invoice_rows wf_in_rows ".
     "WHERE wf_in_rows.id_facture=wf_in.id_facture ".
     "AND ".
@@ -55,8 +60,9 @@ function compare_invoices_transaction($op){
     while($invoice = mysql_fetch_assoc($result)){
       //print_r($invoice);
       if ( $is_paye < 1 ) {
-	print "<b style=\"color: green;\">La facture correspondante à ce virement a été trouvée, elle est marquée « payée »</b><br/>";
+	printf("<b style=\"color: green;\">%s</b><br/>",_('The related invoice is found, it\'s unpaid!'));
 	printf("<input type='hidden' name='date_tr[%d]' value='%s'>",$invoice['id_facture'],$op->date);
+	printf("<input type='hidden' name='id_tr[%d]' value='%s'>",$invoice['id_facture'],$op->id);
 	printf("<input type='checkbox' name='invoices[]'  value='%d' >",$invoice['id_facture']);
 	printf("<span style='background-color: rgb(255, 102, 102);'>#%s : %s : %s&euro; : %s </span><br/>",
 	       $invoice['num_facture'],$invoice['ref_contrat'],round($invoice['total_facture'],3), strftime($invoice['date_facture']) ) ;
@@ -72,7 +78,7 @@ if (preg_match("!\.!", $_POST['filtre'])) { die("Wrong filter"); } // file trave
 print "<h1>Import de données bancaires</h1>";
 
 if (!file_exists($_FILES['csv']['tmp_name'])) {
-  die("Pas de fichier reçu");
+  die(_('File not uploaded!'));
 }
 
 if (!file_exists($_POST['format'])) {
@@ -83,11 +89,15 @@ if (!file_exists($_POST['format'])) {
 
 extract($_FILES['csv']);
 
-print "Fichier envoyé : $name<br/>";
+print _('File sent')." : $name<br/>";
 print "Type mime : $type<br/><br/>";
 
 print "<h2>Analyse des lignes :</h2>";
 
+
 require($_POST['format']);
+
+$Revision = '$Revision$';
+require("../bottom.php");
 
 ?>
