@@ -13,10 +13,7 @@ include("../inc/main.php");
 
 if (!is_numeric($_GET['id_facture'])) {
   // Création de facture
-  $result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='taxe_TVA' OR type_pref='taxe_tva' ");
-  list($tva) = mysql_fetch_array($result);
-  if(!is_numeric($tva))
-    $tva=19.6;
+  $tva = getTVA();
 
   mysql_query("INSERT INTO webfinance_invoices (date_created,date_facture,id_client,tax) values(now(), now(), ".$_GET['id_client'].",'$tva')") or wf_mysqldie();
   $id_facture=mysql_insert_id();

@@ -123,6 +123,14 @@ function check_email($param){
   return preg_match('/^[A-z0-9][\w.-]*@[A-z0-9][\w\-\.]+\.[A-Za-z]{2,4}$/',$param);
 }
 
+function getTVA(){
+  $result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='taxe_TVA' OR type_pref='taxe_tva' ");
+  list($tva) = mysql_fetch_array($result);
+  if(!is_numeric($tva))
+    $tva=19.6;
+  return $tva;
+}
+
 
 header("Content-Type: text/html; charset=utf-8");
 
