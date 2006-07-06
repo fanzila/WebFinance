@@ -59,15 +59,17 @@ function compare_invoices_transaction($op){
   }else{
     while($invoice = mysql_fetch_assoc($result)){
       //print_r($invoice);
-      if ( $is_paye < 1 ) {
+      if ( $invoice['is_paye'] < 1 ) {
 	printf("<b style=\"color: green;\">%s</b><br/>",_('The related invoice is found, it\'s unpaid!'));
 	printf("<input type='hidden' name='date_tr[%d]' value='%s'>",$invoice['id_facture'],$op->date);
 	printf("<input type='hidden' name='id_tr[%d]' value='%s'>",$invoice['id_facture'],$op->id);
 	printf("<input type='checkbox' name='invoices[]'  value='%d' >",$invoice['id_facture']);
-	printf("<span style='background-color: rgb(255, 102, 102);'>#%s : %s : %s&euro; : %s </span><br/>",
-	       $invoice['num_facture'],$invoice['ref_contrat'],round($invoice['total_facture'],3), strftime($invoice['date_facture']) ) ;
 	$indic=true;
+      }else{
+	printf("<b style=\"color: green;\">%s</b><br/>",_('The related invoice is found, it\'s paid!'));
       }
+      printf("<a href='../prospection/edit_facture.php?id_facture=%d' target='_blank' ><span style='background-color: rgb(255, 102, 102);'>#%s : %s : %s&euro; : %s </span></a><br/>",
+	     $invoice['id_facture'],$invoice['num_facture'],$invoice['ref_contrat'],round($invoice['total_facture'],3), strftime($invoice['date_facture']) ) ;
     }
   }
   return $indic;

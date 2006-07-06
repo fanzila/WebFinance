@@ -56,6 +56,7 @@ if($_POST['action']=="update_invoices" ){
 	or wf_mysqldie();
       mysql_query("UPDATE webfinance_transactions SET id_invoice=$id_invoice WHERE id=".$id_tr[$id_invoice]) or wf_mysqldie();
     }
+    $_SESSION['message']= _('Invoice(s) and transaction(s) updated');
   }
 
   header("Location: ./");
