@@ -357,7 +357,7 @@ function ask_confirmation(txt) {
 <?php
       $tr_ids = $Facture->getTransactions($facture->id_facture);
       foreach($tr_ids as $id_tr=>$text){
-	printf('<a href="#" title="%s" onclick="inpagePopup(event, this, 440, 350, \'../tresorerie/fiche_transaction.php?id=%d\');" >%s #%d</a><br/>',$text, $id_tr, _('Transaction'),$id_tr);
+	printf('<a href="#" title="%s" onclick="inpagePopup(event, this, 440, 350, \'../cashflow/fiche_transaction.php?id=%d\');" >%s #%d</a><br/>',$text, $id_tr, _('Transaction'),$id_tr);
       }
 ?>
       <?php

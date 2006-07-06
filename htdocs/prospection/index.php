@@ -222,11 +222,11 @@ if ($User->isAuthorized('manager,accounting')) {
 ?>
 <tr>
   <td><b><?= _('Cash (real)') ?></b></td>
-  <td><a href="/tresorerie/"><?= number_format($tresorerie_real, 0, ',', ' ') ?>&euro;</a></td>
+  <td><a href="/cashflow/"><?= number_format($tresorerie_real, 0, ',', ' ') ?>&euro;</a></td>
 </tr>
 <tr>
   <td><b><?= _('Cash (forecast)') ?></b></td>
-  <td><a href="/tresorerie/"><?= number_format($tresorerie_prev, 0, ',', ' ') ?>&euro;</a></td>
+  <td><a href="/cashflow/"><?= number_format($tresorerie_prev, 0, ',', ' ') ?>&euro;</a></td>
 </tr>
 <?php
 }
