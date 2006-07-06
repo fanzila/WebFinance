@@ -7,34 +7,33 @@
 //
 // You can use and redistribute this file under the term of the GNU GPL v2.0
 //
-?>
-<?php
 //$Id$
 
-class Facture {
+class Facture extends WFO {
   function Facture() {
   }
 
   function _markForRebuild($id) {
-    mysql_query("UPDATE webfinance_invoices SET date_generated=NULL,pdf_file='' WHERE id_facture=$id");
+    $this->SQL("UPDATE webfinance_invoices SET date_generated=NULL,pdf_file='' WHERE id_facture=$id");
   }
 
   function addLigne($id_facture, $desc, $pu_ht, $qtt) {
     $desc = preg_replace("/\'/", "\\'", $desc);
-    $result = mysql_query("INSERT INTO webfinance_invoice_rows (date_creation, id_facture, description, pu_ht, qtt) VALUES(now(), $id_facture, '$desc', '$pu_ht', $qtt)") or wf_mysqldie();
+    $result = $this->SQL("INSERT INTO webfinance_invoice_rows (date_creation, id_facture, description, pu_ht, qtt) VALUES(now(), $id_facture, '$desc', '$pu_ht', $qtt)");
     $this->_markForRebuild($id_facture);
   }
 
   function getTotal($id_facture) {
-    $result = mysql_query("SELECT sum(qtt*pu_ht) FROM webfinance_invoice_rows WHERE id_facture=$id_facture") or wf_mysqldie();
+    $result = $this->SQL("SELECT sum(qtt*pu_ht) FROM webfinance_invoice_rows WHERE id_facture=$id_facture");
     list($total) = mysql_fetch_array($result);
     mysql_free_result($result);
 
     return $total;
   }
 
-  function exists($id_facture){
-    $result = mysql_query("SELECT count(*) FROM webfinance_invoices WHERE id_facture=$id_facture") or wf_mysqldie();
+  function exists($id_facture=null){
+    if ($id_facture == "") { return 0; }
+    $result = $this->SQL("SELECT count(*) FROM webfinance_invoices WHERE id_facture=$id_facture");
     list($exists) = mysql_fetch_array($result);
     return $exists;
   }
@@ -44,7 +43,7 @@ class Facture {
     if (!is_numeric($id_facture)) {
       die("Facture:getInfos no id");
     }
-    $result = mysql_query("SELECT c.id_client as id_client,c.nom as nom_client, c.addr1, c.addr2, c.addr3, c.cp, c.ville, c.vat_number,
+    $result = $this->SQL("SELECT c.id_client as id_client,c.nom as nom_client, c.addr1, c.addr2, c.addr3, c.cp, c.ville, c.vat_number,
                                   date_format(f.date_created,'%d/%m/%Y') as nice_date_created,
                                   date_format(f.date_paiement, '%d/%m/%Y') as nice_date_paiement,
                                   date_format(f.date_sent, '%d/%m/%Y') as nice_date_sent,
@@ -58,10 +57,10 @@ class Facture {
                                   f.type_paiement, f.is_paye, f.ref_contrat, f.extra_top, f.extra_bottom, f.num_facture, f.period, f.tax, f.*
                            FROM webfinance_clients as c, webfinance_invoices as f
                            WHERE f.id_client=c.id_client
-                           AND f.id_facture=$id_facture") or wf_mysqldie();
+                           AND f.id_facture=$id_facture");
     $facture = mysql_fetch_object($result);
 
-    $result = mysql_query("SELECT id_facture_ligne,prix_ht,qtt,description FROM webfinance_invoice_rows WHERE id_facture=$id_facture ORDER BY ordre");
+    $result = $this->SQL("SELECT id_facture_ligne,prix_ht,qtt,description FROM webfinance_invoice_rows WHERE id_facture=$id_facture ORDER BY ordre");
     $facture->lignes = Array();
     $total = 0;
     $count = 0;
@@ -86,7 +85,7 @@ class Facture {
 //     print "<pre>";
 //     print_r($facture);
 
-    $result = mysql_query("SELECT nom FROM webfinance_clients WHERE id_client=".$facture->id_client) or wf_mysqldie();
+    $result = $this->SQL("SELECT nom FROM webfinance_clients WHERE id_client=".$facture->id_client);
     list($facture->nom_client) = mysql_fetch_array($result);
     mysql_free_result($result);
 
@@ -98,14 +97,14 @@ class Facture {
    */
   function setPaid($id_facture) {
     // Marque toutes les lignes comme "payées"
-    mysql_query("UPDATE webfinance_invoices SET date_paiement=now(),is_payee=1 WHERE id_facture=$id_facture") or wf_mysqldie();
+    $this->SQL("UPDATE webfinance_invoices SET date_paiement=now(),is_payee=1 WHERE id_facture=$id_facture");
   }
 
 
   /** Renvoie vrai si la facture est générée au format PDF
     */
   function hasPdf($id) {
-    $result = mysql_query("SELECT pdf_file FROM webfinance_invoices WHERE id_facture=$id");
+    $result = $this->SQL("SELECT pdf_file FROM webfinance_invoices WHERE id_facture=$id");
     list($file) = mysql_fetch_array($result);
     mysql_free_result($result);
 
@@ -117,7 +116,7 @@ class Facture {
 
   function getTransactions($id_invoice){
     $trs=array();
-    $q = mysql_query("SELECT id , text FROM webfinance_transactions WHERE id_invoice=$id_invoice") or wf_mysqldie();
+    $q = $this->SQL("SELECT id , text FROM webfinance_transactions WHERE id_invoice=$id_invoice");
     while(list($id_tr, $text) = mysql_fetch_array($q))
       $trs[$id_tr] = $text;
     return $trs;
@@ -126,16 +125,16 @@ class Facture {
   function duplicate($id){
 
     if(is_numeric($id)){
-      $result = mysql_query("SELECT id_client FROM webfinance_invoices WHERE id_facture=$id");
+      $result = $this->SQL("SELECT id_client FROM webfinance_invoices WHERE id_facture=$id");
       list($id_client) = mysql_fetch_array($result);
       mysql_free_result($result);
 
-      mysql_query("INSERT INTO webfinance_invoices (id_client,date_created,date_facture) VALUES ($id_client, now(), now())")
+      $this->SQL("INSERT INTO webfinance_invoices (id_client,date_created,date_facture) VALUES ($id_client, now(), now())")
 	or wf_mysqldie();
       $id_new_facture = mysql_insert_id();
 
       // On recopie les donnÃ©es de la facture
-      mysql_query("UPDATE webfinance_invoices as f1, webfinance_invoices as f2
+      $this->SQL("UPDATE webfinance_invoices as f1, webfinance_invoices as f2
                SET
                  f1.commentaire=f2.commentaire,
                  f1.type_paiement=f2.type_paiement,
@@ -146,9 +145,9 @@ class Facture {
                  f1.type_doc=f2.type_doc,
                  f1.id_compte=f2.id_compte
                WHERE f1.id_facture=$id_new_facture
-                 AND f2.id_facture=$id") or wf_mysqldie();
+                 AND f2.id_facture=$id");
 
-      mysql_query("INSERT INTO webfinance_invoice_rows (id_facture,description,qtt,ordre,prix_ht) SELECT $id_new_facture,description,qtt,ordre,prix_ht FROM webfinance_invoice_rows WHERE id_facture=$id")
+      $this->SQL("INSERT INTO webfinance_invoice_rows (id_facture,description,qtt,ordre,prix_ht) SELECT $id_new_facture,description,qtt,ordre,prix_ht FROM webfinance_invoice_rows WHERE id_facture=$id")
 	or wf_mysqldie();
       return $id_new_facture;
     }else{
@@ -179,7 +178,7 @@ class Facture {
       }
 
 
-      $result=mysql_query("SELECT id, id_category FROM webfinance_transactions WHERE id_invoice=$id_invoice" )
+      $result=$this->SQL("SELECT id, id_category FROM webfinance_transactions WHERE id_invoice=$id_invoice" )
 	or wf_mysqldie();
       $nb=mysql_num_rows($result);
 
@@ -195,11 +194,11 @@ class Facture {
 	  // Dans tous les cas on essaie de retrouver la catÃ©gorie de la transaction
 	  // automagiquement.
 	  $id_categorie = 1;
-	  $result = mysql_query("SELECT COUNT(*),id,name
+	  $result = $this->SQL("SELECT COUNT(*),id,name
                          FROM webfinance_categories
                          WHERE re IS NOT NULL
                          AND '".addslashes($comment." ".$text )."' RLIKE re
-                         GROUP BY id") or wf_mysqldie();
+                         GROUP BY id");
 	  list($nb_matches,$id, $name) = mysql_fetch_array($result);
 	  if($nb_matches>0)
 	    $id_category=$id;
@@ -215,7 +214,7 @@ class Facture {
 	  "date='%s' ".
 	  "WHERE id_invoice=%d";
 	$q = sprintf($query, $facture->id_compte, $id_category, $text, preg_replace("!,!", ".", $facture->total_ttc),  $date_transaction, $id_invoice );
-	mysql_query($q) or wf_mysqldie();
+	$this->SQL($q);
 
 
       }else if($nb<1){
@@ -230,7 +229,7 @@ class Facture {
 	  "comment='%s', ".
 	  "id_invoice=%d";
 	$q = sprintf($query, $facture->id_compte, $id_category, $text, preg_replace('!,!', '.', $facture->total_ttc), $date_transaction , $comment, $id_invoice );
-	mysql_query($q) or wf_mysqldie();
+	$this->SQL($q);
 	$id_tr=mysql_insert_id();
       }else{
 	//multiple transactions

@@ -83,15 +83,15 @@ function checkForm(f) {
 <input type="hidden" name="action" value="changepass" />
 <table border="0" cellspacing="7" cellpadding="0">
 <tr>
-  <td>Ancien mot de passe</td>
+  <td><?= _('Old password') ?></td>
   <td><input name="old_password" type="password" /></td>
 </tr>
 <tr>
-  <td>Nouveau mot de passe</td>
+  <td><?= _('New password') ?></td>
   <td><input name="new_pass1" type="password" /></td>
 </tr>
 <tr>
-  <td>Répéter</td>
+  <td><?= _('Repeat') ?></td>
   <td><input name="new_pass2" type="password" /></td>
 </tr>
 <tr>
@@ -154,7 +154,7 @@ function checkForm(f) {
   <td colspan="2"><input type="checkbox" name="pref_graphgrid" <?= ($User->prefs->graphgrid)?"checked":"" ?> /> <?= _('Show grids in graphs') ?></td>
 </tr>
 <tr>
-  <td>Onglet par défaut dans la fiche entreprise</td>
+  <td><?= _('Default focused tab in company view') ?></td>
   <td><select name="pref_default_onglet_fiche_contact">
   <?php
   foreach (array(
