@@ -149,12 +149,16 @@ if ($filter['shown_cat']['invert'] == "on") {
 
 // Calculate balance for each transaction
 if ($filter['id_account'] != 0) { $w = "WHERE id_account=".$filter['id_account']; }
-$req=WFO::SQL("SELECT id, amount FROM webfinance_transactions $w ORDER BY date");
+$req=WFO::SQL("SELECT id, amount, id_account FROM webfinance_transactions $w ORDER BY date");
 $balance_yesterday=0;
 $balance_lines=array();
 while ($row=mysql_fetch_assoc($req)) {
-  $balance_lines[$row['id']]=$balance_yesterday+$row['amount'];
-  $balance_yesterday+=$row['amount'];
+  list($currency,$exchange_rate)=getCurrency($row['id_account']);
+  if(empty($exchange_rate))
+    $exchange_rate=1;
+
+  $balance_lines[$row['id']]=$balance_yesterday+($row['amount']/$exchange_rate);
+  $balance_yesterday+=$row['amount']/$exchange_rate;
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -335,6 +339,10 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
      $cur_date=$ts_start_date;
 
      while ($tr = mysql_fetch_object($result)) {
+       list($currency,$exchange)=getCurrency($tr->id_account);
+       if(empty($exchange))
+	 $exchange=1;
+
        //s�parer les mois
        $current_month=ucfirst(strftime("%B %Y",$tr->ts_date));
        if(!empty($prev_date)){
@@ -347,7 +355,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
 
        $prev_date=$tr->ts_date;
 
-       $total_shown += $tr->amount;
+       $total_shown += ($tr->amount/$exchange);
 
        $fmt_date = strftime("%d/%m/%Y", $tr->ts_date); // Formated date (localized)
        $fmt_amount = number_format($tr->amount, 2, ',', ' '); // Formated amount
@@ -410,8 +418,8 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
      }
 ?>
   </td>
-  <td style="text-align: right; font-weight: bold; background: $amount_color" nowrap><?=$fmt_amount?> &euro;</td>
-  <td style="text-align: right; background: <?=$balance_color?>;" nowrap><?=$fmt_balance?> &euro;</td>
+  <td style="text-align: right; font-weight: bold; background: $amount_color" nowrap><?=$fmt_amount?> $currency</td>
+      <td style="text-align: right; background: <?=$balance_color?>;" nowrap><?=$fmt_balance?> &euro;</td>
 </tr>
 
 <?
@@ -447,7 +455,7 @@ EOF;
      }
 print <<<EOF
          </td>
-  <td style="text-align: right; font-weight: bold; background: $amount_color" nowrap>$fmt_amount &euro;</td>
+  <td style="text-align: right; font-weight: bold; background: $amount_color" nowrap>$fmt_amount $currency</td>
   <td style="text-align: right; background: $balance_color;" nowrap>$fmt_balance &euro;</td>
 </tr>
 EOF;

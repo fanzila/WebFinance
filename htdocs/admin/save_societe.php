@@ -1,6 +1,6 @@
 <?php
 //
-// This file is part of « Webfinance »
+// This file is part of Â« Webfinance Â»
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
@@ -57,12 +57,16 @@ foreach ($_POST as $n=>$v) {
     $rib->banque = $_POST['banque_'.$num];
     $rib->domiciliation = $_POST['domiciliation_'.$num];
     $rib->currency = $_POST['currency_'.$num];
+    $rib->exchange = $_POST['exchange_'.$num];
     $rib->code_banque = $_POST['code_banque_'.$num];
     $rib->code_guichet = $_POST['code_guichet_'.$num];
     $rib->compte = $_POST['compte_'.$num];
     $rib->clef = $_POST['clef_'.$num];
     $rib->iban = $_POST['iban_'.$num];
     $rib->swift = $_POST['swift_'.$num];
+
+    if(empty($rib->exchange))
+      $rib->exchange=1;
 
     if ($rib->compte != "") {
       $rib = base64_encode(serialize($rib));
@@ -71,6 +75,7 @@ foreach ($_POST as $n=>$v) {
       mysql_query("DELETE FROM webfinance_pref WHERE type_pref='rib' AND id_pref=$num") or wf_mysqldie();
     }
   }
+
 }
 
 if ($_POST['banque_new'] != "") {
@@ -78,12 +83,16 @@ if ($_POST['banque_new'] != "") {
   $rib->banque = $_POST['banque_new'];
   $rib->domiciliation = $_POST['domiciliation_new'];
   $rib->currency = $_POST['currency_new'];
+  $rib->exchange = $_POST['exchange_new'];
   $rib->code_banque = $_POST['code_banque_new'];
   $rib->code_guichet = $_POST['code_guichet_new'];
   $rib->compte = $_POST['compte_new'];
   $rib->clef = $_POST['clef_new'];
   $rib->iban = $_POST['iban_new'];
   $rib->swift = $_POST['swift_new'];
+
+  if(empty($rib->exchange))
+    $rib->exchange=1;
 
   $rib = base64_encode(serialize($rib));
   mysql_query("INSERT INTO webfinance_pref (type_pref, value) VALUES('rib', '$rib')") or wf_mysqldie();
