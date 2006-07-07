@@ -66,7 +66,7 @@ $_SESSION['code'] = $code;
     <form action="passwd.php" method="post">
     <table border="0" cellspacing="0" cellpadding="10" style="border: solid 1px black; margin: auto auto auto auto;">
       <tr><td><?= _("Login") ?></td><td><input type="text" size="22" style="border: solid 1px #777;" name="login" id="login" value="" /></td></tr>
-      <tr><td></td><td><img src="code.php">&nbsp;<a href="passwd.php"><img src="/imgs/icons/reload.png" alt="<?=_('Change picture')?>" title="<?=_('Change picture')?>" /></a></td></tr>
+      <tr><td></td><td><img src="code.php">&nbsp;<a href="passwd.php"><img src="/imgs/icons/reload.png" alt="<?=_('The image is unreadable')?>" title="<?=_('The image is unreadable')?>" /></a></td></tr>
       <tr><td>Code</td><td><input type="text" size="22" style="border: solid 1px #777;" name="code" id="login" value="" /></td></tr>
       <tr><td colspan="2" style="text-align:center"><input value="<?= _('Send') ?>" type="submit" /></td></tr>
     </table>
