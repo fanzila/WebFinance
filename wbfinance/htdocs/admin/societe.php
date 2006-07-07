@@ -98,6 +98,7 @@ Changer le logo <input type="file" name="logo" /> <b>(ONLY PNG)</b>
   <td><?=_('Bank')?></td>
   <td>Domiciliation</td>
   <td><?=_('Currency')?></td>
+  <td>1&euro;</td>
   <td>Code banque</td>
   <td>Code guichet</td>
   <td>N&deg; compte</td>
@@ -108,6 +109,7 @@ Changer le logo <input type="file" name="logo" /> <b>(ONLY PNG)</b>
 <?php
 $result = mysql_query("SELECT id_pref,value FROM webfinance_pref WHERE type_pref='rib' AND owner=-1");
 $count = 1;
+$currencies = array();
 while (list($id_pref,$value) = mysql_fetch_array($result)) {
   $compte = unserialize(base64_decode($value));
 
@@ -156,6 +158,7 @@ while (list($id_pref,$value) = mysql_fetch_array($result)) {
   <td><input style="width: 100px; text-align: center;" type="text" name="banque_$id_pref" value="$compte->banque" /></td>
   <td><input style="width: 100px; text-align: center;" type="text" name="domiciliation_$id_pref" value="$compte->domiciliation" /></td>
   <td><input style="width: 30px; text-align: center;" type="text" name="currency_$id_pref" value="$compte->currency" /></td>
+  <td><input style="width: 35px; text-align: center;" type="text" name="exchange_$id_pref" value="$compte->exchange" /></td>
   <td><input style="width: 50px; text-align: center;" type="text" name="code_banque_$id_pref" value="$compte->code_banque" /></td>
   <td><input style="width: 50px; text-align: center;" type="text" name="code_guichet_$id_pref" value="$compte->code_guichet" /></td>
   <td><input style="width: 90px; text-align: center;" type="text" name="compte_$id_pref" value="$compte->compte" /></td>
@@ -172,6 +175,7 @@ EOF;
   <td><input style="width: 100px; text-align: center;" type="text" name="banque_new" value="" /></td>
   <td><input style="width: 100px; text-align: center;" type="text" name="domiciliation_new" value="" /></td>
   <td><input style="width: 30px; text-align: center;" type="text" name="currency_new" value="€" /></td>
+  <td><input style="width: 35px; text-align: center;" type="text" name="exchange_new" value="1" /></td>
   <td><input style="width: 50px; text-align: center;" type="text" name="code_banque_new" value="" /></td>
   <td><input style="width: 50px; text-align: center;" type="text" name="code_guichet_new" value="" /></td>
   <td><input style="width: 90px; text-align: center;" type="text" name="compte_new" value="" /></td>
@@ -180,7 +184,8 @@ EOF;
   <td><input style="width: 50px; text-align: center;" type="text" name="swift_new" value="" /></td>
 </tr>
 </table>
-<i>Nota : pour supprimer un compte banquaire, positionner le num&eacute;ro de compte &agrave; vide</i><br/>
+<i>Nota : pour supprimer un compte bancaire, positionner le num&eacute;ro de compte &agrave; vide</i><br/>
+
   <input type="submit" value=<?= _("Save") ?> />
 </form>
 

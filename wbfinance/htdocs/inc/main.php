@@ -131,6 +131,14 @@ function getTVA(){
   return $tva;
 }
 
+function getCurrency($id_bank){
+  $result = mysql_query("SELECT value FROM webfinance_pref WHERE id_pref=$id_bank")
+    or wf_mysqldie();
+  list($value) = mysql_fetch_array($result);
+  $account = unserialize(base64_decode($value));
+  return array($account->currency,$account->exchange);
+}
+
 
 header("Content-Type: text/html; charset=utf-8");
 
