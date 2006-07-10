@@ -20,9 +20,9 @@ include("top.php");
     Chiffre d'affaire mensuel (18 derniers mois, total, incluant les impayés <a href="showca.php">plus</a>)<br/>
     <a href="showca.php"><img src="/graphs/ca_mensuel.php?width=600&height=250&nb_months=18&grid=0" /></a>
   </td>
-  <td width="250">
+  <td width="350">
     Facturé mais non encore payé<br/>
-    <a href="/prospection/facturation.php?type=unpaid"><img width="250" height="250" alt="Factures impayées" src="/graphs/factures_impayees.php?width=250&height=250" /></a>
+    <a href="/prospection/facturation.php?type=unpaid"><img width="350" height="250" alt="Factures impayées" src="/graphs/factures_impayees.php?width=350&height=250" /></a>
   </td>
 </tr>
 <tr valign="top">

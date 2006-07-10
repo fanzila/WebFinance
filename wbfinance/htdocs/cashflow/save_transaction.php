@@ -76,6 +76,10 @@ if (isset($_FILES['file']) && is_uploaded_file($_FILES['file']['tmp_name'])) {
 
 $amount = preg_replace("!,!", ".", $amount);
 $amount = preg_replace("! +!", "", $amount);
+
+if(empty($date))
+  $date=date('d/m/Y');
+
 if($id_transaction>0){
   $q = sprintf("UPDATE webfinance_transactions SET ".
 	       "%s".
@@ -84,11 +88,12 @@ if($id_transaction>0){
 	       "id_invoice=%d, ".
 	       "text='%s', ".
 	       "amount='%s', ".
+	       "exchange_rate='%s', ".
 	       "type='%s', ".
 	       "date=str_to_date('%s', '%%d/%%m/%%Y'), ".
 	       "comment='%s' ".
 	       "WHERE id=%d",
-	       $fq, $id_category, $id_account, $id_invoice, $text, $amount, $type, $date, $comment, $id_transaction);
+	       $fq, $id_category, $id_account, $id_invoice, $text, $amount, $exchange_rate, $type, $date, $comment, $id_transaction);
  }else{
   $q = sprintf("INSERT INTO webfinance_transactions SET ".
 	       "%s".
@@ -96,10 +101,11 @@ if($id_transaction>0){
 	       "id_account=%d, ".
 	       "text='%s', ".
 	       "amount=%s, ".
+	       "exchange_rate='%s', ".
 	       "type='%s', ".
 	       "date=str_to_date('%s', '%%d/%%m/%%Y'), ".
 	       "comment='%s' ",
-	       $fq, $id_category, $id_account, $text, $amount, $type, $date, $comment);
+	       $fq, $id_category, $id_account, $text, $amount, $exchange_rate, $type, $date, $comment);
  }
 
 mysql_query($q) or wf_mysqldie();

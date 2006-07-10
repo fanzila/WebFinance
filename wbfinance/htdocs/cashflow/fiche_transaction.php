@@ -1,6 +1,6 @@
 <?php
 //
-// This file is part of « Webfinance »
+// This file is part of Â« Webfinance Â»
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
@@ -12,7 +12,7 @@
 require("../inc/main.php");
 require("../top_popup.php");
 
-$result = mysql_query("SELECT id, id_category, id_account, text, amount, type, date, comment, file_name , id_invoice,
+$result = mysql_query("SELECT id, id_category, id_account, text, amount, exchange_rate, type, date, comment, file_name , id_invoice,
                               unix_timestamp(date) as ts_date
                        FROM webfinance_transactions WHERE id=".$_GET['id'])
   or wf_mysqldie();
@@ -28,9 +28,8 @@ if(mysql_num_rows($result)>0){
   $transaction->id_invoice=0;
   $transaction->text="";
   $transaction->amount=0;
+  $transaction->exchange_rate=1;
   $transaction->type="real";
-  // $transaction->date=date("Y-m-d");
-  // $transaction->comment="no comment"; <-- YEURK
   $transaction->file_name="";
  }
 
@@ -40,7 +39,8 @@ if(mysql_num_rows($result)>0){
 <table width="200" border="0" cellspacing="0" cellpadding="3">
 <tr>
   <td><?=_('Account')?></td>
-  <td colspan="3"><select name="id_account" style="width: 210px;">
+  <td>
+     <select name="id_account" style="width: 210px;">
         <option value="0"><?= _('-- Select an account --') ?></option>
       <?php
       $result = mysql_query("SELECT id_pref,value FROM webfinance_pref WHERE owner=-1 AND type_pref='rib'");
@@ -50,7 +50,9 @@ if(mysql_num_rows($result)>0){
       }
       mysql_free_result($result);
       ?>
-  </td>
+     </select>
+  </td >
+     <td colspan="2">&nbsp;1€ : <input type="text" style="width: 60px;text-align: center;" name="exchange_rate" value="<?=$transaction->exchange_rate?>"/></td>
 </tr>
 <tr>
   <td><?= _('Date') ?></td>
