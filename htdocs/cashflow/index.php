@@ -149,16 +149,15 @@ if ($filter['shown_cat']['invert'] == "on") {
 
 // Calculate balance for each transaction
 if ($filter['id_account'] != 0) { $w = "WHERE id_account=".$filter['id_account']; }
-$req=WFO::SQL("SELECT id, amount, id_account FROM webfinance_transactions $w ORDER BY date");
+$req=WFO::SQL("SELECT id, amount, id_account, exchange_rate FROM webfinance_transactions $w ORDER BY date");
 $balance_yesterday=0;
 $balance_lines=array();
 while ($row=mysql_fetch_assoc($req)) {
-  list($currency,$exchange_rate)=getCurrency($row['id_account']);
-  if(empty($exchange_rate))
-    $exchange_rate=1;
+  if(empty($row['exchange_rate']))
+    $row['exchange_rate']=1;
 
-  $balance_lines[$row['id']]=$balance_yesterday+($row['amount']/$exchange_rate);
-  $balance_yesterday+=$row['amount']/$exchange_rate;
+  $balance_lines[$row['id']]=$balance_yesterday+($row['amount']/$row['exchange_rate']);
+  $balance_yesterday+=$row['amount']/$row['exchange_rate'];
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -318,7 +317,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
      // -------------------------------------------------------------------------------------------------------------
 
 
-     $q = "SELECT t.id,t.amount,t.date,UNIX_TIMESTAMP(t.date) as ts_date, c.name,t.type,t.text,t.comment,c.color,t.id_category,t.file_name,t.id_account,t.id_invoice
+     $q = "SELECT t.id,t.amount, t.exchange_rate ,t.date,UNIX_TIMESTAMP(t.date) as ts_date, c.name,t.type,t.text,t.comment,c.color,t.id_category,t.file_name,t.id_account,t.id_invoice
            FROM webfinance_transactions AS t LEFT JOIN webfinance_categories AS c ON t.id_category=c.id
            HAVING $where_clause
            ORDER BY $order_clause";
@@ -339,9 +338,10 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
      $cur_date=$ts_start_date;
 
      while ($tr = mysql_fetch_object($result)) {
-       list($currency,$exchange)=getCurrency($tr->id_account);
-       if(empty($exchange))
-	 $exchange=1;
+       list($currency,$ex)=getCurrency($tr->id_account);
+
+       if(empty($tr->exchange_rate))
+	 $tr->exchange_rate=1;
 
        //s�parer les mois
        $current_month=ucfirst(strftime("%B %Y",$tr->ts_date));
@@ -355,7 +355,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
 
        $prev_date=$tr->ts_date;
 
-       $total_shown += ($tr->amount/$exchange);
+       $total_shown += ($tr->amount/$tr->exchange_rate);
 
        $fmt_date = strftime("%d/%m/%Y", $tr->ts_date); // Formated date (localized)
        $fmt_amount = number_format($tr->amount, 2, ',', ' '); // Formated amount

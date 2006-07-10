@@ -73,17 +73,27 @@ if($nb_day>0){
 
   $date_last_real=mysql_result($query_date_last_real, 0);
 
-  $q = "SELECT amount, type, date, UNIX_TIMESTAMP(date) as ts_date FROM webfinance_transactions ORDER BY date ";
+  $q = "SELECT amount, type, date, UNIX_TIMESTAMP(date) as ts_date , id_account, exchange_rate FROM webfinance_transactions ORDER BY date ";
   $res = mysql_query($q) or wf_mysqldie();
   $trs=array();
-  while($row  = mysql_fetch_assoc($res))
+  while($row  = mysql_fetch_assoc($res)){
+    if(empty($row['exchange_rate']))
+      $row['exchange_rate']=1;
+
+    $row['amount']=$row['amount']/$row['exchange_rate'];
     $trs[] = $row;
+  }
   mysql_free_result($res);
 
-  $q_real = "SELECT amount, type, date, UNIX_TIMESTAMP(date) as ts_date FROM webfinance_transactions WHERE type='real' ORDER BY date ";
+  $q_real = "SELECT amount, type, date, UNIX_TIMESTAMP(date) as ts_date, id_account, exchange_rate FROM webfinance_transactions WHERE type='real' ORDER BY date ";
   $res_real = mysql_query($q_real) or wf_mysqldie();
-  while($row  = mysql_fetch_assoc($res_real))
+  while($row  = mysql_fetch_assoc($res_real)){
+    if(empty($row['exchange_rate']))
+      $row['exchange_rate']=1;
+
+    $row['amount']=$row['amount']/$row['exchange_rate'];
     $trs_real[] = $row;
+  }
   mysql_free_result($res_real);
 
   for($step = 0; $step <= $nb_day ; $step++ ){

@@ -70,36 +70,28 @@ if(isset($_GET['account']) AND !empty($_GET['account']))
  $nb_accounts=mysql_num_rows($result_accounts);
  ?>
   <form id="main_form" method="get" onchange="this.submit();" >
-  	<table border="0">
-  		<tr>
-  			<td>
-  				Account
-  			</td>
-  			<td>
-		      	<select name="account">
-              <option value="0"><?= _('-- All accounts --') ?></option>
-					<?
-		      		while ($acc=mysql_fetch_assoc($result_accounts)) {
-                $cpt = unserialize(base64_decode($acc['value']));
-                printf('<option value="%d"%s>Compte %s n°%s</option>',
-                       $acc['id_pref'], ($acc['id_pref']==$account)?" selected":"",
-                       $cpt->banque, $cpt->compte );
-              }
-            ?>
-				</select>
-  			</td>
-  			<td>
-  				Date
-  			</td>
-  			<td>
-  				<input type="text" name="start_date" value="<?=$start_date?>" size="9" maxlength="10"/>
-  			</td>
-  			<td>to</td>
-  			<td>
-  				<input type="text" name="end_date" value="<?=$end_date?>" size="9" maxlength="10"/>
-  			</td>
-  		</tr>
-  	</table>
+   <table border="0">
+    <tr>
+     <td>Account</td>
+     <td>
+      <select name="account">
+       <option value="0"><?= _('-- All accounts --') ?></option>
+   <?
+   while ($acc=mysql_fetch_assoc($result_accounts)) {
+     $cpt = unserialize(base64_decode($acc['value']));
+     printf('<option value="%d"%s>%s #%s</option>',
+	    $acc['id_pref'], ($acc['id_pref']==$account)?" selected":"",
+	    $cpt->banque, $cpt->compte );
+   }
+   ?>
+      </select>
+     </td>
+     <td>Date</td>
+     <td><input type="text" name="start_date" value="<?=$start_date?>" size="9" maxlength="10"/></td>
+     <td>to</td>
+     <td><input type="text" name="end_date" value="<?=$end_date?>" size="9" maxlength="10"/></td>
+    </tr>
+   </table>
   </form>
 
   <!-- Affichage des graphes -->

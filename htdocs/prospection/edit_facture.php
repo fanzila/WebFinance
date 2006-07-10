@@ -1,6 +1,6 @@
 <?php
 //
-// This file is part of « Webfinance »
+// This file is part of Â« Webfinance Â»
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
@@ -12,7 +12,7 @@
 include("../inc/main.php");
 
 if (!is_numeric($_GET['id_facture'])) {
-  // Création de facture
+  // CrÃ©ation de facture
   $tva = getTVA();
 
   mysql_query("INSERT INTO webfinance_invoices (date_created,date_facture,id_client,tax) values(now(), now(), ".$_GET['id_client'].",'$tva')") or wf_mysqldie();
@@ -28,6 +28,7 @@ include("../top.php");
 include("nav.php");
 $Facture = new Facture();
 $facture = $Facture->getInfos($_GET['id_facture']);
+list($currency,$exchange) = getCurrency($facture->id_compte);
 ?>
 <script type="text/javascript">
 <?php
@@ -42,9 +43,9 @@ print $lignes;
 ?>
 function changedData(f) {
   <?php if ($facture->immuable) {
-  // Le devis est validé ou la facture est payée => pas possible de modifier ce doc
+  // Le devis est validÃ© ou la facture est payÃ©e => pas possible de modifier ce doc
   ?>
-  alert('Ce document ne peut être modifié');
+  alert('Ce document ne peut Ãªtre modifiÃ©');
   window.location.reload(true);
   return;
   <?php } ?>
@@ -60,9 +61,9 @@ function changedData(f) {
 
 function submitForm(f) {
   <?php if ($facture->immuable) {
-  // Le devis est validé ou la facture est payée => pas possible de modifier ce doc
+  // Le devis est validÃ© ou la facture est payÃ©e => pas possible de modifier ce doc
   ?>
-  alert('Ce document ne peut être modifié');
+  alert('Ce document ne peut Ãªtre modifiÃ©');
   return;
   <?php } ?>
 
@@ -195,19 +196,19 @@ function ask_confirmation(txt) {
 <tr>
   <td width="300">
     <table width="300" border="0" cellspacing="0" cellpadding="2">
-    <tr><td width="100"><?= ucfirst($facture->type_doc) ?> n°</td><td><input type="text" style="width:85px; text-align: center;" name="num_facture" value="<?= $facture->num_facture ?>" /><img src="/imgs/icons/help.png" onmouseover="return escape('Le numéro de facture est généré automatiquement lorsqu\'on marque la facture comme envoyée.<br/><br/>On peut forcer ce numéro arbitrairement mais souvenez-vous que la loi française oblige les numéros de facture à être séquenciels (pas de trous ni de YYYYMMDD');" /></td></tr>
+    <tr><td width="100"><?= ucfirst($facture->type_doc) ?> n&deg;</td><td><input type="text" style="width:85px; text-align: center;" name="num_facture" value="<?= $facture->num_facture ?>" /><img src="/imgs/icons/help.png" onmouseover="return escape('Le num&eacute;ro de facture est g&eacute;n&eacute;r&eacute; automatiquement lorsqu\'on marque la facture comme envoy&eacute;e.<br/><br/>On peut forcer ce num&eacute;ro arbitrairement mais souvenez-vous que la loi fran&ccedil;aise oblige les num&eacute;ros de facture &agrave; &ecirc;tre s&eacute;quenciels (pas de trous ni de YYYYMMDD');" /></td></tr>
     <tr><td>Date <?= $facture->type_doc ?></td><td><?php makeDateField('date_facture', $facture->timestamp_date_facture) ?></td></tr>
     <tr><td>Code TVA Client</td><td><input style="width: 110px;" type="text" name="vat_number" value="<?= $facture->vat_number ?>" /></td></tr>
     <tr><td>Ref Contrat</td><td><input style="width: 200px;" type="text" name="ref_contrat" value="<?= $facture->ref_contrat ?>" /></td></tr>
     <tr><td>Paiement</td><td><input type="text" style="width: 200px;" name="type_paiement" value="<?=$facture->type_paiement ?>" /></td></tr>
-    <tr><td>Accompte </td><td><input type="text" style="width: 50px; text-align: center;" name="accompte" value="<?= number_format($facture->accompte, 2, ' ', ','); ?>" />&euro; TTC</td></tr>
+    <tr><td>Accompte </td><td><input type="text" style="width: 50px; text-align: center;" name="accompte" value="<?= number_format($facture->accompte, 2, ' ', ','); ?>" /><?=$currency?> TTC</td></tr>
     <tr><td colspan="2">
     <textarea style="width: 300px; height: 40px" name="extra_top"><?= $facture->extra_top ?></textarea>
     </table>
   </td>
 
   <td valign="top">
-  <?// Adresse = 5 champs valeur par défaut = addr client si modifié => adresse facturation affectée ?>
+  <?// Adresse = 5 champs valeur par dÃ©faut = addr client si modifiÃ© => adresse facturation affectÃ©e ?>
   <div style="width: 180px; border: dashed 1px #cecece; padding: 10px;">
   <b><?= $facture->nom_client ?></b><br/>
   <?= $facture->addr1 ?><br/>
@@ -287,7 +288,16 @@ function ask_confirmation(txt) {
         </select>
       </td>
     </tr>
-
+<?php
+	if($currency!="€"){
+?>
+  <tr>
+    <td nowrap><?=_('Exchange rate')?>&nbsp;1&euro; :</td>
+    <td><input style="width:80px; text-align: center;" type="text" name="exchange_rate" value="<?=$facture->exchange_rate?>"/><?=$currency?></td>
+    </tr>
+<?
+	    }
+?>
     <tr>
       <td nowrap><?=_('TVA')?></td>
       <td>
@@ -299,7 +309,7 @@ function ask_confirmation(txt) {
       if ($facture->type_doc == "devis") { // CAS DEVIS  ?>
       <tr>
       <td colspan="2">
-        <input type="checkbox" name="is_paye" <?= $facture->is_paye?"checked":"" ?> />&nbsp;Devis Accepté
+        <input type="checkbox" name="is_paye" <?= $facture->is_paye?"checked":"" ?> />&nbsp;Devis AcceptÃ©
         <?= ($facture->date_paiement!="")?"le ".$facture->nice_date_paiement:"" ?>
       </td>
       </tr>
@@ -333,7 +343,7 @@ function ask_confirmation(txt) {
 <!--
     <tr>
       <td colspan="2">
-        <input type="checkbox" name="is_comptabilise" <?= $facture->is_comptabilise?"checked":"" ?> />&nbsp;Comptabilisé
+        <input type="checkbox" name="is_comptabilise" <?= $facture->is_comptabilise?"checked":"" ?> />&nbsp;ComptabilisÃ©
         <?= ($facture->date_comptabilise!="")?"le ".$facture->nice_date_comptabilise:"" ?>
       </td>
     </tr>
@@ -382,7 +392,7 @@ function ask_confirmation(txt) {
 <tr class="row_header" style="font-weight: bold; text-align: center;">
   <td></td>
   <td width="400">Description</td>
-  <td>Quantité</td>
+  <td><?=_('Quantity')?></td>
   <td style="text-align: center;">PU HT</td>
   <td>Total</td>
 </tr>
@@ -405,12 +415,12 @@ foreach ($facture->lignes as $l) {
       </tr>
     </table>
   </td>
-  <td nowrap style="text-align: center;"><input type="text" onkeyup="updateTotal('$facture->taxe');" name="prix_ht_$l->id_facture_ligne" id="prix_ht_$l->id_facture_ligne" style="width: 50px; text-align: center" value="$prix" />&euro; HT</td>
-  <td nowrap><input type="text" id="total_$l->id_facture_ligne" name="total_$l->id_facture_ligne" onfocus="blur();" style="background: none; border: none; width: 40px; text-align: right" value="$total_ligne" />&nbsp;&euro; HT</td>
+  <td nowrap style="text-align: center;"><input type="text" onkeyup="updateTotal('$facture->taxe');" name="prix_ht_$l->id_facture_ligne" id="prix_ht_$l->id_facture_ligne" style="width: 50px; text-align: center" value="$prix" />&nbsp;$currency HT</td>
+  <td nowrap><input type="text" id="total_$l->id_facture_ligne" name="total_$l->id_facture_ligne" onfocus="blur();" style="background: none; border: none; width: 40px; text-align: right" value="$total_ligne" />&nbsp;$currency HT</td>
 </tr>
 EOF;
 }
-if (! $facture->immuable) { // Début ajout une ligne
+if (! $facture->immuable) { // DÃ©but ajout une ligne
 ?>
 
 <tr style="background: #cecece">
@@ -426,16 +436,16 @@ if (! $facture->immuable) { // Début ajout une ligne
       </tr>
     </table>
   </td>
-  <td nowrap style="text-align: center;"><input type="text" onkeyup="updateTotal('<?= $facture->taxe?>');" name="prix_ht_new" id="prix_ht_new" style="width: 50px; text-align: center" value="0" />&nbsp;&euro; HT</td>
-  <td nowrap><input type="text" id="total_new" name="total_new" onfocus="blur();" style="background: none; border: none; width: 40px; text-align: right" value="0" />&nbsp;&euro; HT</td>
+  <td nowrap style="text-align: center;"><input type="text" onkeyup="updateTotal('<?= $facture->taxe?>');" name="prix_ht_new" id="prix_ht_new" style="width: 50px; text-align: center" value="0" />&nbsp;<?=$currency?> HT</td>
+  <td nowrap><input type="text" id="total_new" name="total_new" onfocus="blur();" style="background: none; border: none; width: 40px; text-align: right" value="0" />&nbsp;<?=$currency?> HT</td>
 </tr>
 <?php
 } // Fin ajout une ligne
 ?>
 
-<tr><td colspan="4" style="text-align: right;">Total HT<input onfocus="blur();" type="text" name="total_ht" id="total_ht" style="text-align:right; border: none; width: 70px;" value="<?= $facture->nice_total_ht ?>" />&euro;</td></tr>
-<tr><td colspan="4" style="text-align: right;">TVA<input onfocus="blur();" type="text" id="tva" style="text-align:right; border: none; width: 70px;" value="<?= number_format($facture->total_ttc - $facture->total_ht,2, ',', ' '); ?>" />&euro;</td></tr>
-<tr><td colspan="4" style="text-align: right;"><b>Total</b><input onfocus="blur();" type="text" id="total_ttc" style="font-weight: bold; text-align:right; border: none; width: 70px;" value="<?= number_format($facture->total_ttc,2, ',', ' '); ?>" /><b>&euro;</b></td></tr>
+<tr><td colspan="4" style="text-align: right;">Total HT<input onfocus="blur();" type="text" name="total_ht" id="total_ht" style="text-align:right; border: none; width: 70px;" value="<?= $facture->nice_total_ht ?>" /><?=$currency?></td></tr>
+<tr><td colspan="4" style="text-align: right;">TVA<input onfocus="blur();" type="text" id="tva" style="text-align:right; border: none; width: 70px;" value="<?= number_format($facture->total_ttc - $facture->total_ht,2, ',', ' '); ?>" /><?=$currency?></td></tr>
+<tr><td colspan="4" style="text-align: right;"><b>Total</b><input onfocus="blur();" type="text" id="total_ttc" style="font-weight: bold; text-align:right; border: none; width: 70px;" value="<?= number_format($facture->total_ttc,2, ',', ' '); ?>" /><b><?=$currency?></b></td></tr>
 </table>
 
 </tr>

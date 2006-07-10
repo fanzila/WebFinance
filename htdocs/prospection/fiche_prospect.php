@@ -188,8 +188,8 @@ function ask_confirmation(txt) {
         // Affichage par année, avec une séparation lisible
 			    $q="SELECT YEAR(f.date_facture) as annee, ".
 			    "SUM( IF(f.type_doc='facture', ".
-			    "fl.qtt*fl.prix_ht, 0)) as ca_ht_total, ".
-			    "SUM( IF(f.type_doc='facture', IF(f.is_paye=0, fl.qtt*fl.prix_ht, 0), 0)) as du_ht_total ".
+			    "(fl.qtt*fl.prix_ht)/f.exchange_rate, 0)) as ca_ht_total, ".
+			    "SUM( IF(f.type_doc='facture', IF(f.is_paye=0, (fl.qtt*fl.prix_ht)/f.exchange_rate, 0), 0)) as du_ht_total ".
 			    "FROM webfinance_invoices f LEFT JOIN webfinance_invoice_rows fl ON f.id_facture=fl.id_facture ".
 			    "WHERE f.id_client=$Client->id ".
 			    "GROUP BY YEAR(date_facture) ".
@@ -199,7 +199,8 @@ function ask_confirmation(txt) {
 
         $Facture = new Facture();
         while ($year = mysql_fetch_object($result)) {
-          printf('<tr><td style="border-bottom: solid 1px #777;" colspan="5"><b style="font-size: 16px;">%s</b> - <b><i>Encours %s&euro; HT</i></b> - <i>%s&euro; HT</i></td></tr>', $year->annee, number_format($year->du_ht_total, 2, ',', ' '), number_format($year->ca_ht_total, 2, ',', ' '));
+          printf('<tr><td style="border-bottom: solid 1px #777;" colspan="5"><b style="font-size: 16px;">%s</b> - <b><i>Encours %s&euro; HT</i></b> - <i>%s&euro; HT</i></td></tr>',
+		 $year->annee, number_format($year->du_ht_total, 2, ',', ' '), number_format($year->ca_ht_total, 2, ',', ' '));
 
           $q = "SELECT f.id_facture
                 FROM webfinance_invoices as f
@@ -211,6 +212,9 @@ function ask_confirmation(txt) {
 //            $total_du = 0;
            while (list($id_invoice) = mysql_fetch_array($result2)) {
              $facture = $Facture->getInfos($id_invoice);
+
+	     list($currency,$exchange)=getCurrency($facture->id_compte);
+
              // Récupération du texte des lignes facturées pour afficher en infobulle.
              $description = "<b>".$facture->nice_date_facture."</b><br/>";
              foreach ($facture->lignes as $l) {
@@ -234,18 +238,19 @@ function ask_confirmation(txt) {
              printf('<tr class="facture_line" onmouseover="return escape(\'%s\');" valign=middle>
                        <td nowrap>%s</td>
                        <td>%s%s</td>
-                       <td class="euro" nowrap>%s &euro; HT</td>
-                       <td class="euro" nowrap>%s &euro; TTC</td>
+                       <td class="euro" nowrap>%s %s HT</td>
+                       <td class="euro" nowrap>%s %s TTC</td>
                        <td width="100%%" style="text-align: right;" nowrap><img src="/imgs/icons/%s" alt=""><a href="edit_facture.php?id_facture=%d"><img src="/imgs/icons/edit.png" border="0"></a>%s</td>
                      </tr>',
-                     $description,
-                     $facture->nice_date_facture, // FIXME : nice_date = option dans partie admin heritee par tous les objets penser 6 pour 2006
-                     $facture->code_type_doc, $facture->num_facture,
-                     number_format($facture->total_ht, 2, ',', ' '),
-                     number_format($facture->total_ttc, 2, ',', ' '), // FIXME : Taux de TVA par facture
-                     $icon,
-                     $facture->id_facture,
-                     $pdf);
+		    $description,
+		    $facture->nice_date_facture, // FIXME : nice_date = option dans partie admin heritee par tous les objets penser 6 pour 2006
+		    $facture->code_type_doc, $facture->num_facture,
+		    number_format($facture->total_ht, 2, ',', ' '), $currency,
+		    number_format($facture->total_ttc, 2, ',', ' '), // FIXME : Taux de TVA par facture
+		    $currency,
+		    $icon,
+		    $facture->id_facture,
+		    $pdf);
              $count++;
            }
            mysql_free_result($result2);
