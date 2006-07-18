@@ -117,7 +117,14 @@ while (list($id_facture) = mysql_fetch_array($result)) {
 <tr onmouseover="return escape('<?=$description?>');" class="row_$class">
   <td><?=$count?></td>
   <td><?=$fa->nice_date_facture?></td>
-  <td><img src="/imgs/icons/<?=$icon?>.gif" alt="<?=$icon?>" /></td>
+  <td>
+<?
+   if(empty($fa->is_paye))
+     printf('<a href="../payment/paybox/?id_invoice=%d&id_client=%d"><img src="/imgs/icons/%s.gif" alt="%s" /></a>',$id_facture,$fa->id_client,$icon,$icon);
+   else
+     printf('<img src="/imgs/icons/%s.gif" alt="%s" />',$icon,$icon);
+?>
+  </td>
   <td>FA<?=$fa->num_facture?></td>
   <td>
 <?
@@ -137,6 +144,10 @@ while (list($id_facture) = mysql_fetch_array($result)) {
  }
 
    $num_factures[$id_facture]=$fa->num_facture;
+
+   if(!($fa->is_paye)){
+     echo "";
+   }
 
 ?>
   </td>

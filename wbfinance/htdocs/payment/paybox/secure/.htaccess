@@ -1,0 +1,6 @@
+deny from all
+allow from 195.101.99.76
+allow from 195.101.99.77
+allow from 62.39.109.166
+allow from 194.50.38.6
+allow from 127.0.0.1

@@ -329,6 +329,24 @@ CREATE TABLE `webfinance_roles` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
 
 
+CREATE TABLE `webfinance_paybox` (
+  `id_paybox` int(11) NOT NULL auto_increment,
+  `id_invoice` int(11) NOT NULL,
+  `reference` varchar(255) NOT NULL,
+  `state` enum('nok','pending','cancel','deny','ok') NOT NULL default 'nok',
+  `amount` int(11) unsigned NOT NULL default '0',
+  `autorisation` varchar(64) NOT NULL default '',
+  `transaction_id` varchar(64) NOT NULL default '',
+  `payment_type` varchar(64) NOT NULL default '',
+  `card_type` varchar(64) NOT NULL default '',
+  `transaction_sole_id` varchar(64) NOT NULL default '',
+  `error_code` varchar(64) NOT NULL default '',
+  `date` datetime NOT NULL default '0000-00-00 00:00:00',
+  PRIMARY KEY  (`id_paybox`),
+  UNIQUE KEY `reference` (`reference`),
+  KEY `id_invoice` (`id_invoice`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 --
 -- DEFAULT DATA INSERT
 --
