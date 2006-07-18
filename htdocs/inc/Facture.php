@@ -82,9 +82,6 @@ class Facture extends WFO {
     //Can be in preference #FIXME
     $facture->immuable = false;
 
-//     print "<pre>";
-//     print_r($facture);
-
     $result = $this->SQL("SELECT nom FROM webfinance_clients WHERE id_client=".$facture->id_client);
     list($facture->nom_client) = mysql_fetch_array($result);
     mysql_free_result($result);

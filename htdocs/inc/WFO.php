@@ -61,6 +61,37 @@ class WFO {
 
     if ($die) die();  
   }
+
+  /**
+    * Strips format added by javascript and others in the HTML interface.
+    *
+    * print FormatisObject::stripMonetaryFormat('33,12 €'); 
+    * outputs 33.12
+    *
+    * Both this function and makeMonetaryFormat exist because sprintf and such
+    * change the decimal separator symbol depending on the locale set in the
+    * application. Therefore sprintf and sscanf should not be used in WF to
+    * format amounts if we want to preserve the multi-currency behavior AND the
+    * localised interface.
+    */
+  function stripMonetaryFormat($val) {
+    $r = preg_replace("/,/", ".", $val);
+    $r = preg_replace("/ /", "", $r);
+    $r = preg_replace("/[^0-9.]/", "", $r);
+    return $r;
+  }
+
+  /**
+    * This function does the oposit of stripMonetaryFormat : it takes a number
+    * (typicaly a DECIMAL field from a DB) and converts it to a string
+    * representing the ammount
+    *
+    * Todo : handle currency symbols.
+    *
+    */
+  function makeMonetaryFormat($val) {
+    return number_format($val, 2, ',', ' ')." €";
+  }
 }
 
 ?>

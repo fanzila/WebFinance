@@ -162,7 +162,7 @@ if ($action == "save_facture") {
 	       $ref_contrat,
 	       $extra_top,
 	       $extra_bottom,
-	       $accompte,
+	       WFO::stripMonetaryFormat($accompte),
 	       $date_facture,
 	       $type_doc,
 	       $commentaire,

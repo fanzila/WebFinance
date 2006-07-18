@@ -201,7 +201,7 @@ function ask_confirmation(txt) {
     <tr><td>Code TVA Client</td><td><input style="width: 110px;" type="text" name="vat_number" value="<?= $facture->vat_number ?>" /></td></tr>
     <tr><td>Ref Contrat</td><td><input style="width: 200px;" type="text" name="ref_contrat" value="<?= $facture->ref_contrat ?>" /></td></tr>
     <tr><td>Paiement</td><td><input type="text" style="width: 200px;" name="type_paiement" value="<?=$facture->type_paiement ?>" /></td></tr>
-    <tr><td>Accompte </td><td><input type="text" style="width: 50px; text-align: center;" name="accompte" value="<?= number_format($facture->accompte, 2, ' ', ','); ?>" /><?=$currency?> TTC</td></tr>
+    <tr><td>Accompte </td><td><input type="text" style="width: 50px; text-align: center;" name="accompte" value="<?= WFO::makeMonetaryFormat($facture->accompte); ?>" /><?=$currency?> TTC</td></tr>
     <tr><td colspan="2">
     <textarea style="width: 300px; height: 40px" name="extra_top"><?= $facture->extra_top ?></textarea>
     </table>
