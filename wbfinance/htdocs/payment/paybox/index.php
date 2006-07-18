@@ -40,7 +40,7 @@ $company = unserialize(base64_decode($value));
 
 $site="webfinance.dev.jexiste.org";
 if(!empty($company->wf_url) AND strlen($company->wf_url)>3){
-  $site=preg_replace('^/http:\/\//i', '' ,$company->wf_url );
+  $site=preg_replace('/^http:\/\//i', '' ,$company->wf_url );
  }
 
 //TODO generate
