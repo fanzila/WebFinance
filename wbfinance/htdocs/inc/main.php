@@ -19,7 +19,7 @@ require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/Client.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/TabStrip.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT'].'/inc/gettext.php');
 
-$_SESSION['debug'] =1;
+$_SESSION['debug'] = WF_DEBUG;
 
 function parselogline($str) {
   if (preg_match("/(user|fa|client):([0-9]+)/", $str)) {
