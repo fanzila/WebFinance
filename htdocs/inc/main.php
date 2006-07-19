@@ -139,6 +139,20 @@ function getCurrency($id_bank){
   return array($account->currency,$account->exchange);
 }
 
+//from osh
+function format_price($price) {
+  if(empty($price))
+    return '0 &euro;';
+
+  $price=trim($price);
+  $price=str_replace(',', '.', $price);
+  $price=money_format('%i', $price);
+  $price=preg_replace('/[,\.]00 /', ' ', $price);
+  $price=str_replace('EUR', '&euro;', $price);
+  $price=str_replace(' ', '&nbsp;', $price);
+  return $price;
+}
+
 
 header("Content-Type: text/html; charset=utf-8");
 

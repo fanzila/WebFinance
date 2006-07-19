@@ -43,8 +43,8 @@ if(!empty($company->wf_url) AND strlen($company->wf_url)>3){
   $site=preg_replace('/^http:\/\//i', '' ,$company->wf_url );
  }
 
-//TODO generate
-$ref_cmd= $inv->id_facture . time();
+$time=time();
+$ref_cmd = $inv->id_facture . $time ;
 
 $params = array(
 		"PBX_MODE" => "1",
@@ -79,8 +79,15 @@ foreach($params as $param=>$v){
   $args.=$param."=".$v."&";
 }
 
+
 //insert the transation in the db
-$r = mysql_query("INSERT INTO webfinance_paybox SET id_invoice=$inv->id_facture, reference='$ref_cmd' , state='pending', amount='$inv->nice_total_ttc' , date=NOW() ")
+$r = mysql_query("INSERT INTO webfinance_paybox SET id_invoice=$inv->id_facture, ".
+		 "email='".$params['PBX_PORTEUR']."' , ".
+		 "reference='".$params['PBX_CMD']."' , ".
+		 "state='pending', ".
+		 "amount='$inv->nice_total_ttc' , ".
+		 "currency='".$params['PBX_DEVISE']."' , ".
+		 "date='".date("YmdHis", $time)."' ")
   or wf_mysqldie();
 
 header("Location: /cgi-bin/paybox/modulev2.cgi?$args");

@@ -19,7 +19,8 @@ $elements = array(
                   _('Graphics All') => array('url'=>'graphs_all_history.php', 'roles'=>'manager,accounting'),
                   _('Categories') => array('url' => 'categories.php', 'roles' => 'manager,accounting'),
                   _('Expenses') => array('url'=>'expenses.php', 'roles'=>'manager,accounting,employee'),
-                  _('Import') => array('url'=>'import.php', 'roles'=>'manager')
+                  _('Import') => array('url'=>'import.php', 'roles'=>'manager,accounting'),
+                  _('Paybox') => array('url'=>'paybox.php', 'roles'=>'manager,accounting,employee'),
                  );
 
 
