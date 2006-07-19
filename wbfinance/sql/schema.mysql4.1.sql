@@ -332,9 +332,11 @@ CREATE TABLE `webfinance_roles` (
 CREATE TABLE `webfinance_paybox` (
   `id_paybox` int(11) NOT NULL auto_increment,
   `id_invoice` int(11) NOT NULL,
+  `email` varchar(255) default NULL,
   `reference` varchar(255) NOT NULL,
   `state` enum('nok','pending','cancel','deny','ok') NOT NULL default 'nok',
-  `amount` int(11) unsigned NOT NULL default '0',
+  `amount` decimal(14,2) NOT NULL default '0.00',
+  `currency` int(2) NOT NULL default '978',
   `autorisation` varchar(64) NOT NULL default '',
   `transaction_id` varchar(64) NOT NULL default '',
   `payment_type` varchar(64) NOT NULL default '',

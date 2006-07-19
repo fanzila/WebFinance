@@ -66,7 +66,7 @@ switch ($_GET['sort']) {
 <tr valign="top"><td>
 
 <table border=0 cellspacing=0 cellpadding=3 style="border: solid 1px black;">
-<tr align=center class=row_header>
+<tr align="center" class="row_header">
   <td></td>
   <td><a href="?sort=date&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Invoice date') ?></a></td>
   <td colspan="2"><a href="?sort=num&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Invoice #') ?></a></td>
@@ -114,7 +114,7 @@ while (list($id_facture) = mysql_fetch_array($result)) {
    mysql_free_result($result2);
 
 ?>
-<tr onmouseover="return escape('<?=$description?>');" class="row_$class">
+<tr onmouseover="return escape('<?=$description?>');" class="row_<?=$class?>">
   <td><?=$count?></td>
   <td><?=$fa->nice_date_facture?></td>
   <td>

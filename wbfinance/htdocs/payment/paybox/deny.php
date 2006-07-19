@@ -4,15 +4,17 @@ $title = _("Paybox");
 $roles="manager,accounting,employee,client";
 include("../../top.php");
 
-$Invoice = new Facture();
-
-if(isset($_GET['ref']) AND $Invoice->exists($_GET['ref']) ){
+if(isset($_GET['ref']) ){
   //"PBX_RETOUR" => "amount:M;ref:R;auto:A;trans:T;pbxtype:P;card:C;soletrans:S;error:E",
+
   extract($_GET);
 
   if($error>=100 AND $error<200)
     printf("<span class='text'>%s</span>", _("Paiement refusé par le centre d'autorisation"));
   else if(isset($error)){
+
+    $_SESSION['error']=1;
+
     switch($error){
     case 0:
       printf("<span class='text'>%s</span>", _("The transaction accepted")); //error in PBX_EFFECTUE or PAYBOX :)
