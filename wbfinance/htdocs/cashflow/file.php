@@ -20,6 +20,7 @@ function show_file($id_transaction,$type){
     or wf_mysqldie();
   if(mysql_num_rows($result)>0){
     $afile=mysql_fetch_assoc($result);
+    mysql_free_result($result);
     $file_name=$afile['name'];
     $file_type=$afile['type'];
     $file=$afile['file'];
