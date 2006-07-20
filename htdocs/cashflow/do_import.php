@@ -24,6 +24,7 @@ function compare_invoices_transaction($op){
 
   $min = ( $amount/$f )-0.1;
   $max = ( $amount/$f )+0.1;
+
   // S'il s'agit d'un crédit, tenter de retrouver la facture correspondante
 
   //    $q = "SELECT id_facture, is_paye, date_facture, num_facture, ref_contrat, total_facture_ht, 1.196*total_facture_ht as total_facture FROM wf_view_invoices ".
@@ -47,7 +48,7 @@ function compare_invoices_transaction($op){
     "AND webfinance_invoice_rows.id_facture=wf_in.id_facture ".
     "GROUP BY webfinance_invoice_rows.id_facture ".
     ") ".
-    "BETWEEN %s AND %s ".
+    "BETWEEN '%s' AND '%s' ".
     "GROUP BY id_facture";
 
   $query = sprintf($q,$min, $max);
