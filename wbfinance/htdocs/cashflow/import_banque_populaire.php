@@ -43,7 +43,7 @@ while(!feof($fp)) {
 fclose($fp);
 
 if(count($invalid_trs)>0){
-  printf('<b style="color: red;">Invalid CSV format:</b><br/>');
+  printf('<b style="color: red;">%s:</b><br/>',_('Invalid CSV file format'));
   foreach($invalid_trs as $data)
     printf("%s<br/>",$data);
 
