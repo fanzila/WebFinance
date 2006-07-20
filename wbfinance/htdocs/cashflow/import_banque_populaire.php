@@ -22,7 +22,8 @@ while(!feof($fp)) {
   foreach($tmp_array as $data){
     $l=explode(";",$data);
 
-    $l[4] = preg_replace("/,/", ".", preg_replace("/ +/", "", $l[4]));
+    if(isset($l[4]))
+      $l[4] = preg_replace("/,/", ".", preg_replace("/ +/", "", $l[4]));
 
     if(count($l)==6 AND is_numeric($l[4])){
       $op = new stdClass();
