@@ -1,10 +1,7 @@
 <?php
-
-// $Id:
+// $Id$
 
 require_once("../inc/main.php");
-
-// TEMP :
 
 extract($_FILES['csv']);
 
@@ -41,7 +38,7 @@ while(!feof($fp)) {
 fclose($fp);
 
 // Toutes les opérations sont dans $transactions, essayons maintenant de faire
-// quelque chose d'intelligen avec :
+// quelque chose d'intelligent avec :
 //   - Pour chaque opération on va essayer de la faire rentrer dans une
 //     catégorie automatiquement en appliquant les regex de celle-ci
 //   - Pour chaque opération au crédit on va essayer de retrouver la facture
