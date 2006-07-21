@@ -125,7 +125,7 @@ mysql_free_result($result);
 // Setup the default filter if none is given
 extract($_GET);
 
-if ($filter['shown_cat']['invert'] == "on") {
+if (isset($filter['shown_cat']['invert']) AND $filter['shown_cat']['invert'] == "on") {
   $result = WFO::SQL("SELECT id FROM webfinance_categories");
 
   while (list($id) = mysql_fetch_array($result)) {
@@ -137,7 +137,7 @@ if ($filter['shown_cat']['invert'] == "on") {
 
   mysql_free_result($result);
 
- }else if ((!count($filter['shown_cat'])) || ($filter['shown_cat']['check_all'] == "on")) {
+ }else if (isset($filter['shown_cat']) AND ( (!count($filter['shown_cat'])) || ($filter['shown_cat']['check_all'] == "on")  )) {
   $result = WFO::SQL("SELECT id FROM webfinance_categories");
 
   while (list($id) = mysql_fetch_array($result))
@@ -148,7 +148,10 @@ if ($filter['shown_cat']['invert'] == "on") {
 }
 
 // Calculate balance for each transaction
-if ($filter['id_account'] != 0) { $w = "WHERE id_account=".$filter['id_account']; }
+$w="";
+if (isset($filter['id_account']) AND ($filter['id_account'] != 0) ) {
+  $w = "WHERE id_account=".$filter['id_account'];
+ }
 $req=WFO::SQL("SELECT id, amount, id_account, exchange_rate FROM webfinance_transactions $w ORDER BY date");
 $balance_yesterday=0;
 $balance_lines=array();
@@ -162,9 +165,11 @@ while ($row=mysql_fetch_assoc($req)) {
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Check filter data coherence :
-if (!preg_match("!^[0-9.-]+$!", $filter['amount'])) { $filter['amount'] = ""; }  // Search by amount must be numeric
+if ( isset($filter) AND ( !preg_match("!^[0-9.-]+$!", $filter['amount']) ) ) {
+  $filter['amount'] = "";  // Search by amount must be numeric
+}
 
-if (preg_match("!^([0-9.,]+)-([0-9.,]+)$!", $filter['amount'], $foo)) {
+if (isset($filter) AND  preg_match("!^([0-9.,]+)-([0-9.,]+)$!", $filter['amount'], $foo)) {
   if ($foo[1] > $foo[2]) {
     $filter['amount'] = $foo[2]."-".$foo[1]; // Special blondes check, invert amount range
   }
@@ -176,12 +181,12 @@ if ((strftime("%Y") % 4 == 0) && (strftime("%Y") % 100 != 0)) { // Leap year
   $days_in_month[1] = 29;
 }
 
-if (($filter['start_date'] != "") && ($filter['end_date'] == "")) {
+if (isset($filter) && ($filter['start_date'] != "") && ($filter['end_date'] == "")) {
   // If start_date is given and NOT end_date then we show transaction between
   // start_date and current date.
   $filter['end_date'] = strftime("%d/%m/%Y");
 }
-if (($filter['start_date'] == "") && ($filter['end_date'] != "")) {
+if (isset($filter) && ($filter['start_date'] == "") && ($filter['end_date'] != "")) {
   // If end_date is given and NOT start_date then we show transaction from the
   // start of the company to end_date
   $result = WFO::SQL("SELECT value FROM webfinance_pref WHERE type_pref='societe' AND owner=-1");
@@ -191,7 +196,7 @@ if (($filter['start_date'] == "") && ($filter['end_date'] != "")) {
 
   $filter['start_date'] = $company->date_creation;
 }
-if ($filter['start_date'] == "") { $filter['start_date'] = strftime("01/%m/%Y"); }
+if (isset($filter) && $filter['start_date'] == "") { $filter['start_date'] = strftime("01/%m/%Y"); }
 if ($filter['end_date'] == "") { $filter['end_date'] = strftime($days_in_month[strftime("%m")-1]."/%m/%Y"); }
 
 preg_match( "!([0-9]{2})/([0-9]{2})/([0-9]{4})!", $filter['start_date'],$foo);
@@ -243,7 +248,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
      // -------------------------------------------------------------------------------------------------------------
      // Begin where clause
      // Filter on type of transaction
-     if (count($filter['shown_cat'])) {
+  if (isset($filter['shown_cat']) && count($filter['shown_cat'])) {
        $res = WFO::SQL("SELECT count(*) FROM webfinance_categories WHERE id=1");
        list($res) = mysql_fetch_array($res);
 
@@ -259,7 +264,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
        $where_clause = preg_replace("/ OR $/", ")", $where_clause);
      }
 
-     if(count($filter['shown_type'])){
+if(isset($filter['shown_type']) && count($filter['shown_type'])){
        $where_clause .= " AND (";
        foreach($filter['shown_type'] as $type_name=>$dummy){
 	 $where_clause .= " type='$type_name' OR ";
@@ -379,7 +384,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
 	 $file="<a href='file.php?action=file&type=transactions&id=$tr->id' title='$tr->file_name'><img src='/imgs/icons/attachment.png'/></a>";
        }
 
-       if($view=="edit"){
+       if(isset($view) AND $view=="edit"){
 
 ?>
   <input type="hidden" name="query" value="?view=edit&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>" />
