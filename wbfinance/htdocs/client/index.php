@@ -41,8 +41,11 @@ if (isset($_GET['type']) AND $_GET['type']!="") {
   }
 }
 
+if(!isset($_GET['sort']))
+  $_GET['sort']="date";
+
 $w_clause="";
- if($user->admin<1 AND count($roles)==1 AND in_array($client_role,$roles) ) {
+ if(count($roles)==1 AND in_array($client_role,$roles) ) {
    $is_client=true;
    $w_clause=" AND webfinance_clients.id_user=$user->id_user ";
    $where_clause .= $w_clause;
@@ -93,15 +96,18 @@ $q="SELECT webfinance_invoices.id_facture ".
 
 $result = mysql_query($q) or wf_mysqldie();
 
-$mois = array();
 $num_factures = array();
+$count=0;
 while (list($id_facture) = mysql_fetch_array($result)) {
   $count++;
   $fa = $Facture->getInfos($id_facture);
   $class = ($count%2 == 0)?"even":"odd";
   $icon = $fa->is_paye?"paid":"not_paid";
   $total_ca_ht += $fa->total_ht;
-  $mois[$fa->mois_facture]++;
+  if(isset($mois[$fa->mois_facture]))
+    $mois[$fa->mois_facture]++;
+  else
+    $mois[$fa->mois_facture]=1;
 
    $description = "";
    $result2 = mysql_query("SELECT description FROM webfinance_invoice_rows WHERE id_facture=".$fa->id_facture);
@@ -245,8 +251,9 @@ $q="SELECT DISTINCT webfinance_clients.id_client, webfinance_clients.nom ".
     <table width="100%" border="0" cellspacing="0" cellpadding="5">
     <?php
       $w_clause="";
-	if(count($num_factures)>0){
+      	if(count($num_factures)>0){
 	  $w_clause .= " AND ( ";
+	  $tmp=array();
 	  foreach($num_factures as $id_facture=>$num_facture){
 	    $tmp[] .=" log RLIKE '#$num_facture' ";
 	    #$tmp[] .= " log RLIKE 'fa:$id_facture' ";
