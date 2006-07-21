@@ -18,8 +18,13 @@ require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/Facture.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/Client.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/TabStrip.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT'].'/inc/gettext.php');
+require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/Debug.php");
 
 $_SESSION['debug'] = WF_DEBUG;
+if(WF_DEBUG){
+  $debug = new Debug() ;
+  $debug->start();
+ }
 
 function parselogline($str) {
   if (preg_match("/(user|fa|client):([0-9]+)/", $str)) {
@@ -136,7 +141,7 @@ function getCurrency($id_bank){
     or wf_mysqldie();
   list($value) = mysql_fetch_array($result);
   $account = unserialize(base64_decode($value));
-  return array($account->currency,$account->exchange);
+  return array((isset($account->currency))?$account->currency:"",(isset($account->exchange))?$account->exchange:"");
 }
 
 //from osh
