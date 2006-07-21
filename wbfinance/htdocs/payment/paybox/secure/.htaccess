@@ -2,5 +2,10 @@ deny from all
 allow from 195.101.99.76
 allow from 195.101.99.77
 allow from 62.39.109.166
+allow from 194.50.38.4
+allow from 194.50.38.5
 allow from 194.50.38.6
-allow from 127.0.0.1
+allow from 195.101.99.69
+allow from 195.101.99.72
+allow from 10.0.0.0/8
+allow from 84.207.24.0/24
