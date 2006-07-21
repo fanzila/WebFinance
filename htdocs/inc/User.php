@@ -67,8 +67,12 @@ class User {
   }
 
   function isLogued() {
-    if (!is_array($_SESSION)) { return 0; }
-    return ($_SESSION['id_user'] > 0);
+    if (!is_array($_SESSION))
+      return 0;
+    if(isset($_SESSION['id_user']))
+      return ($_SESSION['id_user'] > 0);
+    else
+      return 0;
   }
 
   function random_password() {
