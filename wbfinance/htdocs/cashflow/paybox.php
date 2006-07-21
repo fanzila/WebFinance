@@ -65,7 +65,7 @@ $q = "SELECT id_paybox, id_invoice, email, reference, state, amount, currency , 
   "autorisation, transaction_id as trans, payment_type, card_type, transaction_sole_id, error_code, date, UNIX_TIMESTAMP(date) as ts_date  ".
   "FROM webfinance_paybox $where_clause ORDER BY date DESC";
 
-echo $q;
+//echo $q;
 $trs = mysql_query($q) or wf_mysqldie();
 
 $count=1;
