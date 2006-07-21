@@ -1,10 +1,10 @@
-<?php 
-// 
+<?php
+//
 // This file is part of « Webfinance »
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
-// 
+//
 // You can use and redistribute this file under the term of the GNU GPL v2.0
 //
 // $Id$
@@ -12,7 +12,7 @@
 require("inc/main.php");
 require("top_popup.php");
 
-$title = _("Pick a date"); 
+$title = _("Pick a date");
 
 if ((isset($_GET['jour'])) && (preg_match("/([0-9]{4})([0-9]{2})([0-9]{2})/", $_GET['jour'], $matches))) {
   $year = $matches[1];
@@ -26,8 +26,8 @@ if ((isset($_GET['jour'])) && (preg_match("/([0-9]{4})([0-9]{2})([0-9]{2})/", $_
     $year = strftime("%Y", time());
     $month = strftime("%m", time());
   }
+  $_GET['jour']=$year . $month."01";
 }
-
 
 function mycal($year, $month) {
     global $on, $off;
@@ -63,7 +63,7 @@ function mycal($year, $month) {
             $line_day = 1;
             $cal .= "$tr_\n$tr";
         }
-        $cal .= sprintf('<td onclick="clickDay(this);" class="cal_day%s" id="%s">%s</td>', 
+        $cal .= sprintf('<td onclick="clickDay(this);" class="cal_day%s" id="%s">%s</td>',
                         ($i==$day)?"_selected":"", strftime("%Y%m%d", mktime(0,0,0, $month,$i,$year)), $i);
         $line_day++;
     }
@@ -118,5 +118,5 @@ function validateChoice() {
 <div style="height: 185px; width: 185px; margin: auto auto auto auto;">
 <?php
 echo (mycal($year, $month));
-?> 
+?>
 </div>
