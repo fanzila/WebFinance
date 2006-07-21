@@ -13,7 +13,7 @@ class Debug {
   // For storing the path to the temporary log file
   var $debug_log;
 
-  function debug ($log = 'debug.log') {
+  function Debug ($log = 'debug.log') {
     $this->debug_log = $log;
   }
 

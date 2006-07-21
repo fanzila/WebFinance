@@ -22,7 +22,7 @@ require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/Debug.php");
 
 $_SESSION['debug'] = WF_DEBUG;
 if(WF_DEBUG){
-  $debug = new Debug() ;
+  $debug = new Debug($_SERVER['DOCUMENT_ROOT'].'/../logs/debug.log') ;
   $debug->start();
  }
 
