@@ -1,6 +1,7 @@
 <?php
 require("../inc/main.php");
 require_once("/usr/share/phplot/phplot.php");
+if (! $_SESSION['id_user'] > 0) { die(); }
 
 extract($_GET);
 if (!isset($width)) { $width = 500; }

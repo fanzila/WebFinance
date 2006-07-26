@@ -13,6 +13,7 @@
 
 require("../inc/main.php");
 require("../inc/barGraph.php");
+if (! $_SESSION['id_user'] > 0) { die(); }
 
 if (is_numeric($_GET['width']))
   $width = $_GET['width'];
