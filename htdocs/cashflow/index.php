@@ -232,7 +232,7 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
     <?php // Transaction listing ?>
     <form id="checkboxes" name="checkboxes" action="save_transaction.php" method="post"> <? // This form does not submit !! It's only here to allow apearance of checkboxes ?>
      <input type="hidden" name="action" value="update_transactions"/>
-    <table border="0" cellspacing="0" width="750" cellpadding="3" class="framed">
+    <table border="0" cellspacing="0" width="100%" cellpadding="3" class="framed">
       <tr style="text-align: center;" class="row_header">
         <td><input onmouseover="return escape('<?= _('Check and unchecks all transactions shown') ?>');" type="checkbox" onchange="checkAll(this);" /></td>
         <td></td>
@@ -414,7 +414,7 @@ if(isset($filter['shown_type']) && count($filter['shown_type'])){
       <option value="asap" <? if("asap"==$tr->type) echo "selected";  ?> ><?= _('ASAP') ?></option>
    </select>
   </td>
-  <td width="100%" style="font-size: 9px;">
+  <td width="100%" style="font-size: 10px;">
     <?=$tr->text?><br/>
     <i><?=$tr->comment?></i>&nbsp;<?=$file?>&nbsp;<a href="expenses.php?id_transaction=<?=$tr->id?>">[expenses]</a>
 <?php
