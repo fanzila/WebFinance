@@ -21,7 +21,7 @@ require($GLOBALS['_SERVER']['DOCUMENT_ROOT'].'/inc/gettext.php');
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/Debug.php");
 
 $_SESSION['debug'] = WF_DEBUG;
-if(WF_DEBUG){
+if(WF_DEBUG_ALL){
   $debug = new Debug($_SERVER['DOCUMENT_ROOT'].'/../logs/debug.log') ;
   $debug->start();
  }
