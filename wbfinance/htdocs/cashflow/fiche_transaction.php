@@ -42,9 +42,12 @@ if(mysql_num_rows($result)>0){
   <td><?=_('Account')?></td>
   <td>
      <select name="id_account" style="width: 210px;">
-        <option value="0"><?= _('-- Select an account --') ?></option>
       <?php
-      $result = mysql_query("SELECT id_pref,value FROM webfinance_pref WHERE owner=-1 AND type_pref='rib'");
+  $result = mysql_query("SELECT id_pref,value FROM webfinance_pref WHERE owner=-1 AND type_pref='rib'") or wf_mysqldie();
+if(mysql_num_rows($result)>1){
+  printf("<option value='0'>%s</option>",_('-- Select an account --'));
+ }
+
       while (list($id_cpt,$cpt) = mysql_fetch_array($result)) {
         $cpt = unserialize(base64_decode($cpt));
         printf(_('<option value="%d"%s>%s #%s</option>')."\n", $id_cpt, ($transaction->id_account==$id_cpt)?" selected":"", $cpt->banque, $cpt->compte );
