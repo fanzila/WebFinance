@@ -1,10 +1,10 @@
 <?php
-// 
+//
 // This file is part of « Webfinance »
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
-// 
+//
 // You can use and redistribute this file under the term of the GNU GPL v2.0
 //
 // $Id$
@@ -12,10 +12,11 @@
 // Generates an income graph based on the invoices in the database. Renders a SVG graphic.
 
 require("../inc/main.php");
+must_login();
 header("Content-Type: image/svg+xml; charset=utf8");
 
 // -----------------------------------------------------------------------------------------
-// Data definitions 
+// Data definitions
 // -----------------------------------------------------------------------------------------
 // Defines for the look of the graph
 $top_color = "#6785c3";
@@ -74,7 +75,7 @@ print '<?xml version="1.0" encoding="UTF-8" standalone="no"?>'; // Has to be pri
   <defs id="defs4">
     <linearGradient inkscape:collect="always" id="linearGradient2182">
       <stop style="stop-color:<?= $bottom_color ?>;stop-opacity:1" offset="0" id="stop2186" /> <!-- color top -->
-      <stop style="stop-color:<?= $top_color ?>;stop-opacity:1" offset="1" id="stop2184" /> <!-- color bottom --> 
+      <stop style="stop-color:<?= $top_color ?>;stop-opacity:1" offset="1" id="stop2184" /> <!-- color bottom -->
     </linearGradient>
     <linearGradient
        inkscape:collect="always"
@@ -113,7 +114,7 @@ print '<?xml version="1.0" encoding="UTF-8" standalone="no"?>'; // Has to be pri
       </cc:Work>
     </rdf:RDF>
   </metadata>
-<?php 
+<?php
 
 $max_value = 0;
 foreach ($bar_data as $bar) { if ($bar->value > $max_value) { $max_value = $bar->value; } }

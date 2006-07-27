@@ -1,7 +1,8 @@
 <?php
 require("../inc/main.php");
 require_once("/usr/share/phplot/phplot_data.php");
-if (! $_SESSION['id_user'] > 0) { die(); }
+
+must_login();
 
 global $User;
 $User->getInfos();

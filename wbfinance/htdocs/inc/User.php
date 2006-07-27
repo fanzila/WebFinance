@@ -69,8 +69,8 @@ class User {
   function isLogued() {
     if (!is_array($_SESSION))
       return 0;
-    if(isset($_SESSION['id_user']))
-      return ($_SESSION['id_user'] > 0);
+    if(isset($_SESSION['id_user']) AND $_SESSION['id_user']>0 )
+      return $this->exists($_SESSION['id_user']);
     else
       return 0;
   }
@@ -181,7 +181,7 @@ class User {
   }
 
   function exists($id_user){
-    $result = mysql_query("SELECT count(id_user) FROM webfinance_users WHERE id_user=$id_user") or wf_mysqldie();
+    $result = mysql_query("SELECT count(*) FROM webfinance_users WHERE id_user=$id_user") or wf_mysqldie();
     list($exists) = mysql_fetch_array($result);
     return $exists;
   }
