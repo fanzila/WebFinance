@@ -1,5 +1,6 @@
 <?php
 include("../../inc/main.php");
+must_login();
 
 if(!isset($_GET['id_client']) OR !isset($_GET['id_invoice']) ){
   echo "Missing arguments";

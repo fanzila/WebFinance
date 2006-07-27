@@ -30,7 +30,12 @@ if ($User->login($_POST)) {
 <body>
 <div style="margin-top: 15%; width: 100%; text-align: center;">
     <form action="login.php" method="post">
-    <input type="hidden" name="came_from" value="<?= $GLOBALS['_SERVER']['HTTP_REFERER'] ?>" />
+<?php
+  $came_from="/";
+  if(isset($_SESSION['came_from']))
+    $came_from=$_SESSION['came_from'];
+?>
+    <input type="hidden" name="came_from" value="<?=$came_from ?>" />
     <table border="0" cellspacing="0" cellpadding="10" style="border: solid 1px black; margin: auto auto auto auto;">
       <tr><td><?= _("Login") ?></td><td><input type="text" size="20" style="border: solid 1px #777;" name="login" id="login" value="" /></td></tr>
       <tr><td><?= _("Password") ?></td><td><input type="password" style="border: solid 1px #777;" size="20" name="password" /></td></tr>
@@ -39,4 +44,7 @@ if ($User->login($_POST)) {
     </form>
 </div>
 <center><a href="passwd.php"><?= _("Forgot password")?></a></center>
-<? include("bottom.php");?>
+<?
+$Revision = '$Revision$';
+include("bottom.php");
+?>
