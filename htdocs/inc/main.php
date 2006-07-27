@@ -158,6 +158,24 @@ function format_price($price) {
   return $price;
 }
 
+//security
+function must_login(){
+  if(isset($_SESSION['id_user']) AND $_SESSION['id_user']>0 ){
+    $User = new User();
+    if (! $User->isLogued() ) {
+      if(WF_DEBUG){
+	echo 'Not logged. Debug mode, please <a href="/login.php">log in</a>';
+	include("bottom.php");
+	die();
+      }
+      header("Location: ../");
+      die();
+    }
+  }else{
+   header("Location: ../");
+   die();
+  }
+}
 
 header("Content-Type: text/html; charset=utf-8");
 

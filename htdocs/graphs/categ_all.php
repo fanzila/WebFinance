@@ -2,7 +2,8 @@
 require("../inc/main.php");
 //require_once("/usr/share/phplot/phplot.php");
 require_once("phplot_cvs.php"); //<- this is the newest phplot than the debian package (stackedbars support)
-if (! $_SESSION['id_user'] > 0) { die(); }
+
+must_login();
 
 $ttf_dir = "/usr/share/fonts/truetype/freefont";
 

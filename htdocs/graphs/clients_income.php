@@ -15,6 +15,8 @@
 require("../inc/main.php");
 require("../inc/barGraph.php");
 
+must_login();
+
 if (is_numeric($_GET['width']))
   $width = $_GET['width'];
 else
