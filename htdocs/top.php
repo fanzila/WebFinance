@@ -19,12 +19,13 @@ global $roles;
 $User = new User();
 
 if (! $User->isLogued()) {
+  $_SESSION['came_from']=$_SERVER['REQUEST_URI'];
+
   if($_SESSION['debug']==1){
     echo 'Not logged. Debug mode, please <a href="/login.php">log in</a>';
     include("bottom.php");
     die();
   }
-
   header("Location: /login.php");
   die();
 }

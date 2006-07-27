@@ -163,17 +163,19 @@ function must_login(){
   if(isset($_SESSION['id_user']) AND $_SESSION['id_user']>0 ){
     $User = new User();
     if (! $User->isLogued() ) {
+      $_SESSION['came_from']=$_SERVER['REQUEST_URI'];
       if(WF_DEBUG){
 	echo 'Not logged. Debug mode, please <a href="/login.php">log in</a>';
 	include("bottom.php");
 	die();
       }
-      header("Location: ../");
+      header("Location: ../login.php");
       die();
     }
   }else{
-   header("Location: ../");
-   die();
+    $_SESSION['came_from']=$_SERVER['REQUEST_URI'];
+    header("Location: ../login.php");
+    die();
   }
 }
 
