@@ -41,10 +41,13 @@ function checkForm(f) {
 <table class="bordered" border="0" cellspacing="0" cellpadding="3">
 <tr>
   <td><?=_('Account :')?></td>
-  <td><select name="id_account" style="width: 150px;">
-        <option value="-1"><?= _('-- Select an account --') ?></option>
-      <?php
-      $result = mysql_query("SELECT id_pref,value FROM webfinance_pref WHERE owner=-1 AND type_pref='rib'");
+  <td><select name="id_account" style="width: 250px;">
+  <?php
+  $result = mysql_query("SELECT id_pref,value FROM webfinance_pref WHERE owner=-1 AND type_pref='rib'") or wf_mysqldie();
+if(mysql_num_rows($result)>1){
+  printf("<option value='-1'>%s</option>",_('-- Select an account --'));
+ }
+
       while (list($id_cpt,$cpt) = mysql_fetch_array($result)) {
         $cpt = unserialize(base64_decode($cpt));
         printf(_('        <option value="%d"%s>%s #%s</option>')."\n", $id_cpt, ($filter['id_account']==$id_cpt)?" selected":"", $cpt->banque, $cpt->compte );
@@ -56,7 +59,7 @@ function checkForm(f) {
   <td>Fichier CSV</td><td><input type="file" name="csv" /></td>
 </tr>
 <tr>
-  <td>Format du fichier</td><td><select name="format"><option value="import_none.php">-- Choisissez --</option><?php
+	<td>Format du fichier</td><td><select name="format"><option value="import_none.php">-- <?=_('Select')?> --</option><?php
     foreach (glob("import_*.php") as $filtre) {
       preg_match("/import_(.*).php$/", $filtre, $matches);
 
