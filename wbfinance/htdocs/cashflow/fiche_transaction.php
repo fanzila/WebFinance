@@ -11,6 +11,7 @@
 
 require("../inc/main.php");
 require("../top_popup.php");
+must_login();
 
 $result = mysql_query("SELECT id, id_category, id_account, text, amount, exchange_rate, type, date, comment, file_name , id_invoice,
                               unix_timestamp(date) as ts_date
@@ -29,7 +30,7 @@ if(mysql_num_rows($result)>0){
   $transaction->text="";
   $transaction->amount=0;
   $transaction->exchange_rate=1;
-  $transaction->type="real";
+  $transaction->type="prevision";
   $transaction->file_name="";
  }
 
@@ -62,7 +63,7 @@ if(mysql_num_rows($result)>0){
   <td><?= _('Category') ?></td>
  <td colspan="3">
   <select name="id_category"><?php
-  $result = mysql_query("SELECT id,name FROM webfinance_categories ORDER BY name");
+    $result = mysql_query("SELECT id,name FROM webfinance_categories ORDER BY name") or wf_mysqldie();
   while (list($id,$name) = mysql_fetch_array($result)) {
   printf('<option value="%d"%s>%s</option>', $id, ($id==$transaction->id_category)?" selected":"", $name );
  }

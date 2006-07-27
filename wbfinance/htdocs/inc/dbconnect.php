@@ -34,6 +34,9 @@ if (!defined('WF_SQL_PASS')) {
 if(!defined('WF_DEBUG')){
   define('WF_DEBUG',1);
  }
+if(!defined('WF_DEBUG_ALL')){
+  define('WF_DEBUG_ALL',0);
+ }
 
 $dbi = mysql_pconnect(WF_SQL_HOST,WF_SQL_LOGIN, WF_SQL_PASS)
   or die("Could not connect to mysql : ".mysql_error());
