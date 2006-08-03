@@ -52,7 +52,7 @@ foreach ($releases as $r) {
 <ul>
 <li>Install pre-requisites (debian-centric)
 <pre class="shell">
-apt-get install php-fpdf apache php4 mysql-server-4.1 ttf-freefont gettext libphp-phpplot perlmagick libphp-phpmailer
+apt-get install php-fpdf apache php4 mysql-server-4.1 ttf-freefont gettext libphp-phplot perlmagick libphp-phpmailer
 </pre></li>
 
 <li>Create a database, and load the default schema</li>
@@ -104,6 +104,9 @@ echo '30 7  * * *  www-data  php /path/to/webfinance/htdocs/inc/scheduler.php' >
     make -C /path/to/webfinance/doc
     </pre>
     </li>
+<li>
+	Paybox support:
+</li>
 
 </ul>
 
