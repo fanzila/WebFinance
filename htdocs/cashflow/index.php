@@ -149,10 +149,19 @@ if (isset($filter['shown_cat']['invert']) AND $filter['shown_cat']['invert'] == 
 
 // Calculate balance for each transaction
 $w="";
+
 if (isset($filter['id_account']) AND ($filter['id_account'] != 0) ) {
-  $w = "WHERE id_account=".$filter['id_account'];
+  $w = "WHERE id_account=".$filter['id_account']." " ;
  }
-$req=WFO::SQL("SELECT id, amount, id_account, exchange_rate FROM webfinance_transactions $w ORDER BY date");
+if(isset($filter['shown_type']) AND count($filter['shown_type'])){
+  foreach($filter['shown_type'] as $type=>$value){
+    $w .= " AND type='$type' ";
+  }
+ }
+
+$w = preg_replace('/^\sAND\s/',' WHERE ',$w);
+
+$req=WFO::SQL("SELECT id, amount, id_account, exchange_rate FROM webfinance_transactions $w  ORDER BY date");
 $balance_yesterday=0;
 $balance_lines=array();
 while ($row=mysql_fetch_assoc($req)) {
@@ -162,6 +171,7 @@ while ($row=mysql_fetch_assoc($req)) {
   $balance_lines[$row['id']]=$balance_yesterday+($row['amount']/$row['exchange_rate']);
   $balance_yesterday+=$row['amount']/$row['exchange_rate'];
 }
+mysql_free_result($req);
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Check filter data coherence :
