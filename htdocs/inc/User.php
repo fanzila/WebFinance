@@ -293,7 +293,7 @@ class User {
       $this->prefs->theme = "main";
     }
     if(!isset($this->prefs->graphgrid)){
-      $this->prefs->graphgrid = 0;
+      $this->prefs->graphgrid = "off";
     }
   }
 
