@@ -16,7 +16,7 @@ $roles = 'admin,manager';
 include("../top.php");
 include("nav.php");
 
-$result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='societe' AND owner=-1");
+$result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='societe' AND owner=-1") or wf_mysqldie();
 list($value) = mysql_fetch_array($result);
 mysql_free_result($result);
 
