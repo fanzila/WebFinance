@@ -278,7 +278,7 @@ if ($movingaverage) {
   $graph2->DoMovingAverage(0,$moving_average_blur,FALSE);
 }
 
-if (isset($User->prefs->graphgrid) && $User->prefs->graphgrid == "on") {
+if (isset($User->prefs->graphgrid) && $User->prefs->graphgrid ) {
   $graph2->SetDrawXGrid(true);
   $graph2->SetDrawYGrid(true);
 } else {
