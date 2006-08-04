@@ -49,7 +49,7 @@ $result = mysql_query("SELECT sum(fl.prix_ht*fl.qtt) as total, count(f.id_factur
 $count = mysql_num_rows($result);
 while ($billed = mysql_fetch_object($result)) {
   $billed->total = sprintf("%d", $billed->total);
-  $bar->addValue($billed->total, $count--, $billed->nom, preg_replace("/\./", ",", sprintf("%.1f", $billed->total/1000))."K\xe2\x82\xac");
+  $bar->addValue($billed->total, $count--, $billed->nom."\n\n".preg_replace("/\./", ",", sprintf("%.1f", $billed->total/1000))."K\xe2\x82\xac" , preg_replace("/\./", ",", sprintf("%.1f", $billed->total/1000))."K\xe2\x82\xac");
 }
 
 $bar->realise();

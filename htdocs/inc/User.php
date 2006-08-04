@@ -292,6 +292,9 @@ class User {
     if (!isset($this->prefs->theme)) {
       $this->prefs->theme = "main";
     }
+    if(!isset($this->prefs->graphgrid)){
+      $this->prefs->graphgrid = 0;
+    }
   }
 
   function sendInfo($id_user,$passwd){
