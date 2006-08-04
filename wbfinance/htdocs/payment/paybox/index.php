@@ -45,7 +45,7 @@ if(!empty($company->wf_url) AND strlen($company->wf_url)>3){
  }
 
 $time=time();
-$ref_cmd = $inv->id_facture . $time ;
+$ref_cmd = "WEBFINANCE;".$inv->id_facture . $time ;
 
 $params = array(
 		"PBX_MODE" => "1",
@@ -55,7 +55,7 @@ $params = array(
 		"PBX_DEVISE" => "978", //978 =  Eur, 840 = $ , 952 = CFA
 		"PBX_CMD" => $ref_cmd,
 		"PBX_PORTEUR" => $Client->email,
-		"PBX_RETOUR" => "amount:M;ref:R;auto:A;trans:T;pbxtype:P;card:C;soletrans:S;error:E",
+		"PBX_RETOUR" => "ref:R;auto:A;trans:T;montant:M;pbxtype:P;card:C;soletrans:S;error:E",
 		"PBX_IDENTIFIANT" => "2",
 
 		"PBX_EFFECTUE" => "http://$site/payment/paybox/ok.php",
