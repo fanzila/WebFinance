@@ -65,10 +65,10 @@ switch ($_GET['sort']) {
 
 ?>
 
-<table border="0" cellspacing="5" cellpadding="0">
-<tr valign="top"><td>
+<table width="100%" cellspacing="5" cellpadding="0">
+<tr valign="top"><td width="60%">
 
-<table border=0 cellspacing=0 cellpadding=3 style="border: solid 1px black;">
+<table width="100%" cellspacing=0 cellpadding=3 style="border: solid 1px black;">
 <tr align="center" class="row_header">
   <td></td>
   <td><a href="?sort=date&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Invoice date') ?></a></td>
@@ -110,12 +110,15 @@ while (list($id_facture) = mysql_fetch_array($result)) {
     $mois[$fa->mois_facture]=1;
 
    $description = "";
-   $result2 = mysql_query("SELECT description FROM webfinance_invoice_rows WHERE id_facture=".$fa->id_facture);
+   $result2 = mysql_query("SELECT description FROM webfinance_invoice_rows WHERE id_facture=".$fa->id_facture) or wf_mysqldie();
    while (list($desc) = mysql_fetch_array($result2)) {
      $desc = preg_replace("/\r\n/", " ", $desc);
      $desc = preg_replace("/\"/", "", $desc);
      $desc = preg_replace("/\'/", "", $desc);
      $description .= $desc."<br/>";
+   }
+   if(!($fa->is_paye)){
+     $description .= "<i>"._('Veuillez cliquer sur le bouton rouge pour payer la facture par CB.')."</i>";
    }
    mysql_free_result($result2);
 
@@ -140,8 +143,8 @@ while (list($id_facture) = mysql_fetch_array($result)) {
      echo $fa->nom_client;
 ?>
   </td>
-  <td><?=$fa->nice_total_ht?>&euro;</td>
-  <td><?=$fa->nice_total_ttc?>&euro;</td>
+  <td align="right"><?=$fa->nice_total_ht?> &euro;</td>
+  <td align="right"><?=$fa->nice_total_ttc?> &euro;</td>
   <td>
      <a href="../prospection/gen_facture.php?id=<?=$fa->id_facture?>"><img src="/imgs/icons/pdf.gif" alt="Chopper" /></a>
 <?
@@ -167,15 +170,15 @@ while (list($id_facture) = mysql_fetch_array($result)) {
 </td><td>
 
 <form  method="get">
-<table border="0" cellspacing="0" cellpadding="3" style="border: solid 1px black;" width="350">
+<table cellspacing="0" cellpadding="3" style="border: solid 1px black;" width="100%">
 <tr align="center" class="row_header">
-  <td colspan="2"><?= _('Simple Filter')?></td>
+  <td colspan="2"><?= _('Filter')?></td>
 </tr>
 <tr>
   <td>Total CA</td>
   <td>
-    <b><?= number_format($total_ca_ht, 2, ',', ' ') ?>&euro; HT</b> /
-    <b><?= number_format(1.196*$total_ca_ht, 2, ',', ' ') ?>&euro; TTC</b>
+    <b><?= number_format($total_ca_ht, 2, ',', ' ') ?> &euro; HT</b> /
+    <b><?= number_format(1.196*$total_ca_ht, 2, ',', ' ') ?> &euro; TTC</b>
   </td>
 </tr>
 <tr>
@@ -241,7 +244,7 @@ $q="SELECT DISTINCT webfinance_clients.id_client, webfinance_clients.nom ".
 </form>
 <br/>
 
-<table border="0" cellspacing="0" cellpadding="3" style="border: solid 1px black;" width="350">
+<table border="0" cellspacing="0" cellpadding="3" style="border: solid 1px black;" width="100%">
 <tr align="center">
   <td><?= _('Events')?></td>
 </tr>
