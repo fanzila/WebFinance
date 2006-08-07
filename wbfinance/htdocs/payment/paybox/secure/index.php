@@ -7,7 +7,7 @@ extract($_GET);
 //"PBX_RETOUR" => "montant:M;ref:R;auto:A;trans:T;pbxtype:P;card:C;soletrans:S;error:E",
 //http://webfinance.dev.jexiste.org/payment/paybox/ok.php?montant=14472&ref=1041153308810&auto=XXXXXX&trans=605964387&pbxtype=CARTE&card=CB&soletrans=608599999&error=00000
 
-if(isset($ref) AND isset($auto)){
+if(isset($ref,$auto) AND !empty($ref) AND !empty($auto)){
   $res = mysql_query("UPDATE webfinance_paybox SET ".
 		     "state='ok' , ".
 		     "autorisation='$auto' , ".
@@ -33,6 +33,8 @@ if(isset($ref) AND isset($auto)){
     }
   }
  }else{
+  require("/usr/share/php/libphp-phpmailer/class.phpmailer.php");
+
   $result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='societe' AND owner=-1") or wf_mysqldie();
   list($value) = mysql_fetch_array($result);
   mysql_free_result($result);
