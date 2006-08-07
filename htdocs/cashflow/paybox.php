@@ -179,9 +179,10 @@ while($tr = mysql_fetch_object($trs)){
 
   //s�parer les mois
   $current_month=ucfirst(strftime("%B %Y",$tr->ts_date));
+  $current_month = utf8_encode($current_month);
   if(!empty($prev_date)){
     if(date("m",$prev_date)!=date("m",$tr->ts_date))
-      echo "<tr class=\"row_even\"><td colspan='8' align='center'><b>$current_month</b></td></tr>";
+      echo "<tr class=\"row_even\"><td colspan='8' align='center'><b>".$current_month."</b></td></tr>";
   }else{
     echo "<tr class=\"row_even\"><td colspan='8' align='center'><b>$current_month</b></td></tr>";
 	 $cur_date=$tr->ts_date;

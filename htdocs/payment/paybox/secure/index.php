@@ -5,7 +5,7 @@ $title = _("Paybox");
 extract($_GET);
 
 //"PBX_RETOUR" => "montant:M;ref:R;auto:A;trans:T;pbxtype:P;card:C;soletrans:S;error:E",
-//http://webfinance.dev.jexiste.org/payment/paybox/ok.php?montant=14472&ref=1041153308810&auto=XXXXXX&trans=605964387&pbxtype=CARTE&card=CB&soletrans=608599999&error=00000
+//http://webfinance.dev.jexiste.org/payment/paybox/secure/?montant=14472&ref=1041153308810&auto=XXXXXX&trans=605964387&pbxtype=CARTE&card=CB&soletrans=608599999&error=00000
 
 if(isset($ref,$auto) AND !empty($ref) AND !empty($auto)){
   $res = mysql_query("UPDATE webfinance_paybox SET ".
