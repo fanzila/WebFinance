@@ -63,6 +63,13 @@ if(count($invalid_trs)>0){
     print "<form action='save_transaction.php' method='post'>";
     print "<input type='hidden' name='action' value='update_invoices'>";
 
+    //recherche de la catégorie unknow
+    $id_default_category = 1;
+    $result = mysql_query("SELECT COUNT(*) , id FROM webfinance_categories WHERE name RLIKE 'unknown' GROUP BY id") or wf_mysqldie();
+    list($nb_matches,$id, $name) = mysql_fetch_array($result);
+    if($nb_matches==1)
+      $id_default_category = $id;
+
     foreach ($transactions as $op) {
       printf("Transaction de <b>%s&euro;</b> du <b>%s</b> intitulÃ©e <i>%s</i><div style=\"font-size: 10px; border-left: solid 4px #ceceff; margin-left: 10px; padding-left: 10px;\">\n",
 	     $op->montant, $op->date, $op->desc );
@@ -71,7 +78,8 @@ if(count($invalid_trs)>0){
       // automagiquement.
 
       //default id category
-      $id_categorie = 1;
+
+      $id_categorie = $id_default_category;
       $result = mysql_query("SELECT COUNT(*) , id , name FROM webfinance_categories WHERE re IS NOT NULL AND '".addslashes($op->desc)."' RLIKE re GROUP BY id")
 	or wf_mysqldie();
       list($nb_matches,$id, $name) = mysql_fetch_array($result);
