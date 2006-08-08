@@ -125,27 +125,14 @@ mysql_free_result($result);
 // Setup the default filter if none is given
 extract($_GET);
 
-if (isset($filter['shown_cat']['invert']) AND $filter['shown_cat']['invert'] == "on") {
-  $result = WFO::SQL("SELECT id FROM webfinance_categories");
-
-  while (list($id) = mysql_fetch_array($result)) {
-    if(isset($filter['shown_cat'][$id]) == "on")
-      unset($filter['shown_cat'][$id]);
-    else
-      $filter['shown_cat'][$id] = "on";
-  }
-
-  mysql_free_result($result);
-
- }else if (isset($filter['shown_cat']) AND ( (!count($filter['shown_cat'])) || ($filter['shown_cat']['check_all'] == "on")  )) {
+if (isset($filter['shown_cat']) AND ( (!count($filter['shown_cat'])) || ($filter['shown_cat']['check_all'] == "on")  )) {
   $result = WFO::SQL("SELECT id FROM webfinance_categories");
 
   while (list($id) = mysql_fetch_array($result))
     $filter['shown_cat'][$id] = "on";
 
   mysql_free_result($result);
-
-}
+ }
 
 // Calculate balance for each transaction
 $w="";
@@ -258,21 +245,36 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w*\\&*+/", "", $GLOBA
      // -------------------------------------------------------------------------------------------------------------
      // Begin where clause
      // Filter on type of transaction
-  if (isset($filter['shown_cat']) && count($filter['shown_cat'])) {
-       $res = WFO::SQL("SELECT count(*) FROM webfinance_categories WHERE id=1");
-       list($res) = mysql_fetch_array($res);
+  if( isset($filter['shown_cat']) && count($filter['shown_cat']) && !isset($filter['shown_cat']['check_all']) ) {
 
-       if($res != 1)
-	 $where_clause .= " (id_category=1 OR ";
-       else
-	 $where_clause .= " (";
+    $operator = "=";
+    $clause = "OR";
+    if(isset($filter['shown_cat']['invert']) AND $filter['shown_cat']['invert'] == "on" ){
+      $operator = "<>";
+      $clause = "AND";
+    }
 
-       foreach ($filter['shown_cat'] as $catid=>$dummy) {
-	 if(is_numeric($catid))
-	   $where_clause .= "id_category=$catid OR ";
-       }
-       $where_clause = preg_replace("/ OR $/", ")", $where_clause);
-     }
+    $where_clause .= " (";
+
+    foreach ($filter['shown_cat'] as $catid=>$dummy) {
+      if(is_numeric($catid))
+	$where_clause .= "id_category".$operator." ".$catid." ".$clause." ";
+    }
+    $where_clause = preg_replace("/ (OR|AND) $/", ")", $where_clause);
+
+    //affichage
+    if(isset($filter['shown_cat']['invert']) AND $filter['shown_cat']['invert'] == "on" ){
+      $result = WFO::SQL("SELECT id FROM webfinance_categories");
+      while (list($id) = mysql_fetch_array($result)) {
+	if(isset($filter['shown_cat'][$id]) == "on")
+	  unset($filter['shown_cat'][$id]);
+	else
+	  $filter['shown_cat'][$id] = "on";
+      }
+      mysql_free_result($result);
+    }
+
+  }
 
 if(isset($filter['shown_type']) && count($filter['shown_type'])){
        $where_clause .= " AND (";
