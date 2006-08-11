@@ -178,32 +178,45 @@ if ((strftime("%Y") % 4 == 0) && (strftime("%Y") % 100 != 0)) { // Leap year
   $days_in_month[1] = 29;
 }
 
-if (isset($filter) && ($filter['start_date'] != "") && ($filter['end_date'] == "")) {
-  // If start_date is given and NOT end_date then we show transaction between
-  // start_date and current date.
-  $filter['end_date'] = strftime("%d/%m/%Y");
-}
-if (isset($filter) && ($filter['start_date'] == "") && ($filter['end_date'] != "")) {
-  // If end_date is given and NOT start_date then we show transaction from the
-  // start of the company to end_date
-  $result = WFO::SQL("SELECT value FROM webfinance_pref WHERE type_pref='societe' AND owner=-1");
-  list($value) = mysql_fetch_array($result);
-  mysql_free_result($result);
-  $company = unserialize(base64_decode($value));
+if(isset($filter)){
 
-  $filter['start_date'] = $company->date_creation;
-}
-if (isset($filter) && $filter['start_date'] == "") {
-  $filter['start_date'] = strftime("01/%m/%Y");
-}
-if ($filter['end_date'] == "") {
-  $filter['end_date'] = strftime($days_in_month[strftime("%m")-1]."/%m/%Y");
-}
+  #si la date start est vide on utilise la plus ancienne date d'une transaction
+  if( ( isset($filter['start_date']) AND empty($filter['start_date']) ) OR ( !isset($filter['start_date']) ) ){
+    $result = WFO::SQL("SELECT UNIX_TIMESTAMP(MIN(date)) as ts_start_date FROM webfinance_transactions");
+    list($ts_start_date) = mysql_fetch_array($result);
+    if(empty($ts_start_date)){
+      $ts_start_date=mktime();
+    }
+    $filter['start_date'] = strftime("%d/%m/%Y",$ts_start_date);
+  }
 
-preg_match( "!([0-9]{2})/([0-9]{2})/([0-9]{4})!", $filter['start_date'],$foo);
-$ts_start_date = mktime( 0,0,0, $foo['2'], $foo['1'], $foo['3']);
-preg_match( "!([0-9]{2})/([0-9]{2})/([0-9]{4})!", $filter['end_date'],$foo);
-$ts_end_date = mktime( 0,0,0, $foo['2'], $foo['1'], $foo['3']);
+  #si la date end est vide on utilise la plus récente date d'une transaction
+  if( ( isset($filter['end_date']) AND empty($filter['end_date']) ) OR ( !isset($filter['end_date']) ) ){
+    $result = WFO::SQL("SELECT UNIX_TIMESTAMP(MAX(date)) as ts_end_date FROM webfinance_transactions");
+    list($ts_end_date) = mysql_fetch_array($result);
+    if(empty($ts_end_date)){
+      $ts_end_date=mktime();
+    }
+    $filter['end_date'] = strftime("%d/%m/%Y",$ts_end_date);
+  }
+
+  preg_match( "!([0-9]{2})/([0-9]{2})/([0-9]{4})!", $filter['start_date'],$foo);
+  $ts_start_date = mktime( 0,0,0, $foo['2'], $foo['1'], $foo['3']);
+  preg_match( "!([0-9]{2})/([0-9]{2})/([0-9]{4})!", $filter['end_date'],$foo);
+  $ts_end_date = mktime( 0,0,0, $foo['2'], $foo['1'], $foo['3']);
+
+ }else{
+  $result = WFO::SQL("SELECT UNIX_TIMESTAMP(MIN(date)) as ts_start_date , UNIX_TIMESTAMP(MAX(date)) as ts_end_date FROM webfinance_transactions");
+  list($ts_start_date,$ts_end_date) = mysql_fetch_array($result);
+  if(empty($ts_start_date)){
+    $ts_start_date=mktime();
+  }
+  if(empty($ts_end_date)){
+    $ts_end_date=mktime();
+  }
+  $filter['start_date'] = strftime("%d/%m/%Y",$ts_start_date);
+  $filter['end_date'] = strftime("%d/%m/%Y",$ts_end_date);
+ }
 
 // end date must be after begin date. If not reverse them
 if ($ts_start_date > $ts_end_date) {
