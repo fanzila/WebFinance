@@ -193,8 +193,12 @@ if (isset($filter) && ($filter['start_date'] == "") && ($filter['end_date'] != "
 
   $filter['start_date'] = $company->date_creation;
 }
-if (isset($filter) && $filter['start_date'] == "") { $filter['start_date'] = strftime("01/%m/%Y"); }
-if ($filter['end_date'] == "") { $filter['end_date'] = strftime($days_in_month[strftime("%m")-1]."/%m/%Y"); }
+if (isset($filter) && $filter['start_date'] == "") {
+  $filter['start_date'] = strftime("01/%m/%Y");
+}
+if ($filter['end_date'] == "") {
+  $filter['end_date'] = strftime($days_in_month[strftime("%m")-1]."/%m/%Y");
+}
 
 preg_match( "!([0-9]{2})/([0-9]{2})/([0-9]{4})!", $filter['start_date'],$foo);
 $ts_start_date = mktime( 0,0,0, $foo['2'], $foo['1'], $foo['3']);
@@ -204,13 +208,8 @@ $ts_end_date = mktime( 0,0,0, $foo['2'], $foo['1'], $foo['3']);
 // end date must be after begin date. If not reverse them
 if ($ts_start_date > $ts_end_date) {
   // Reverse : switch timestamps and formated dates
-  $foo = $filter['start_date'];
-  $filter['start_date'] = $filter['end_date'];
-  $filter['end_date'] = $foo;
-
-  $foo = $ts_start_date;
-  $ts_start_date = $ts_end_date;
-  $ts_end_date = $foo;
+  list($filter['start_date'],$filter['end_date']) = array($filter['end_date'],$filter['start_date']);
+  list($ts_start_date,$ts_end_date) = array($ts_end_date,$ts_start_date);
 }
 
 // End check filter data coherence
@@ -347,7 +346,7 @@ if(isset($filter['shown_type']) && count($filter['shown_type'])){
      $result = WFO::SQL($q);
 
      $filter_base = sprintf("sort=%d&filter[start_date]=%s&filter[end_date]=%s&filter[textsearch]=%s&filter[amount]=%s",
-                            $_GET['sort'], $filter[start_date], $filter[end_date], $filter[textsearch], $filter[amount] );
+                            $_GET['sort'], $filter['start_date'], $filter['end_date'], $filter['textsearch'], $filter['amount'] );
      $result = WFO::SQL($q);
      $total_shown = 0;
      $count = 1;
