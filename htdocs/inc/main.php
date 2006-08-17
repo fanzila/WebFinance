@@ -73,6 +73,16 @@ function randomPass() {
   print $passwd;
 }
 
+function random_int($length=15) {
+  $rand='';
+
+  for($i=0; $i<$length; $i++) {
+    $rand.=rand(0,9);
+  }
+
+  return $rand;
+ }
+
 // Logs a message ala syslog
 function logmessage($msg) {
   $id = (empty($_SESSION['id_user']))?-1:$_SESSION['id_user'];

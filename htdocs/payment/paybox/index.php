@@ -44,8 +44,7 @@ if(!empty($company->wf_url) AND strlen($company->wf_url)>3){
   $site=preg_replace('/^http:\/\//i', '' ,$company->wf_url );
  }
 
-$time=time();
-$ref_cmd = "WEBFINANCE;".$inv->id_facture . $time ;
+$ref_cmd = "WEBFINANCE;".random_int(10) ;
 
 $params = array(
 		"PBX_MODE" => "1",
