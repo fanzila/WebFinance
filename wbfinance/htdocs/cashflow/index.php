@@ -447,7 +447,7 @@ if(isset($filter['shown_type']) && count($filter['shown_type'])){
      }
 ?>
   </td>
-  <td style="text-align: right; font-weight: bold; background: $amount_color" nowrap><?=$fmt_amount?> $currency</td>
+  <td style="text-align: right; font-weight: bold; background: $amount_color" nowrap><?=$fmt_amount?> <?=$currency?></td>
       <td style="text-align: right; background: <?=$balance_color?>;" nowrap><?=$fmt_balance?> &euro;</td>
 </tr>
 
