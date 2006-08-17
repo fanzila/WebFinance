@@ -69,16 +69,16 @@ function update_ca() {
 }
 
 function regenerate($id) {
-  mysql_query("UPDATE webfinance_invoices SET date_generated=NULL,facture_file=NULL where id_facture=$id");
+  mysql_query("UPDATE webfinance_invoices SET date_generated=NULL,facture_file=NULL where id_facture=$id") or wf_mysqldie();
 }
 
 function renum() {
-  $result = mysql_query("SELECT id_facture FROM webfinance_invoice_rows");
+  $result = mysql_query("SELECT id_facture FROM webfinance_invoice_rows") or wf_mysqldie();
   while (list($id_facture) = mysql_fetch_array($result)) {
     $count = 1;
-    $result2 = mysql_query("SELECT id_facture_ligne FROM webfinance_invoice_rows WHERE id_facture=$id_facture ORDER BY ordre");
+    $result2 = mysql_query("SELECT id_facture_ligne FROM webfinance_invoice_rows WHERE id_facture=$id_facture ORDER BY ordre") or wf_mysqldie();
     while (list($id_facture_ligne) = mysql_fetch_array($result2)) {
-      mysql_query("UPDATE webfinance_invoice_rows SET ordre=$count WHERE id_facture_ligne=$id_facture_ligne");
+      mysql_query("UPDATE webfinance_invoice_rows SET ordre=$count WHERE id_facture_ligne=$id_facture_ligne") or wf_mysqldie();
       $count += 2;
     }
     mysql_free_result($result2);
