@@ -95,8 +95,8 @@ if ($GLOBALS['HTTP_SERVER_VARS']['REQUEST_METHOD'] == "POST") {
 if ($action == "save_facture") {
   // save_facture
   // Enregistrement d'une facture existante
-#  print "<pre>";
-#  print_r($_POST);
+//   print "<pre>";
+//   print_r($_POST);
   extract($_POST);
 
   // Enregistrement des paramètres facture
@@ -223,9 +223,10 @@ if ($action == "save_facture") {
   } else
     $_SESSION['message'] = _('Invoice updated');
 
-  $Facture->updateTransaction($_POST['id_facture'],$type_prev);
-
-  $_SESSION['message'] .=  "<br>"._('Transaction updated');
+  if($type_doc=="facture" || ($type_doc=="devis" &&  $is_paye=="on" )){
+    $Facture->updateTransaction($_POST['id_facture'],$type_prev);
+    $_SESSION['message'] .=  "<br>"._('Transaction updated');
+  }
 
   header("Location: edit_facture.php?id_facture=".$_POST['id_facture']);
 
