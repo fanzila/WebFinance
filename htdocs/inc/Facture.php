@@ -160,7 +160,7 @@ class Facture extends WFO {
       $facture = $this->getInfos($id_invoice);
 
       if($facture->is_paye){
-	$type="real";
+	$type="asap";
 	$date_transaction=date("Y-m-d", $facture->timestamp_date_paiement );
       }else if($type_prev==1){
 	$type="asap";
