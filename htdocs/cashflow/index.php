@@ -18,6 +18,8 @@ $roles="manager,accounting";
 require("../top.php");
 require("nav.php");
 
+extract($_GET);
+
 $Invoice = new Facture();
 $User = new User();
 
@@ -28,6 +30,16 @@ if(is_numeric($User->prefs->transactions_per_page) and $User->prefs->transaction
   $transactions_per_page = $User->prefs->transactions_per_page;
 else
   $transactions_per_page = 50;
+
+$view="";
+if(isset($_GET['view'])){
+  $view=$_GET['view'];
+ }
+
+$page=0;
+if(isset($filter,$filter['page'])){
+  $page=$filter['page'];
+ }
 
 ?>
 <script type="text/javascript">
@@ -123,7 +135,7 @@ mysql_free_result($result);
 //print_r($_GET);
 
 // Setup the default filter if none is given
-extract($_GET);
+
 
 if (isset($filter['shown_cat']) AND ( (!count($filter['shown_cat'])) || ($filter['shown_cat']['check_all'] == "on")  )) {
   $result = WFO::SQL("SELECT id FROM webfinance_categories");
@@ -296,7 +308,7 @@ if(isset($filter['shown_type']) && count($filter['shown_type'])){
        $where_clause = preg_replace("/ OR $/", ")", $where_clause);
      }
 
-     $limit_clause = sprintf(" LIMIT %d,%d", $filter['page']*$transactions_per_page, $transactions_per_page );
+     $limit_clause = sprintf(" LIMIT %d,%d", $page*$transactions_per_page, $transactions_per_page );
 
      // Filter on dates
      if (($ts_start_date != 0) && ($ts_end_date != 0)) {
@@ -359,7 +371,7 @@ if(isset($filter['shown_type']) && count($filter['shown_type'])){
      $result = WFO::SQL($q);
 
      $filter_base = sprintf("sort=%d&filter[start_date]=%s&filter[end_date]=%s&filter[textsearch]=%s&filter[amount]=%s&view=%s",
-                            $_GET['sort'], $filter['start_date'], $filter['end_date'], $filter['textsearch'], $filter['amount'],$view );
+                            $_GET['sort'], $filter['start_date'], $filter['end_date'], $filter['textsearch'], $filter['amount'], $view);
      $result = WFO::SQL($q);
      $total_shown = 0;
      $count = 1;
@@ -519,6 +531,7 @@ EOF;
     <form id="main_form" onchange="this.submit();" method="get">
     <input type="hidden" name="sort" value="<?= $_GET['sort'] ?>" />
     <input type="hidden" name="view" value="<?= $view ?>" />
+    <input type="hidden" name="filter[page]" value="<?= $page ?>" />
     <table border="0" cellspacing="0" cellpadding="3" width="310" class="framed">
     <tr class="row_header">
       <td colspan="2" style="text-align: center"><?= _('Filter') ?></td>
@@ -557,20 +570,20 @@ printf('<a class="pager_link" href="?%s&filter[start_date]=%s&filter[end_date]=%
        <?php
 
      $nb_page= ceil($nb_transactions/$transactions_per_page);
-     $diz=1+floor($filter['page']/10);
+     $diz=1+floor($page/10);
      $start=0;
      $end=$nb_transactions/$transactions_per_page;
      if((10*$diz) < $nb_transactions/$transactions_per_page)
        $end=10*$diz;
 
-     if($filter['page']>0)
-       printf('<a class="pager_link" href="?%s&filter[page]=%d"><<</a>', $filter_base, $filter['page']-1 );
-     if($filter['page']>9  ){
-       printf('<a class="pager_link" href="?%s&filter[page]=%d">&nbsp;...</a>', $filter_base, ((floor($filter['page']/10))*10)-1   );
+     if($page>0)
+       printf('<a class="pager_link" href="?%s&filter[page]=%d"><<</a>', $filter_base, $page-1 );
+     if($page>9  ){
+       printf('<a class="pager_link" href="?%s&filter[page]=%d">&nbsp;...</a>', $filter_base, ((floor($page/10))*10)-1   );
        $start=((floor($filter['page']/10))*10);
      }
 	for ($i=$start ; $i<$end ; $i++) {
-	   if ($filter['page'] == $i) {
+	   if ( $page == $i) {
 		 printf("[%d]", $i+1);
 	   } else {
 	     printf('<a class="pager_link" href="?%s&filter[page]=%d">%d</a>', $filter_base, $i, $i+1 );
@@ -581,8 +594,8 @@ printf('<a class="pager_link" href="?%s&filter[start_date]=%s&filter[end_date]=%
        printf('<a class="pager_link" href="?%s&filter[page]=%d">...&nbsp;</a>', $filter_base, $end  );
      }
 
-     if($filter['page'] < floor($nb_transactions/$transactions_per_page) )
-       printf('<a class="pager_link" href="?%s&filter[page]=%d">>></a>', $filter_base, $filter['page']+1 );
+     if($page < floor($nb_transactions/$transactions_per_page) )
+       printf('<a class="pager_link" href="?%s&filter[page]=%d">>></a>', $filter_base, $page+1 );
       ?>
       </td>
 
