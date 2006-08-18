@@ -40,3 +40,4 @@ class Debug {
     ini_set ('error_log', $this->debug_log);
   }
  }
+?>

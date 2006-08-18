@@ -25,6 +25,9 @@ if(WF_DEBUG_ALL){
   $debug = new Debug($_SERVER['DOCUMENT_ROOT'].'/../logs/debug.log') ;
   $debug->start();
  }
+if(WF_DEBUG){
+      $mt_start=getMicroTime();
+ }
 
 function parselogline($str) {
   if (preg_match("/(user|fa|client):([0-9]+)/", $str)) {
@@ -187,6 +190,12 @@ function must_login(){
     header("Location: ../login.php");
     die();
   }
+}
+
+function getMicroTime() {
+	$microsecondes=microtime();
+	list($micro,$time)=explode(' ',$microsecondes);
+	return($micro+$time);
 }
 
 header("Content-Type: text/html; charset=utf-8");
