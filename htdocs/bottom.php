@@ -27,12 +27,10 @@ if($_SESSION['debug']==1){
   echo '<b>$_SERVER:</b>';
   print_r($_SERVER);
 
-  $microsecondes=microtime();
-  list($micro,$time)=explode(' ',$microsecondes);
-  $mt_end=$micro+$time;
+  $mt_end=getMicroTime();
 
   echo "<b>Time elapsed</b>: ".round(($mt_end-$mt_start)*1000)." ms \n";
-  echo "<b>Query number</b>: $query_number\n";
+  //  echo "<b>Query number</b>: $query_number\n";
 
   echo "<b>mysql stats:</b>\n";
   $status = explode('  ', mysql_stat());
