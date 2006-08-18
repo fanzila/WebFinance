@@ -358,8 +358,8 @@ if(isset($filter['shown_type']) && count($filter['shown_type'])){
      $q .= $limit_clause;
      $result = WFO::SQL($q);
 
-     $filter_base = sprintf("sort=%d&filter[start_date]=%s&filter[end_date]=%s&filter[textsearch]=%s&filter[amount]=%s",
-                            $_GET['sort'], $filter['start_date'], $filter['end_date'], $filter['textsearch'], $filter['amount'] );
+     $filter_base = sprintf("sort=%d&filter[start_date]=%s&filter[end_date]=%s&filter[textsearch]=%s&filter[amount]=%s&view=%s",
+                            $_GET['sort'], $filter['start_date'], $filter['end_date'], $filter['textsearch'], $filter['amount'],$view );
      $result = WFO::SQL($q);
      $total_shown = 0;
      $count = 1;
