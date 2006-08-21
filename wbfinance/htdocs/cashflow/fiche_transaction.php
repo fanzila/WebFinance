@@ -101,7 +101,7 @@ mysql_free_result($result);
   <tr>
   <td><?= _('Invoice') ?> :</td>
   <td colspan="3">
- <select style="width: 300px;" name="id_invoice">
+ <select style="width: 340px;" name="id_invoice">
   <option value="0">-- related invoice --</option>
 <?
 
