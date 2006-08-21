@@ -13,6 +13,7 @@
 
 include("../inc/dbconnect.php");
 
+ini_set('session.gc_maxlifetime',3600);
 session_cache_limiter("must-revalidate");
 session_start();
 if (! ($_SESSION['id_user'] > 0)) {

@@ -11,6 +11,7 @@
 <?include "../nbi/functions.php" ?>
 <?php
 connect();
+ini_set('session.gc_maxlifetime',3600);
 session_start();
 if (!nbi_is_logued()) {
   nbi_redirect("/login.php");
