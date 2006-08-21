@@ -349,6 +349,18 @@ CREATE TABLE `webfinance_paybox` (
   KEY `id_invoice` (`id_invoice`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+CREATE TABLE `webfinance_files` (
+  `id_file` int(11) NOT NULL auto_increment,
+  `fk_id` int(11) NOT NULL,
+  `wf_type` enum('transaction','users','client') NOT NULL default 'transaction',
+  `file_type` varchar(32) NOT NULL,
+  `file_name` varchar(128) NOT NULL,
+  `file` mediumblob NOT NULL,
+  PRIMARY KEY  (`id_file`),
+  KEY `fk_id` (`fk_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 --
 -- DEFAULT DATA INSERT
 --
