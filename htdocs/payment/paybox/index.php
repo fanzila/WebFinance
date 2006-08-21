@@ -87,7 +87,7 @@ $r = mysql_query("INSERT INTO webfinance_paybox SET id_invoice=$inv->id_facture,
 		 "state='pending', ".
 		 "amount='$inv->nice_total_ttc' , ".
 		 "currency='".$params['PBX_DEVISE']."' , ".
-		 "date='".date("YmdHis", $time)."' ")
+		 "date='".date("YmdHis")."' ")
   or wf_mysqldie();
 
 header("Location: /cgi-bin/paybox/modulev2.cgi?$args");
