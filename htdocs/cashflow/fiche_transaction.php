@@ -104,12 +104,13 @@ mysql_free_result($result);
  <select style="width: 300px;" name="id_invoice">
   <option value="0">-- related invoice --</option>
 <?
+
   $res = mysql_query("SELECT id_facture as id, ".
-		   "num_facture as num, ".
+		     "num_facture as num, ".
 		     "ref_contrat as ref, ".
 		     "date_format(date_facture, '%d/%m/%Y') as nice_date_facture ".
 		     "FROM webfinance_invoices ".
-		     "ORDER BY date_facture")
+		     "ORDER BY date_facture DESC")
     or wf_mysqldie();
 
    while($inv=mysql_fetch_assoc($res)){
@@ -130,7 +131,8 @@ mysql_free_result($result);
      $nice_total_ht = sprintf("%.2f", $total_ht);
      $nice_total_ttc = sprintf("%.2f", $total_ttc);
 
-     printf(_(' <option value="%d"%s>%s (%sEuro %s #%s)</option>')."\n", $inv['id'], ($inv['id']==$transaction->id_invoice)?" selected":"", $inv['ref'] ,$nice_total_ttc ,$inv['nice_date_facture'], $inv['num'] );
+     printf('<option value="%d"%s>%s : %s : %s€ : #%s</option>',
+	    $inv['id'], ($inv['id']==$transaction->id_invoice)?" selected":"", $inv['nice_date_facture'] ,(empty($inv['ref']))?"noref":$inv['ref'] , $nice_total_ttc , $inv['num'] );
    }
 ?>
  </select>
