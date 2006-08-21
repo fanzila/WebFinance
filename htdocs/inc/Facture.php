@@ -9,6 +9,8 @@
 //
 //$Id$
 
+require_once("WFO.php");
+
 class Facture extends WFO {
   function Facture() {
   }
