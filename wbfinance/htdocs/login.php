@@ -11,15 +11,20 @@
 <?php
 // $Id$
 include("inc/main.php");
-$User = new User();
-if ($User->login($_POST)) {
-  if ($_POST['came_from'] != "" AND !preg_match('/login.php$/i',$_POST['came_from']) AND !preg_match('/passwd.php$/i',$_POST['came_from']) ) {
-    header("Location: ".$_POST['came_from']);
-  } else {
-    header("Location: /");
-  }
-}
 
+if(isset($_POST['login'],$_POST['password'])){
+  $User = new User();
+  $test = $User->login($_POST);
+  if($test>0) {
+    if ($_POST['came_from'] != "" AND !preg_match('/login.php$/i',$_POST['came_from']) AND !preg_match('/passwd.php$/i',$_POST['came_from']) ) {
+      header("Location: ".$_POST['came_from']);
+    } else {
+      header("Location: /");
+    }
+  }else{
+    header("Location: /login?err=1");
+  }
+ }
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
@@ -34,7 +39,17 @@ if ($User->login($_POST)) {
   $came_from="/";
   if(isset($_SESSION['came_from']))
     $came_from=$_SESSION['came_from'];
+
+$err_msg="";
+if(isset($_GET['err'])){
+  switch ($_GET['err']){
+    case 1:
+      $err_msg="<center><span style='color: rgb(255, 0, 0);'>"._('Invalid Login or password!') . "</span>";
+      break;
+    }
+ }
 ?>
+    <?=$err_msg?>
     <input type="hidden" name="came_from" value="<?=$came_from ?>" />
     <table border="0" cellspacing="0" cellpadding="10" style="border: solid 1px black; margin: auto auto auto auto;">
       <tr><td><?= _("Login") ?></td><td><input type="text" size="20" style="border: solid 1px #777;" name="login" id="login" value="" /></td></tr>
