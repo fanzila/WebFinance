@@ -1,5 +1,6 @@
 <?php
 require("../../../inc/dbconnect.php");
+require("../../../inc/Facture.php");
 
 extract($_GET);
 
@@ -37,7 +38,12 @@ if(isset($ref,$auto,$montant) AND !empty($ref) AND !empty($auto) AND $montant>20
 		       "date=NOW() ".
 		       "WHERE reference='$ref'") or die(mysql_error());
 
+    //maj de la facture
     mysql_query("UPDATE webfinance_invoices SET is_paye=1, date_paiement=NOW() WHERE id_facture=$id_invoice ") or die(mysql_error());
+
+    //on met à jour le cashflow
+    $Facture = new Facture();
+    $Facture->updateTransaction($id_invoice);
 
   }else{
     echo "ref,auto,montant: don't exist <br/>";
