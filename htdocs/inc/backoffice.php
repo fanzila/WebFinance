@@ -12,6 +12,7 @@
 
 // $Id$
 
+ini_set('session.gc_maxlifetime',3600);
 session_start();
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/dbconnect.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/User.php");
