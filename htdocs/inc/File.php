@@ -3,7 +3,7 @@
 class File {
 
   function File($id_file=-1){
-    if($id>0){
+    if(is_numeric($id_file) && $id_file>0){
       $result = mysql_query("SELECT id_file, fk_id , wf_type , file_name , file_type FROM webfinance_files WHERE id_file=$id_file ") or die(mysql_error());
       list($this->id,$this->fk_id,$this->wf_type,$this->name , $this->type) = mysql_fetch_array($result);
     }
@@ -29,10 +29,10 @@ class File {
     }
   }
 
-  function getFiles($id_fk){
+  function getFiles($id_fk , $wf_type='transaction'){
     $files = array();
     if(is_numeric($id_fk)){
-      $result = mysql_query("SELECT id_file ,  file_name as name , file_type as type FROM webfinance_files WHERE fk_id=$id_fk ") or die(mysql_error());
+      $result = mysql_query("SELECT id_file ,  file_name as name , file_type as type FROM webfinance_files WHERE fk_id=$id_fk AND wf_type='$wf_type' ") or die(mysql_error());
       while( $file = mysql_fetch_object($result)){
 	$files[]=$file;
       }
@@ -73,6 +73,14 @@ class File {
       mysql_query("DELETE FROM webfinance_files WHERE id_file=$id_file") or die(mysql_error());
     }
   }
+
+  function deleteAllFiles($fk_id, $wf_type='transaction'){
+    if(is_numeric($fk_id) && $fk_id>0){
+      mysql_query("DELETE FROM webfinance_files WHERE fk_id=$fk_id AND wf_type='$wf_type'") or die(mysql_error());
+    }
+  }
+
+
 
 }
 
