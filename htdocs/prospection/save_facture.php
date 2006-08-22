@@ -8,7 +8,10 @@
 // You can use and redistribute this file under the term of the GNU GPL v2.0
 //
 ?>
-<?include "../inc/main.php" ?>
+<?
+require("../inc/main.php");
+must_login();
+?>
 <?php
 
 //$Id$

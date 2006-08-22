@@ -11,6 +11,7 @@
 // $Id$
 
 require("../inc/main.php");
+must_login();
 
   $data = new stdClass();
   $data->PBX_SITE = $_GET['PBX_SITE'];

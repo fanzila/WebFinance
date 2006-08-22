@@ -56,3 +56,6 @@ if($_SESSION['debug']==1){
 </body>
 
 </html>
+<?php
+    mysql_close();
+?>

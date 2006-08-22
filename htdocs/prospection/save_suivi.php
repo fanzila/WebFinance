@@ -8,7 +8,10 @@
 // You can use and redistribute this file under the term of the GNU GPL v2.0
 //
 ?>
-<?include "../nbi/functions.php" ?>
+<?
+require("../nbi/functions.php");
+must_login();
+?>
 <?php
 connect();
 ini_set('session.gc_maxlifetime',3600);

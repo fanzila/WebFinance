@@ -13,6 +13,7 @@
 
 $title = _("Send Invoice");
 require("../inc/main.php");
+must_login();
 $roles = 'manager,admin';
 require("../top.php");
 require("nav.php");

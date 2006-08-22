@@ -12,7 +12,8 @@
 
 // $Id$
 
-include("../inc/main.php");
+require("../inc/main.php");
+must_login();
 
 // Enregistrement du logo if provided
 if (file_exists($_FILES['logo']['tmp_name'])) {

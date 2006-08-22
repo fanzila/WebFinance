@@ -11,7 +11,8 @@
 <?php
 // $Id$
 
-include("../inc/main.php");
+require("../inc/main.php");
+must_login();
 
 $User = new User();
 

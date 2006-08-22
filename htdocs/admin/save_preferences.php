@@ -12,7 +12,8 @@
 
 // $Id$
 
-include("../inc/main.php");
+require("../inc/main.php");
+must_login();
 
 if(preg_match('/^mail_/',$_POST['action']) ){
   // Enregistrement adresse et raison sociale

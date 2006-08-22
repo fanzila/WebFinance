@@ -11,7 +11,9 @@
 <?php
 // $Id$
 
-include("../inc/main.php");
+require("../inc/main.php");
+must_login();
+
 $roles = 'admin,manager';
 include("../top.php");
 include("nav.php");

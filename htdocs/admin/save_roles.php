@@ -11,6 +11,7 @@
 // $Id$
 
 require("../inc/main.php");
+must_login();
 
 if ($_GET['action'] == "delete") {
   mysql_query("DELETE FROM webfinance_roles WHERE id_role=".$_GET['id']);

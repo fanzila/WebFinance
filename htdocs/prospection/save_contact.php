@@ -11,6 +11,7 @@
 <?php
 
 include("../inc/main.php");
+must_login();
 
 if ($GLOBALS['HTTP_SERVER_VARS']['REQUEST_METHOD'] != "POST") {
   die();
