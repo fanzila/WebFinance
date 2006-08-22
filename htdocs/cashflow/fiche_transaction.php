@@ -139,13 +139,21 @@ mysql_free_result($result);
   </td>
 </tr>
 <tr>
-  <td><?= _('File') ?> :<br/>
-  <? if(!empty($transaction->file_name)){
+  <td colspan="4"><?= _('File') ?> :</td>
+</tr>
+<tr>
+ <td colspan="4">
+  <?php
+     $File = new File();
+     $files = $File->getFiles($transaction->id);
+     foreach($files as $file ){
+       printf("<input checked='checked' name='file_del[%d]' type='checkbox' /><a href='save_transaction?action=file&id_file=%d'>%s</a><br/>",$file->id_file,$file->id_file, $file->name);
+     }
   ?>
-       <input checked='checked' name='file_del' value='1' type='checkbox' />&nbsp<a href='file.php?action=file&type=transactions&id=<?=$transaction->id ?>'><?=$transaction->file_name ?></a><br/>
- <? }?>
-  </td>
- <td colspan="3"><input type="file" name="file" /></td>
+ </td>
+</tr>
+<tr>
+ <td colspan="4"><input type="file" name="file" /></td>
 </tr>
 <tr>
   <td colspan="4" style="text-align: center">

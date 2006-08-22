@@ -413,11 +413,12 @@ if(isset($filter['shown_type']) && count($filter['shown_type'])){
        if($tr->type=="prevision" AND $tr->ts_date<mktime(23,59,59,date("m"),date("d")-1,date("Y")))
 	 $class = "row_error";
 
-       //file
-       $file="";
-       if($tr->file_name != ""){
-	 //put a icon here
-	 $file="<a href='file.php?action=file&type=transactions&id=$tr->id' title='$tr->file_name'><img src='/imgs/icons/attachment.png'/></a>";
+
+       $file ="";
+       $File = new File();
+       $files = $File->getFiles($tr->id);
+       foreach($files as $file_object ){
+	 $file .= sprintf("<a href='save_transaction?action=file&id_file=%d' title='%s'><img src='/imgs/icons/attachment.png'/></a>",$file_object->id_file, $file_object->name);
        }
 
        if(isset($view) AND $view=="edit"){
@@ -430,7 +431,7 @@ if(isset($filter['shown_type']) && count($filter['shown_type'])){
 	 <input type="checkbox" id="chk_<?=$tr->id?>" name="chk[]" onchange="updateCheck(<?=$tr->id?>);" value="<?=$tr->id?>"/>
   </td>
   <td>
-	 <img src="/imgs/icons/edit.gif" onmouseover="return escape('<?=$help_edit?>');" onclick="inpagePopup(event, this, 440, 350, 'fiche_transaction.php?id=<?=$tr->id?>');" />
+	 <img src="/imgs/icons/edit.gif" onmouseover="return escape('<?=$help_edit?>');" onclick="inpagePopup(event, this, 440, 410, 'fiche_transaction.php?id=<?=$tr->id?>');" />
   </td>
   <td><?=$fmt_date?></td>
   <td style="background: <?= $tr->color ?>; text-align: center;" nowrap>
@@ -478,7 +479,7 @@ print <<<EOF
 	 <input type="checkbox" id="chk_$tr->id" name="chk[]" onchange="updateCheck($tr->id);" value="$tr->id"/>
   </td>
   <td>
-	 <img src="/imgs/icons/edit.gif" onmouseover="return escape('$help_edit');" onclick="inpagePopup(event, this, 440, 350, 'fiche_transaction.php?id=$tr->id');" />
+	 <img src="/imgs/icons/edit.gif" onmouseover="return escape('$help_edit');" onclick="inpagePopup(event, this, 440, 410, 'fiche_transaction.php?id=$tr->id');" />
   </td>
   <td>$fmt_date</td>
   <td style="background: $tr->color; text-align: center;" nowrap><a href="?$filter_base&filter[shown_cat][$tr->id_category]='on'">$tr->name</a></td>
@@ -531,6 +532,7 @@ EOF;
     <form id="main_form" onchange="this.submit();" method="get">
     <input type="hidden" name="sort" value="<?= $_GET['sort'] ?>" />
     <input type="hidden" name="view" value="<?= $view ?>" />
+    <input type="hidden" name="page" value="<?= $page ?>" />
     <input type="hidden" name="filter[page]" value="<?= $page ?>" />
     <table border="0" cellspacing="0" cellpadding="3" width="310" class="framed">
     <tr class="row_header">
