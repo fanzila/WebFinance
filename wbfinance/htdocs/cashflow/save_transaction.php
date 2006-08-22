@@ -11,13 +11,27 @@
 
 require("../inc/main.php");
 
+if(isset($_GET) && array_key_exists('action' , $_GET) ){
+
+    switch ($_GET['action']){
+      case 'file':
+	$file = new File();
+	$file->getFile($_GET['id_file']);
+	break;
+    }
+    die();
+  }
+
 extract($_POST);
+
 if (is_array($_POST['action'])) {
+  $File = new File();
   foreach (explode(',', $selected_transactions) as $id_transaction) {
     $q = "";
     switch ($action['type']) {
       case "delete":
 	$q = "DELETE FROM webfinance_transactions WHERE id=$id_transaction";
+	$File->deleteAllFiles($id_transaction,'transaction');
 	break;
       case "change_account" :
 	$q = "UPDATE webfinance_transactions SET id_account=".$action['id_account']." WHERE id=$id_transaction";
@@ -63,17 +77,6 @@ if($_POST['action']=="update_invoices" ){
   die();
 }
 
-$fq="";
-if (isset($_FILES['file']) && is_uploaded_file($_FILES['file']['tmp_name'])) {
-  $file_type=addslashes($_FILES['file']['type']);
-  $file_name=addslashes($_FILES['file']['name']);
-  $file_blob = file_get_contents($_FILES['file']['tmp_name']);
-  $file=addslashes($file_blob);
-  $fq=sprintf("file='%s' , file_name='%s' , file_type='%s' , ",$file,$file_name,$file_type );
- }else if(!isset($file_del) OR $file_del!=1)
-  $fq=sprintf("file='' , file_name='' , file_type='' , ");
-
-
 $amount = preg_replace("!,!", ".", $amount);
 $amount = preg_replace("! +!", "", $amount);
 
@@ -81,8 +84,8 @@ if(empty($date))
   $date=date('d/m/Y');
 
 if($id_transaction>0){
+
   $q = sprintf("UPDATE webfinance_transactions SET ".
-	       "%s".
 	       "id_category=%d, ".
 	       "id_account=%d, ".
 	       "id_invoice=%d, ".
@@ -93,10 +96,11 @@ if($id_transaction>0){
 	       "date=str_to_date('%s', '%%d/%%m/%%Y'), ".
 	       "comment='%s' ".
 	       "WHERE id=%d",
-	       $fq, $id_category, $id_account, $id_invoice, $text, $amount, $exchange_rate, $type, $date, $comment, $id_transaction);
+	       $id_category, $id_account, $id_invoice, $text, $amount, $exchange_rate, $type, $date, $comment, $id_transaction);
+  mysql_query($q) or wf_mysqldie();
+
  }else{
   $q = sprintf("INSERT INTO webfinance_transactions SET ".
-	       "%s".
 	       "id_category=%d, ".
 	       "id_account=%d, ".
 	       "text='%s', ".
@@ -105,10 +109,29 @@ if($id_transaction>0){
 	       "type='%s', ".
 	       "date=str_to_date('%s', '%%d/%%m/%%Y'), ".
 	       "comment='%s' ",
-	       $fq, $id_category, $id_account, $text, $amount, $exchange_rate, $type, $date, $comment);
+	       $id_category, $id_account, $text, $amount, $exchange_rate, $type, $date, $comment);
+
+  mysql_query($q) or wf_mysqldie();
+  $id_transaction = mysql_insert_id();
+
  }
 
-mysql_query($q) or wf_mysqldie();
+$File = new File();
+
+if(isset($file_del)){
+  $files = $File->getFiles($id_transaction, 'transaction');
+  foreach($files as $file){
+    if(!array_key_exists($file->id_file , $file_del)){
+      $File->deleteFile($file->id_file);
+    }
+  }
+ }else{
+  $File->deleteAllFiles($id_transaction, 'transaction');
+ }
+
+if (isset($_FILES['file']) && is_uploaded_file($_FILES['file']['tmp_name'])) {
+  $File->addFile($_FILES['file'], $id_transaction ,'transaction');
+ }
 
 ?>
 <script>
