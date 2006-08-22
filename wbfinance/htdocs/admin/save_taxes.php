@@ -11,6 +11,7 @@
 // $Id$
 
 require("../inc/main.php");
+must_login();
 
 if ($_GET['action'] == "delete") {
   mysql_query("DELETE FROM webfinance_pref WHERE id_pref=".$_GET['id']);

@@ -11,6 +11,7 @@
 // $Id$
 
 require("../inc/main.php");
+must_login();
 
 //echo "<pre/>";
 //print_r($_POST);

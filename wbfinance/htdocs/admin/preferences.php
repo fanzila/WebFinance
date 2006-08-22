@@ -10,9 +10,10 @@
 // $Id$
 //
 //
-include("../inc/main.php");
-$roles = "manager,admin,employee";
+require("../inc/main.php");
+must_login();
 
+$roles = "manager,admin,employee";
 
 //array_push($extra_js, "/js/onglets.js");
 

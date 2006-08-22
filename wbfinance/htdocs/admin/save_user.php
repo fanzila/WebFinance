@@ -13,8 +13,7 @@
 // $Id$
 
 include("../inc/main.php");
-
-
+must_login();
 
 if ($_GET['action'] == "cancel") {
   $_POST="";

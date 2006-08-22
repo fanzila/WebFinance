@@ -11,6 +11,7 @@
 <?php
 
 include("../inc/main.php");
+must_login();
 
 global $User;
 $user = $User->getInfos();

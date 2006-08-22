@@ -10,6 +10,7 @@
 // $Id$
 
 require("../inc/main.php");
+must_login();
 
 if(isset($_GET) && array_key_exists('action' , $_GET) ){
 
