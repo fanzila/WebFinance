@@ -18,6 +18,7 @@ require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/User.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/Facture.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/Client.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/File.php");
+require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/FileTransaction.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/TabStrip.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT'].'/inc/gettext.php');
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/Debug.php");

@@ -415,7 +415,7 @@ if(isset($filter['shown_type']) && count($filter['shown_type'])){
 
 
        $file ="";
-       $File = new File();
+       $File = new FileTransaction();
        $files = $File->getFiles($tr->id);
        foreach($files as $file_object ){
 	 $file .= sprintf("<a href='save_transaction?action=file&id_file=%d' title='%s'><img src='/imgs/icons/attachment.png'/></a>",$file_object->id_file, $file_object->name);

@@ -144,7 +144,7 @@ mysql_free_result($result);
 <tr>
  <td colspan="4">
   <?php
-     $File = new File();
+     $File = new FileTransaction();
      $files = $File->getFiles($transaction->id);
      foreach($files as $file ){
        printf("<input checked='checked' name='file_del[%d]' type='checkbox' /><a href='save_transaction?action=file&id_file=%d'>%s</a><br/>",$file->id_file,$file->id_file, $file->name);
