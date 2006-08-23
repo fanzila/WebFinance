@@ -10,8 +10,9 @@
 // $Id$
 
 require("../inc/main.php");
-require("../top_popup.php");
 must_login();
+
+require("../top_popup.php");
 
 $result = mysql_query("SELECT id, id_category, id_account, text, amount, exchange_rate, type, date, comment, file_name , id_invoice,
                               unix_timestamp(date) as ts_date
@@ -100,10 +101,12 @@ mysql_free_result($result);
 </tr>
   <tr>
   <td><?= _('Invoice') ?> :</td>
-  <td colspan="3">
- <select style="width: 340px;" name="id_invoice">
-  <option value="0">-- related invoice --</option>
+  <td colspan='3'></td>
+</tr>
 <?
+
+ //liste des factures
+$invoices = array();
 
   $res = mysql_query("SELECT id_facture as id, ".
 		     "num_facture as num, ".
@@ -113,31 +116,72 @@ mysql_free_result($result);
 		     "ORDER BY date_facture DESC")
     or wf_mysqldie();
 
-   while($inv=mysql_fetch_assoc($res)){
+while($inv = mysql_fetch_object($res)){
 
-     $result = mysql_query("SELECT prix_ht,qtt FROM webfinance_invoice_rows WHERE id_facture=".$inv['id'])
-       or wf_mysqldie();
+  $result = mysql_query("SELECT prix_ht,qtt FROM webfinance_invoice_rows WHERE id_facture=".$inv->id)  or wf_mysqldie();
+  $lignes = array();
+  $total = 0;
 
-     $lignes = array();
-     $total = 0;
+  while ($el = mysql_fetch_object($result)) {
+    array_push($lignes, $el);
+    $total += $el->qtt * $el->prix_ht;
+  }
+  mysql_free_result($result);
 
-     while ($el = mysql_fetch_object($result)) {
-       array_push($lignes, $el);
-       $total += $el->qtt * $el->prix_ht;
-     }
-     mysql_free_result($result);
-     $total_ht = $total;
-     $total_ttc = $total*1.196;
-     $nice_total_ht = sprintf("%.2f", $total_ht);
-     $nice_total_ttc = sprintf("%.2f", $total_ttc);
+  $inv->total_ht = $total;
+  $inv->total_ttc = $total*1.196;
+  $inv->nice_total_ht = sprintf("%.2f", $inv->total_ht);
+  $inv->nice_total_ttc = sprintf("%.2f", $inv->total_ttc);
 
-     printf('<option value="%d"%s>%s : %s : %s€ : #%s</option>',
-	    $inv['id'], ($inv['id']==$transaction->id_invoice)?" selected":"", $inv['nice_date_facture'] ,(empty($inv['ref']))?"noref":$inv['ref'] , $nice_total_ttc , $inv['num'] );
-   }
+  $invoices[]=$inv;
+ }
+mysql_free_result($res);
+
+
+//liste des factures liées
+$id_invoices = array();
+$result = mysql_query("SELECT id_invoice FROM webfinance_transaction_invoice WHERE id_transaction=".$transaction->id) or wf_mysqldie();
+while(list($id_invoice) = mysql_fetch_array($result)){
+
+  ?>
+<tr>
+    <td></td>
+    <td colspan="3">
+
+<select style="width: 350px;" name="id_invoices[]">
+    <option value="0">-- related invoice --</option>
+    <?
+    foreach($invoices as $inv){
+    printf('<option value="%d"%s>%s : %s : %s€ : #%s</option>',
+	   $inv->id, ($inv->id==$id_invoice)?" selected":"", $inv->nice_date_facture ,(empty($inv->ref))?"noref":$inv->ref , $inv->nice_total_ttc , $inv->num );
+  }
+
+?>
+    </select>
+	</td>
+	</tr>
+<?
+
+
+ }
+mysql_free_result($result);
+?>
+
+<tr>
+ <td></td>
+<td colspan="3">
+ <select style="width: 350px;" name="id_invoices[]">
+  <option value="0">-- related invoice --</option>
+<?
+  foreach($invoices as $inv){
+    printf('<option value="%d">%s : %s : %s€ : #%s</option>',
+	   $inv->id,  $inv->nice_date_facture ,(empty($inv->ref))?"noref":$inv->ref , $inv->nice_total_ttc , $inv->num );
+ }
 ?>
  </select>
-  </td>
+</td>
 </tr>
+
 <tr>
   <td colspan="4"><?= _('File') ?> :</td>
 </tr>
@@ -153,7 +197,8 @@ mysql_free_result($result);
  </td>
 </tr>
 <tr>
- <td colspan="4"><input type="file" name="file" /></td>
+  <td></td>
+ <td colspan="3"><input type="file" size="40"  name="file" /></td>
 </tr>
 <tr>
   <td colspan="4" style="text-align: center">
