@@ -115,11 +115,21 @@ class Facture extends WFO {
 
   function getTransactions($id_invoice){
     $trs=array();
-    $q = $this->SQL("SELECT id , text FROM webfinance_transactions WHERE id_invoice=$id_invoice");
+    $q = $this->SQL("SELECT id_transaction , text FROM webfinance_transaction_invoice AS wf_tr_inv LEFT JOIN webfinance_transactions AS wf_tr ON (wf_tr_inv.id_transaction = wf_tr.id ) ".
+		    "WHERE wf_tr_inv.id_invoice =$id_invoice");
     while(list($id_tr, $text) = mysql_fetch_array($q))
       $trs[$id_tr] = $text;
     return $trs;
   }
+
+  function getTransactionsId($id_invoice){
+    $trs=array();
+    $q = $this->SQL("SELECT id_transaction FROM webfinance_transaction_invoice WHERE id_invoice =$id_invoice");
+    while(list($id_tr) = mysql_fetch_array($q))
+      $trs[] = $id_tr;
+    return $trs;
+  }
+
 
   function duplicate($id){
 
@@ -148,8 +158,7 @@ class Facture extends WFO {
                WHERE f1.id_facture=$id_new_facture
                  AND f2.id_facture=$id");
 
-      $this->SQL("INSERT INTO webfinance_invoice_rows (id_facture,description,qtt,ordre,prix_ht) SELECT $id_new_facture,description,qtt,ordre,prix_ht FROM webfinance_invoice_rows WHERE id_facture=$id")
-	or wf_mysqldie();
+      $this->SQL("INSERT INTO webfinance_invoice_rows (id_facture,description,qtt,ordre,prix_ht) SELECT $id_new_facture,description,qtt,ordre,prix_ht FROM webfinance_invoice_rows WHERE id_facture=$id");
       return $id_new_facture;
     }else{
       return 0;
@@ -178,9 +187,11 @@ class Facture extends WFO {
 	  $date_transaction=date("Y-m-d",$facture->timestamp_date_facture);
       }
 
+      $result = $this->SQL("SELECT id_transaction as id , id_category ".
+			   "FROM webfinance_transaction_invoice AS wf_tr_inv LEFT JOIN webfinance_transactions AS wf_tr ON (wf_tr_inv.id_transaction = wf_tr.id ) ".
+			   "WHERE wf_tr_inv.id_invoice =$id_invoice");
+      //$result=$this->SQL("SELECT id, id_category FROM webfinance_transactions WHERE id_invoice=$id_invoice" );
 
-      $result=$this->SQL("SELECT id, id_category FROM webfinance_transactions WHERE id_invoice=$id_invoice" )
-	or wf_mysqldie();
       $nb=mysql_num_rows($result);
 
       $text = "Num fact: $facture->num_facture, Ref contrat:  $facture->ref_contrat";
@@ -213,8 +224,8 @@ class Facture extends WFO {
 	  "amount='%s', ".
 	  "type='$type', ".
 	  "date='%s' ".
-	  "WHERE id_invoice=%d";
-	$q = sprintf($query, $facture->id_compte, $id_category, $text, preg_replace("!,!", ".", $facture->total_ttc),  $date_transaction, $id_invoice );
+	  "WHERE id=%d";
+	$q = sprintf($query, $facture->id_compte, $id_category, $text, preg_replace("!,!", ".", $facture->total_ttc),  $date_transaction, $id_tr );
 	$this->SQL($q);
 
 
@@ -228,10 +239,12 @@ class Facture extends WFO {
 	  "type='$type', ".
 	  "date='%s', ".
 	  "comment='%s', ".
-	  "id_invoice=%d";
-	$q = sprintf($query, $facture->id_compte, $id_category, $text, preg_replace('!,!', '.', $facture->total_ttc), $date_transaction , $comment, $id_invoice );
+	$q = sprintf($query, $facture->id_compte, $id_category, $text, preg_replace('!,!', '.', $facture->total_ttc), $date_transaction , $comment );
 	$this->SQL($q);
 	$id_tr=mysql_insert_id();
+
+	$query = $this->SQL("INSERT INTO webfinance_transaction_invoice SET id_transaction=$id_tr , id_invoice=$id_invoice ");
+
       }else{
 	//multiple transactions
 	$id_tr=0;

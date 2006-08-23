@@ -51,6 +51,22 @@ class Transaction extends WFO {
     }
   }
 
+  /**
+   * return an array of related invoices
+   * return array()
+   */
+  function getInvoices($id){
+    $id_invoices = array();
+    if (is_numeric($id) && $id>0) {
+      $result = $this->SQL("SELECT id_invoice FROM webfinance_transaction_invoice WHERE id_transaction=".$id);
+      while(list($id_invoice) = mysql_fecth_assoc($result)){
+	$id_invoices[] = $id_invoice;
+      }
+      mysql_free_result($result);
+    }
+    return $id_invoices;
+  }
+
   /** Returns an array containing the id of possible matching invoices for this
       transaction.
 
