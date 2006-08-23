@@ -23,27 +23,29 @@ class Transaction extends WFO {
   var $amount = null;
 
   function _getInfos() {
-    $result = $this->SQL("SELECT id_account, id_category, text, amount, type, document, date, date_update, comment, lettrage, id_invoice
+    if(is_numeric($this->id) && $this->id>0){
+      $result = $this->SQL("SELECT id_account, id_category, text, amount, type, document, date, date_update, comment, lettrage, id_invoice
                            FROM webfinance_transactions
                            WHERE id=".$this->id);
-    if (mysql_num_rows($result)) {
-      $data = mysql_fetch_assoc($result);
-      foreach ($data as $n=>$v) {
-	$this->$n = $v;
+      if (mysql_num_rows($result)) {
+	$data = mysql_fetch_assoc($result);
+	foreach ($data as $n=>$v) {
+	  $this->$n = $v;
+	}
+	mysql_free_result($result);
       }
-      mysql_free_result($result);
     }
   }
 
   function Transaction($id = null) {
-    if (is_numeric($id)) {
+    if (is_numeric($id) && $id>0) {
       $this->id = $id;
       $this->_getInfos();
     }
   }
 
   function setId($id) {
-    if (is_numeric($id)) {
+    if (is_numeric($id) && $id>0) {
       $this->id = $id;
       $this->_getInfos();
     }
@@ -189,7 +191,7 @@ class Transaction extends WFO {
 
   function save() {
     // print_r($this);
-    if ($this->id == -1) {
+    if (!is_numeric($this->id) || $this->id<1) {
       if ($this->text == "") {
 	die("Transaction::save Cannot add a transaction without a text");
       }
