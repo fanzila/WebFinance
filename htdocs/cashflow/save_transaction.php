@@ -16,7 +16,7 @@ if(isset($_GET) && array_key_exists('action' , $_GET) ){
 
     switch ($_GET['action']){
       case 'file':
-	$file = new File();
+	$file = new FileTransaction();
 	$file->getFile($_GET['id_file']);
 	break;
     }
@@ -26,13 +26,13 @@ if(isset($_GET) && array_key_exists('action' , $_GET) ){
 extract($_POST);
 
 if (is_array($_POST['action'])) {
-  $File = new File();
+  $File = new FileTransaction();
   foreach (explode(',', $selected_transactions) as $id_transaction) {
     $q = "";
     switch ($action['type']) {
       case "delete":
 	$q = "DELETE FROM webfinance_transactions WHERE id=$id_transaction";
-	$File->deleteAllFiles($id_transaction,'transaction');
+	$File->deleteAllFiles($id_transaction);
 	break;
       case "change_account" :
 	$q = "UPDATE webfinance_transactions SET id_account=".$action['id_account']." WHERE id=$id_transaction";
@@ -117,21 +117,21 @@ if($id_transaction>0){
 
  }
 
-$File = new File();
+$File = new FileTransaction();
 
 if(isset($file_del)){
-  $files = $File->getFiles($id_transaction, 'transaction');
+  $files = $File->getFiles($id_transaction);
   foreach($files as $file){
     if(!array_key_exists($file->id_file , $file_del)){
       $File->deleteFile($file->id_file);
     }
   }
  }else{
-  $File->deleteAllFiles($id_transaction, 'transaction');
+  $File->deleteAllFiles($id_transaction);
  }
 
 if (isset($_FILES['file']) && is_uploaded_file($_FILES['file']['tmp_name'])) {
-  $File->addFile($_FILES['file'], $id_transaction ,'transaction');
+  $File->addFile($_FILES['file'], $id_transaction);
  }
 
 ?>
