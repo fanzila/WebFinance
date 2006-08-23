@@ -187,7 +187,7 @@ class Facture extends WFO {
 	  $date_transaction=date("Y-m-d",$facture->timestamp_date_facture);
       }
 
-      $result = $this->SQL("SELECT id_transaction as id , id_category ".
+      $result = $this->SQL("SELECT id_transaction as id , id_category , type ".
 			   "FROM webfinance_transaction_invoice AS wf_tr_inv LEFT JOIN webfinance_transactions AS wf_tr ON (wf_tr_inv.id_transaction = wf_tr.id ) ".
 			   "WHERE wf_tr_inv.id_invoice =$id_invoice");
       //$result=$this->SQL("SELECT id, id_category FROM webfinance_transactions WHERE id_invoice=$id_invoice" );
@@ -247,8 +247,17 @@ class Facture extends WFO {
 
       }else{
 	//multiple transactions
+	if($facture->is_paye){
+	  while(list($id_tr , $id_category , $type_tr) = mysql_fetch_array($result)){
+	    if($type_tr == "prevision"){
+	    $this->SQL("UPDATE webfinance_transactions SET type='asap' WHERE id=$id_tr ");
+	    }
+	  }
+	}
 	$id_tr=0;
+
       }
+      mysql_free_result($result);
       return $id_tr;
 
     }
