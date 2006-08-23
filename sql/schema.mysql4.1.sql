@@ -361,6 +361,22 @@ CREATE TABLE `webfinance_files` (
   KEY `fk_id` (`fk_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+
+--
+-- Table structure for table `webfinance_transaction_invoice`
+--
+
+CREATE TABLE `webfinance_transaction_invoice` (
+  `id_transaction` int(11) NOT NULL,
+  `id_invoice` int(11) NOT NULL,
+  `date_update` timestamp NOT NULL default '0000-00-00 00:00:00' on update CURRENT_TIMESTAMP,
+  PRIMARY KEY  (`id_transaction`,`id_invoice`),
+  KEY `id_invoice` (`id_invoice`),
+  CONSTRAINT `webfinance_transaction_invoice_ibfk_2` FOREIGN KEY (`id_invoice`) REFERENCES `webfinance_invoices` (`id_facture`) ON DELETE CASCADE,
+  CONSTRAINT `webfinance_transaction_invoice_ibfk_1` FOREIGN KEY (`id_transaction`) REFERENCES `webfinance_transactions` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 --
 -- DEFAULT DATA INSERT
 --

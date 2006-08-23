@@ -379,6 +379,19 @@ if(isset($filter['shown_type']) && count($filter['shown_type'])){
      $cur_date=$ts_start_date;
 
      while ($tr = mysql_fetch_object($result)) {
+
+       //id des factures liées
+       $id_invoices = array();
+       $result_invoices = mysql_query("SELECT id_invoice as id , num_facture , ref_contrat ".
+				      "FROM webfinance_transaction_invoice AS wf_tr_inv LEFT JOIN webfinance_invoices AS wf_inv ON (wf_tr_inv.id_invoice = wf_inv.id_facture) ".
+				      "WHERE wf_tr_inv.id_transaction=".$tr->id)
+	 or wf_mysqldie();
+       while($invoice_obj = mysql_fetch_object($result_invoices)){
+	 $id_invoices[] = $invoice_obj;
+       }
+       mysql_free_result($result_invoices);
+
+       //currency
        list($currency,$ex)=getCurrency($tr->id_account);
 
        if(empty($tr->exchange_rate))
@@ -431,7 +444,7 @@ if(isset($filter['shown_type']) && count($filter['shown_type'])){
 	 <input type="checkbox" id="chk_<?=$tr->id?>" name="chk[]" onchange="updateCheck(<?=$tr->id?>);" value="<?=$tr->id?>"/>
   </td>
   <td>
-	 <img src="/imgs/icons/edit.gif" onmouseover="return escape('<?=$help_edit?>');" onclick="inpagePopup(event, this, 440, 410, 'fiche_transaction.php?id=<?=$tr->id?>');" />
+	 <img src="/imgs/icons/edit.gif" onmouseover="return escape('<?=$help_edit?>');" onclick="inpagePopup(event, this, 450, 500, 'fiche_transaction.php?id=<?=$tr->id?>');" />
   </td>
   <td><?=$fmt_date?></td>
   <td style="background: <?= $tr->color ?>; text-align: center;" nowrap>
@@ -455,9 +468,10 @@ if(isset($filter['shown_type']) && count($filter['shown_type'])){
     <?=$tr->text?><br/>
     <i><?=$tr->comment?></i>&nbsp;<?=$file?>&nbsp;<a href="expenses.php?id_transaction=<?=$tr->id?>">[expenses]</a>
 <?php
-     if($Invoice->exists($tr->id_invoice)){
-       printf('<a href="../prospection/edit_facture.php?id_facture=%d" >[invoice]</a>',$tr->id_invoice);
-     }
+ foreach($id_invoices as $invoice_obj){
+  printf('<a href="../prospection/edit_facture.php?id_facture=%d" ><img style="width: 12px; height: 12px;" onmouseover="return escape(\'%s\');" src="/imgs/icons/invoice-edit.png" /></a> ',
+	 $invoice_obj->id , $invoice_obj->num_facture ."<br/>".$invoice_obj->ref_contrat);
+ }
 ?>
   </td>
   <td style="text-align: right; font-weight: bold; background: $amount_color" nowrap><?=$fmt_amount?> <?=$currency?></td>
@@ -479,7 +493,7 @@ print <<<EOF
 	 <input type="checkbox" id="chk_$tr->id" name="chk[]" onchange="updateCheck($tr->id);" value="$tr->id"/>
   </td>
   <td>
-	 <img src="/imgs/icons/edit.gif" onmouseover="return escape('$help_edit');" onclick="inpagePopup(event, this, 440, 410, 'fiche_transaction.php?id=$tr->id');" />
+	 <img src="/imgs/icons/edit.gif" onmouseover="return escape('$help_edit');" onclick="inpagePopup(event, this, 450, 500, 'fiche_transaction.php?id=$tr->id');" />
   </td>
   <td>$fmt_date</td>
   <td style="background: $tr->color; text-align: center;" nowrap><a href="?$filter_base&filter[shown_cat][$tr->id_category]='on'">$tr->name</a></td>
@@ -492,9 +506,10 @@ EOF;
   </td>
   <td width="100%" style="font-size: 9px;"><?= $tr->text ?><br/><i><?= $tr->comment ?></i>&nbsp;<?=$file?>&nbsp;<a href="expenses.php?id_transaction=<?=$tr->id?>">[expenses]</a>
 <?
-     if($Invoice->exists($tr->id_invoice)){
-       printf('<a href="../prospection/edit_facture.php?id_facture=%d" >[invoice]</a>',$tr->id_invoice);
-     }
+ foreach($id_invoices as $invoice_obj){
+  printf('<a href="../prospection/edit_facture.php?id_facture=%d" ><img style="width: 12px; height: 12px;" onmouseover="return escape(\'%s\');" src="/imgs/icons/invoice-edit.png" /></a> ',
+	 $invoice_obj->id , $invoice_obj->num_facture ."<br/>".$invoice_obj->ref_contrat);
+ }
 print <<<EOF
          </td>
   <td style="text-align: right; font-weight: bold; background: $amount_color" nowrap>$fmt_amount $currency</td>
@@ -524,7 +539,7 @@ EOF;
      </tr>
     </table>
     </form> <? // End of checkboxes form ?>
-    <a href="" onClick="inpagePopup(event, this, 440, 350, 'fiche_transaction.php?id=-1');return false"><?= _('Add a transaction') ?></a>
+    <a href="" onClick="inpagePopup(event, this, 450, 500, 'fiche_transaction.php?id=-1');return false"><?= _('Add a transaction') ?></a>
   </td>
 
   <td><?php // Begin of right column ?>

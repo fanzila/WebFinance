@@ -89,7 +89,6 @@ if($id_transaction>0){
   $q = sprintf("UPDATE webfinance_transactions SET ".
 	       "id_category=%d, ".
 	       "id_account=%d, ".
-	       "id_invoice=%d, ".
 	       "text='%s', ".
 	       "amount='%s', ".
 	       "exchange_rate='%s', ".
@@ -97,7 +96,7 @@ if($id_transaction>0){
 	       "date=str_to_date('%s', '%%d/%%m/%%Y'), ".
 	       "comment='%s' ".
 	       "WHERE id=%d",
-	       $id_category, $id_account, $id_invoice, $text, $amount, $exchange_rate, $type, $date, $comment, $id_transaction);
+	       $id_category, $id_account, $text, $amount, $exchange_rate, $type, $date, $comment, $id_transaction);
   mysql_query($q) or wf_mysqldie();
 
  }else{
@@ -114,9 +113,10 @@ if($id_transaction>0){
 
   mysql_query($q) or wf_mysqldie();
   $id_transaction = mysql_insert_id();
-
  }
 
+
+//fichiers attachés
 $File = new FileTransaction();
 
 if(isset($file_del)){
@@ -132,6 +132,26 @@ if(isset($file_del)){
 
 if (isset($_FILES['file']) && is_uploaded_file($_FILES['file']['tmp_name'])) {
   $File->addFile($_FILES['file'], $id_transaction);
+ }
+
+
+//factures liées
+if(isset($id_invoices)){
+  mysql_query("DELETE FROM webfinance_transaction_invoice WHERE id_transaction=$id_transaction") or wf_mysqldie();
+
+  $id_invoices = array_unique($id_invoices);
+
+  if(count($id_invoices)){
+    $q="";
+    foreach($id_invoices as $id_invoice){
+      if(is_numeric($id_invoice) && $id_invoice>0)
+	$q .= " ($id_transaction , $id_invoice ),";
+    }
+    $q = preg_replace('/,$/' , '' , $q);
+    if(!empty($q)){
+      mysql_query("INSERT INTO webfinance_transaction_invoice (id_transaction , id_invoice ) VALUES $q  ") or wf_mysqldie();
+    }
+  }
  }
 
 ?>
