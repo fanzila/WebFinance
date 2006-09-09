@@ -12,8 +12,9 @@
 include("../inc/main.php");
 
 if (!is_numeric($_GET['id_facture'])) {
-  // CrÃ©ation de facture
+  // Creates a new invoice. 
   $tva = getTVA();
+  $tva = preg_replace("\,", ".", $tva); // 19,6 fails to insert as 19.6
 
   mysql_query("INSERT INTO webfinance_invoices (date_created,date_facture,id_client,tax) values(now(), now(), ".$_GET['id_client'].",'$tva')") or wf_mysqldie();
   $id_facture=mysql_insert_id();
