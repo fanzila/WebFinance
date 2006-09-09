@@ -43,14 +43,6 @@ print $lignes;
 
 ?>
 function changedData(f) {
-  <?php if ($facture->immuable) {
-  // Le devis est validÃ© ou la facture est payÃ©e => pas possible de modifier ce doc
-  ?>
-  alert(<?= _('This document cannot be changed') ?>);
-  window.location.reload(true);
-  return;
-  <?php } ?>
-
   document.getElementById('submit_button').style.background = '#009f00';
   document.getElementById('submit_button').style.fontWeight = 'bold';
   document.getElementById('submit_button').style.color = 'white';
@@ -62,13 +54,13 @@ function changedData(f) {
 
 function submitForm(f) {
   <?php if ($facture->immuable) {
-  // Le devis est validÃ© ou la facture est payÃ©e => pas possible de modifier ce doc
+  // When a quote is validated of an invoice paid, trying to change and save
+  // the document will raise an error
   ?>
-  alert('Ce document ne peut Ãªtre modifiÃ©');
-  return;
+  if (!confirm('<?= _('This document SHANT be changed, it has been sent to client and/or paid. Do you realy want to save your changes ?') ?>')) {
+    return false;
+  }
   <?php } ?>
-
-  f.submit();
 }
 
 function number_format(v, precision, thousands, coma) {
@@ -182,7 +174,7 @@ function ask_confirmation(txt) {
 <area shape="rect" coords="0,32,16,48" alt="Supprimer" href="javascript:del_ligne();" />
 </map>
 
-<form id="main_form" onchange="changedData(this);" action="save_facture.php" method="post">
+<form id="main_form" onsubmit="return submitForm(this.form);" onchange="changedData(this);" action="save_facture.php" method="post">
 <h1><?= ucfirst($facture->type_doc) ?> <?= $facture->num_facture ?> <?= $facture->nom_client ?></h1>
 <input type="hidden" name="action" value="save_facture" />
 <input type="hidden" name="id_facture" value="<?= $facture->id_facture ?>" />
@@ -376,11 +368,11 @@ function ask_confirmation(txt) {
       </td>
     </tr>
     <tr>
-      <td colspan="2" class="liens_boutons">
+      <td colspan="2">
       <a href="fiche_prospect.php?id=<?= $facture->id_client ?>&onglet=biling"><?=_('Back to client screen')?></a><br/>
       <a href="edit_facture.php?id_facture=new&id_client=<?= $facture->id_client ?>"><?=_('Create a new')?></a><br/>
       <a href="save_facture.php?id=<?= $facture->id_facture ?>&action=duplicate"><?=_('Duplicate')?></a><br/>
-      <a href="gen_facture.php?dest=file&id=<?= $facture->id_facture ?>"><?= _('Send') ?></a><br/>
+      <a href="gen_facture.php?dest=file&id=<?= $facture->id_facture ?>"><?= _('Send by mail...') ?></a><br/>
 <?php
       $tr_ids = $Facture->getTransactions($facture->id_facture);
       foreach($tr_ids as $id_tr=>$text){
@@ -388,7 +380,7 @@ function ask_confirmation(txt) {
       }
 ?>
       <?php
-        printf('<a href="gen_facture.php?id=%d">PDF</a><br/>', $facture->id_facture);
+        printf('<a href="gen_facture.php?id=%d">Download PDF</a><br/>', $facture->id_facture);
         if (! $facture->immuable)
           printf('<a href="save_facture.php?id_facture=%d&action=delete_facture" onclick="return ask_confirmation(\'%s\');">%s</a><br/>', $facture->id_facture,_('Do you really want to delete it ?'), _('Delete'));
       ?>
@@ -396,7 +388,7 @@ function ask_confirmation(txt) {
     </tr>
     <tr>
       <td colspan="2" style="text-align: center;">
-      <input style="width: 90px; background: #eee; color: #7f7f7f; border: solid 1px #aaa;" id="submit_button" onclick="submitForm(this.form);" type="button" value="<?=_('Save')?>" />
+      <input style="width: 90px; background: #eee; color: #7f7f7f; border: solid 1px #aaa;" id="submit_button" type="submit" value="<?=_('Save')?>" />
       <input style="width: 90px; background: #eee; color: #7f7f7f; border: solid 1px #aaa;" id="cancel_button" type="button" onclick="window.location='fiche_prospect.php?id=<?= $facture->id_client ?>';" value="<?=_('Cancel')?>" />
       </td>
     </tr>
@@ -440,7 +432,6 @@ foreach ($facture->lignes as $l) {
 </tr>
 EOF;
 }
-if (! $facture->immuable) { // DÃ©but ajout une ligne
 ?>
 
 <tr style="background: #cecece">
@@ -459,9 +450,6 @@ if (! $facture->immuable) { // DÃ©but ajout une ligne
   <td nowrap style="text-align: center;"><input type="text" onkeyup="updateTotal('<?= $facture->taxe?>');" name="prix_ht_new" id="prix_ht_new" style="width: 50px; text-align: center" value="0" />&nbsp;<?=$currency?> HT</td>
   <td nowrap><input type="text" id="total_new" name="total_new" onfocus="blur();" style="background: none; border: none; width: 40px; text-align: right" value="0" />&nbsp;<?=$currency?> HT</td>
 </tr>
-<?php
-} // Fin ajout une ligne
-?>
 
 <tr><td colspan="4" style="text-align: right;">Total HT<input onfocus="blur();" type="text" name="total_ht" id="total_ht" style="text-align:right; border: none; width: 70px;" value="<?= $facture->nice_total_ht ?>" /><?=$currency?></td></tr>
 <tr><td colspan="4" style="text-align: right;">TVA<input onfocus="blur();" type="text" id="tva" style="text-align:right; border: none; width: 70px;" value="<?= number_format($facture->total_ttc - $facture->total_ht,2, ',', ' '); ?>" /><?=$currency?></td></tr>

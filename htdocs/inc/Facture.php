@@ -79,10 +79,8 @@ class Facture extends WFO {
     $facture->total_ttc = $total+($total*$facture->taxe)/100;
     $facture->nice_total_ht = sprintf("%.2f", $facture->total_ht);
     $facture->nice_total_ttc = sprintf("%.2f", $facture->total_ttc);
-    //$facture->immuable = $facture->is_paye || $facture->is_sent;
-    //We can always modify invoice
-    //Can be in preference #FIXME
-    $facture->immuable = false;
+    // If an invoice has been send or is paid, then we SHANT CHANGE IT
+    $facture->immuable = $facture->is_paye || $facture->is_sent;
 
     $result = $this->SQL("SELECT nom FROM webfinance_clients WHERE id_client=".$facture->id_client);
     list($facture->nom_client) = mysql_fetch_array($result);
