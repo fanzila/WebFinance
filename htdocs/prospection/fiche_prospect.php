@@ -125,7 +125,7 @@ function ask_confirmation(txt) {
 <table width="740" border="0" cellspacing="0" cellpadding="0" class="fiche_prospect">
 <tr class="onglets">
   <td id="handle_contacts" onclick="focusOnglet('contacts');"><?= _('Contacts') ?></td>
-  <td id="handle_facturation" onclick="focusOnglet('facturation');"><?= _('Billing') ?></td>
+  <td id="handle_billing" onclick="focusOnglet('billing');"><?= _('Billing') ?></td>
   <td id="handle_log" onclick="focusOnglet('log');"><?= _('Flollow&nbsp;up') ?></td>
   <td id="handle_other" onclick="focusOnglet('other');"><?= _('Miscellaneous') ?></td>
   <td id="handle_graph" onclick="focusOnglet('graph');"><?= _('Graphics') ?></td>
@@ -178,7 +178,7 @@ function ask_confirmation(txt) {
   </table>
 </div>
 
-<div id="tab_facturation" style="display: none;">
+<div id="tab_billing" style="display: none;">
     <br/>
 
     <div style="overflow: auto; width: 700px; height: 550px;">
