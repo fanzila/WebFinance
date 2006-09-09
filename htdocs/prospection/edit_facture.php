@@ -376,7 +376,7 @@ function ask_confirmation(txt) {
     </tr>
     <tr>
       <td colspan="2" class="liens_boutons">
-      <a href="fiche_prospect.php?id=<?= $facture->id_client ?>&onglet=facturation"><?=_('Back to client screen')?></a><br/>
+      <a href="fiche_prospect.php?id=<?= $facture->id_client ?>&onglet=biling"><?=_('Back to client screen')?></a><br/>
       <a href="edit_facture.php?id_facture=new&id_client=<?= $facture->id_client ?>"><?=_('Create a new')?></a><br/>
       <a href="save_facture.php?id=<?= $facture->id_facture ?>&action=duplicate"><?=_('Duplicate')?></a><br/>
       <a href="gen_facture.php?dest=file&id=<?= $facture->id_facture ?>"><?= _('Send') ?></a><br/>
