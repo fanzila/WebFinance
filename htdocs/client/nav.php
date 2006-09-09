@@ -14,14 +14,14 @@
 //$Id$
 
 $elements = array( _('Clients') => 'index.php?q=1',
-		   _('Billing') => 'facturation.php',
+                   _('Billing') => 'facturation.php',
                  );
 
 foreach ($elements as $elname=>$url) {
   $on = '/imgs/boutons/'.urlencode(base64_encode($elname.":on:".$User->prefs->theme)).'.png';
   array_push($_SESSION['preload_images'], $on);
   $off = '/imgs/boutons/'.urlencode(base64_encode($elname.":off:".$User->prefs->theme)).'.png';
-  printf( '<a class="bouton" href="%s"><img onMouseOver="this.src=\'%s\';" onMouseOut="this.src=\'%s\';" src="%s" border=0 /></a>',
+  printf( '<a class="bouton" href="%s"><img onMouseOver="this.src=\'%s\';" onMouseOut="this.src=\'%s\';" src="%s" border=0 /></a>'."\n",
            $url, $on, $off, $off);
 }
 
