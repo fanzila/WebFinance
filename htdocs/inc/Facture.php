@@ -92,15 +92,15 @@ class Facture extends WFO {
     return $facture;
   }
 
-  /** Marque chaque ligne d'une facture comme "payée"
+  /** Marque chaque ligne d'une facture comme "payÃ©e"
    */
   function setPaid($id_facture) {
-    // Marque toutes les lignes comme "payées"
+    // Marque toutes les lignes comme "payÃ©es"
     $this->SQL("UPDATE webfinance_invoices SET date_paiement=now(),is_payee=1 WHERE id_facture=$id_facture");
   }
 
 
-  /** Renvoie vrai si la facture est générée au format PDF
+  /** Renvoie vrai si la facture est gÃ©nÃ©rÃ©e au format PDF
     */
   function hasPdf($id) {
     $result = $this->SQL("SELECT pdf_file FROM webfinance_invoices WHERE id_facture=$id");
