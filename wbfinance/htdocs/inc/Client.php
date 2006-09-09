@@ -12,12 +12,12 @@
 
 // $Id$
 
-class Client {
+class Client extends WFO {
   var $id = -1;
   var $data = null;
 
   function _getInfos() {
-    $result = mysql_query("SELECT c.id_client as id,
+    $result = $this->SQL("SELECT c.id_client as id,
                                   c.id_client, c.nom,
                                   c.date_created,
                                   c.tel, c.fax, c.web,
@@ -66,9 +66,9 @@ class Client {
 
     $this->login = "";
     if($this->id_user>0){
-      $login_res = mysql_query("SELECT login FROM webfinance_users WHERE id_user=".$this->id_user) or wf_mysqldie();
+      $login_res = $this->SQL("SELECT login FROM webfinance_users WHERE id_user=".$this->id_user);
       if(mysql_num_rows($login_res)>0)
-	list($this->login) = mysql_fetch_array($login_res);
+      list($this->login) = mysql_fetch_array($login_res);
     }
 
 
@@ -92,7 +92,7 @@ class Client {
     if($id == null)
       $id = $this->id;
 
-    $result = mysql_query("SELECT count(*) FROM webfinance_clients WHERE id_client=$id") or wf_mysqldie();
+    $result = $this->SQL("SELECT count(*) FROM webfinance_clients WHERE id_client=$id");
     list($exists) = mysql_fetch_array($result);
     return $exists;
   }
