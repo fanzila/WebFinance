@@ -118,33 +118,6 @@ echo '30 7  * * *  www-data  php /path/to/webfinance/htdocs/inc/scheduler.php' >
   <li>Join us on IRC channel at #webfinance on irc.freenode.net</li>
 </ul>
 
-<a name="roadmap"></a><h2>Roadmap</h2>
-
-<ul>
-  <li>RELEASE_0_1 : First open source</li>
-  <li>RELEASE_0_2 : Due date : <b>End of April 2006 ?</b>
-      <ul>
-        <li>Blend webcash and backoffice fully</li>
-        <li>numerous bugfixes needed</li>
-        <li>Nicer graphs everywhere
-        <li>Tab manager uses one <tt>include</tt> per tab, to generalize use of tabs everywhere needed
-        <li>Promote to other small companies and find 2 other users for feedback</li>
-      </ul>
-  <li>RELEASE_0_3 : Due date : <b>May 2006 ?</b>
-      <ul>
-        <li>Get rid of perl /cgi-bin/</li>
-        <li>Full gettext support (all is translated in at least french and english)</li>
-        <li>At least one different css skin</li>
-        <li>Todo manager</li>
-        <li>Calendar manager (exports/imports palm ?)</li>
-        <li>Bookmark manager : imports, merges and exports for Mozilla format, XBEL (galeon...)</li>
-        <li>access grants by role
-        <li>exports contact adresses to LDAP/emacs/mutt/CSV
-        <li>exports financial data as excel and CSV at least, perhaps to an accounting software (Coala ?)</li>
-      </ul>
-  <li>???</li>
-</ul>
-
 <h2>Contributors</h2>
 <i>By alphabetical order</i>
 
