@@ -1,4 +1,7 @@
-all: export
+all: daily export
+
+daily:
+	rm -f webfinance_HEAD.tar.gz
 
 export: webfinance_HEAD.tar.gz webfinance_RELEASE_0_1.tar.gz
 
