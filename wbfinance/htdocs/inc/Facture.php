@@ -236,8 +236,9 @@ class Facture extends WFO {
 	  "amount='%s', ".
 	  "type='$type', ".
 	  "date='%s', ".
-	  "comment='%s', ".
-	$q = sprintf($query, $facture->id_compte, $id_category, $text, preg_replace('!,!', '.', $facture->total_ttc), $date_transaction , $comment );
+	  "comment='%s',".
+    "id_invoice=%d";
+	$q = sprintf($query, $facture->id_compte, $id_category, $text, preg_replace('!,!', '.', $facture->total_ttc), $date_transaction , $comment, $this->id );
 	$this->SQL($q);
 	$id_tr=mysql_insert_id();
 
