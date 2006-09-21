@@ -55,7 +55,7 @@ class Facture extends WFO {
                                   unix_timestamp(f.date_sent) as timestamp_date_sent,
                                   date_format(f.date_facture, '%Y%m') as mois_facture,
                                   UPPER(LEFT(f.type_doc, 2)) AS code_type_doc,
-                                  date_sent<now() as is_sent,
+                                  is_envoye as is_sent,
                                   f.type_paiement, f.is_paye, f.ref_contrat, f.extra_top, f.extra_bottom, f.num_facture, f.period, f.tax, f.id_compte, f.exchange_rate, f.*
                            FROM webfinance_clients as c, webfinance_invoices as f
                            WHERE f.id_client=c.id_client

@@ -16,7 +16,7 @@ require("/usr/share/fpdf/fpdf.php");
 
 // Get my company info (address...)
 $result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='societe' AND owner=-1");
-if (mysql_num_rows($result) != 1) { die(_("You didn't setup your company address and name. Go to 'Admin' and 'My company'")); }
+if (mysql_num_rows($result) != 1) { die(_("You didn't setup your company address and name. <a href='../admin/societe'>Go to 'Admin' and 'My company'</a>")); }
 list($value) = mysql_fetch_array($result);
 mysql_free_result($result);
 $societe = unserialize(base64_decode($value));
@@ -27,7 +27,7 @@ foreach ($societe as $n=>$v) {
   $societe->$n = preg_replace("/\\\\EUR\\{([0-9.,]+)\\}/", "\\1 ".chr(128), $societe->$n );
 }
 $result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='logo' AND owner=-1");
-if (mysql_num_rows($result) != 1) { die(_("You didn't setup the logo for your comany. Go to 'Admin' and 'My company'")); }
+if (mysql_num_rows($result) != 1) { die(_("You didn't setup the logo for your company. <a href='../admin/societe'>Go to 'Admin' and 'My company'</a>")); }
 list($logo_data) = mysql_fetch_array($result);
 $logo_data = base64_decode($logo_data);
 
@@ -193,7 +193,7 @@ $result = mysql_query("SELECT value FROM webfinance_pref WHERE id_pref=".$factur
 list($cpt) = mysql_fetch_array($result);
 mysql_free_result($result);
 $cpt = unserialize(base64_decode($cpt));
-if (!is_object($cpt)) { die("Impossible de generer la facture. Vous devez saisir au moins un compte bancaire dans les options pour emettre des factures"); }
+if (!is_object($cpt)) { die("Impossible de generer la facture. <a href='../admin/societe'>Vous devez saisir au moins un compte bancaire dans les options pour emettre des factures</a>"); }
 foreach ($cpt as $n=>$v) {
   $cpt->$n = utf8_decode($cpt->$n);
 }
