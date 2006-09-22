@@ -38,5 +38,5 @@ require("../top.php");
 $Revision = '$Revision$';
 require("../bottom.php");
 // -*- indent-tabs-mode: nil -*-
-// vim: ts=4,sw=4,et
+// vim: ts=4 sw=4 et
 ?>
