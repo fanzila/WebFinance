@@ -17,7 +17,7 @@ if (($GLOBALS['HTTP_SERVER_VARS']['REDIRECT_STATUS'] == "404") && (preg_match("/
   header("Location: $new_loc");
 } elseif (($GLOBALS['HTTP_SERVER_VARS']['REDIRECT_STATUS'] == "404") && (preg_match("!/imgs/boutons/([^\.]+).png$!", $GLOBALS['HTTP_SERVER_VARS']['REDIRECT_URL'], $matches))) {
   // Génération des images dynamiquement.
-  header("Location: /cgi-bin/button.cgi?data=".urlencode($matches[1]));
+  header("Location: /imgs/boutons/generate.php?data=".urlencode($matches[1]));
   die();
 } else {
   require("top.php");
