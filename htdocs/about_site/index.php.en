@@ -59,7 +59,7 @@ apt-get install php-fpdf apache php4 mysql-server-4.1 ttf-freefont gettext libph
 <pre class="shell">
 echo "CREATE DATABASE webfinance" | mysql -u root --password=verysecret
 echo "GRANT ALL ON webfinance.* TO 'webfinance'@'localhost'" | mysql -u root --password=verysecret
-mysql -u root --password=verysecret &lt; /path/to/webfinance/schema.mysql4.1.sql
+mysql -u root --password=verysecret &lt; /path/to/webfinance/sql/schema.mysql4.1.sql
 </pre>
 
 <li>Add the virtual host to Apache configuration and make sure the name resolves :
@@ -122,11 +122,11 @@ echo '30 7  * * *  www-data  php /path/to/webfinance/htdocs/inc/scheduler.php' >
 <i>By alphabetical order</i>
 
 <ul>
+  <li>Cedric Ravier &lt;cravier@nbi.fr&gt; <i>Some icons, logo, and other graphical stuff</i></li>
   <li>Cyril Bouthors &lt;cyril@isvtec.com&gt; <i>Initial cash-flow specifications, bug reports, feature requests, gettext support</i></li>
   <li>Nicolas Bouthors &lt;nbouthors@nbi.fr&gt; <i>Initial developpement for client, clientlog, contacts, and invoice managing, gettext french translation</i></li>
   <li>Pierre Doleans &lt;pierre@isvtec.com&gt; <i>Bug reports, feature requests</i></li>
   <li>Thierry Randrianiriana &lt;thierry@isvtec.com&gt; <i>A lot of code, bugfixes and features</i></li>
-  <li>Cedric Ravier &lt;cravier@nbi.fr&gt; <i>Some icons, logo, and other graphical stuff</i></li>
 </ul>
 
 <i>$Id$</i>
