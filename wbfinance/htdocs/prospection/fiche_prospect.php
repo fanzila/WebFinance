@@ -115,9 +115,15 @@ function ask_confirmation(txt) {
 <tr>
   <td width="100%"><input type="text" name="nom" value="<?= preg_replace('/"/', '\\"', $Client->nom) ?>" style="font-size: 18px; font-weight: bold; width: 510px; border-top: none; border-left: none; border-right: none;" /><br/></td>
   <td nowrap>
+<?php
+    if($User->hasRole("manager",$_SESSION['id_user']) || $User->hasRole("employee",$_SESSION['id_user']) ){
+?>
     <input style="width: 75px; background: #eee; color: #7f7f7f; border: solid 1px #aaa;" id="submit_button" onclick="submitForm(this.form);" type="button" value="<?= _('Save') ?>" />
     <input style="width: 75px; background: #eee; color: #7f7f7f; border: solid 1px #aaa;" id="cancel_button" type="button" onclick="window.location='fiche_prospect.php?id=<?= $facture->id_client ?>';" value="<?= _('Cancel') ?>" />
     <input style="width: 75px; background: #eee; color: #7f7f7f; border: solid 1px #aaa;" id="delete_button" type="button" onclick="confirmDelete(<?= $Client->id ?>);" value="<?= _('Delete') ?>" />
+<?
+    }
+?>
   </td>
 </tr>
 </table>
@@ -172,7 +178,13 @@ function ask_confirmation(txt) {
 
   <b><?= _('Contacts :') ?></b><br/>
   <?include "contact_entreprise.php" ?>
-  <div style="text-align: center;"><a href="#" onclick="inpagePopup(event, this, 240, 220, 'edit_contact.php?id=_new&id_client=<?= $Client->id ?>');"><?= _('Add a new contact') ?></a></div>
+  <div style="text-align: center;">
+<?php
+    if($User->hasRole("manager",$_SESSION['id_user']) || $User->hasRole("employee",$_SESSION['id_user']) ){
+      printf("<a href=\"#\" onclick=\"inpagePopup(event, this, 240, 220, 'edit_contact.php?id=_new&id_client=%d');\">%s</a>" , $Client->id , _('Add a new contact'));
+    }
+?>
+  </div>
   </td>
 
   </table>
@@ -259,7 +271,12 @@ function ask_confirmation(txt) {
       ?>
     </table>
     </div>
-    <center><a href="edit_facture.php?id_facture=new&id_client=<?= $Client->id ?>" onclick="return ask_confirmation('<?=_('Confirm ?')?>');" ><?=_('Create invoice/estimate')?></a></center>
+<?php
+    if($User->hasRole("manager",$_SESSION['id_user']) || $User->hasRole("employee",$_SESSION['id_user']) ){
+      printf("<center><a href=\"edit_facture.php?id_facture=new&id_client=%d\" onclick=\"return ask_confirmation('%s');\" >%s</a></center>" ,
+	     $Client->id , _('Confirm ?') , _('Create invoice/estimate'));
+    }
+?>
 </div>
 
 <div style="display: none;" id="tab_other">
