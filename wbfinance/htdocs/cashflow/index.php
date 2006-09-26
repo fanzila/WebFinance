@@ -434,7 +434,7 @@ if(isset($filter['shown_type']) && count($filter['shown_type'])){
 	 $file .= sprintf("<a href='save_transaction?action=file&id_file=%d' title='%s'><img src='/imgs/icons/attachment.png'/></a>",$file_object->id_file, $file_object->name);
        }
 
-       if(isset($view) AND $view=="edit"){
+       if(isset($view) AND $view=="edit" AND $User->hasRole("manager",$_SESSION['id_user'])){
 
 ?>
   <input type="hidden" name="query" value="?view=edit&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>" />
@@ -444,7 +444,13 @@ if(isset($filter['shown_type']) && count($filter['shown_type'])){
 	 <input type="checkbox" id="chk_<?=$tr->id?>" name="chk[]" onchange="updateCheck(<?=$tr->id?>);" value="<?=$tr->id?>"/>
   </td>
   <td>
-	 <img src="/imgs/icons/edit.gif" onmouseover="return escape('<?=$help_edit?>');" onclick="inpagePopup(event, this, 450, 500, 'fiche_transaction.php?id=<?=$tr->id?>');" />
+<?php
+	   if($User->hasRole("manager", $_SESSION['id_user'] )){
+	     printf("<img src=\"/imgs/icons/edit.gif\" onmouseover=\"return escape('%s');\" onclick=\"inpagePopup(event, this, 450, 500, 'fiche_transaction.php?id=%d');\" />" ,$help_edit , $tr->id );
+	   }else{
+	     echo "&nbsp;";
+	   }
+?>
   </td>
   <td><?=$fmt_date?></td>
   <td style="background: <?= $tr->color ?>; text-align: center;" nowrap>
@@ -493,7 +499,15 @@ print <<<EOF
 	 <input type="checkbox" id="chk_$tr->id" name="chk[]" onchange="updateCheck($tr->id);" value="$tr->id"/>
   </td>
   <td>
-	 <img src="/imgs/icons/edit.gif" onmouseover="return escape('$help_edit');" onclick="inpagePopup(event, this, 450, 500, 'fiche_transaction.php?id=$tr->id');" />
+EOF;
+
+ if($User->hasRole("manager", $_SESSION['id_user'] )){
+   printf("<img src=\"/imgs/icons/edit.gif\" onmouseover=\"return escape('%s');\" onclick=\"inpagePopup(event, this, 450, 500, 'fiche_transaction.php?id=%d');\" />" ,$help_edit , $tr->id );
+ }else{
+   echo "&nbsp;";
+ }
+
+print <<<EOF
   </td>
   <td>$fmt_date</td>
   <td style="background: $tr->color; text-align: center;" nowrap><a href="?$filter_base&filter[shown_cat][$tr->id_category]='on'">$tr->name</a></td>
@@ -523,9 +537,9 @@ EOF;
      }
      ?>
      <tr class="row_even">
-       <td colspan="4">
+       <td colspan="3">
 <?
-       if($count>1){
+       if($User->hasRole("manager",$_SESSION['id_user']) && $count>1){
 	 if($view=="edit")
 	   printf('<input type="submit" value="%s" /><input type="button" onclick="window.location=\'?%s\'" value="%s" />',
          _('Save'),preg_replace('/=edit/i','', $old_query_string), _('Normal view'));
@@ -534,12 +548,16 @@ EOF;
        }
 ?>
        </td>
-       <td colspan="2" style="text-align: right; font-weight: bold;"><?= _('Total amount of shown transactions') ?></td>
+       <td colspan="3" style="text-align: right; font-weight: bold;"><?= _('Total amount of shown transactions') ?></td>
        <td nowrap style="text-align: right; font-weight: bold;"><?= number_format($total_shown, 2, ',', ' ') ?> &euro;</td>
      </tr>
     </table>
     </form> <? // End of checkboxes form ?>
-    <a href="" onClick="inpagePopup(event, this, 450, 500, 'fiche_transaction.php?id=-1');return false"><?= _('Add a transaction') ?></a>
+<?
+       if($User->hasRole("manager",$_SESSION['id_user'] )){
+	 printf("<a href=\"\" onClick=\"inpagePopup(event, this, 450, 500, 'fiche_transaction.php?id=-1');return false\">%s</a>" , _('Add a transaction'));
+       }
+?>
   </td>
 
   <td><?php // Begin of right column ?>
@@ -681,10 +699,12 @@ printf('<a class="pager_link" href="?%s&filter[start_date]=%s&filter[end_date]=%
       ?>
     </tr>
     </table>
-    </form><br/>
-
-  <?php //Actions on selected transactions ?>
-
+    </form>
+  <?php
+      //Actions on selected transactions
+    if($User->hasRole("manager" , $_SESSION['id_user'])){
+  ?>
+  <br/>
   <form id="action_form" action="save_transaction.php" method="post">
   <input type="hidden" name="query" value="<?= $old_query_string ?>" />
   <input type="hidden" name="selected_transactions" value="" />
@@ -734,6 +754,11 @@ printf('<a class="pager_link" href="?%s&filter[start_date]=%s&filter[end_date]=%
   </tr>
   </table>
   </form>
+
+<?php
+	    }
+      //END Actions on selected transactions
+?>
 
   <div class="bordered" style="margin-top: 20px;" >
   <?php
