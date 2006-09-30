@@ -1,0 +1,414 @@
+# Cyril Bouthors <cyril@bouthors.org>, 2006.
+msgid ""
+msgstr ""
+"Project-Id-Version: webfinance\n"
+"Report-Msgid-Bugs-To: Webfinance <webfinance@nbi.fr>\n"
+"POT-Creation-Date: 2005-09-30 18:05+0200\n"
+"PO-Revision-Date: 2006-09-30 17:14+0100\n"
+"Last-Translator: José Vicente Mondéjar Brell <jomonbre@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language-Team: \n"
+
+msgid "show all"
+msgstr "mostrar todo"
+
+msgid "Financial graphics"
+msgstr "Gráficas financieras"
+
+msgid "Home"
+msgstr "Inicio"
+
+msgid "Companies"
+msgstr "Empresas"
+
+msgid "Cashflow"
+msgstr "Tesorería"
+
+msgid "My account"
+msgstr "Mi cuenta"
+
+msgid "Customers"
+msgstr "Clientes"
+
+msgid "Administration"
+msgstr "Administración"
+
+msgid "Logout"
+msgstr "Desconexión"
+
+msgid "Outgo & Income from %s to %s"
+msgstr "Gastos e Ingresos del %s al %s"
+
+msgid "Cash flow from %s to %s"
+msgstr "Tesorería del %s al %s"
+
+msgid "Cash flow : %s-%s"
+msgstr "Tesorería : %s-%s"
+
+msgid "Outgo & Income : %s-%s"
+msgstr "Gastos e Ingresos : %s-%s"
+
+msgid "Day"
+msgstr "Día"
+
+msgid "Amount"
+msgstr "Cantidad"
+
+msgid "File"
+msgstr "Fichero"
+
+msgid "Amount (Euro)"
+msgstr "Cantidad (Euro)"
+
+msgid "Nothing"
+msgstr "Nada"
+
+msgid "All accounts"
+msgstr "Todas las cuentas"
+
+msgid "-- Choose --"
+msgstr "-- Elija --"
+
+msgid "-- All accounts --"
+msgstr "-- Todas las cuentas --"
+
+msgid ""
+"Income by category\n"
+"%s\n"
+"from %s to %s"
+msgstr ""
+"ReIngresos por categoría\n"
+"%s\n"
+"del %s al %s"
+
+msgid "Outgo by category / all history"
+msgstr "Gastos por categoría / todo el historial"
+
+msgid "Income & Outgo / all history"
+msgstr "Ingresos y Gastos / todo el historial"
+
+msgid "Outgo"
+msgstr "Gastos"
+
+msgid "Income"
+msgstr "Ingresos"
+
+msgid ""
+"Outgo by category\n"
+"%s\n"
+"from %s to %s"
+msgstr ""
+"Gastos por categoría\n"
+"%s\n"
+"del %s al %s"
+
+msgid "Cash flow / all history"
+msgstr "Tesorería / todo el historial"
+
+msgid "real"
+msgstr "real"
+
+msgid "prev"
+msgstr "previsional"
+
+msgid "unknown"
+msgstr "desconocido"
+
+msgid "Save"
+msgstr "Guardar"
+
+msgid "Language"
+msgstr "Idioma"
+
+msgid "Login screen"
+msgstr "Identificación"
+
+msgid "Login"
+msgstr "Usuario"
+
+msgid "Password"
+msgstr "Contraseña"
+
+msgid "Connect"
+msgstr "Conexión"
+
+# Nav prospection
+msgid "Clients"
+msgstr "Clientes"
+
+msgid "Targets"
+msgstr "Objetivos"
+
+msgid "Add company"
+msgstr "Añadir empresa"
+
+msgid "Billing"
+msgstr "Facturación"
+
+# Fiche prospection
+msgid "Company name"
+msgstr "Nombre de la empresa"
+
+msgid "Total Income"
+msgstr "Total de ingresos"
+
+msgid "Year Income"
+msgstr "Ingresos anuales"
+
+msgid "Owed"
+msgstr "Deuda"
+
+msgid "Total income %Y"
+msgstr "Ingresos totales %Y"
+
+msgid "Income 12 months"
+msgstr "Ingresos 12 meses"
+
+msgid "Billed and unpaid"
+msgstr "Facturado y no pagado"
+
+msgid "Cash (real)"
+msgstr "Tesorería (real)"
+
+msgid "Cash (forecast)"
+msgstr "Tesorería (previsión)"
+
+msgid "Only show"
+msgstr "Mostrar sólo"
+
+msgid "Name contains"
+msgstr "El nombre contiene"
+
+msgid "Sort companies by"
+msgstr "Ordenar empresas por"
+
+msgid "Default focused tab in company view"
+msgstr "Pestaña seleccionada por defecto en la vista de empresas"
+
+msgid "Transactions"
+msgstr "Transacciones"
+
+msgid "Graphics"
+msgstr "Gráficas"
+
+msgid "Categories"
+msgstr "Categorías"
+
+msgid "Import"
+msgstr "Importe"
+
+msgid "Up to date / has unpaid"
+msgstr "Al día / impagados"
+
+msgid "Users"
+msgstr "Usuarios"
+
+msgid "Events"
+msgstr "Eventos"
+
+msgid "My company"
+msgstr "Mi empresa"
+
+msgid "Contacts"
+msgstr "Contactos"
+
+msgid "Flollow&nbsp;up"
+msgstr "Seguimiento"
+
+msgid "Miscellaneous"
+msgstr "Varios"
+
+msgid "Phone and URL"
+msgstr "Teléfono y URL"
+
+msgid "Address :"
+msgstr "Dirección :"
+
+msgid "Contacts :"
+msgstr "Contactos :"
+
+msgid "Add a new contact"
+msgstr "Añadir nuevo contacto"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Delete"
+msgstr "Borrar"
+
+msgid "Do you realy want to delete this category ?"
+msgstr "Quiere borrar realmente esta categoría?"
+
+msgid "Name"
+msgstr "Nombre"
+
+msgid "Class"
+msgstr "Clase"
+
+msgid "Regexp"
+msgstr "Expresión regular"
+
+msgid "Comment"
+msgstr "Comentario"
+
+msgid "Color"
+msgstr "Color"
+
+# /tresorerie/index.php
+msgid "Enter a number for 10% aproximated search, enter 100-200 to search transactions fromm 100&euro; to 200&euro; included"
+msgstr "Introducir un número para una búsqueda aproximada del 10%, introducir 100-200 para buscar transacciones de 100&euro; a 200&euro; incluido"
+
+msgid "Text contains :"
+msgstr "El texto contiene :"
+
+msgid "Account :"
+msgstr "Cuenta :"
+
+msgid "Start date :"
+msgstr "Fecha inicial :"
+
+msgid "End date :"
+msgstr "Fecha final :"
+
+msgid "Shown categories :"
+msgstr "Mostrar las categorías :"
+
+msgid "View all"
+msgstr "Ver todo"
+
+msgid "Filter"
+msgstr "Filtro"
+
+msgid "Category"
+msgstr "Categoría"
+
+msgid "Search"
+msgstr "Buscar"
+
+msgid "Search results"
+msgstr "Resultados de la búsqueda"
+
+msgid "Advanced search"
+msgstr "Búsqueda avanzada"
+
+msgid "Keywords"
+msgstr "Palabras clave"
+
+msgid "Search in"
+msgstr "Buscar en"
+
+msgid "Invoices"
+msgstr "Facturas"
+
+msgid "Search again"
+msgstr "Volver a buscar"
+
+msgid "Add a transaction"
+msgstr "Añadir una transacción"
+
+msgid "Validate"
+msgstr "Validar"
+
+# Client.php (object)
+msgid "See financial info about this company on Societe.com"
+msgstr "Ver la información financiera de esta sociedad en Societe.com"
+
+msgid "Cannot link to societe.com if no RCS or siren specified. Click icon to perform a search."
+msgstr "No se puede conectar con societe.com si no se facilita el número de RCS o el número Siren. Haga click en el icono para realizar una búsqueda."
+
+msgid " #"
+msgstr " n°"
+
+msgid "Show grids in graphs"
+msgstr "Mostrar las guías en las gráficas"
+
+msgid "Skin"
+msgstr "Tema Gráfico"
+
+msgid "My password"
+msgstr "Mi contraseña"
+
+msgid "My preferences"
+msgstr "Mis preferencias"
+
+msgid "You are not allowed to modify this information"
+msgstr "No está autorizado para modificar esta información"
+
+msgid "The company, contacts, and invoices has been deleted from the database"
+msgstr "La empresa, los contactos y las facturas han sido borrados de la base de datos"
+
+msgid "Activity graphics"
+msgstr "Gráficas de actividad"
+
+msgid "Total income per month"
+msgstr "Ingresos totales por mes"
+
+msgid "Total income per client"
+msgstr "Ingresos totales por cliente"
+
+msgid "Debt per client"
+msgstr "Deuda por cliente"
+
+msgid "My invoices"
+msgstr "Mis facturas"
+
+msgid "The data has been saved"
+msgstr "Los datos han sido guardados"
+
+msgid "Password changed"
+msgstr "Contraseña modificada"
+
+msgid "Wrong password"
+msgstr "Contraseña incorrecta"
+
+msgid "Invoice"
+msgstr "Factura"
+
+msgid "Week #%W"
+msgstr "Semana %W"
+
+# Periodicidad de una factura
+msgid "Periodicity"
+msgstr "Periodicidad"
+
+msgid "doesn't repeat"
+msgstr "no se repite"
+
+msgid "end of month"
+msgstr "fin de mes"
+
+msgid "end of term"
+msgstr "fin de trimestre"
+
+msgid "end of year"
+msgstr "fin de año"
+
+msgid "This option allows to periodically dupplicate an invoice"
+msgstr "Esta opción permite duplicar la factura periódicamente"
+
+msgid "Payment expected"
+msgstr "Previsión de pago"
+
+msgid "Document type"
+msgstr "Tipo de documento"
+
+msgid "Old password"
+msgstr "Contraseña antigua"
+
+msgid "New password"
+msgstr "Nueva contraseña"
+
+msgid "Repeat"
+msgstr "Repetir"
+
+msgid "Stow view"
+msgstr "Vista por clases"
+
+msgid "Normal view"
+msgstr "Vista normal"
+
+msgid "Total amount of shown transactions"
+msgstr "Total de transacciones mostradas"
+
