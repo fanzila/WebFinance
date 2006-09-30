@@ -113,8 +113,10 @@ function checkForm(f) {
   <td>
     <select name="pref_lang">
     <?php
-      $choices = array("Français" => "fr_FR",
-                       "English" => "en_US");
+      $choices = array( "English (default)" => "en_US",
+                        "Français" => "fr_FR",
+                        "Español" => "es_ES",
+          );
       foreach ($choices as $n=>$v) {
         printf('<option value="%s"%s>%s</option>', $v, ($v==$User->prefs->lang)?" selected":"", $n );
       }
