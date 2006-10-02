@@ -330,7 +330,7 @@ if ($action == "save_facture") {
       } else{
 	$_SESSION['message'] = _('Invoice sent');
 	//mettre à jour l'état de la facture, update sql
-	mysql_query("UPDATE webfinance_invoices SET is_envoye=1")
+	mysql_query("UPDATE webfinance_invoices SET is_envoye=1 WHERE id_facture=$id ")
 	  or wf_mysqldie();
 	$_SESSION['message'] .= "<br/>"._('Invoice updated');
 
