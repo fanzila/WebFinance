@@ -59,7 +59,7 @@ apt-get install php-fpdf apache php4 mysql-server-4.1 ttf-freefont gettext libph
 <pre class="shell">
 echo "CREATE DATABASE webfinance" | mysql -u root --password=verysecret
 echo "GRANT ALL ON webfinance.* TO 'webfinance'@'localhost'" | mysql -u root --password=verysecret
-mysql -u root --password=verysecret &lt; /path/to/webfinance/sql/schema.mysql4.1.sql
+mysql -u root --password=verysecret webfinance &lt; /path/to/webfinance/sql/schema.mysql4.1.sql
 </pre>
 
 <li>Add the virtual host to Apache configuration and make sure the name resolves :
