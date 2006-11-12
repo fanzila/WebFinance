@@ -227,7 +227,7 @@ msgstr "Annuler"
 msgid "Delete"
 msgstr "Supprimer"
 
-msgid "Do you realy want to delete this category ?"
+msgid "Do you really want to delete this category ?"
 msgstr "Voulez-vous vraiment supprimer cette catégorie ?"
 
 msgid "Name"

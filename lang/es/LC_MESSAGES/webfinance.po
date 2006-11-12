@@ -238,7 +238,7 @@ msgstr "Cancelar"
 msgid "Delete"
 msgstr "Borrar"
 
-msgid "Do you realy want to delete this category ?"
+msgid "Do you really want to delete this category ?"
 msgstr "Quiere borrar realmente esta categoría?"
 
 msgid "Name"
@@ -411,4 +411,3 @@ msgstr "Vista normal"
 
 msgid "Total amount of shown transactions"
 msgstr "Total de transacciones mostradas"
-
