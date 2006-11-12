@@ -246,7 +246,7 @@ msgid "Color"
 msgstr "Couleur"
 
 # /tresorerie/index.php
-msgid "Enter a number for 10% aproximated search, enter 100-200 to search transactions fromm 100&euro; to 200&euro; included"
+msgid "Enter a number for 10% aproximated search, enter 100-200 to search transactions from 100&euro; to 200&euro; included"
 msgstr "Saisir un nombre pour une recherche aproximée à 10% près, saisir un 100-200 pour ne montrer que les transactions entre 100&euro; et 200&euro; inclu"
 
 msgid "Text contains :"
