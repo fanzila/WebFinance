@@ -12,7 +12,7 @@
 include("../inc/main.php");
 
 if (!is_numeric($_GET['id_facture'])) {
-  // Creates a new invoice. 
+  // Creates a new invoice.
   $tva = getTVA();
   $tva = preg_replace("/,/", ".", $tva); // 19,6 fails to insert as 19.6
 
@@ -57,7 +57,7 @@ function submitForm(f) {
   // When a quote is validated of an invoice paid, trying to change and save
   // the document will raise an error
   ?>
-  if (!confirm('<?= _('This document SHANT be changed, it has been sent to client and/or paid. Do you realy want to save your changes ?') ?>')) {
+  if (!confirm('<?= _('This document SHANT be changed, it has been sent to client and/or paid. Do you really want to save your changes ?') ?>')) {
     return false;
   }
   <?php } ?>
@@ -179,7 +179,7 @@ function ask_confirmation(txt) {
 <input type="hidden" name="action" value="save_facture" />
 <input type="hidden" name="id_facture" value="<?= $facture->id_facture ?>" />
 <input type="hidden" name="raise_lower" value="" />
-<table class="facture" width="100%" border="0" cellspacing="0" cellpadding="3"><?=//Main Layout Table?>
+<table class="facture" width="100%" border="0" cellspacing="0" cellpadding="3"><?//Main Layout Table ?>
 <tr class="row_header">
   <td>Informations <?= $facture->type_doc ?></td>
   <td>Adresse de Facturation</td>
