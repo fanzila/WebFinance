@@ -207,7 +207,7 @@ function ask_confirmation(txt) {
   <?= $facture->addr1 ?><br/>
   <?= $facture->addr2 ?><br/>
   <?= $facture->addr3 ?><br/>
-  <?= $facture->cp ?> <?= $facture->ville ?>
+  <?= $facture->cp ?> <?= $facture->ville ?><br/>
   <?= $facture->pays ?>
   </div>
   </td>
