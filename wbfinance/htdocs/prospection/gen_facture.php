@@ -85,6 +85,9 @@ for ($i=0 ; $i<3 ; $i++) {
 }
 $pdf->SetXY(115, $y);
 $pdf->Cell(80, 4, $facture->cp." ".$facture->ville, 0, 0 );
+$pdf->SetXY(115, $y);
+$pdf->Cell(80, 4, $facture->pays, 0, 0 );
+
 
 // Donnees factures
 $pdf->SetXY(10, 19+$logo_height);
@@ -200,27 +203,27 @@ foreach ($cpt as $n=>$v) {
 
 $pdf->SetFont('Arial', 'B', '10');
 $pdf->SetXY(10, 250);
-$pdf->Cell(145, 6, "Référence Bancaires ", "LTR", 0, "C");
+$pdf->Cell(160, 6, "Référence Bancaires ", "LTR", 0, "C");
 $pdf->Ln();
 
 $pdf->SetFont('Arial', '', '10');
 $pdf->Cell(35, 6, "Banque : ", "L");
-$pdf->Cell(110, 6, $cpt->banque, "R");
+$pdf->Cell(125, 6, $cpt->banque, "R");
 $pdf->Ln();
 $pdf->Cell(35, 6, "Code banque : ", "L");
 $pdf->Cell(30, 6, $cpt->code_banque, "");
 $pdf->Cell(25, 6, "Clef RIB : ", "");
-$pdf->Cell(55, 6, $cpt->clef, "R");
+$pdf->Cell(70, 6, $cpt->clef, "R");
 $pdf->Ln();
 $pdf->Cell(35, 6, "Code guichet : ", "L");
 $pdf->Cell(30, 6, $cpt->code_guichet, "");
 $pdf->Cell(25, 6, "IBAN : ", "");
-$pdf->Cell(55, 6, $cpt->iban, "R");
+$pdf->Cell(70, 6, $cpt->iban, "R");
 $pdf->Ln();
 $pdf->Cell(35, 6, "Numéro de compte : ", "LB");
 $pdf->Cell(30, 6, $cpt->compte, "B");
 $pdf->Cell(25, 6, "SWIFT/BIC : ", "B");
-$pdf->Cell(55, 6, $cpt->swift, "BR");
+$pdf->Cell(70, 6, $cpt->swift, "BR");
 $pdf->Ln();
 
 $pdf->SetAuthor($societe->raison_sociale);
