@@ -85,7 +85,7 @@ for ($i=0 ; $i<3 ; $i++) {
 }
 $pdf->SetXY(115, $y);
 $pdf->Cell(80, 4, $facture->cp." ".$facture->ville, 0, 0 );
-$pdf->SetXY(115, $y);
+$pdf->SetXY(115, $y+5);
 $pdf->Cell(80, 4, $facture->pays, 0, 0 );
 
 
