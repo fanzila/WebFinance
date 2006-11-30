@@ -203,7 +203,7 @@ foreach ($cpt as $n=>$v) {
 
 $pdf->SetFont('Arial', 'B', '10');
 $pdf->SetXY(10, 250);
-$pdf->Cell(160, 6, "Référence Bancaires ", "LTR", 0, "C");
+$pdf->Cell(160, 6, "Références Bancaires ", "LTR", 0, "C");
 $pdf->Ln();
 
 $pdf->SetFont('Arial', '', '10');
