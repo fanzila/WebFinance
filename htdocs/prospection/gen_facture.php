@@ -244,8 +244,7 @@ if(isset($_GET['dest']) AND $_GET['dest']=="file"){
   header("Location: send_facture.php?id=".$_GET['id']);
 
 }else
-  $pdf->Output(ucfirst($facture->type_doc)."_".$facture->num_facture."_".preg_replace("/[ ]/", "_", $facture->nom_client).".pdf", "D");
-
+  $pdf->Output(ucfirst($facture->type_doc)."_".$facture->num_facture."_".preg_replace("/[ ]/", "_", $facture->nom_client).".pdf", "I");
 
 // Delete temporary logofile
 unlink("/tmp/logo.png");
