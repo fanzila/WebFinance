@@ -23,7 +23,7 @@ function confirmAddCompany(txt) {
 
 $elements = array( _('Customers') => array( 'url' => './?q=1', 'roles' => 'manager,accounting,employee' ),
                    _('Targets') => array( 'url' => './?q=2', 'roles' => 'manager,accounting,employee' ),
-		   _('Add company') => array( 'url' => 'javascript:confirmAddCompany(\'Do you really want to add a new company?\');', 'roles' => 'manager' ),
+		   _('Add company') => array( 'url' => 'javascript:confirmAddCompany(\'Do you really want to add a new company?\');', 'roles' => 'manager,accounting' ),
                   _('Billing') => array( 'url' => 'facturation.php', 'roles' => 'manager,accounting' )
                  );
 global $User;
