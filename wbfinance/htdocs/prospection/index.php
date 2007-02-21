@@ -236,7 +236,10 @@ if ($User->isAuthorized('manager,accounting')) {
   <input type="hidden" name="sort" value="<?= $_GET['sort'] ?>" />
   <input type="hidden" name="namelike" value="<?= $_GET['namelike'] ?>" />
   <select style="width: 150px;" onchange="this.form.submit();" name="q"><option value="0">Tous<?php
-  $result = mysql_query("SELECT ct.id_company_type,ct.nom,count(*) as nb FROM webfinance_company_types ct, webfinance_clients c WHERE ct.id_company_type=c.id_company_type group by ct.id_company_type");
+  $result = mysql_query("SELECT webfinance_company_types.id_company_type,webfinance_company_types.nom,count(distinct webfinance_clients.id_client) as nb 
+                         FROM webfinance_company_types 
+                         LEFT JOIN webfinance_clients ON webfinance_clients.id_company_type=webfinance_company_types.id_company_type 
+                         GROUP by webfinance_company_types.id_company_type");
   while ($s = mysql_fetch_object($result)) {
     printf('<option value="%s"%s>%s (%d fiches)</option>', $s->id_company_type, ($s->id_company_type==$_GET['q'])?" selected":"", $s->nom, $s->nb );
   }
