@@ -12,7 +12,7 @@
 
 require("../inc/main.php");
 
-if (! ($_SESSION['id_user'] > 0)) {
+if( !isset($_SESSION['id_user']) || $_SESSION['id_user'] < 1 ) {
   header("Location: /login.php");
   die();
 }
