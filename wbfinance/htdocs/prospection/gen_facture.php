@@ -11,6 +11,12 @@
 // Génère un PDF pour une facture
 
 require("../inc/main.php");
+
+if (! ($_SESSION['id_user'] > 0)) {
+  header("Location: /login.php");
+  die();
+}
+
 require("../inc/dbconnect.php");
 require("/usr/share/fpdf/fpdf.php");
 
