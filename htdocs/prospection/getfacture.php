@@ -16,7 +16,8 @@ include("../inc/dbconnect.php");
 ini_set('session.gc_maxlifetime',3600);
 session_cache_limiter("must-revalidate");
 session_start();
-if (! ($_SESSION['id_user'] > 0)) {
+
+if( !isset($_SESSION['id_user']) || $_SESSION['id_user'] < 1 ) {
   header("Location: /login.php");
   die();
 }
