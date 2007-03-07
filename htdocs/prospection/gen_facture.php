@@ -239,7 +239,7 @@ $pdf->SetTitle(ucfirst($facture->type_doc)." n° ".$facture->num_facture);
 
 if(isset($_GET['dest']) AND $_GET['dest']=="file"){
   $filename=ucfirst($facture->type_doc)."_".$facture->num_facture."_".preg_replace("/[ ]/", "_", $facture->nom_client).".pdf";
-  $path="/tmp/".$filename;
+  $path="/tmp/".utf8_encode($filename);
 
   if(file_exists($path))
     unlink($path);
