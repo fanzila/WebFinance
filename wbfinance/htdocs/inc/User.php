@@ -58,11 +58,11 @@ class User {
     }
  }
 
-  function logout($url = "") {
+  function logout($url = "/") {
     logmessage("Disconnect");
     $_SESSION['id_user'] = -1;
     session_destroy();
-    header("Location: /");
+    header("Location: ". $url);
     die();
   }
 
