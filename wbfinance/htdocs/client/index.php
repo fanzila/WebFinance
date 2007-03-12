@@ -29,7 +29,7 @@ $total_ca_ht = 0;
 
 $where_clause = "1";
 if (isset($_GET['id_client']) AND $_GET['id_client']!="") {
-  $where_clause .= " AND wf_invoices.id_client=".$_GET['id_client'];
+  $where_clause .= " AND webfinance_invoices.id_client=".$_GET['id_client'];
 }
 if (isset($_GET['mois']) AND $_GET['mois'] != "") {
   $where_clause .= " AND date_format(date_facture, '%Y%m')='".$_GET['mois']."'";
@@ -47,19 +47,19 @@ if(!isset($_GET['sort']))
 $w_clause="";
  if(count($roles)==1 AND in_array($client_role,$roles) ) {
    $is_client=true;
-   $w_clause=" AND wf_clients.id_user=$user->id_user ";
+   $w_clause=" AND webfinance_clients.id_user=$user->id_user ";
    $where_clause .= $w_clause;
   }
 
 $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w+\\&*+/", "", $GLOBALS['_SERVER']['QUERY_STRING']);
 
 switch ($_GET['sort']) {
-  case "num" : $order_clause = "wf_invoices.num_facture DESC"; break;
-  case "client" : $order_clause = "wf_clients.nom"; break;
+  case "num" : $order_clause = "webfinance_invoices.num_facture DESC"; break;
+  case "client" : $order_clause = "webfinance_clients.nom"; break;
   case "montant_ttc" :
-  case "montant_ht" : $order_clause = "wf_invoices.id_client"; break;
+  case "montant_ht" : $order_clause = "webfinance_invoices.id_client"; break;
   case "date" :
-  default : $order_clause = "wf_invoices.date_facture DESC";
+  default : $order_clause = "webfinance_invoices.date_facture DESC";
 }
 
 
@@ -81,16 +81,16 @@ switch ($_GET['sort']) {
 <?php
 $total_ca_ht = 0;
 
-$q="SELECT wf_invoices.id_facture ".
-  "FROM wf_users, wf_clients, wf_invoices ".
+$q="SELECT webfinance_invoices.id_facture ".
+  "FROM webfinance_users, webfinance_clients, webfinance_invoices ".
   "WHERE ".
   "( ".
-  "wf_clients.id_user = wf_users.id_user ".
-  "AND wf_clients.id_client = wf_invoices.id_client ".
+  "webfinance_clients.id_user = webfinance_users.id_user ".
+  "AND webfinance_clients.id_client = webfinance_invoices.id_client ".
   " ) ".
-  "AND wf_invoices.type_doc='facture' ".
-  "AND wf_invoices.num_facture!='' ".
-  "AND wf_invoices.date_facture<=now() ".
+  "AND webfinance_invoices.type_doc='facture' ".
+  "AND webfinance_invoices.num_facture!='' ".
+  "AND webfinance_invoices.date_facture<=now() ".
   "AND $where_clause ".
   "ORDER BY $order_clause ";
 
@@ -110,7 +110,7 @@ while (list($id_facture) = mysql_fetch_array($result)) {
     $mois[$fa->mois_facture]=1;
 
    $description = "";
-   $result2 = mysql_query("SELECT description FROM wf_invoice_rows WHERE id_facture=".$fa->id_facture) or wf_mysqldie();
+   $result2 = mysql_query("SELECT description FROM webfinance_invoice_rows WHERE id_facture=".$fa->id_facture) or wf_mysqldie();
    while (list($desc) = mysql_fetch_array($result2)) {
      $desc = preg_replace("/\r\n/", " ", $desc);
      $desc = preg_replace("/\"/", "", $desc);
@@ -188,13 +188,13 @@ while (list($id_facture) = mysql_fetch_array($result)) {
      <option value=""><?= _('All')?></option>
 <?php
 
-$q="SELECT DISTINCT wf_clients.id_client, webfinance_clients.nom ".
-  "FROM wf_clients, wf_invoices ".
+$q="SELECT DISTINCT webfinance_clients.id_client, webfinance_clients.nom ".
+  "FROM webfinance_clients, webfinance_invoices ".
   "WHERE ".
-  "wf_clients.id_client = wf_invoices.id_client ".
-  "AND wf_invoices.type_doc='facture' ".
+  "webfinance_clients.id_client = webfinance_invoices.id_client ".
+  "AND webfinance_invoices.type_doc='facture' ".
   " $w_clause ".
-  "ORDER BY wf_clients.nom ASC";
+  "ORDER BY webfinance_clients.nom ASC";
 
  $result = mysql_query($q) or wf_mysqldie();
 
@@ -265,7 +265,7 @@ $q="SELECT DISTINCT wf_clients.id_client, webfinance_clients.nom ".
 	  $w_clause .=") ";
          }
 	$q="SELECT id_userlog,log,date,id_user,date_format(date,'%d/%m/%Y %k:%i') as nice_date ".
-	  "FROM wf_userlog ".
+	  "FROM webfinance_userlog ".
 	  "WHERE log RLIKE 'fa:' $w_clause ".
 	  "ORDER BY date DESC";
 	$result = mysql_query($q) or wf_mysqldie();
@@ -273,7 +273,7 @@ $q="SELECT DISTINCT wf_clients.id_client, webfinance_clients.nom ".
     $count=1;
     while ($log = mysql_fetch_object($result)) {
       $class = ($count%2)==0?"odd":"even";
-      $result2 = mysql_query("SELECT login FROM wf_users WHERE id_user=".$log->id_user);
+      $result2 = mysql_query("SELECT login FROM webfinance_users WHERE id_user=".$log->id_user);
       list($login) = mysql_fetch_array($result2);
       mysql_free_result($result2);
 
