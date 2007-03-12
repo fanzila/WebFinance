@@ -1,6 +1,6 @@
 <?php
 //
-// This file is part of Â« Webfinance Â»
+// This file is part of « Webfinance »
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
