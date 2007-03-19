@@ -6,6 +6,18 @@
 // call for onglets.js.
 // FIXME : onglets.js should be renamed tabStrip.js
 
+// Returns the content of the specified file. Allows us to assign this content to a var.
+function get_include_contents($filename) {
+  if (is_file($filename)) {
+   ob_start();
+   include $filename;
+   $contents = ob_get_contents();
+   ob_end_clean();
+   return $contents;
+  }
+  return false;
+}
+
 class TabStrip {
   var $nb_tab = 0;
   var $title = array();
@@ -15,8 +27,10 @@ class TabStrip {
   function TabStrip($nb_tabs=0, $title="") {
   }
 
-  function includeTab($title, $file, $id=0) {
-    // FIXME : file include 
+  function includeTab($title, $file, $id=null) {
+    // Include the specified file and assign its content to $content
+    $content = get_include_contents($file);
+		$this->addTab($title,$content,$id);
   }
 
   function addTab($title, $content, $id=null) {
@@ -47,7 +61,7 @@ EOF;
       $html .= sprintf('<td id="handle_%s" onclick="focusOnglet(\'%s\');">%s</td>',
                         $id, $id, _($t) );
       if (strlen($this->content[$id]) == 0) {
-        die("TabStrip::Tab $id has no content");
+        die("TabStrip::Tab $id called $t has no content");
       }
     }
     $colspan = count($this->title)+1;
