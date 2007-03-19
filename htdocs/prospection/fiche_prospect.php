@@ -131,12 +131,12 @@ function ask_confirmation(txt) {
 <?php // DEBUT ONGLET
 // Creation du TabStrip
 $tab = new TabStrip();
-$tab->includeTab(_('Contacts'),"../inc/tab/contacts.php","contacts");
-$tab->includeTab(_('Billing'),"../inc/tab/biling.php","biling");
-$tab->includeTab(_('Flollow&nbsp;up'),"../inc/tab/log.php","log");
-$tab->includeTab(_('Miscellaneous'),"../inc/tab/other.php","other");
-$tab->includeTab(_('Graphics'),"../inc/tab/graph.php","graph");
-$tab->includeTab(_('Events'),"../inc/tab/event.php","event");
+$tab->includeTab(_('Contacts'),"../inc/tab/fiche_prospect_contacts.php","contacts");
+$tab->includeTab(_('Billing'),"../inc/tab/fiche_prospect_biling.php","biling");
+$tab->includeTab(_('Flollow&nbsp;up'),"../inc/tab/fiche_prospect_log.php","log");
+$tab->includeTab(_('Miscellaneous'),"../inc/tab/fiche_prospect_other.php","other");
+$tab->includeTab(_('Graphics'),"../inc/tab/fiche_prospect_graph.php","graph");
+$tab->includeTab(_('Events'),"../inc/tab/fiche_prospect_event.php","event");
 
 if (isset($_GET['tab']))
   $tab->setFocusedTab($_GET['tab']);
