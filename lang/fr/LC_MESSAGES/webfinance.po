@@ -408,10 +408,10 @@ msgstr "le"
 msgid "Designation"
 msgstr "Désignation"
 
-msgid "TVA code"
+msgid "VAT code"
 msgstr "Code TVA"
 
-msgid "Your TVA code"
+msgid "Your VAT code"
 msgstr "Votre Code TVA"
 
 msgid "Exclusive of tax"
@@ -453,7 +453,7 @@ msgstr "Clef RIB"
 msgid "Account number"
 msgstr "Numéro de compte"
 
-msgid "Swift code"
+msgid "Office code"
 msgstr "Code guichet"
 
 msgid "VAT excl."
