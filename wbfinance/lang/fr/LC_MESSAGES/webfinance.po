@@ -400,3 +400,64 @@ msgstr "Vue normale"
 
 msgid "Total amount of shown transactions"
 msgstr "Total des mouvements affichées"
+
+# Invoice
+msgid "on"
+msgstr "le"
+
+msgid "Designation"
+msgstr "Désignation"
+
+msgid "TVA code"
+msgstr "Code TVA"
+
+msgid "Your TVA code"
+msgstr "Votre Code TVA"
+
+msgid "Exclusive of tax"
+msgstr "Hors taxe"
+
+msgid "Quantity"
+msgstr "Quantité"
+
+msgid "Total"
+msgstr "Total"
+
+msgid "Payment"
+msgstr "Paiement"
+
+msgid "Subtotal"
+msgstr "Sous Total"
+
+msgid "VAT"
+msgstr "TVA"
+
+msgid "Versed deposit"
+msgstr "Acompte versé"
+
+msgid "Amount due"
+msgstr "Solde à régler"
+
+msgid "Bank references"
+msgstr "Références Bancaires"
+
+msgid "Bank"
+msgstr "Banque"
+
+msgid "Bank code"
+msgstr "Code banque"
+
+msgid "BIC Key"
+msgstr "Clef RIB"
+
+msgid "Account number"
+msgstr "Numéro de compte"
+
+msgid "Swift code"
+msgstr "Code guichet"
+
+msgid "VAT excl."
+msgstr "Prix HT"
+
+msgid "for"
+msgstr "Pour"
