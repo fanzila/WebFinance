@@ -101,11 +101,11 @@ $pdf->SetFont('Arial','B',14);
 $pdf->Cell(60, 4, ucfirst($facture->type_doc).utf8_decode(_(' #')).$facture->num_facture);
 $pdf->SetFont('Arial','',9);
 $pdf->SetXY(10, 27+$logo_height);
-$pdf->Cell(60, 4, $societe->ville." le ".strftime("%d/%m/%Y", $facture->timestamp_date_facture));
+$pdf->Cell(60, 4, $societe->ville." ".utf8_decode(_("on"))." ".strftime("%d/%m/%Y", $facture->timestamp_date_facture));
 $pdf->SetXY(10, 32+$logo_height);
-$pdf->Cell(60, 4, "Code TVA ".$societe->raison_sociale." : ".$societe->tva_intracommunautaire);
+$pdf->Cell(60, 4, utf8_decode(_("TVA code"))." ".$societe->raison_sociale." : ".$societe->tva_intracommunautaire);
 $pdf->SetXY(10, 37+$logo_height);
-$pdf->Cell(60, 4, "Votre Code TVA : ".$facture->vat_number);
+$pdf->Cell(60, 4, utf8_decode(_("Your TVA code"))." : ".$facture->vat_number);
 $pdf->SetXY(10, 42+$logo_height);
 $pdf->Cell(60, 4, $facture->ref_contrat);
 $pdf->SetXY(10, 47+$logo_height);
@@ -115,10 +115,10 @@ $pdf->Cell(60, 4, $facture->extra_top);
 $pdf->SetLineWidth(0.1);
 $pdf->SetXY(10,80);
 $pdf->SetFont('Arial', 'B', '10');
-$pdf->Cell(110, 6, "Désignation", 1); // FIXME : gettext
-$pdf->Cell(20, 6, "Quantité", 1, 0, "C" );
-$pdf->Cell(30, 6, "Prix HT", 1, 0, "C" );
-$pdf->Cell(30, 6, "Total", 1, 0, "C" );
+$pdf->Cell(110, 6, utf8_decode(_("Designation")), 1);
+$pdf->Cell(20, 6, utf8_decode(_("Quantity")), 1, 0, "C" );
+$pdf->Cell(30, 6, utf8_decode(_("VAT excl.")), 1, 0, "C" );
+$pdf->Cell(30, 6,utf8_decode( _("Total")), 1, 0, "C" );
 $pdf->Ln();
 
 $total_ht = 0;
@@ -162,33 +162,33 @@ if ($y < 190) {
 
 // Total HT
 $pdf->SetFont('Arial', '', '11');
-$pdf->Cell(130, 6, "Paiement : ".$facture->type_paiement ); // FIXME : gettext
-$pdf->Cell(30, 6, "Sous Total", "", 0, "R"); // FIXME : gettext
+$pdf->Cell(130, 6, utf8_decode(_("Payment"))." : ".$facture->type_paiement ); // FIXME : gettext
+$pdf->Cell(30, 6, utf8_decode(_("Subtotal")), "", 0, "R"); // FIXME : gettext
 $pdf->Cell(30, 6, preg_replace("/\./", ",", sprintf("%.2f".EURO, $total_ht)), "", 0, "R");
 $pdf->Ln();
 
 // TVA
 $pdf->Cell(130, 6,  "" );
-$pdf->Cell(30, 6, "TVA ".str_replace('.', ',',$facture->taxe)."%", "", 0, "R");
+$pdf->Cell(30, 6, utf8_decode(_("VAT"))." ".str_replace('.', ',',$facture->taxe)."%", "", 0, "R");
 $pdf->Cell(30, 6, preg_replace("/\./", ",", sprintf("%.2f".EURO, ($facture->taxe/100)*$total_ht)), "", 0, "R");
 $pdf->Ln();
 
 // Total TTC
 $pdf->Cell(130, 6,  "" );
-$pdf->Cell(30, 6, "Total", "", 0, "R");
+$pdf->Cell(30, 6, utf8_decode(_("Total")), "", 0, "R");
 $pdf->Cell(30, 6, preg_replace("/\./", ",", sprintf("%.2f".EURO, (1+($facture->taxe/100))*$total_ht)), "", 0, "R");
 $pdf->Ln();
 
 // Accompte
 $pdf->Cell(130, 6,  "" );
-$pdf->Cell(30, 6, "Accompte versé", "", 0, "R");
+$pdf->Cell(30, 6, utf8_decode(_("Versed deposit")), "", 0, "R");
 $pdf->Cell(30, 6, preg_replace("/\./", ",", sprintf("%.2f".EURO, $facture->accompte )), "", 0, "R");
 $pdf->Ln();
 
 // Solde à régler
 $pdf->SetFont('Arial', 'B', '11');
 $pdf->Cell(130, 6,  "" );
-$pdf->Cell(30, 6, "Solde à régler", "", 0, "R");
+$pdf->Cell(30, 6, utf8_decode(_("Amount due")), "", 0, "R");
 $pdf->Cell(30, 6, preg_replace("/\./", ",", sprintf("%.2f".EURO,(1+($facture->taxe/100))*$total_ht - $facture->accompte )), "", 0, "R");
 $pdf->Ln();
 
@@ -209,24 +209,24 @@ foreach ($cpt as $n=>$v) {
 
 $pdf->SetFont('Arial', 'B', '10');
 $pdf->SetXY(10, 250);
-$pdf->Cell(160, 6, "Références Bancaires ", "LTR", 0, "C");
+$pdf->Cell(160, 6, utf8_decode(_("Bank references"))." ", "LTR", 0, "C");
 $pdf->Ln();
 
 $pdf->SetFont('Arial', '', '10');
-$pdf->Cell(35, 6, "Banque : ", "L");
+$pdf->Cell(35, 6, utf8_decode(_("Bank"))." : ", "L");
 $pdf->Cell(125, 6, $cpt->banque, "R");
 $pdf->Ln();
-$pdf->Cell(35, 6, "Code banque : ", "L");
+$pdf->Cell(35, 6, utf8_decode(_("Bank code"))." : ", "L");
 $pdf->Cell(30, 6, $cpt->code_banque, "");
-$pdf->Cell(25, 6, "Clef RIB : ", "");
+$pdf->Cell(25, 6, utf8_decode(_("BIC Key"))." : ", "");
 $pdf->Cell(70, 6, $cpt->clef, "R");
 $pdf->Ln();
-$pdf->Cell(35, 6, "Code guichet : ", "L");
+$pdf->Cell(35, 6, utf8_decode(_("Swift code"))." : ", "L");
 $pdf->Cell(30, 6, $cpt->code_guichet, "");
 $pdf->Cell(25, 6, "IBAN : ", "");
 $pdf->Cell(70, 6, $cpt->iban, "R");
 $pdf->Ln();
-$pdf->Cell(35, 6, "Numéro de compte : ", "LB");
+$pdf->Cell(35, 6, utf8_decode(_("Account number"))." : ", "LB");
 $pdf->Cell(30, 6, $cpt->compte, "B");
 $pdf->Cell(25, 6, "SWIFT/BIC : ", "B");
 $pdf->Cell(70, 6, $cpt->swift, "BR");
@@ -234,8 +234,8 @@ $pdf->Ln();
 
 $pdf->SetAuthor($societe->raison_sociale);
 $pdf->SetCreator("Webfinance $Id$ Using FPDF");
-$pdf->SetSubject(ucfirst($facture->type_doc)." n° ".$facture->num_facture." pour ".$facture->nom_client);
-$pdf->SetTitle(ucfirst($facture->type_doc)." n° ".$facture->num_facture);
+$pdf->SetSubject(ucfirst($facture->type_doc).utf8_decode(_(' #'))." ".$facture->num_facture." ".utf8_decode(_("for"))." ".$facture->nom_client);
+$pdf->SetTitle(ucfirst($facture->type_doc).utf8_decode(_(' #'))." ".$facture->num_facture);
 
 if(isset($_GET['dest']) AND $_GET['dest']=="file"){
   $filename=ucfirst($facture->type_doc)."_".$facture->num_facture."_".preg_replace("/[ ]/", "_", $facture->nom_client).".pdf";
