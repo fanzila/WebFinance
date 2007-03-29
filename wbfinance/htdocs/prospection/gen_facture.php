@@ -12,13 +12,26 @@
 
 require("../inc/main.php");
 
-if( !isset($_SESSION['id_user']) || $_SESSION['id_user'] < 1 ) {
-  header("Location: /login.php");
-  die();
-}
-
 require("../inc/dbconnect.php");
 require("/usr/share/fpdf/fpdf.php");
+
+if( !isset($_SESSION['id_user']) || $_SESSION['id_user'] < 1 ) {
+	$pdf = new FPDF('P', 'mm', 'A4');
+	$pdf->SetMargins(10, 10, 10);
+	$pdf->SetDisplayMode('fullwidth');
+	$pdf->SetAutoPageBreak(true);
+	$pdf->AddPage();
+
+	$pdf->SetFont('Arial','',12);
+	$pdf->Cell(190, 20, _("You are not authenticated"));
+
+	$pdf->SetSubject(_('Error'));
+	$pdf->SetTitle(_('Error'));
+
+	$pdf->Output(_("Error").".pdf", "I");
+
+	die();
+}
 
 // Get my company info (address...)
 $result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='societe' AND owner=-1");
@@ -250,7 +263,7 @@ if(isset($_GET['dest']) AND $_GET['dest']=="file"){
   header("Location: send_facture.php?id=".$_GET['id']);
 
 }else
-  $pdf->Output(ucfirst($facture->type_doc)."_".$facture->num_facture."_".preg_replace("/[ ]/", "_", $facture->nom_client).".pdf", "I");
+  $pdf->Output(ucfirst($facture->type_doc)."_".$facture->num_facture."_".preg_replace("/[ ]/", "_", $facture->nom_client).".pdf", "D");
 
 // Delete temporary logofile
 unlink("/tmp/logo.png");
