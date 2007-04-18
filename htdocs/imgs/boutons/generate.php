@@ -12,6 +12,11 @@ $theme = (isset($User->prefs->theme) ? isset($User->prefs->theme) : 'main');
 $data = base64_decode($_GET['data']);
 list($text, $style) = explode(":", $data);
 
+if(file_exists($_GET['data'])) {
+  header('Location: ./'. $_GET['data'].'.png');
+  exit;
+}
+
 if (!file_exists("../../css/themes/$theme/$style.png")) {
   die("No base image '$style.png' for this theme !");
 }
