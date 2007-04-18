@@ -8,11 +8,11 @@ if (!isset($_GET['data'])) {
 
 $font_size = 8;
 
-$theme = (isset($User->prefs->theme) ? isset($User->prefs->theme) : 'main');
+$theme = (isset($User->prefs->theme) ? $User->prefs->theme : 'main');
 $data = base64_decode($_GET['data']);
 list($text, $style) = explode(":", $data);
 
-if(file_exists($_GET['data'])) {
+if(file_exists($_GET['data'].'.png')) {
   header('Location: ./'. $_GET['data'].'.png');
   exit;
 }
