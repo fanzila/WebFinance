@@ -86,11 +86,11 @@ function checkForm(f) {
 <tr>
   <td colspan="4" style="text-align: center;">
   <?php
-  $save_off = '/imgs/boutons/'.urlencode(base64_encode(_('Save').":off:".$User->prefs->theme)).".png";
-  $save_on = '/imgs/boutons/'.urlencode(base64_encode(_('Save').":on:".$User->prefs->theme)).".png";
+  $save_off = '/imgs/boutons/'.urlencode(_('Save')."_off_".$User->prefs->theme).".png";
+  $save_on = '/imgs/boutons/'.urlencode(_('Save')."_on_".$User->prefs->theme).".png";
 
-  $cancel_off = '/imgs/boutons/'.urlencode(base64_encode(_('Cancel').":off:".$User->prefs->theme)).".png";
-  $cancel_on = '/imgs/boutons/'.urlencode(base64_encode(_('Cancel').":on:".$User->prefs->theme)).".png";
+  $cancel_off = '/imgs/boutons/'.urlencode(_('Cancel')."_off_".$User->prefs->theme).".png";
+  $cancel_on = '/imgs/boutons/'.urlencode(_('Cancel')."_on_".$User->prefs->theme).".png";
   ?>
     <img onclick="checkForm(document.forms['userdata']);" src="<?= $save_off ?>" onmouseover="this.src='<?= $save_on ?>';" onmouseout="this.src='<?= $save_off ?>';" />
     <img onclick="window.location='index.php'" src="<?= $cancel_off ?>" onmouseover="this.src='<?= $cancel_on ?>';" onmouseout="this.src='<?= $cancel_off ?>';" />

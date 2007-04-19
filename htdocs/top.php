@@ -50,8 +50,8 @@ if (! file_exists($GLOBALS['_SERVER']['DOCUMENT_ROOT'].$css_theme)) {
   $User->prefs->theme = "main";
 }
 
-$search_button = '/imgs/boutons/'.urlencode(base64_encode(_('Search').":off:".$User->prefs->theme)).'.png';
-$search_button_on = '/imgs/boutons/'.urlencode(base64_encode(_('Search').":on:".$User->prefs->theme)).'.png';
+$search_button = '/imgs/boutons/'.urlencode(_('Search')."_off_".$User->prefs->theme).'.png';
+$search_button_on = '/imgs/boutons/'.urlencode(_('Search')."_on_".$User->prefs->theme).'.png';
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
