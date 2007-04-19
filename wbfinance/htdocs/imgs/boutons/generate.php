@@ -2,30 +2,28 @@
 
 include("../../inc/main.php");
 
-if (!isset($_GET['data'])) {
-  die();
+if (!isset($_GET['text'], $_GET['style'], $_GET['theme'])) {
+  die('missing argument');
 }
 
 $font_size = 8;
 
-$theme = (isset($User->prefs->theme) ? $User->prefs->theme : 'main');
-$data = base64_decode($_GET['data']);
-list($text, $style) = explode(":", $data);
+$filename=$_GET['text'].'_'.$_GET['style'].'_'.$_GET['theme'].'.png';
 
-if(file_exists($_GET['data'].'.png')) {
-  header('Location: ./'. $_GET['data'].'.png');
+if(file_exists($filename)) {
+  header("Location: ./$filename");
   exit;
 }
 
-if (!file_exists("../../css/themes/$theme/$style.png")) {
-  die("No base image '$style.png' for this theme !");
+$base_image = '../../css/themes/'.$_GET['theme'].'/'.$_GET['style'].'.png';
+if (!file_exists($base_image)) {
+  die("No base image '$base_image' for this theme !");
 }
-$base_image = "../../css/themes/$theme/$style.png";
 
-if (!file_exists("../../css/themes/$theme/buttonfont.ttf")) {
-  die("No font for this theme");
+$font = '../../css/themes/'.$_GET['theme'].'/buttonfont.ttf';
+if (!file_exists($font)) {
+  die("No font for this theme ($font)");
 }
-$font = "../../css/themes/$theme/buttonfont.ttf";
 
 // Load the background PNG
 $img = imagecreatefrompng($base_image);
@@ -35,7 +33,7 @@ $black = imagecolorallocate($img, 255, 0, 0, 127);
 imagealphablending($img, TRUE);
 
 list($width, $height, $ignored1, $ignored2) = getimagesize($base_image);
-$bounding_box = imageftbbox($font_size, 0, $font, $text);
+$bounding_box = imageftbbox($font_size, 0, $font, $_GET['text']);
 
 $text_width = abs($bounding_box[0] - $bounding_box[4]);
 $text_height  = abs($bounding_box[1] - $bounding_box[5]);
@@ -43,10 +41,10 @@ $text_height  = abs($bounding_box[1] - $bounding_box[5]);
 $text_x = ($width - $text_width) / 2;
 $text_y = $height - (3 + ($height - $text_height) / 2);
 
-imagettftext($img, $font_size, 0, $text_x, $text_y, $black, $font, $text);
+imagettftext($img, $font_size, 0, $text_x, $text_y, $black, $font, $_GET['text']);
 
-header("Content-Type: image/png");
-imagepng($img);
-imagepng($img, $_GET['data'].".png");
+imagepng($img, $filename);
+
+header("Location: ./$filename");
 
 ?>
