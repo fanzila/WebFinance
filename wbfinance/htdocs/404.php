@@ -18,11 +18,11 @@ if (($GLOBALS['HTTP_SERVER_VARS']['REDIRECT_STATUS'] == "404") && (preg_match("/
 } elseif (($GLOBALS['HTTP_SERVER_VARS']['REDIRECT_STATUS'] == "404") && (preg_match("!/imgs/boutons/([^\.]+)_([^\.]+)_([^\.]+).png$!", $GLOBALS['HTTP_SERVER_VARS']['REDIRECT_URL'], $matches))) {
   // Génération des images dynamiquement.
   header("Location: /imgs/boutons/generate.php?text=".$matches[1].'&style='.$matches[2].'&theme='.$matches[3]);
-  die();
+  exit;
 } else {
   require("top.php");
   ?>
-<h1>404 : Page innexistante</h1>
+<h1>404 : Page inexistante</h1>
 
 Lien suivi depuis : <?= $GLOBALS['_SERVER']['HTTP_REFERER'] ?><br/>
 URI demandée : <?= $GLOBALS['_SERVER']['REDIRECT_URL'] ?>
