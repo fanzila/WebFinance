@@ -28,7 +28,7 @@ if (!file_exists($font)) {
 // Load the background PNG
 $img = imagecreatefrompng($base_image);
 // Allocate black
-$black = imagecolorallocate($img, 255, 0, 0, 127);
+$black = imagecolorallocate($img, 0, 0, 0);
 // Blends the font into the background
 imagealphablending($img, TRUE);
 
