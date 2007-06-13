@@ -1,10 +1,26 @@
-#!/usr/bin/perl -w 
-# 
+#!/usr/bin/perl -w
+#
+#    This file is part of Webfinance.
+
+#     Webfinance is free software; you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published by
+#     the Free Software Foundation; either version 2 of the License, or
+#     (at your option) any later version.
+
+#     Webfinance is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+
+#     You should have received a copy of the GNU General Public License
+#     along with Webfinance; if not, write to the Free Software
+#     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
 # $Id$
 #
 # FIXME : Complete pod
 
-=h1 NAME fill_ldap.pl 
+=h1 NAME fill_ldap.pl
 
 Extrait de la base locale backoffice les personnes et se connecte à OpenLDAP
 pour y entrer les adresses.
@@ -35,19 +51,19 @@ use vars qw{ %vars $dbh $ldap };
 
 =h2 OPTIONS
 
-=h3 LDAP options 
+=h3 LDAP options
 
   --ldap-host           OpenLDAP server
   --base-dn             Root of the address book
   --bind-dn, -D         Bind to LDAP as this user
   --bind-password, -w   Password
-  
+
   --db-host, -M         MySQL server
   --db-name             Base name
   --db-user             MySQL user
   --db-password, -p     MySQL password
-  
-=cut 
+
+=cut
 Getopt::Mixed::init("ldap-host=s L>ldap-host "
                    ."bind-dn=s D>bind-dn "
                    ."base-dn=s "
@@ -68,7 +84,7 @@ while (my ($option, $value) = nextOption()) {
 foreach my $required ('db-user', 'db-pass', 'db-host', 'db-name', 'base-dn', 'bind-dn', 'ldap-host', 'bind-password') {
   die("--$required is a required parameter") unless ($vars{$required} ne "");
 }
-                    
+
 
 # Connexion à la base et à l'annuaire
 $dbh = DBI->connect("DBI:mysql:".$vars{'db-name'}.";host=".$vars{'db-host'}, $vars{'db-user'}, $vars{'db-pass'});
@@ -130,7 +146,7 @@ if ($vars{delete}) {
   for my $entry ($mesg->entries) {
     print "  Deleting ".$entry->dn()."\n" if ($vars{verbose});
     $ldap->delete( $entry->dn() );
-  } 
+  }
 }
 
 # Get all names from the database and add them to the directory. First delete them if they exists
@@ -142,7 +158,7 @@ $s = $dbh->prepare("SELECT p.prenom as sn,
                            p.mobile,
                            p.tel as telephoneNumber,
                            p.fax as facsimileTelephoneNumber,
-                           c.nom as o, 
+                           c.nom as o,
                            c.cp as postalCode,
                            c.ville as l,
                            c.addr1, c.addr2, c.addr3
@@ -183,4 +199,3 @@ while (my $row = $s->fetchrow_hashref()) {
 $s->finish();
 
 $mesg = $ldap->unbind;   # take down session
-
