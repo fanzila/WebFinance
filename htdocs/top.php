@@ -69,7 +69,7 @@ if(isset($User->prefs->theme)){
   $css_theme = "/css/themes/main/main.css";
  }
 
-if (! file_exists($GLOBALS['_SERVER']['DOCUMENT_ROOT'].$css_theme)) {
+if (! file_exists(getWFDirectory().$css_theme)) {
   $css_theme = "/css/themes/main/main.css"; // Historic default
   $User->prefs->theme = "main";
 }
@@ -94,7 +94,7 @@ $search_button_on = '/imgs/boutons/'.urlencode(_('Search')."_on_".$User->prefs->
 <table border="0" cellspacing="10" cellpadding="0" style="height: 100%">
 <tr>
   <td style="text-align: center" width=150 valign=top>
-  <? require("nav.php"); ?>
+  <? include(getWFDirectory()."/nav.php"); ?>
     <img height="200" width="1" src="/imgs/blank.gif" /><br />
 
     <?php if ($User->isAuthorized('admin,employee,manager')) { ?>
