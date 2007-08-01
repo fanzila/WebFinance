@@ -21,7 +21,7 @@
 # $Id$
 ?>
 <?php
-$filename="../../etc/wf.conf";
+$filename=dirname(__FILE__)."/../../etc/wf.conf";
 if (!file_exists($filename)) {
    $filename='/etc/webfinance/wf.conf';
  }
