@@ -18,13 +18,13 @@
     along with Webfinance; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+# $Id$
 ?>
 <?php
-
-if (!empty($_SERVER['DOCUMENT_ROOT']))
-  $filename=$_SERVER['DOCUMENT_ROOT'].'/../etc/wf.conf';
- else
+$filename="../../etc/wf.conf";
+if (!file_exists($filename)) {
    $filename='/etc/webfinance/wf.conf';
+ }
 
 $perms = fileperms($filename);
 if ($perms & 0x0004) {
