@@ -222,6 +222,11 @@ function getMicroTime() {
 	return($micro+$time);
 }
 
+function getWFDirectory(){
+# very basic, can do better
+  return str_replace($_SERVER['PHP_SELF'],'/',$_SERVER['SCRIPT_FILENAME']);
+}
+
 header("Content-Type: text/html; charset=utf-8");
 
 // This array starts empty here and is filled by pages
