@@ -89,11 +89,11 @@ $search_button_on = '/imgs/boutons/'.urlencode(_('Search')."_on_".$User->prefs->
 <table border="0" cellspacing="10" cellpadding="0" style="height: 100%">
 <tr>
   <td style="text-align: center" width=150 valign=top>
-     <?include $GLOBALS['_SERVER']['DOCUMENT_ROOT']."/nav.php" ?>
+  <? require("nav.php"); ?>
     <img height="200" width="1" src="/imgs/blank.gif" /><br />
 
     <?php if ($User->isAuthorized('admin,employee,manager')) { ?>
-    <form action="/search.php" method="get">
+    <form action="search.php" method="get">
     <input id="searchfield" type="text" name="q" style="width: 120px; margin-bottom: 5px;" class="bordered" />
     <input type="image" src="<?= $search_button ?>" onmouseover="this.src='<?= $search_button_on ?>';" onmouseout="this.src='<?= $search_button ?>';" style="border: none;" /><br/>
     </form>
