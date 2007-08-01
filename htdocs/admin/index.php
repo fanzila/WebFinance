@@ -30,7 +30,7 @@
 <?php
 // $Id$
 
-include("../inc/main.php");
+require("../inc/main.php");
 $title = _("Administration");
 $roles = "admin,manager,employee";
 include("../top.php");
@@ -44,7 +44,12 @@ function confirmDeleteUser(id) {
 }
 </script>
 
-<?= $_SESSION['message']; $_SESSION['message']=""; ?>
+<?php
+if( isset($_SESSION['message']) ){
+  $_SESSION['message'];
+  $_SESSION['message']="";
+ }
+?>
 
 <h2><?=_('BackOffice users')?></h2>
 <?
