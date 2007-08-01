@@ -18,10 +18,11 @@
     along with Webfinance; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+# $Id$
 ?>
 <?
 
-if ($_SESSION['id_user']) {
+if( isset($_SESSION['id_user']) and is_numeric($_SESSION['id_user']) and $_SESSION['id_user']>0 ) {
   $User = new User();
   $User->getPrefs();
   $language = $User->prefs->lang;
