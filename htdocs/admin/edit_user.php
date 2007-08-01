@@ -28,9 +28,8 @@
 //
 ?>
 <?php
-
-// $Id$
-include("../inc/main.php");
+# $Id$
+require("../inc/main.php");
 include("../top_popup.php");
 
 if (!is_numeric($_GET['id'])) {
@@ -79,17 +78,17 @@ function confirmCancel(txt) {
 
 <tr>
   <td>Compte désactivé</td>
-  <td><input type="checkbox" name="disabled" <?= ($user->disabled)?"checked":"" ?> /></td>
+  <td><input type="checkbox" name="disabled" <?= (isset($user->disabled) and $user->disabled)?"checked":"" ?> /></td>
 </tr>
 
 <tr>
   <td>Créé le </td>
-  <td><?=$user->nice_creation_date?></td>
+  <td><?=(isset($user->nice_creation_date))?$user->nice_creation_date:'' ?></td>
 </tr>
 
 <tr>
   <td>Modifié le </td>
-  <td><?=$user->nice_modification_date?></td>
+  <td><?=(isset($user->nice_modification_date))?$user->nice_modification_date:'' ?></td>
 </tr>
 
  <tr>
