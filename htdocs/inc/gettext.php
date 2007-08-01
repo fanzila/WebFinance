@@ -21,13 +21,14 @@
 # $Id$
 ?>
 <?
+$language = 'en_US';
 
 if( isset($_SESSION['id_user']) and is_numeric($_SESSION['id_user']) and $_SESSION['id_user']>0 ) {
   $User = new User();
   $User->getPrefs();
-  $language = $User->prefs->lang;
-} else {
-  $language = 'en_US';
+  if(isset($User->prefs->lang))
+    $language = $User->prefs->lang;
+
 }
 
 if (isset($language) and $language!='en_US') {
