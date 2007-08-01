@@ -50,7 +50,7 @@ include("inc/main.php");
 
 <tr>
   <td style="text-align: center" width=150 valign=top>
-     <?include $GLOBALS['_SERVER']['DOCUMENT_ROOT']."/nav.php" ?>
+    <? include("nav.php"); ?>
     <img height="200" width="1" src="/imgs/blank.gif" /><br />
   </td>
   <td valign=top><?= _("Welcome to WebFinance ...") ?></td>

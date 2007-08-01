@@ -63,16 +63,14 @@ if (isset($_SESSION['message']) AND $_SESSION['message'] != "") {
     $_SESSION['message'] = '<div class="post_message">'.$_SESSION['message']."</div>";
  }
 
+$css_theme = "/css/themes/main/main.css"; // Historic default
 if(isset($User->prefs->theme)){
-  $css_theme = "/css/themes/".$User->prefs->theme."/main.css";
- }else{
-  $css_theme = "/css/themes/main/main.css";
+  $user_css_theme = "/css/themes/".$User->prefs->theme."/main.css";
+  if (!file_exists(getWFDirectory().$user_css_theme)) {
+    $User->prefs->theme = "main";
+  }else
+    $css_theme=$user_css_theme;
  }
-
-if (! file_exists(getWFDirectory().$css_theme)) {
-  $css_theme = "/css/themes/main/main.css"; // Historic default
-  $User->prefs->theme = "main";
-}
 
 $search_button = '/imgs/boutons/'.urlencode(_('Search')."_off_".$User->prefs->theme).'.png';
 $search_button_on = '/imgs/boutons/'.urlencode(_('Search')."_on_".$User->prefs->theme).'.png';
