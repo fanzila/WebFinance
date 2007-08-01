@@ -46,10 +46,14 @@ if (! $User->isLogued()) {
 
 $User->getInfos();
 
-$css_theme = "/css/themes/".$User->prefs->theme."/main.css";
-if (! file_exists($GLOBALS['_SERVER']['DOCUMENT_ROOT'].$css_theme)) {
-  $css_theme = "/css/main.css"; // Historic default
-}
+$css_theme = "/css/themes/main/main.css"; // Historic default
+if(isset($User->prefs->theme)){
+  $user_css_theme = "/css/themes/".$User->prefs->theme."/main.css";
+  if (!file_exists(getWFDirectory().$user_css_theme)) {
+    $User->prefs->theme = "main";
+  }else
+    $css_theme=$user_css_theme;
+ }
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
