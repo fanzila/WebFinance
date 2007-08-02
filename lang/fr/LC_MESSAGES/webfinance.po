@@ -461,3 +461,8 @@ msgstr "Prix HT"
 
 msgid "for"
 msgstr "Pour"
+
+msgid "Add an user"
+msgstr "Ajouter un utilisateur"
+
+

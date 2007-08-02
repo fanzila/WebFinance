@@ -31,7 +31,7 @@
 ?>
 <?php
 
-include("../inc/main.php");
+require("../inc/main.php");
 must_login();
 
 global $User;
@@ -45,7 +45,7 @@ if (!$User->isAuthorized("admin,manager")) {
 // print_r($User->getInfos());
 // die();
 
-if ($_GET['action'] == "delete") {
+if (isset($_GET['action']) && $_GET['action'] == "delete") {
 
   $Client = new Client($_GET['id']);
 
@@ -77,7 +77,7 @@ if ($_GET['action'] == "delete") {
 
  }
 
-if($_GET['action'] == "send_info"){
+if(isset($_GET['action']) && $_GET['action'] == "send_info"){
 
   extract($_GET);
 
@@ -99,7 +99,12 @@ if($_GET['action'] == "send_info"){
 
  }
 
+$id_current_user=$_SESSION['id_user'];
+
 extract($_POST);
+
+#bugfix for register_globals=on
+$_SESSION['id_user']=$id_current_user;
 
 $emails = "";
 

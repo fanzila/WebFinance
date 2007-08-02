@@ -116,7 +116,7 @@ mysql_free_result($result);
 
 ?>
 </table><br/>
-<a href="#" onclick="inpagePopup(event, this, 280, 260, 'edit_user.php?id=-1<?=$link?>');"><?= _('Add a user') ?></a>
+<a href="#" onclick="inpagePopup(event, this, 280, 260, 'edit_user.php?id=-1<?=$link?>');"><?= _('Add an user') ?></a>
 
 <?php
 
