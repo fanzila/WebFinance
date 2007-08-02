@@ -155,7 +155,7 @@ $q = sprintf("UPDATE webfinance_clients SET ".
              $nom, $addr1, $addr2, $addr3, $cp,
 	     $ville, $pays, $tel, $fax, $web,
 	     $emails,
-	     $vat_number, $siren, $id_company_type, $id_user , $password,
+	     $vat_number, $siren, $id_company_type, $_POST['id_user'] , $password,
              $id_client );
 
 //echo $q;
