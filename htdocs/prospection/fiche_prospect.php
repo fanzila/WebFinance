@@ -133,7 +133,7 @@ if(isset($_SESSION['message']) and !empty($_SESSION['message'])){
 
 <form onchange="formChanged();" id="main_form" action="save_client.php" method="post">
 
-<input type="hidden" name="focused_onglet" value="<?=(isset($_GET['focused_onglet']))?$_GET['focused_onglet']:'' ?>" />
+<input type="hidden" name="focused_onglet" value="<?=(isset($_GET['focused_onglet']))?$_GET['focused_onglet']:'contacts' ?>" />
 <input type="hidden" name="id_client" value="<?= $Client->id ?>" />
 <input type="hidden" name="id_user" value="<?= $Client->id_user ?>" />
 
