@@ -45,7 +45,7 @@ $User = new User();
 $user = $User->getInfos($_SESSION['id_user']);
 
 // Number of transaction to show on one page
-if(is_numeric($User->prefs->transactions_per_page) and $User->prefs->transactions_per_page>0 )
+if(isset($User->prefs->transactions_per_page) and is_numeric($User->prefs->transactions_per_page) and $User->prefs->transactions_per_page>0 )
   $transactions_per_page = $User->prefs->transactions_per_page;
 else
   $transactions_per_page = 50;
@@ -331,21 +331,25 @@ if(isset($filter['shown_type']) && count($filter['shown_type'])){
 
      // Filter on dates
      if (($ts_start_date != 0) && ($ts_end_date != 0)) {
-       $where_clause .= " AND (unix_timestamp(date)>=$ts_start_date AND unix_timestamp(date)<=$ts_end_date) ";
+       $this_clause = " AND (unix_timestamp(date)>=$ts_start_date AND unix_timestamp(date)<=$ts_end_date) ";
+       if(isset($where_clause))
+	 $where_clause .= $this_clause;
+       else
+	 $where_clause = $this_clause;
      }
 
      // Filter on account
-     if ($filter['id_account'] != 0) {
+     if (isset($filter['id_account']) and $filter['id_account'] != 0) {
        $where_clause .= " AND id_account=".$filter['id_account'];
      }
 
      // Filter on text
-     if ($filter['textsearch'] != "") {
+     if (isset($filter['textsearch']) and $filter['textsearch'] != "") {
        $where_clause .= " AND (text LIKE '%".$filter['textsearch']."%' OR comment LIKE '%".$filter['textsearch']."%')";
      }
 
      // Filter on amount
-     if ($filter['amount'] != "") {
+     if ( isset($filter['amount']) and $filter['amount'] != "") {
        $filter['amount'] = preg_replace("!,!", ".", $filter['amount']); // Decimal dot can be coma for european users
 
        if (preg_match("!([0-9.]+)-([0-9.]+)!", $filter['amount'], $matches)) {
@@ -364,6 +368,9 @@ if(isset($filter['shown_type']) && count($filter['shown_type'])){
 
      // -------------------------------------------------------------------------------------------------------------
      // BEGIN order clause
+    if(!isset($_GET['sort']))
+      $_GET['sort'] = 'date';
+
      switch ($_GET['sort']) {
        case "category" : $order_clause = "c.name, t.date DESC"; break;
        case "color" : $order_clause = "HEX(MID(c.color, 1,2)),HEX(MID(c.color,3,2)),HEX(MID(c.color,5,2))"; break;
@@ -390,7 +397,7 @@ if(isset($filter['shown_type']) && count($filter['shown_type'])){
      $result = WFO::SQL($q);
 
      $filter_base = sprintf("sort=%d&filter[start_date]=%s&filter[end_date]=%s&filter[textsearch]=%s&filter[amount]=%s&view=%s",
-                            $_GET['sort'], $filter['start_date'], $filter['end_date'], $filter['textsearch'], $filter['amount'], $view);
+                            $_GET['sort'], $filter['start_date'], $filter['end_date'], (isset($filter['textsearch']))?$filter['textsearch']:'', (isset($filter['amount']))?$filter['amount']:'', $view);
      $result = WFO::SQL($q);
      $total_shown = 0;
      $count = 1;
@@ -600,9 +607,9 @@ printf('<a class="pager_link" href="?%s&filter[start_date]=%s&filter[end_date]=%
        $filter_base,
        date("d/m/Y",mktime(0,0,0,date("n",$cur_date)-1,1,date("Y",$cur_date) ) ) ,
        date("d/m/Y",mktime(0,0,0,date("n",$cur_date),0,date("Y",$cur_date) ) ) ,
-       ($filter['shown_type']['real'])?"&filter[shown_type][real]=on":"" ,
-       ($filter['shown_type']['prevision'])?"&filter[shown_type][prevision]=on":"" ,
-       ($filter['shown_type']['asap'])?"&filter[shown_type][asap]=on":""
+       (isset($filter['shown_type']) && $filter['shown_type']['real'])?"&filter[shown_type][real]=on":"" ,
+       (isset($filter['shown_type']) && $filter['shown_type']['prevision'])?"&filter[shown_type][prevision]=on":"" ,
+       (isset($filter['shown_type']) && $filter['shown_type']['asap'])?"&filter[shown_type][asap]=on":""
        ) ;
 
 echo strftime("%B %Y",$cur_date);
@@ -610,9 +617,9 @@ printf('<a class="pager_link" href="?%s&filter[start_date]=%s&filter[end_date]=%
        $filter_base,
        date("d/m/Y",mktime(0,0,0,date("n",$cur_date)+1,1,date("Y",$cur_date) ) ) ,
        date("d/m/Y",mktime(0,0,0,date("n",$cur_date)+2,0,date("Y",$cur_date) ) ) ,
-       ($filter['shown_type']['real'])?"&filter[shown_type][real]=on":"" ,
-       ($filter['shown_type']['prevision'])?"&filter[shown_type][prevision]=on":"" ,
-       ($filter['shown_type']['asap'])?"&filter[shown_type][asap]=on":""
+       (isset($filter['shown_type']) && $filter['shown_type']['real'])?"&filter[shown_type][real]=on":"" ,
+       (isset($filter['shown_type']) && $filter['shown_type']['prevision'])?"&filter[shown_type][prevision]=on":"" ,
+       (isset($filter['shown_type']) && $filter['shown_type']['asap'])?"&filter[shown_type][asap]=on":""
   ) ;
 ?>
      </td>
@@ -689,9 +696,9 @@ printf('<a class="pager_link" href="?%s&filter[start_date]=%s&filter[end_date]=%
       <td nowrap><b><?= _('Shown types :') ?></b></td>
       <td>
        <?
-	printf('<input type="checkbox" name="filter[shown_type][real]" %s /><b>%s</b>', ($filter['shown_type']['real'])?"checked":"" ,_('real'));
-	printf('<input type="checkbox" name="filter[shown_type][prevision]" %s /><b>%s</b>', ($filter['shown_type']['prevision'])?"checked":"" ,_('prev'));
-	printf('<input type="checkbox" name="filter[shown_type][asap]" %s /><b>%s</b>', ($filter['shown_type']['asap'])?"checked":"" ,_('asap'));
+	printf('<input type="checkbox" name="filter[shown_type][real]" %s /><b>%s</b>', (isset($filter['shown_type']) && $filter['shown_type']['real'])?"checked":"" ,_('real'));
+	printf('<input type="checkbox" name="filter[shown_type][prevision]" %s /><b>%s</b>', (isset($filter['shown_type']) && $filter['shown_type']['prevision'])?"checked":"" ,_('prev'));
+	printf('<input type="checkbox" name="filter[shown_type][asap]" %s /><b>%s</b>', (isset($filter['shown_type']) && $filter['shown_type']['asap'])?"checked":"" ,_('asap'));
        ?>
       </td>
     </tr>
@@ -708,7 +715,7 @@ printf('<a class="pager_link" href="?%s&filter[start_date]=%s&filter[end_date]=%
       $count = 0;
       $result = WFO::SQL("SELECT id,name,color FROM webfinance_categories ORDER BY name");
       while ($cat = mysql_fetch_object($result)) {
-        printf('<td nowrap><input type="checkbox" name="filter[shown_cat][%d]" %s>&nbsp;%s</td>', $cat->id, ($filter['shown_cat'][$cat->id])?"checked":"", $cat->name );
+        printf('<td nowrap><input type="checkbox" name="filter[shown_cat][%d]" %s>&nbsp;%s</td>', $cat->id, (isset($filter['shown_cat']) and $filter['shown_cat'][$cat->id])?"checked":"", $cat->name );
         $count++;
         if ($count % 2 == 0) {
           print "</tr>\n<tr class=\"row_even\">\n";
@@ -784,7 +791,7 @@ printf('<a class="pager_link" href="?%s&filter[start_date]=%s&filter[end_date]=%
     $small_image_url = sprintf("/graphs/cashflow.php?grid=0&width=300&height=200&legend=0&end_date=%s&start_date=%s&hidetitle=1&account=%d",
                                strftime("%Y-%m-%d", $ts_end_date),
                                strftime("%Y-%m-%d", $ts_start_date),
-                               ($filter['id_account']==0)?"":$filter['id_account']
+                               (isset($filter['id_account']) && $filter['id_account']>0)?$filter['id_account']:''
                               );
   ?>
   <img src="<?= $small_image_url ?>" onmouseover="return escape('<?= _('Cashflow over the selected period') ?>');" />

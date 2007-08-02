@@ -53,19 +53,26 @@ function confirmCancel(txt) {
 }
 
 </script>
+<?php
+$first_name=(isset($user->first_name))?$user->first_name:'';
+$last_name=(isset($user->last_name))?$user->last_name:'';
+$login=(isset($user->login))?$user->login:'';
+$email=(isset($user->email))?$user->email:'';
+?>
+
 
 <form name="user_data" action="save_user.php" method="post">
 <input type="hidden" name="id_user" value="<?= $user->id_user ?>" />
 <table border="0" cellspacing="4" cellpadding="0">
 <tr>
-  <td><?=_('First name')?></td><td><input type="text" size="25" name="first_name" value="<?=$user->first_name ?>" /></td>
+  <td><?=_('First name')?></td><td><input type="text" size="25" name="first_name" value="<?=$first_name ?>" /></td>
 </tr>
 <tr>
-  <td><?=_('Last name')?></td><td><input type="text" size="25" name="last_name" value="<?=$user->last_name ?>" /></td>
+  <td><?=_('Last name')?></td><td><input type="text" size="25" name="last_name" value="<?=$last_name ?>" /></td>
 </tr>
 
 <tr>
-  <td>Login</td><td><input type="text" size="20" name="login" value="<?=$user->login ?>" /></td>
+  <td>Login</td><td><input type="text" size="20" name="login" value="<?=$login ?>" /></td>
 </tr>
 
 <tr>
@@ -73,7 +80,7 @@ function confirmCancel(txt) {
 </tr>
 
 <tr>
-  <td>Email</td><td><input type="text" size="25" name="email" value="<?=$user->email ?>" /></td>
+  <td>Email</td><td><input type="text" size="25" name="email" value="<?=$email ?>" /></td>
 </tr>
 
 <tr>

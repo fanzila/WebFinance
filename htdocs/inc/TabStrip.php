@@ -58,7 +58,7 @@ class TabStrip {
     if ($id == null) {
       $id=count($this->title);
     }
-    if (!$this->focusedTab) { $this->focusedTab = $id; } // First added tab is focused by default
+    if (!isset($this->focusedTab) || !$this->focusedTab) { $this->focusedTab = $id; } // First added tab is focused by default
     $this->title[$id] = $title;
     $this->content[$id] = $content;
 

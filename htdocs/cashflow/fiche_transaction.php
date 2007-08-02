@@ -80,7 +80,7 @@ if(mysql_num_rows($result)>1){
 </tr>
 <tr>
   <td><?= _('Date') ?></td>
-  <td colspan="3"><?= makeDateField('date', $transaction->ts_date); ?></td>
+			     <td colspan="3"><?= makeDateField('date', (isset($transaction->ts_date))?$transaction->ts_date:null ); ?></td>
 </tr>
 <tr>
   <td><?= _('Category') ?></td>
@@ -115,7 +115,7 @@ mysql_free_result($result);
 <tr style="vertical-align: top">
   <td nowrap><?= _('Comment') ?> :</td>
   <td colspan="3">
-  <textarea style="width: 340px; height: 100px;" name="comment"><?=$transaction->comment?></textarea>
+  <textarea style="width: 340px; height: 100px;" name="comment"><?=(isset($transaction->comment))?$transaction->comment:''?></textarea>
   </td>
 </tr>
   <tr>

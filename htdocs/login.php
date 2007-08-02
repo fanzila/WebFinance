@@ -31,7 +31,9 @@
 // $Id$
 include("inc/main.php");
 
-if(isset($_POST['login'],$_POST['password'])){
+if(isset($_POST['user_login'],$_POST['user_password'])){
+  $_POST['login']=$_POST['user_login'];
+  $_POST['password']=$_POST['user_password'];
   $User = new User();
   $test = $User->login($_POST);
   if($test>0) {
@@ -71,8 +73,8 @@ if(isset($_GET['err'])){
     <?=$err_msg?>
     <input type="hidden" name="came_from" value="<?=$came_from ?>" />
     <table border="0" cellspacing="0" cellpadding="10" style="border: solid 1px black; margin: auto auto auto auto;">
-      <tr><td><?= _("Login") ?></td><td><input type="text" size="20" style="border: solid 1px #777;" name="login" id="login" value="" /></td></tr>
-      <tr><td><?= _("Password") ?></td><td><input type="password" style="border: solid 1px #777;" size="20" name="password" /></td></tr>
+      <tr><td><?= _("Login") ?></td><td><input type="text" size="20" style="border: solid 1px #777;" name="user_login" id="login" value="" /></td></tr>
+      <tr><td><?= _("Password") ?></td><td><input type="password" style="border: solid 1px #777;" size="20" name="user_password" /></td></tr>
       <tr><td colspan="2" style="text-align:center"><input value="<?= _('Login') ?>" type="submit" /></td></tr>
     </table>
     </form>

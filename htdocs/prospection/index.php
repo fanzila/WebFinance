@@ -30,9 +30,9 @@
 //
 ?>
 <?php
-// $Id$
+# $Id$
 
-include("../inc/main.php");
+require("../inc/main.php");
 $title = _("Companies");
 $roles="manager,employee,accounting";
 include("../top.php");
@@ -42,9 +42,10 @@ global $User;
 $User->getInfos();
 
 //msg
-echo $_SESSION['message'];
-unset($_SESSION['message']);
-
+if(isset($_SESSION['message']) and !empty($_SESSION['message'])){
+  echo $_SESSION['message'];
+  $_SESSION['message']='';
+ }
 
 //scheduled invoices and transactions
 $result = mysql_query("SELECT id_facture, ".
@@ -113,7 +114,7 @@ if (isset($_GET['q']) && ($_GET['q']!=0)) {
   $where_clause = "ct.id_company_type=".$_GET['q'];
 }
 
-if (preg_match("/[a-zA-Z ]+/", $_GET['namelike'])) {
+if ( isset($_GET['namelike']) and preg_match("/[a-zA-Z ]+/", $_GET['namelike']) ) {
   $where_clause .= " AND c.nom LIKE '%".$_GET['namelike']."%'";
 }
 $where_clause .= " AND c.id_company_type=ct.id_company_type ";
@@ -135,8 +136,10 @@ $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w+\\&*+/", "", $GLOBA
 <?php
 
 $critere = "has_unpaid desc,has_devis desc, c.nom";
-if ((!isset($_GET['sort'])) && (isset($User->prefs->tri_entreprise))) {
-  $_GET['sort'] = $User->prefs->tri_entreprise;
+if( !isset($_GET['sort']) ) {
+  $_GET['sort'] = 'nom';
+  if( isset($User->prefs->tri_entreprise) )
+    $_GET['sort'] = $User->prefs->tri_entreprise;
 }
 switch ($_GET['sort']) {
   case "nom" : $critere = "c.nom"; break;
@@ -153,6 +156,9 @@ $result = mysql_query("SELECT c.nom, c.id_client,ct.id_company_type
                        WHERE $where_clause
                        ORDER BY $critere") or wf_mysqldie();
 $client = new Client(1);
+$grand_total_ca_ht=0;
+$grand_total_ca_ht_year=0;
+$count=0;
 while ($found = mysql_fetch_object($result)) {
   $count++;
 
@@ -257,9 +263,9 @@ if ($User->isAuthorized('manager,accounting')) {
   <input type="hidden" name="sort" value="<?= $_GET['sort'] ?>" />
   <input type="hidden" name="namelike" value="<?= $_GET['namelike'] ?>" />
   <select style="width: 150px;" onchange="this.form.submit();" name="q"><option value="0">Tous<?php
-  $result = mysql_query("SELECT webfinance_company_types.id_company_type,webfinance_company_types.nom,count(distinct webfinance_clients.id_client) as nb 
-                         FROM webfinance_company_types 
-                         LEFT JOIN webfinance_clients ON webfinance_clients.id_company_type=webfinance_company_types.id_company_type 
+  $result = mysql_query("SELECT webfinance_company_types.id_company_type,webfinance_company_types.nom,count(distinct webfinance_clients.id_client) as nb
+                         FROM webfinance_company_types
+                         LEFT JOIN webfinance_clients ON webfinance_clients.id_company_type=webfinance_company_types.id_company_type
                          GROUP by webfinance_company_types.id_company_type");
   while ($s = mysql_fetch_object($result)) {
     printf('<option value="%s"%s>%s (%d fiches)</option>', $s->id_company_type, ($s->id_company_type==$_GET['q'])?" selected":"", $s->nom, $s->nb );

@@ -38,9 +38,15 @@ must_login();
 //$Id$
   //echo "<pre>"; print_r($_POST);
 $Facture = new Facture();
-if (is_numeric($_POST['id_facture'])) {
-  $facture = $Facture->getInfos($_POST['id_facture']);
-}
+$id_facture=-1;
+
+if (isset($_POST['id_facture']) && is_numeric($_POST['id_facture']))
+  $id_facture=$_POST['id_facture'];
+else if (isset($_GET['id_facture']) && is_numeric($_GET['id_facture']))
+  $id_facture=$_GET['id_facture'];
+
+if($id_facture>0)
+  $facture = $Facture->getInfos($id_facture);
 
 function update_ca() {
   global $facture;
@@ -123,6 +129,15 @@ if ($action == "save_facture") {
 //   print_r($_POST);
   extract($_POST);
 
+  if(!isset($id_compte))
+    header("Location: ../admin/societe");
+
+  if(!isset($is_envoye))
+    $is_envoye='off';
+
+  if(!isset($is_paye))
+    $is_paye='off';
+
   // Enregistrement des paramètres facture
   preg_match("/([0-9]{2})\/([0-9]{2})\/([0-9]{4})/", $date_facture, $ma);
   $date_facture = $ma[3]."/".$ma[2]."/".$ma[1];
@@ -136,7 +151,7 @@ if ($action == "save_facture") {
   $date_sent = $ma[3]."/".$ma[2]."/".$ma[1];
   $date_sent_ts = mktime(0,0,0,$ma[2],$ma[1],$ma[3]);
 
-  if( ($facture->is_envoye == 0) && ($is_envoye == "on") && empty($num_facture) ) {
+  if( ($facture->is_sent == 0) && ($is_envoye == "on") && empty($num_facture) ) {
     $result = mysql_query("SELECT count(*) FROM webfinance_invoices
                            WHERE num_facture!=''
                            AND year(date_facture)=year('".$facture->date_facture."')") or wf_mysqldie();

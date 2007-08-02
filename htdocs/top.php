@@ -92,7 +92,7 @@ $search_button_on = '/imgs/boutons/'.urlencode(_('Search')."_on_".$User->prefs->
 <table border="0" cellspacing="10" cellpadding="0" style="height: 100%">
 <tr>
   <td style="text-align: center" width=150 valign=top>
-  <? include(getWFDirectory()."/nav.php"); ?>
+  <? include(getWFDirectory()."nav.php"); ?>
     <img height="200" width="1" src="/imgs/blank.gif" /><br />
 
     <?php if ($User->isAuthorized('admin,employee,manager')) { ?>

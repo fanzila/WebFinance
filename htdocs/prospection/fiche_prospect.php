@@ -37,7 +37,7 @@
 include("../inc/main.php");
 $roles = "manager,employee,accounting";
 
-if ($_GET['action'] == '_new') {
+if (isset($_GET['action']) && $_GET['action'] == '_new') {
   mysql_query("INSERT INTO webfinance_clients (nom,date_created) VALUES('Nouvelle Entreprise', now())") or wf_mysqldie();
 //$result = mysql_query("SELECT id_client FROM webfinance_clients WHERE date_sub(now(), INTERVAL 1 SECOND)<=date_created");
 //list($_GET['id']) = mysql_fetch_array($result);
@@ -124,7 +124,12 @@ function ask_confirmation(txt) {
 
 </script>
 
-<?= $_SESSION['message']; unset($_SESSION['message']); ?>
+<?php
+if(isset($_SESSION['message']) and !empty($_SESSION['message'])){
+  echo $_SESSION['message'];
+  unset($_SESSION['message']);
+ }
+?>
 
 <form onchange="formChanged();" id="main_form" action="save_client.php" method="post">
 

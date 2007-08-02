@@ -223,8 +223,16 @@ function getMicroTime() {
 }
 
 function getWFDirectory(){
-# very basic, can do better
-  return str_replace($_SERVER['PHP_SELF'],'/',$_SERVER['SCRIPT_FILENAME']);
+# very basic, doesn't work with multiviews
+  $dir = str_replace($_SERVER['PHP_SELF'],'/',$_SERVER['SCRIPT_FILENAME']);
+  $pattern = '/\.php$|\.html$|\.html$/';
+
+  if(is_dir($dir))
+    return $dir."/";
+  else if(is_dir( preg_replace($pattern,'/', $dir) ) )
+    return preg_replace($pattern,'/', $dir);
+  else
+    return "";
 }
 
 header("Content-Type: text/html; charset=utf-8");

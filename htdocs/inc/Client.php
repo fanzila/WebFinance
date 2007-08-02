@@ -29,7 +29,7 @@
 ?>
 <?php
 
-// $Id$
+# $Id$
 
 class Client extends WFO {
   var $id = -1;
@@ -62,9 +62,9 @@ class Client extends WFO {
 
     // sensible default value
     $this->link_societe = sprintf('<a href="http://www.societe.com/cgi-bin/liste?nom=%s&dep=%s"><img src="/imgs/icons/societe.com.gif" class="bouton" onmouseover="return escape(\'%s\');" /></a>',
-                                  urlencode($this->nom), $this->departement,
+                                  (isset($this->nom))?urlencode($this->nom):'', (isset($this->departement))?$this->departement:'',
                                   addslashes( _('Cannot link to societe.com if no RCS or siren specified. Click icon to perform a search.') ) );
-    if ($this->siren != "") {
+    if ( isset($this->siren) and $this->siren != "") {
       // Trim non-digits from value
       $this->siren = preg_replace("/[^0-9]/", "", $this->siren);
       switch (strlen($this->siren)) {
@@ -84,7 +84,7 @@ class Client extends WFO {
     }
 
     $this->login = "";
-    if($this->id_user>0){
+    if(isset($this->id_user) and $this->id_user>0){
       $login_res = $this->SQL("SELECT login FROM webfinance_users WHERE id_user=".$this->id_user);
       if(mysql_num_rows($login_res)>0)
       list($this->login) = mysql_fetch_array($login_res);

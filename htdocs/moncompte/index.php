@@ -76,7 +76,7 @@ function checkForm(f) {
 }
 </script>
 
-<?= $_SESSION['message']; $_SESSION['message'] = ""; ?>
+<?=(isset($_SESSION['message']))?$_SESSION['message']:""; ?>
 
 <h2><?=_('My account') ?></h2>
 <table border="0" cellspacing="7" cellpadding="0">

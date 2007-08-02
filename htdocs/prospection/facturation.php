@@ -42,13 +42,13 @@ $Facture = new Facture();
 $total_ca_ht = 0;
 
 $where_clause = "1";
-if ($_GET['id_client']!="") {
+if (isset($_GET['id_client']) && $_GET['id_client']!="") {
   $where_clause .= " AND f.id_client=".$_GET['id_client'];
 }
-if ($_GET['mois'] != "") {
+if (isset($_GET['mois']) && $_GET['mois'] != "") {
   $where_clause .= " AND date_format(f.date_facture, '%Y%m')='".$_GET['mois']."'";
 }
-if ($_GET['type']!="") {
+if (isset($_GET['type']) && $_GET['type']!="") {
   switch ($_GET['type']) {
     case "unpaid" : $where_clause .= " AND f.is_paye=0"; break;
     case "paid" : $where_clause .= " AND f.is_paye=1"; break;
@@ -56,6 +56,9 @@ if ($_GET['type']!="") {
 }
 
 $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w+\\&*+/", "", $GLOBALS['_SERVER']['QUERY_STRING']);
+
+if(!isset($_GET['sort']))
+  $_GET['sort']='date';
 
 switch ($_GET['sort']) {
   case "num" : $order_clause = "f.num_facture DESC"; break;
@@ -83,7 +86,7 @@ switch ($_GET['sort']) {
 </tr>
 <?php
 $total_ca_ht = 0;
-$total_ca_tcc = 0;
+$total_ca_ttc = 0;
 $result = mysql_query("SELECT f.id_facture
                        FROM webfinance_invoices f , webfinance_clients as c
                        WHERE type_doc='facture'

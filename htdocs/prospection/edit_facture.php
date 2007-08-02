@@ -182,7 +182,7 @@ function ask_confirmation(txt) {
 
 </script>
 
-<?= $_SESSION['message']; unset($_SESSION['message']); ?>
+<?=( isset($_SESSION['message']) && !empty($_SESSION['message']) )?$_SESSION['message']:'' ?>
 
 <map name="facture_row_handle">
 <!-- #$-:Image Map file created by GIMP Imagemap Plugin -->
@@ -386,7 +386,7 @@ function ask_confirmation(txt) {
       <td colspan="2">
         Commentaire : <br/>
         <textarea style="width: 200px;" name="commentaire"><?= $facture->commentaire ?></textarea>
-        <?= ($facture->date_comptabilise!="")?"le ".$facture->nice_date_comptabilise:"" ?>
+      <?= (isset($facture->date_comptabilise) && $facture->date_comptabilise!="")?"le ".$facture->nice_date_comptabilise:"" ?>
       </td>
     </tr>
     <tr>
