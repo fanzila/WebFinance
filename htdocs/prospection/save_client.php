@@ -125,10 +125,14 @@ if(!empty($login)){
     $password = $User->randomPass();
   }
 
+  $prenom="";
+  if(isset($_POST['prenom']))
+    $prenom=$_POST['prenom'];
+
   $user_data=array(
 		 "id_user"=>$_POST['id_user'],
 		 "login"=>$login,
-		 "first_name"=>$_POST['prenom'],
+		 "first_name"=>$prenom,
 		 "last_name"=>$_POST['nom'],
 		 "password"=>$_POST['password'],
 		 "email"=>$emails,
