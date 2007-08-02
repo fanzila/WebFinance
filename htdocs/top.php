@@ -29,8 +29,7 @@
 // $Id$
 // Common topper
 
-
-include_once("inc/main.php");
+require_once("inc/main.php");
 
 global $title;
 global $roles;

@@ -31,28 +31,26 @@
 
 // $Id$
 
-include("../inc/main.php");
+require("../inc/main.php");
 must_login();
 
-if ($_GET['action'] == "cancel") {
+if (isset($_GET['action']) && $_GET['action'] == "cancel") {
   $_POST="";
   $_GET="";
  }else{
-
   $User = new User();
 
-  if ($_GET['action'] == "delete") {
+  if (isset($_GET['action']) && $_GET['action'] == "delete") {
     $User->delete($_GET['id']);
     header("Location: index.php");
     die();
   }
 
-  extract($_POST);
   if (!preg_match("/^[0-9-]+$/", $id_user)) {
     //  header("Location: index.php");
     die();
   }
-  if ($_POST['id_user'] > 0) {
+  if (isset($_POST['id_user']) && $_POST['id_user'] > 0) {
     $User->saveData($_POST);
     //  header("Location: fiche_user.php?id=".$_POST['id_user']);
   } else {

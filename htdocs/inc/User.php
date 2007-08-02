@@ -214,6 +214,10 @@ class User {
       return false;
     }
     extract($data);
+
+    if(!isset($disabled))
+      $disabled='off';
+
     $roles=implode(",",$data['role']);
 
     if($this->existsLogin($login)){

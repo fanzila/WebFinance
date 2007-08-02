@@ -30,7 +30,7 @@
 //
 // $Id$
 
-ini_set('session.gc_maxlifetime',3600);
+@ini_set('session.gc_maxlifetime',3600);
 session_start();
 
 require("dbconnect.php");
@@ -199,21 +199,19 @@ function format_price($price) {
 function must_login(){
   if(isset($_SESSION['id_user']) AND $_SESSION['id_user']>0 ){
     $User = new User();
-    if (! $User->isLogued() ) {
-      $_SESSION['came_from']=$_SERVER['REQUEST_URI'];
-      if(WF_DEBUG){
-	echo 'Not logged. Debug mode, please <a href="/login.php">log in</a>';
-	include("bottom.php");
-	die();
-      }
-      header("Location: ../login.php");
-      die();
+    if ($User->isLogued()){
+      return true;
+      exit;
     }
-  }else{
-    $_SESSION['came_from']=$_SERVER['REQUEST_URI'];
-    header("Location: ../login.php");
+  }
+  $_SESSION['came_from']=$_SERVER['REQUEST_URI'];
+  if(WF_DEBUG){
+    echo 'Not logged. Debug mode, please <a href="/login.php">log in</a>';
+    include("bottom.php");
     die();
   }
+  header("Location: ../login.php");
+  die();
 }
 
 function getMicroTime() {

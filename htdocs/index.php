@@ -28,7 +28,7 @@
 //
 // $Id$
 
-include("inc/main.php");
+require("inc/main.php");
 $title = _("Home");
 $roles="manager,accounting,employee";
 include("top.php");
