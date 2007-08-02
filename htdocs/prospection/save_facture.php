@@ -289,7 +289,7 @@ if ($action == "save_facture") {
     update_ca();
 
   }
-  header("Location: fiche_prospect.php?focused_onglet=biling&tab=biling&id=$id_client");
+  header("Location: fiche_prospect.php?onglet=biling&tab=biling&id=$id_client");
 
 } elseif ($action == "duplicate") {
   extract($_GET);
