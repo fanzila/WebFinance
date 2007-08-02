@@ -46,8 +46,8 @@ if (isset($_GET['action']) && $_GET['action'] == "cancel") {
     die();
   }
 
-  if (!preg_match("/^[0-9-]+$/", $id_user)) {
-    //  header("Location: index.php");
+  if (isset($_POST['id_user']) && !is_numeric($_POST['id_user']) ) {
+    header("Location: index.php");
     die();
   }
   if (isset($_POST['id_user']) && $_POST['id_user'] > 0) {
