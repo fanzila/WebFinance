@@ -156,8 +156,8 @@ $q = sprintf("UPDATE webfinance_clients SET ".
 //echo $q;
 mysql_query($q) or wf_mysqldie();
 
-$_SESSION['message'] .= "<br/>"._('Update custumer');
-logmessage(_('Update custumer')." client:$id_client ($nom)");
+$_SESSION['message'] .= "<br/>"._('Update customer');
+logmessage(_('Update customer')." client:$id_client ($nom)");
 
 header("Location: /prospection/fiche_prospect.php?id=$id_client&onglet=".$focused_onglet);
 
