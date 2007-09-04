@@ -78,9 +78,21 @@ fclose($logo_tmp);
 
 define('EURO',chr(128));
 
+if(isset($_POST['action'],$_POST['id']) && $_POST['action'] == 'send' && is_numeric($_POST['id'])  )
+  $id_invoice = $_POST['id'];
+
+else if(isset($_GET['id']) && is_numeric($_GET['id']))
+  $id_invoice = $_GET['id'];
+
+ else{
+  echo _("Error: Missing invoice id");
+  exit;
+ }
+
+
 $Facture = new Facture();
-if (is_numeric($_GET['id'])) {
-  $facture = $Facture->getInfos($_GET['id']);
+if (is_numeric($id_invoice)) {
+  $facture = $Facture->getInfos($id_invoice);
 
   foreach ($facture as $n=>$v) {
     if (!is_array($v)) {
@@ -283,7 +295,71 @@ if(isset($_GET['dest']) AND $_GET['dest']=="file"){
 
   header("Location: send_facture.php?id=".$_GET['id']);
 
-}else
+ }else if(isset($_POST['action'],$_POST['id']) && $_POST['action'] == 'send' && is_numeric($_POST['id'])  ){
+
+  require("/usr/share/php/libphp-phpmailer/class.phpmailer.php");
+
+  $mail_addresses = explode(',',$_POST['mails2']);
+  $mails = array_merge($mail_addresses,$_POST['$mails']);
+
+  if(count($mails)>0){
+
+    //récupérer les info sur la société
+    $result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='societe' AND owner=-1")
+      or wf_mysqldie();
+    list($value) = mysql_fetch_array($result);
+    mysql_free_result($result);
+    $societe = unserialize(base64_decode($value));
+
+    //compléter l'entête de l'email
+    $mail = new PHPMailer();
+    $mail->SetLanguage('en');
+
+    if(preg_match('/^[A-z0-9][\w.-]*@[A-z0-9][\w\-\.]+\.[A-Za-z]{2,4}$/',$from) )
+      $mail->From = $_POST['from'];
+    else
+      $mail->From = $societe->email;
+
+    $mail->FromName = $_POST['from_name'];
+
+    foreach($mails as $address)
+      $mail->AddAddress($address);
+
+    $mail->Subject = stripslashes(utf8_decode($_POST['subject'])) ;
+    $mail->Body = stripslashes(utf8_decode($_POST['body'])) ;
+
+    $mail->WordWrap = 80;
+
+    //attach the invoice file
+    $file_name=ucfirst($facture->type_doc)."_".$facture->num_facture."_".preg_replace("/[ ]/", "_", $facture->nom_client).".pdf";
+
+    $file_string = $pdf->Output($file_name,'S');
+
+    $mail->AddStringAttachment($file_string , $file_name,'base64','application/pdf');
+
+    if(!$mail->Send()){
+      $_SESSION['message'] = _('Invoice was not sent');
+      $_SESSION['error'] = 1;
+      echo _("Invoice was not sent");
+      echo "Mailer Error: " . $mail->ErrorInfo;
+
+    } else{
+      $_SESSION['message'] = _('Invoice sent');
+      //mettre à jour l'état de la facture, update sql
+      mysql_query("UPDATE webfinance_invoices SET is_envoye=1 WHERE id_facture=$id_invoice ")
+	or wf_mysqldie();
+      $_SESSION['message'] .= "<br/>"._('Invoice updated');
+
+      logmessage(_("Send invoice")." #$facture->num_facture fa:$id_invoice client:$facture->id_client");
+    }
+
+    unlink("/tmp/logo.png");
+    header("Location: edit_facture.php?id_facture=$id_invoice");
+    die();
+  }else
+    echo _("Please add mail address!");
+
+ }else
   $pdf->Output(ucfirst($facture->type_doc)."_".$facture->num_facture."_".preg_replace("/[ ]/", "_", $facture->nom_client).".pdf", "D");
 
 // Delete temporary logofile

@@ -98,7 +98,7 @@ $invoice = $Facture->getInfos($id);
 
 ?>
 
-<form id="main_form" action="save_facture.php" method="post">
+<form id="main_form" action="gen_facture.php" method="post">
   <input type="hidden" name="action" value="send">
   <input type="hidden" name="id" value="<?= $id ?>">
   <table class="bordered" border="0" cellspacing="0" cellpadding="3" width="500">
