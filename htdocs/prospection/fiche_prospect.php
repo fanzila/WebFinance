@@ -43,7 +43,7 @@ if (isset($_GET['action']) && $_GET['action'] == '_new') {
 //list($_GET['id']) = mysql_fetch_array($result);
   $_GET['id'] = mysql_insert_id();
   $_SESSION['message']= _('New customer created');
-  logmessage(_('Create custumer')." client:".$_GET['id'] );
+  logmessage(_('Create customer')." client:".$_GET['id'] );
 }
 
 if (!preg_match("/^[0-9]+$/", $_GET['id'])) {
