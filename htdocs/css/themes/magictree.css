@@ -1,0 +1,24 @@
+/* Tree node closed = invisible */
+img.handle { 
+  margin-right: 5px;
+  cursor: pointer;
+}
+div.treeContent {
+  padding-left: 2px;
+}
+div.treeNode_open {
+  display: block;
+  margin-left: 12px;
+  border-left: 1px dashed #a1a1a1;
+  /* padding-left: 4px; */
+}
+div.treeNode_closed {
+  display: none;
+}
+
+span.nodeSelected {
+  background: #ceffce;
+}
+span.node {
+
+}

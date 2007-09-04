@@ -1,0 +1,138 @@
+<?php
+
+// $Id: index.php.en 496 2006-10-02 13:32:42Z cyb $
+//
+
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" type="text/css" href="webfinance.css" />
+  <title>Webfinance</title>
+</head>
+
+<body>
+<img src="logo.gif" style="float: right;" />
+<h1>Webfinance</h1>
+
+<h2>What is Webfinance ?</h2>
+
+<p><i>Webfinance</i> is a web application based on PHP/MySQL to manage
+invoices, handle clients contacts, manage cash-flow history and make
+cash-flow previsions.
+
+<p>It has been initially developped by a collaborative effort from <a
+href="http://www.nbi.fr">NBI</a> and <a
+href="http://www.isvtec.com/">ISVTEC</a> and is now publicly available
+as a Free and Open Source software under the <a
+href="http://www.gnu.org/">GNU General Public License</a>. We hope to
+get feedback and support from the Free Software community.
+
+<h2>Download</h2>
+
+While still in very early stages, you can download the latest sources here. The
+HEAD version is the latest developpement release. Probably buggy but more
+feature rich. The RELEASE versions are (hopefully) more stable versions. <a
+href="#roadmap">See below</a> for more info.
+
+<ul class="releases">
+<?php
+$releases = glob("webfinance_*.tar.gz");
+foreach ($releases as $r) {
+  $a = stat($r);
+  printf('<li><a href="%s">%s</a> %s (%.2fKo)</li>'."\n", $r, $r, strftime("%Y-%m-%d", $a['mtime']), filesize($r)/1024);
+}
+?>
+</ul>
+
+<h2>Installation</h2>
+
+<ul>
+<li>Install pre-requisites (debian-centric)
+<pre class="shell">
+apt-get install php-fpdf apache php4 mysql-server-4.1 ttf-freefont gettext libphp-phplot libphp-phpmailer
+</pre></li>
+
+<li>Create a database, and load the default schema</li>
+<pre class="shell">
+echo "CREATE DATABASE webfinance" | mysql -u root --password=verysecret
+echo "GRANT ALL ON webfinance.* TO 'webfinance'@'localhost'" | mysql -u root --password=verysecret
+mysql -u root --password=verysecret webfinance &lt; /path/to/webfinance/sql/schema.mysql4.1.sql
+</pre>
+
+<li>Add the virtual host to Apache configuration and make sure the name resolves :
+<pre class="shell">
+cat &gt; /etc/apache/conf.d/webfinance.conf &lt;&lt;EOF
+&lt;VirtualHost *&gt;
+    ServerName webfinance
+    DocumentRoot /path/to/webfinance/htdocs
+    ScriptAlias /cgi-bin /path/to/webfinance/cgi-bin
+    Options ExecCGI
+    AddDefaultCharset off
+&lt;/VirtualHost&gt;
+EOF
+apachectl graceful
+echo '127.0.0.1 webfinance' &gt;&gt; /etc/hosts
+</li>
+
+<li>Adapt the connections params for the application</li>
+<pre class="shell">
+cd /path/to/webfinance/etc/
+cp wf.conf.skel wf.conf
+modify wf.conf
+</pre>
+
+<li>Add the script scheduler.php to a daily task with cron</li>
+<pre class="shell">
+echo '30 7  * * *  www-data  php /path/to/webfinance/htdocs/inc/scheduler.php' > /etc/cron.d/webfinance
+</pre>
+
+<li>Go to <a href="http://webfinance/">http://webfinance/</a> and login as administrator
+  : login = admin, password = admin<br/><br/>
+
+  You probably want to start by adding some users and configure your data<br/><br/>
+</li>
+
+<li>Optional : if you want to generate <a href="http://www.stack.nl/~dimitri/doxygen/index.html">Doxygen</a>
+    documentation for <i>Webfinance</i> classes, you will need to install
+    doxygen and preferably <a href="http://www.graphviz.org/">Graphviz</a> too. Then use the makefile in /doc
+
+    <pre class="shell">
+    apt-get install doxygen graphviz
+    make -C /path/to/webfinance/doc
+    </pre>
+    </li>
+<li>
+	Paybox support:
+</li>
+
+</ul>
+
+<h2>Community</h2>
+
+<ul>
+  <li>Report a bug through <a href="http://ovh.isvtec.com/mantis/">Mantis</a>
+  <li>Send us a mail : <a href="mailto:webfinance@nbi.fr">webfinance@nbi.fr</a>
+  <li>Join us on IRC channel at #webfinance on irc.freenode.net</li>
+</ul>
+
+<h2>Contributors</h2>
+<i>By alphabetical order</i>
+
+<ul>
+  <li>Cedric Ravier &lt;cravier@nbi.fr&gt; <i>Some icons, logo, and other graphical stuff</i></li>
+  <li>Cyril Bouthors &lt;cyril@isvtec.com&gt; <i>Initial cash-flow specifications, bug reports, feature requests, gettext support</i></li>
+  <li>Nicolas Bouthors &lt;nbouthors@nbi.fr&gt; <i>Initial developpement for client, clientlog, contacts, and invoice managing, gettext french translation</i></li>
+  <li>Pierre Doleans &lt;pierre@isvtec.com&gt; <i>Bug reports, feature requests</i></li>
+  <li>Thierry Randrianiriana &lt;thierry@isvtec.com&gt; <i>A lot of code, bugfixes and features</i></li>
+</ul>
+
+<i>$Id: index.php.en 496 2006-10-02 13:32:42Z cyb $</i>
+</body>
+
+</html>
+<?php
+// vim: filetype=php
+?>
