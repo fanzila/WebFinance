@@ -295,12 +295,27 @@ if(isset($_GET['dest']) AND $_GET['dest']=="file"){
 
   header("Location: send_facture.php?id=".$_GET['id']);
 
- }else if(isset($_POST['action'],$_POST['id']) && $_POST['action'] == 'send' && is_numeric($_POST['id'])  ){
+ }else if(isset($_POST['action'],$_POST['id'],$_POST['mails2']) && $_POST['action'] == 'send' && is_numeric($_POST['id'])  ){
 
   require("/usr/share/php/libphp-phpmailer/class.phpmailer.php");
 
+  $mails = array();
+
+  if( isset($_POST['mails']) ){
+      foreach($_POST['mails'] as $m ){
+	$m = trim($m);
+	if(strlen($m)>0)
+	  $mails[]=$m;
+      }
+    }
+
+  $_POST['mails2']=str_replace(';',',',$_POST['mails2']);
   $mail_addresses = explode(',',$_POST['mails2']);
-  $mails = array_merge($mail_addresses,$_POST['$mails']);
+  foreach($mail_addresses as $m ){
+    $m = trim($m);
+    if(strlen($m)>0)
+      $mails[]=$m;
+  }
 
   if(count($mails)>0){
 
@@ -321,6 +336,7 @@ if(isset($_GET['dest']) AND $_GET['dest']=="file"){
       $mail->From = $societe->email;
 
     $mail->FromName = $_POST['from_name'];
+
 
     foreach($mails as $address)
       $mail->AddAddress($address);
