@@ -329,6 +329,7 @@ CREATE TABLE `webfinance_roles` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
 
 
+DROP TABLE IF EXISTS `webfinance_paybox`;
 CREATE TABLE `webfinance_paybox` (
   `id_paybox` int(11) NOT NULL auto_increment,
   `id_invoice` int(11) NOT NULL,
@@ -350,6 +351,7 @@ CREATE TABLE `webfinance_paybox` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+DROP TABLE IF EXISTS `webfinance_files`;
 CREATE TABLE `webfinance_files` (
   `id_file` int(11) NOT NULL auto_increment,
   `fk_id` int(11) NOT NULL,
@@ -366,6 +368,7 @@ CREATE TABLE `webfinance_files` (
 -- Table structure for table `webfinance_transaction_invoice`
 --
 
+DROP TABLE IF EXISTS `webfinance_transaction_invoice`;
 CREATE TABLE `webfinance_transaction_invoice` (
   `id_transaction` int(11) NOT NULL,
   `id_invoice` int(11) NOT NULL,
