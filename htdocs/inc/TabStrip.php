@@ -17,27 +17,17 @@
     You should have received a copy of the GNU General Public License
     along with Webfinance; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-?>
-<?php
 
-// $Id: TabStrip.php 551 2007-08-02 05:16:27Z gassla $
-// IDEA : this object builds a DHTML tabstrip. Find a way (callback, with
-// buffered php output probably) to have the including of this .php setup a
-// call for onglets.js.
+    $Id: TabStrip.php 551 2007-08-02 05:16:27Z gassla $
+
+    IDEA : this object builds a DHTML tabstrip. Find a way (callback, with
+    buffered php output probably) to have the including of this .php setup a
+    call for onglets.js.
+
 // FIXME : onglets.js should be renamed tabStrip.js
 
-// Returns the content of the specified file. Allows us to assign this content to a var.
-function get_include_contents($filename) {
-  if (is_file($filename)) {
-   ob_start();
-   include $filename;
-   $contents = ob_get_contents();
-   ob_end_clean();
-   return $contents;
-  }
-  return false;
-}
+*/
+
 
 class TabStrip {
   var $nb_tab = 0;
@@ -45,12 +35,26 @@ class TabStrip {
   var $content = array();
   var $width = 740; // default pixel width of the tabstrip
 
+  /** 
+    * Returns the content of the specified file. Allows us to assign this content to a var.
+    */
+  function _get_include_contents($filename) {
+    if (is_file($filename)) {
+     ob_start();
+     include $filename;
+     $contents = ob_get_contents();
+     ob_end_clean();
+     return $contents;
+    }
+    return false;
+  }
+
   function TabStrip($nb_tabs=0, $title="") {
   }
 
   function includeTab($title, $file, $id=null) {
     // Include the specified file and assign its content to $content
-    $content = get_include_contents($file);
+    $content = _get_include_contents($file);
 		$this->addTab($title,$content,$id);
   }
 
