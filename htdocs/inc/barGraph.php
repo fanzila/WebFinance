@@ -83,7 +83,7 @@ class barGraph {
     $this->C_barshadow = $this->_htmlColorToGd("7f7f7f");
     $this->C_text = $this->_htmlColorToGd("000000");
     $this->C_grid = $this->_htmlColorToGd("dddddd");
-    $this->C_average = ImageColorAllocateAlpha($this->im, 74, 89, 65, 20 );
+    $this->C_average = ImageColorAllocateAlpha($this->im, 74, 89, 65, 0 );
   }
 
   /**

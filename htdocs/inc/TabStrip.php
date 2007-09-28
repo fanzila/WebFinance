@@ -35,26 +35,13 @@ class TabStrip {
   var $content = array();
   var $width = 740; // default pixel width of the tabstrip
 
-  /** 
-    * Returns the content of the specified file. Allows us to assign this content to a var.
-    */
-  function _get_include_contents($filename) {
-    if (is_file($filename)) {
-     ob_start();
-     include $filename;
-     $contents = ob_get_contents();
-     ob_end_clean();
-     return $contents;
-    }
-    return false;
-  }
 
   function TabStrip($nb_tabs=0, $title="") {
   }
 
   function includeTab($title, $file, $id=null) {
     // Include the specified file and assign its content to $content
-    $content = _get_include_contents($file);
+    $content = get_include_contents($file);
 		$this->addTab($title,$content,$id);
   }
 
@@ -91,7 +78,7 @@ EOF;
     }
     $colspan = count($this->title)+1;
     $html .= <<<EOF
-  <td style="border: none; background: none;" width="100%"></td>
+  <td width="100%"></td>
 </tr>
 <tr style="vertical-align: top;">
 <td colspan="$colspan" class="onglet_holder">

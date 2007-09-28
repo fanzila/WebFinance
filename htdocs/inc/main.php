@@ -85,6 +85,31 @@ function parselogline($str) {
   return $str;
 }
 
+function makeCadre($html) {
+    echo <<<EOF
+        <table border="0" cellspacing="0" cellpadding="0">
+        <tr>
+          <td class="cadre_tl">&nbsp;</td>
+          <td class="cadre_t">&nbsp;</td>
+          <td class="cadre_tr">&nbsp;</td>
+        </tr>
+        <tr>
+          <td class="cadre_l">&nbsp;</td>
+          <td class="cadre">
+          $html
+          </td>
+          <td class="cadre_r">&nbsp;</td>
+        </tr>
+        <tr>
+          <td class="cadre_bl">&nbsp;</td>
+          <td class="cadre_b">&nbsp;</td>
+          <td class="cadre_br">&nbsp;</td>
+        </tr>
+        </table>
+EOF;
+
+}
+
 function randomPass() {
   $passwd = "";
 
@@ -231,6 +256,20 @@ function getWFDirectory(){
     return preg_replace($pattern,'/', $dir);
   else
     return "";
+}
+
+/** 
+  * Returns the content of the specified file. Allows us to assign this content to a var.
+  */
+function get_include_contents($filename) {
+  if (is_file($filename)) {
+   ob_start();
+   include $filename;
+   $contents = ob_get_contents();
+   ob_end_clean();
+   return $contents;
+  }
+  return false;
 }
 
 header("Content-Type: text/html; charset=utf-8");

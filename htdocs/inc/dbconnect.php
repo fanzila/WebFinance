@@ -17,8 +17,9 @@
     You should have received a copy of the GNU General Public License
     along with Webfinance; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+    $Id: dbconnect.php 539 2007-08-01 12:15:10Z gassla $
 */
-# $Id: dbconnect.php 539 2007-08-01 12:15:10Z gassla $
 ?>
 <?php
 $filename=dirname(__FILE__)."/../../etc/wf.conf";

@@ -107,7 +107,6 @@ class Facture extends WFO {
     list($facture->nom_client) = mysql_fetch_array($result);
     mysql_free_result($result);
 
-
     return $facture;
   }
 
