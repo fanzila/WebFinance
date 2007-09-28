@@ -15,19 +15,12 @@
     You should have received a copy of the GNU General Public License
     along with Webfinance; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-?>
-<?php
-// 
-// This file is part of « Webfinance »
-//
-// Copyright (c) 2004-2006 NBI SARL
-// Author : Nicolas Bouthors <nbouthors@nbi.fr>
-// 
-// You can use and redistribute this file under the term of the GNU GPL v2.0
-//
-// $Id: barGraph.php 531 2007-06-13 12:32:31Z thierry $
 
+    Copyright (c) 2004-2006 NBI SARL
+    Author : Nicolas Bouthors <nbouthors@nbi.fr>
+
+    $Id: barGraph.php 531 2007-06-13 12:32:31Z thierry $
+*/
 
 /**
   * barGraph produces PNG bargraphs. By default, it will render each bar in a
@@ -90,7 +83,7 @@ class barGraph {
     $this->C_barshadow = $this->_htmlColorToGd("7f7f7f");
     $this->C_text = $this->_htmlColorToGd("000000");
     $this->C_grid = $this->_htmlColorToGd("dddddd");
-    $this->C_average = ImageColorAllocateAlpha($this->im, 64, 192, 64, 20 );
+    $this->C_average = ImageColorAllocateAlpha($this->im, 74, 89, 65, 20 );
   }
 
   /**
