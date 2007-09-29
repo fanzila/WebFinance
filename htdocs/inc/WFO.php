@@ -17,18 +17,9 @@
     You should have received a copy of the GNU General Public License
     along with Webfinance; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+    $Id:$
 */
-?>
-<?php
-// 
-// This file is part of « Webfinance »
-//
-// Copyright (c) 2004-2006 NBI, ISVTEC 
-// See CREDITS file
-// 
-// You can use and redistribute this file under the term of the GNU GPL v2.0
-//
-// $Id: WFO.php 532 2007-06-14 10:39:19Z thierry $
 
 /** 
   * WFO stands for WebFinance Object
