@@ -18,15 +18,6 @@
     along with Webfinance; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-?>
-<?php
-//
-// This file is part of Â« Webfinance Â»
-//
-// Copyright (c) 2004-2006 NBI SARL
-// Author : Nicolas Bouthors <nbouthors@nbi.fr>
-//
-// You can use and redistribute this file under the term of the GNU GPL v2.0
 //
 // $Id: gen_facture.php 532 2007-06-14 10:39:19Z thierry $
 // Génère un PDF pour une facture
@@ -376,7 +367,7 @@ if(isset($_GET['dest']) AND $_GET['dest']=="file"){
     echo _("Please add mail address!");
 
  }else
-  $pdf->Output(ucfirst($facture->type_doc)."_".$facture->num_facture."_".preg_replace("/[ ]/", "_", $facture->nom_client).".pdf", "D");
+  $pdf->Output(ucfirst($facture->type_doc)."_".$facture->num_facture."_".preg_replace("/[ ]/", "_", $facture->nom_client).".pdf", "I");
 
 // Delete temporary logofile
 unlink("/tmp/logo.png");
