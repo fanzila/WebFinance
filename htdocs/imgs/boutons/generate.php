@@ -64,7 +64,10 @@ $text_y = $height - (3 + ($height - $text_height) / 2);
 
 imagettftext($img, $font_size, 0, $text_x, $text_y, $black, $font, $_GET['text']);
 
-imagepng($img, $filename);
+if(!imagepng($img, $filename)) {
+	echo "Unable to build $filename";
+	exit(1);
+}
 
 header("Location: ./$filename");
 
