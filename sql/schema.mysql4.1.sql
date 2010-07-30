@@ -6,7 +6,6 @@
 --
 -- Nicolas Bouthors <nbouthors@nbi.fr>
 --
--- $Id: schema.mysql4.1.sql 470 2006-08-23 13:28:35Z thierry $
 
 SET FOREIGN_KEY_CHECKS = 0;
 
@@ -24,7 +23,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 --  PRIMARY KEY  (`id`),
 --  UNIQUE KEY `account_name` (`account_name`),
 --  KEY `id_bank` (`id_bank`)
--- ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=15 ;
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- DROP TABLE IF EXISTS `webfinance_banks`;
 -- CREATE TABLE `webfinance_banks` (
@@ -37,7 +36,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 --  PRIMARY KEY  (`id`),
 --  UNIQUE KEY `name` (`name`),
 --  UNIQUE KEY `short_name` (`short_name`)
--- ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=30 ;
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 DROP TABLE IF EXISTS `webfinance_categories`;
@@ -50,7 +49,7 @@ CREATE TABLE `webfinance_categories` (
   `color` varchar(7) default '#cefce',
   PRIMARY KEY  (`id`),
   KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=12 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `webfinance_clients`;
 CREATE TABLE `webfinance_clients` (
@@ -80,7 +79,7 @@ CREATE TABLE `webfinance_clients` (
   PRIMARY KEY  (`id_client`),
   KEY `id_company_type` (`id_company_type`),
   KEY `id_user` (`id_user`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `webfinance_company_types`;
 CREATE TABLE `webfinance_company_types` (
@@ -99,7 +98,7 @@ CREATE TABLE `webfinance_dns` (
   `date_modified` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   PRIMARY KEY  (`id_dns`),
   KEY `id_domain` (`id_domain`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `webfinance_domain`;
 CREATE TABLE `webfinance_domain` (
@@ -109,7 +108,7 @@ CREATE TABLE `webfinance_domain` (
   `id_client` int(11) NOT NULL default '0',
   PRIMARY KEY  (`id_domain`),
   UNIQUE KEY `nom` (`nom`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `webfinance_expenses`;
 CREATE TABLE `webfinance_expenses` (
@@ -125,7 +124,7 @@ CREATE TABLE `webfinance_expenses` (
   PRIMARY KEY  (`id`),
   KEY `id_user` (`id_user`),
   KEY `id_transaction` (`id_transaction`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=12 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `webfinance_invoice_rows`;
 CREATE TABLE `webfinance_invoice_rows` (
@@ -137,7 +136,7 @@ CREATE TABLE `webfinance_invoice_rows` (
   `prix_ht` decimal(20,5) default NULL,
   PRIMARY KEY  (`id_facture_ligne`),
   KEY `pfk_facture` (`id_facture`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `webfinance_invoices`;
 CREATE TABLE `webfinance_invoices` (
@@ -156,7 +155,7 @@ CREATE TABLE `webfinance_invoices` (
   `accompte` decimal(10,4) default '0.0000',
   `extra_bottom` blob,
   `date_facture` datetime default NULL,
-  `type_doc` enum('facture','devis') default 'facture',
+  `type_doc` enum('facture', 'devis', 'invoice','pro-forma') default 'facture',
   `commentaire` blob,
   `id_type_presta` int(11) default '1',
   `id_compte` int(11) NOT NULL default '34',
@@ -171,7 +170,7 @@ CREATE TABLE `webfinance_invoices` (
   KEY `id_client` (`id_client`),
   KEY `date_facture` (`date_facture`),
   KEY `id_type_presta` (`id_type_presta`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=8 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `webfinance_naf`;
 CREATE TABLE `webfinance_naf` (
@@ -179,7 +178,7 @@ CREATE TABLE `webfinance_naf` (
   `code` varchar(4) NOT NULL default '',
   `nom` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`id_naf`,`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `webfinance_personne`;
 CREATE TABLE `webfinance_personne` (
@@ -204,7 +203,7 @@ CREATE TABLE `webfinance_personne` (
   `client` int(11) NOT NULL default '-1',
   PRIMARY KEY  (`id_personne`),
   KEY `pfk_client` (`client`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `webfinance_pref`;
 CREATE TABLE `webfinance_pref` (
@@ -214,7 +213,7 @@ CREATE TABLE `webfinance_pref` (
   `date_modified` TIMESTAMP,
   `value` blob,
   PRIMARY KEY  (`id_pref`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `webfinance_publication_method`;
 CREATE TABLE `webfinance_publication_method` (
@@ -223,7 +222,7 @@ CREATE TABLE `webfinance_publication_method` (
   `code` varchar(20) default NULL,
   `description` blob,
   PRIMARY KEY  (`id_publication_method`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 DROP TABLE IF EXISTS `webfinance_suivi`;
@@ -239,7 +238,7 @@ CREATE TABLE `webfinance_suivi` (
   `done` tinyint(3) unsigned default '0',
   `done_date` datetime default NULL,
   PRIMARY KEY  (`id_suivi`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `webfinance_transactions`;
 CREATE TABLE `webfinance_transactions` (
@@ -265,7 +264,7 @@ CREATE TABLE `webfinance_transactions` (
   KEY `date` (`date`),
   KEY `id_invoice` (`id_invoice`)
 --  UNIQUE `unique_transaction` (`id_account`, `amount`, `type`, `date`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `webfinance_type_presta`;
 CREATE TABLE `webfinance_type_presta` (
@@ -273,7 +272,7 @@ CREATE TABLE `webfinance_type_presta` (
   `nom` varchar(255) default NULL,
   PRIMARY KEY  (`id_type_presta`),
   UNIQUE KEY `nom` (`nom`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `webfinance_type_suivi`;
 CREATE TABLE `webfinance_type_suivi` (
@@ -281,7 +280,7 @@ CREATE TABLE `webfinance_type_suivi` (
   `name` varchar(200) default NULL,
   `selectable` tinyint(4) default '1',
   PRIMARY KEY  (`id_type_suivi`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `webfinance_type_tva`;
 CREATE TABLE `webfinance_type_tva` (
@@ -289,7 +288,7 @@ CREATE TABLE `webfinance_type_tva` (
   `nom` varchar(255) default NULL,
   `taux` decimal(5,3) default NULL,
   PRIMARY KEY  (`id_type_tva`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `webfinance_userlog`;
 CREATE TABLE `webfinance_userlog` (
@@ -299,7 +298,7 @@ CREATE TABLE `webfinance_userlog` (
   `id_user` int(11) default NULL,
   PRIMARY KEY  (`id_userlog`),
   KEY `id_user` (`id_user`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `webfinance_users`;
 CREATE TABLE `webfinance_users` (
@@ -317,7 +316,7 @@ CREATE TABLE `webfinance_users` (
   `prefs` blob,
   PRIMARY KEY  (`id_user`),
   UNIQUE KEY `login` (`login`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `webfinance_roles`;
 CREATE TABLE `webfinance_roles` (
@@ -326,7 +325,7 @@ CREATE TABLE `webfinance_roles` (
   `description` blob,
   PRIMARY KEY  (`id_role`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 DROP TABLE IF EXISTS `webfinance_paybox`;
@@ -344,7 +343,7 @@ CREATE TABLE `webfinance_paybox` (
   `card_type` varchar(64) NOT NULL default '',
   `transaction_sole_id` varchar(64) NOT NULL default '',
   `error_code` varchar(64) NOT NULL default '',
-  `date` datetime NOT NULL default '0000-00-00 00:00:00',
+  `date` datetime ,
   PRIMARY KEY  (`id_paybox`),
   UNIQUE KEY `reference` (`reference`),
   KEY `id_invoice` (`id_invoice`)
@@ -361,7 +360,7 @@ CREATE TABLE `webfinance_files` (
   `file` mediumblob NOT NULL,
   PRIMARY KEY  (`id_file`),
   KEY `fk_id` (`fk_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 --
@@ -372,7 +371,7 @@ DROP TABLE IF EXISTS `webfinance_transaction_invoice`;
 CREATE TABLE `webfinance_transaction_invoice` (
   `id_transaction` int(11) NOT NULL,
   `id_invoice` int(11) NOT NULL,
-  `date_update` timestamp NOT NULL default '0000-00-00 00:00:00' on update CURRENT_TIMESTAMP,
+  `date_update` timestamp  on update CURRENT_TIMESTAMP,
   PRIMARY KEY  (`id_transaction`,`id_invoice`),
   KEY `id_invoice` (`id_invoice`),
   CONSTRAINT `webfinance_transaction_invoice_ibfk_2` FOREIGN KEY (`id_invoice`) REFERENCES `webfinance_invoices` (`id_facture`) ON DELETE CASCADE,
@@ -384,13 +383,12 @@ CREATE TABLE `webfinance_transaction_invoice` (
 -- DEFAULT DATA INSERT
 --
 
-INSERT INTO `webfinance_type_tva` (`id_type_tva`, `nom`, `taux`) VALUES (1, 'Taux normal 19,6%', 19.600),
-(2, 'Pas de tva facturée (export...)', 0.000);
-
-INSERT INTO `webfinance_type_presta` (`id_type_presta`, `nom`) VALUES (1, 'Formation'),
-(2, 'Web'),
-(3, 'Dev'),
-(4, 'Support');
+INSERT INTO `webfinance_type_presta` (`id_type_presta`, `nom`) VALUES 
+(1, 'Hosting'),
+(2, 'Training'),
+(3, 'Web'),
+(4, 'Dev'),
+(5, 'Support');
 
 INSERT INTO `webfinance_type_suivi` (`id_type_suivi`, `name`, `selectable`) VALUES
 (1, 'Création entreprise', 0),
@@ -404,7 +402,7 @@ INSERT INTO `webfinance_users` (`id_user`, `last_name`, `first_name`, `login`, `
 
 INSERT INTO `webfinance_type_tva` VALUES
 (NULL,'Taux normal 19,6%', 19.6),
-(NULL,'Pas de tva facturée (export...)', 0) ;
+(NULL,'Pas de tva facturée (export...)', 0);
 
 INSERT INTO `webfinance_company_types` (nom) VALUES
     ('Client'),('Prospect'),('Fournisseur'),('Archive');
@@ -435,7 +433,8 @@ INSERT INTO `webfinance_categories` (`id`, `name`, `re`, `plan_comptable`) VALUE
 
 
 
-INSERT INTO `webfinance_roles` (`id_role`, `name`, `description`) VALUES (7, 'manager', 0x6d616e61676572),
+INSERT INTO `webfinance_roles` (`id_role`, `name`, `description`) VALUES 
+(7, 'manager', 0x6d616e61676572),
 (8, 'employee', 0x656d706c6f796565),
 (9, 'accounting', 0x636f6d707461626c65),
 (10, 'client', 0x636c69656e74);
@@ -480,7 +479,6 @@ ALTER TABLE `webfinance_invoice_rows`
 -- 
 ALTER TABLE `webfinance_invoices`
   ADD CONSTRAINT `webfinance_invoices_ibfk_1` FOREIGN KEY (`id_client`) REFERENCES `webfinance_clients` (`id_client`) ON DELETE CASCADE;
-
 
 -- vim: fileencoding=utf8
 -- EOF
