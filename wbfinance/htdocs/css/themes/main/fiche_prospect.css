@@ -1,9 +1,0 @@
-
-tr.facture_line td {
-  padding-left: 15px;
-  text-align: center; 
-}
-
-tr.facture_line td.euro {
-  text-align: right;
-}
