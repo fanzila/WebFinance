@@ -217,6 +217,9 @@ if ($action == "save_facture") {
   mysql_query($q) or wf_mysqldie();
   logmessage(_("Save invoice")." (#$num_facture) fa:".$_POST['id_facture']." client:$facture->id_client");
 
+  if(empty($_POST['prix_ht_new']))
+	  $_POST['prix_ht_new']='0.0';
+
   if ((is_numeric($_POST['prix_ht_new'])) && (is_numeric($_POST['qtt_new'])) && !empty($_POST['prix_ht_new'])) {
     // Enregistrement d'une nouvelle ligne de facturation pour une facture.
     $q = sprintf("INSERT INTO webfinance_invoice_rows (id_facture,description,prix_ht,qtt) VALUES(%d, '%s', '%s', '%s')",
