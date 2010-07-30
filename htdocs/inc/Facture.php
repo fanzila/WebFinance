@@ -156,8 +156,13 @@ class Facture extends WFO {
       list($id_client) = mysql_fetch_array($result);
       mysql_free_result($result);
 
-      $this->SQL("INSERT INTO webfinance_invoices (id_client,date_created,date_facture) VALUES ($id_client, now(), now())")
-	or wf_mysqldie();
+	  $num_facture=$this->generateInvoiceNumber();
+
+	  $query="INSERT INTO webfinance_invoices (id_client,date_created,date_facture,num_facture) ".
+		  "VALUES ($id_client, now(), now(), $num_facture)";
+      $this->SQL($query)
+		  or wf_mysqldie();
+
       $id_new_facture = mysql_insert_id();
 
       // On recopie les données de la facture
@@ -280,6 +285,23 @@ class Facture extends WFO {
       return $id_tr;
 
     }
+  }
+
+  function generateInvoiceNumber() {
+	  $prefix=date('Ymd');
+
+	  for($i=0; $i<=99; $i++) {
+		  $invoice_number = sprintf('%d%.2d', $prefix, $i);
+
+		  $result = $this->SQL("SELECT num_facture FROM webfinance_invoices WHERE num_facture='$invoice_number'")
+			  or wf_mysqldie();
+
+		  if(mysql_num_rows($result)==0)
+			  break;
+	  }
+
+	  return $invoice_number;
+
   }
 
 }

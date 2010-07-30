@@ -18,18 +18,6 @@
     along with Webfinance; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-?>
-<?php
-//
-// This file is part of Â« Webfinance Â»
-//
-// Copyright (c) 2004-2006 NBI SARL
-// Author : Nicolas Bouthors <nbouthors@nbi.fr>
-//
-// You can use and redistribute this file under the term of the GNU GPL v2.0
-//
-?>
-<?php
 include("../inc/main.php");
 
 if (!is_numeric($_GET['id_facture'])) {
@@ -37,7 +25,12 @@ if (!is_numeric($_GET['id_facture'])) {
   $tva = getTVA();
   $tva = preg_replace("/,/", ".", $tva); // 19,6 fails to insert as 19.6
 
-  mysql_query("INSERT INTO webfinance_invoices (date_created,date_facture,id_client,tax) values(now(), now(), ".$_GET['id_client'].",'$tva')") or wf_mysqldie();
+  $Facture = new Facture();
+  $num_facture=$Facture->generateInvoiceNumber();
+
+  mysql_query("INSERT INTO webfinance_invoices (date_created,date_facture,id_client,tax,num_facture) " .
+			  "VALUES (now(), now(), ".$_GET['id_client'].",'$tva', '$num_facture')")
+	  or wf_mysqldie();
   $id_facture=mysql_insert_id();
   $_SESSION['message'] = _('Invoice created');
   logmessage(_('Create invoice')." for client:".$_GET['id_client'] );

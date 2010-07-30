@@ -235,11 +235,14 @@ $pdf->SetXY(10, 210);
 $pdf->MultiCell(120, 6, $facture->extra_bottom, 0);
 
 // RIB
-$result = mysql_query("SELECT value FROM webfinance_pref WHERE id_pref=".$facture->id_compte) or wf_mysqldie();
+$result = mysql_query("SELECT value FROM webfinance_pref WHERE id_pref=".$facture->id_compte)
+	or wf_mysqldie();
 list($cpt) = mysql_fetch_array($result);
 mysql_free_result($result);
 $cpt = unserialize(base64_decode($cpt));
-if (!is_object($cpt)) { die("Impossible de generer la facture. <a href='../admin/societe'>Vous devez saisir au moins un compte bancaire dans les options pour emettre des factures</a>"); }
+if (!is_object($cpt)) {
+	die("Impossible de generer la facture. <a href='../admin/societe'>Vous devez saisir au moins un compte bancaire dans les options pour emettre des factures</a>");
+}
 foreach ($cpt as $n=>$v) {
   $cpt->$n = utf8_decode($cpt->$n);
 }
