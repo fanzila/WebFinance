@@ -290,8 +290,8 @@ class Facture extends WFO {
   function generateInvoiceNumber() {
 	  $prefix=date('Ymd');
 
-	  for($i=0; $i<=99; $i++) {
-		  $invoice_number = sprintf('%d%.2d', $prefix, $i);
+	  for($suffix=0; $suffix<=99; $suffix++) {
+		  $invoice_number = sprintf('%d%.2d', $prefix, $suffix);
 
 		  $result = $this->SQL("SELECT num_facture FROM webfinance_invoices WHERE num_facture='$invoice_number'")
 			  or wf_mysqldie();
