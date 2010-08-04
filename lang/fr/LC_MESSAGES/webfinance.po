@@ -374,7 +374,7 @@ msgstr "fin de trimestrie"
 msgid "end of year"
 msgstr "fin d'année"
 
-msgid "This option allows to periodically dupplicate an invoice"
+msgid "This option allows to periodically duplicate an invoice"
 msgstr "Cette option permet de dupliquer la facture périodiquement"
 
 msgid "Payment expected"

@@ -18,18 +18,6 @@
     along with Webfinance; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-?>
-<?php
-//
-// This file is part of « Webfinance »
-//
-// Copyright (c) 2004-2006 NBI SARL
-// Author : Nicolas Bouthors <nbouthors@nbi.fr>
-//
-// You can use and redistribute this file under the term of the GNU GPL v2.0
-//
-?>
-<?php
 # $Id: index.php 551 2007-08-02 05:16:27Z gassla $
 
 require("../inc/main.php");
@@ -46,49 +34,6 @@ if(isset($_SESSION['message']) and !empty($_SESSION['message'])){
   echo $_SESSION['message'];
   $_SESSION['message']='';
  }
-
-//scheduled invoices and transactions
-$result = mysql_query("SELECT id_facture, ".
-		      "period, ".
-		      "UNIX_TIMESTAMP(last_run) as last_run_ts ".
-		      "FROM webfinance_invoices ".
-		      "WHERE period<>'none' AND UNIX_TIMESTAMP(last_run)<".mktime(0,0,0,date("m"),1,date("Y"))  )
-  or wf_mysqldie();
-
-while( list($id_invoice,$period,$last_run) = mysql_fetch_array($result)){
-
-  $Invoice = new Facture();
-
-  if($period=="end of month"){
-
-    $id_new_invoice=$Invoice->duplicate($id_invoice);
-    mysql_query("UPDATE webfinance_invoices SET type_doc='devis', date_facture='".date("Y-m-d",mktime(0,0,0,date("m")+1,0,date("Y")))."' WHERE id_facture=$id_new_invoice ")
-		or wf_mysqldie();
-    $Invoice->updateTransaction($id_new_invoice);
-    mysql_query("UPDATE webfinance_invoices SET last_run=NOW() WHERE id_facture=$id_invoice ") or wf_mysqldie();
-
-  }else if($period=="end of term" AND date("m")%3==0  ){
-
-    $id_new_invoice=$Invoice->duplicate($id_invoice);
-    mysql_query("UPDATE webfinance_invoices SET type_doc='devis', date_facture='".date("Y-m-d",mktime(0,0,0,date("m")+1,0,date("Y")))."' WHERE id_facture=$id_new_invoice ")
-		or wf_mysqldie();
-    $Invoice->updateTransaction($id_new_invoice);
-    mysql_query("UPDATE webfinance_invoices SET last_run=NOW() WHERE id_facture=$id_invoice ") or wf_mysqldie();
-
-
-  }else if($period=="end of year" AND date("m")==12 ){
-
-    $id_new_invoice=$Invoice->duplicate($id_invoice);
-    mysql_query("UPDATE webfinance_invoices SET type_doc='devis', date_facture='".date("Y-m-d",mktime(0,0,0,date("m")+1,0,date("Y")))."' WHERE id_facture=$id_new_invoice ")
-		or wf_mysqldie();
-    $Invoice->updateTransaction($id_new_invoice);
-    mysql_query("UPDATE webfinance_invoices SET last_run=NOW() WHERE id_facture=$id_invoice ") or wf_mysqldie();
-
-  }
-
- }
-mysql_free_result($result);
-//end
 
 // House keeping : lister les factures inpayées et marquer les clients qui en ont.
 // FIXME : should go in save_facture.php

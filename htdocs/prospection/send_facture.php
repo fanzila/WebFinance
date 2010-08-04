@@ -19,8 +19,77 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-$title = _("Send Invoice");
 require("../inc/main.php");
+
+if(isset($_POST['action'],$_POST['id'],$_POST['mails2']) &&
+   $_POST['action'] == 'send' && is_numeric($_POST['id'])) {
+
+	if(!isset($_POST['action'],$_POST['id']) or $_POST['action'] != 'send'
+	   or !is_numeric($_POST['id']))
+		die(_("Error: Missing invoice id"));
+
+	$id_invoice = $_POST['id'];
+
+	$mails = array();
+	if( isset($_POST['mails']) ){
+		foreach($_POST['mails'] as $m ){
+			$m = trim($m);
+			if(strlen($m)>0)
+				$mails[]=$m;
+		}
+    }
+
+	$_POST['mails2']=str_replace(';',',',$_POST['mails2']);
+	$mail_addresses = explode(',',$_POST['mails2']);
+	foreach($mail_addresses as $m ){
+		$m = trim($m);
+		if(strlen($m)>0)
+			$mails[]=$m;
+	}
+
+	if(count($mails)==0){
+		echo _("Please add mail address!");
+		exit;
+	}
+
+
+	$from='';
+    if(preg_match('/^[A-z0-9][\w.-]*@[A-z0-9][\w\-\.]+\.[A-Za-z]{2,4}$/',
+				  $_POST['from']))
+		$from = $_POST['from'];
+
+	$fromname = $_POST['from_name'];
+
+	$subject = stripslashes(utf8_decode($_POST['subject'])) ;
+    $body = stripslashes(utf8_decode($_POST['body'])) ;
+
+	$invoice = new Facture;
+	if(!$invoice->sendByEmail($id_invoice, $mails, $from, $fromname, $subject,
+							  $body)) {
+		$_SESSION['message'] = _('Invoice was not sent');
+		$_SESSION['error'] = 1;
+		echo _("Invoice was not sent");
+		die();
+    }
+
+	$_SESSION['message'] = _('Invoice sent');
+	//mettre à jour l'état de la facture, update sql
+	mysql_query("UPDATE webfinance_invoices ".
+				"SET is_envoye=1 ".
+				"WHERE id_facture=$id_invoice")
+		or wf_mysqldie();
+	$_SESSION['message'] .= "<br/>"._('Invoice updated');
+
+	$facture = $invoice->getInfos($id_invoice);
+	logmessage(_("Send invoice")." #$facture->num_facture fa:$id_invoice ".
+			   "client:$facture->id_client");
+
+    header("Location: edit_facture.php?id_facture=$id_invoice");
+    die();
+}
+
+
+$title = _("Send Invoice");
 must_login();
 $roles = 'manager,admin';
 require("../top.php");
@@ -85,7 +154,7 @@ $invoice = $Facture->getInfos($id);
 
 ?>
 
-<form id="main_form" action="gen_facture.php" method="post">
+<form id="main_form" method="post">
   <input type="hidden" name="action" value="send">
   <input type="hidden" name="id" value="<?= $id ?>">
   <table class="bordered" border="0" cellspacing="0" cellpadding="3" width="500">

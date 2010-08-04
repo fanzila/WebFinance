@@ -259,11 +259,12 @@ function ask_confirmation(txt) {
 	<select name="period" style="width: 120px;">
 	  <option value="none"><?=_("doesn't repeat")?></option>
 	  <option value="end of month" <?= ($facture->period=="end of month")?"selected":"" ?>><?=_('end of month')?></option>
-	  <option value="end of term" <?= ($facture->period=="end of term")?"selected":"" ?>  ><?= _('end of term')?></option>
+	  <option value="end of quarter" <?= ($facture->period=="end of quarter")?"selected":"" ?>  ><?=_('end of quarter')?></option>
 	  <option value="end of year" <?= ($facture->period=="end of year")?"selected":"" ?>  ><?=_('end of year')?></option>
+	  <option value="end of term" <?= ($facture->period=="end of term")?"selected":"" ?>  ><?= _('end of term')?></option>
 	</select>
 	  <img src="/imgs/icons/help.png"
-	      onmouseover="return escape('<?= addslashes(_('This option allows to periodically dupplicate an invoice')) ?>');" />
+	      onmouseover="return escape('<?= addslashes(_('This option allows to periodically duplicate an invoice')) ?>');" />
 
 	</td>
     </tr>
@@ -367,14 +368,6 @@ function ask_confirmation(txt) {
 
       <?php } // FIN CAS FACTURE/DEVIS ?>
 
-<!--
-    <tr>
-      <td colspan="2">
-        <input type="checkbox" name="is_comptabilise" <?= $facture->is_comptabilise?"checked":"" ?> />&nbsp;ComptabilisÃ©
-        <?= ($facture->date_comptabilise!="")?"le ".$facture->nice_date_comptabilise:"" ?>
-      </td>
-    </tr>
--->
     <tr>
       <td colspan="2">
         Commentaire : <br/>
@@ -387,7 +380,7 @@ function ask_confirmation(txt) {
       <a href="fiche_prospect.php?id=<?= $facture->id_client ?>&onglet=biling"><?=_('Back to client screen')?></a><br/>
       <a href="edit_facture.php?id_facture=new&id_client=<?= $facture->id_client ?>"><?=_('Create a new')?></a><br/>
       <a href="save_facture.php?id=<?= $facture->id_facture ?>&action=duplicate"><?=_('Duplicate')?></a><br/>
-      <a href="gen_facture.php?dest=file&id=<?= $facture->id_facture ?>"><?= _('Send by mail...') ?></a><br/>
+      <a href="send_facture.php?id=<?= $facture->id_facture ?>"><?= _('Send by mail...') ?></a><br/>
 <?php
       $tr_ids = $Facture->getTransactions($facture->id_facture);
       foreach($tr_ids as $id_tr=>$text){
