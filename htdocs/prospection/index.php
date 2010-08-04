@@ -206,7 +206,7 @@ if ($User->isAuthorized('manager,accounting')) {
 <tr>
   <td><b><?= _("Only show") ?></b></td><td><form action="index.php" method="get">
   <input type="hidden" name="sort" value="<?= $_GET['sort'] ?>" />
-  <input type="hidden" name="namelike" value="<?= $_GET['namelike'] ?>" />
+  <input type="hidden" name="namelike" value="<?=(isset($_GET['namelike'])?$_GET['namelike']:'')?>" />
   <select style="width: 150px;" onchange="this.form.submit();" name="q"><option value="0">Tous<?php
   $result = mysql_query("SELECT webfinance_company_types.id_company_type,webfinance_company_types.nom,count(distinct webfinance_clients.id_client) as nb
                          FROM webfinance_company_types
@@ -223,7 +223,7 @@ if ($User->isAuthorized('manager,accounting')) {
     <form action="index.php" method="get">
     <input type="hidden" name="sort" value="<?= $_GET['sort'] ?>" />
     <input type="hidden" name="q" value="<?= $_GET['q'] ?>" />
-    <input type="text" value="<?= $_GET['namelike'] ?>" name="namelike" style="width: 150px;" class="bordered" />
+    <input type="text" value="<?=(isset($_GET['namelike'])?$_GET['namelike']:'')?>" name="namelike" style="width: 150px;" class="bordered" />
     </form>
   </td>
 </tr>
