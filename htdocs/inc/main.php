@@ -33,16 +33,16 @@
 @ini_set('session.gc_maxlifetime',3600);
 session_start();
 
-require("dbconnect.php");
-require("WFO.php");
-require("User.php");
-require("Facture.php");
-require("Client.php");
-require("File.php");
-require("FileTransaction.php");
-require("TabStrip.php");
-require("gettext.php");
-require("Debug.php");
+require_once("dbconnect.php");
+require_once("WFO.php");
+require_once("User.php");
+require_once("Facture.php");
+require_once("Client.php");
+require_once("File.php");
+require_once("FileTransaction.php");
+require_once("TabStrip.php");
+require_once("gettext.php");
+require_once("Debug.php");
 
 $_SESSION['debug'] = WF_DEBUG;
 if(WF_DEBUG_ALL){
