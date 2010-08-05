@@ -46,7 +46,7 @@ if(mysql_num_rows($result)==0) {
 	exit;
 }
 
-while(list($id_invoice) = mysql_fetch_row($result)){
+while(list($id_invoice) = mysql_fetch_row($result)) {
 	echo "Debug: Processing invoice id $id_invoice\n";
 
 	# Fetch info from invoice
@@ -133,6 +133,8 @@ while(list($id_invoice) = mysql_fetch_row($result)){
 				"SET periodic_next_deadline='$next_deadline' " .
 				"WHERE id_facture = $id_invoice")
 		or die(mysql_error());
+
+	echo "===\n";
 }
 
 $mail = new PHPMailer();
