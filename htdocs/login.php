@@ -39,12 +39,16 @@ if(isset($_POST['user_login'],$_POST['user_password'])){
   if($test>0) {
     if ($_POST['came_from'] != "" AND !preg_match('/login.php$/i',$_POST['came_from']) AND !preg_match('/passwd.php$/i',$_POST['came_from']) ) {
       header("Location: ".$_POST['came_from']);
-    } else {
-      header("Location: /");
+	  exit;
     }
-  }else{
-    header("Location: /login?err=1");
+	
+	header("Location: /");
+	exit;
+
   }
+
+  header("Location: /login?err=1");
+  exit;
  }
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">

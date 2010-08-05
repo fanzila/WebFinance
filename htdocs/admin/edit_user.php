@@ -34,6 +34,7 @@ include("../top_popup.php");
 
 if (!is_numeric($_GET['id'])) {
   header("Location: index.php");
+  exit;
 }
 
 $User = new User();

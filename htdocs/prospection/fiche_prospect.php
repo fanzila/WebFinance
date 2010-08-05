@@ -18,22 +18,7 @@
     along with Webfinance; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-?>
-<?php
-//
-// This file is part of « Webfinance »
-//
-// Copyright (c) 2004-2006 NBI SARL
-// Author : Nicolas Bouthors <nbouthors@nbi.fr>
-//
-// You can use and redistribute this file under the term of the GNU GPL v2.0
-//
-// $Id: fiche_prospect.php 557 2007-08-02 08:31:21Z gassla $
-//
-// THIS CODE IS BEYOND OBFUSCATED. FOR THE BRAVE SOUL ONLY
-// YOU HAVE BEEN WARNED
-//
-//
+
 include("../inc/main.php");
 $roles = "manager,employee,accounting";
 

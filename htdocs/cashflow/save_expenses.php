@@ -41,6 +41,7 @@ if (isset($_GET['action']) AND $_GET['action'] == "delete") {
   mysql_query("DELETE FROM webfinance_expenses WHERE id=".$_GET['id']);
   $_SESSION['message'] = _('Expense deleted');
   header("Location: expenses.php?id_transaction=".$_GET['id_transaction']);
+  exit;
 }
 
 
@@ -100,8 +101,8 @@ if(isset($_POST['exp'])){
 
   }
 
-header("Location: expenses.php?id_transaction=".$_POST['id_transaction']);
-
+  header("Location: expenses.php?id_transaction=".$_POST['id_transaction']);
+  exit;
  }
 
 

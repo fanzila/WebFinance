@@ -37,11 +37,16 @@
   //print_r($_GET);
 
 
-if(isset($_POST['action']) AND $_POST['action']=="select"){
-  if(isset($_POST['id_transaction']) AND is_numeric($_POST['id_transaction']))
-    header("Location: expenses.php?id_transaction=".$_POST['id_transaction']);
-  else if(isset($_GET['id_transaction']) AND is_numeric($_GET['id_transaction']))
-    header("Location: expenses.php?id_transaction=".$_GET['id_transaction']);
+if(isset($_POST['action']) AND $_POST['action']=="select") {
+	if(isset($_POST['id_transaction']) AND is_numeric($_POST['id_transaction'])){
+		header("Location: expenses.php?id_transaction=".$_POST['id_transaction']);
+		exit;
+	}
+
+	if(isset($_GET['id_transaction']) AND is_numeric($_GET['id_transaction'])) {
+		header("Location: expenses.php?id_transaction=".$_GET['id_transaction']);
+		exit;
+	}
  }
 
 

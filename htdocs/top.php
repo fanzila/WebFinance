@@ -52,6 +52,7 @@ $user = $User->getInfos();
 
 if(!$User->isAuthorized($roles)){
   header("Location: /welcome.php");
+  exit;
 }
 
 if (isset($_SESSION['message']) AND $_SESSION['message'] != "") {

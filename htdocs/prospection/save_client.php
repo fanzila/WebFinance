@@ -173,5 +173,6 @@ else
 logmessage(_('Update customer')." client:$id_client ($nom)");
 
 header("Location: /prospection/fiche_prospect.php?id=$id_client&onglet=".$focused_onglet);
+exit;
 
 ?>

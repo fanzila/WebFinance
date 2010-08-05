@@ -70,5 +70,6 @@ if(!imagepng($img, $filename)) {
 }
 
 header("Location: ./$filename");
+exit;
 
 ?>

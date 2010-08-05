@@ -42,6 +42,7 @@ $User = new User();
 
 if (! $User->isLogued()) {
   header("Location: login.php");
+  exit;
 }
 
 $User->getInfos();

@@ -32,6 +32,7 @@ if(isset($auto) AND isset($ref)){
   mysql_query("UPDATE webfinance_paybox SET state='pending', autorisation='$auto' WHERE reference='$ref'") or wf_mysqldie();
   $_SESSION['message'] = _("Merci, votre transaction sera prise en compte dans quelques instants.");
   header("Location: ../../client/");
+  exit;
 
  ?>
 <span class="text">
@@ -39,8 +40,10 @@ if(isset($auto) AND isset($ref)){
 </span>
 <?
 
- }else
-  header("Location: deny.php");
+}else {
+	header("Location: deny.php");
+	exit;
+}
 
 ?>
 

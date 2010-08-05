@@ -119,5 +119,6 @@ if ($_POST['banque_new'] != "") {
 }
 
 header("Location: societe.php");
+exit;
 
 ?>

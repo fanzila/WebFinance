@@ -36,6 +36,7 @@ include("top.php");
 if ($_GET['delete']) {
   unset($_SESSION[$_GET['delete']]);
   header("Location: session.php");
+  exit;
 }
 
 print "<pre>";

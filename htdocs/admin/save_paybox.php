@@ -45,6 +45,6 @@ if($_GET['id']>0)
      or wf_mysqldie();
 
 header("Location: preferences.php?tab=Paybox");
-
+exit;
 
 ?>

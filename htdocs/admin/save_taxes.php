@@ -36,6 +36,7 @@ if ($_GET['action'] == "delete") {
   mysql_query("DELETE FROM webfinance_pref WHERE id_pref=".$_GET['id']);
   $_SESSION['message'] = _('Tax deleted');
   header("Location: preferences.php?tab=Taxes");
+  exit;
 }
 
 foreach ($_POST['taxes'] as $id=>$data) {
@@ -53,6 +54,7 @@ foreach ($_POST['taxes'] as $id=>$data) {
 }
 
 header("Location: preferences.php?tab=Taxes");
+exit;
 
 
 ?>

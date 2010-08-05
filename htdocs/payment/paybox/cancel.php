@@ -34,6 +34,7 @@ if(isset($_GET['ref'])){
   mysql_query("UPDATE webfinance_paybox SET state='cancel' WHERE reference='".$_GET['ref']."'") or wf_mysqldie();
   $_SESSION['message'] = _("The transaction is canceled");
   header("Location: ../../client/");
+  exit;
 
 ?>
   <span class="text">

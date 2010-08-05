@@ -47,10 +47,12 @@ if(preg_match('/^mail_/',$_POST['action']) ){
 
   $_SESSION['message']=_('Preference saved');
 
-  if(preg_match('/invoice/i',$_POST['action']))
+  if(preg_match('/invoice/i',$_POST['action'])) {
     header("Location: preferences.php?tab=Mail_invoice");
-  else
-    header("Location: preferences.php?tab=Mail_user");
+	exit;
+  }
+
+  header("Location: preferences.php?tab=Mail_user");
   die();
  }
 

@@ -65,6 +65,6 @@ foreach ($_POST['cat'] as $id=>$data) {
 }
 
 header("Location: categories.php?sort=".$_POST['sort']);
-
+exit;
 
 ?>
