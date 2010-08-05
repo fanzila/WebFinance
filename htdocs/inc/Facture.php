@@ -507,8 +507,8 @@ class Facture extends WFO {
 
 	  // Total HT
 	  $pdf->SetFont('Arial', '', '11');
-	  $pdf->Cell(130, 6, utf8_decode(_("Payment"))." : ".$facture->type_paiement ); // FIXME : gettext
-	  $pdf->Cell(30, 6, utf8_decode(_("Subtotal")), "", 0, "R"); // FIXME : gettext
+	  $pdf->Cell(130, 6, utf8_decode(_("Payment"))." : ".$facture->type_paiement );
+	  $pdf->Cell(30, 6, utf8_decode(_("Subtotal")), "", 0, "R");
 	  $pdf->Cell(30, 6, preg_replace("/\./", ",", sprintf("%.2f".EURO, $total_ht)), "", 0, "R");
 	  $pdf->Ln();
 
