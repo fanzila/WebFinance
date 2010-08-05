@@ -646,12 +646,29 @@ class Facture extends WFO {
 			  " pour ".$invoice->nom_client;
 
 	  if(empty($body)) {
+
+		  // Delay
+		  $delay='';
+		  $result = mysql_query("SELECT date_format(date, '%d/%m/%Y') ".
+								'FROM webfinance_transactions '.
+								"WHERE id_invoice=$invoice->id_facture ".
+								'ORDER BY date '.
+								'DESC')
+			  or die(mysql_error());
+
+		  if(mysql_num_rows($result)==1){
+			  list($tr_date) = mysql_fetch_array($result);
+			  $delay=_('payable avant le')." $tr_date" ;
+		  }
+		  mysql_free_result($result);
+
 		  $patterns=array(
 			  '/%%LOGIN%%/',
 			  '/%%PASSWORD%%/',
 			  '/%%URL_COMPANY%%/' ,
 			  '/%%NUM_INVOICE%%/' ,
 			  '/%%CLIENT_NAME%%/',
+			  '/%%DELAY%%/',
 			  '/%%AMOUNT%%/',
 			  '/%%BANK%%/',
 			  '/%%RIB%%/',
@@ -664,6 +681,7 @@ class Facture extends WFO {
 			  $societe->wf_url,
 			  $invoice->num_facture ,
 			  $invoice->nom_client,
+			  $delay,
 			  $invoice->nice_total_ttc,
 			  $cpt->banque,
 			  $cpt->code_banque." ".$cpt->code_guichet." ".$cpt->compte." ".$cpt->clef." ",
@@ -676,7 +694,7 @@ class Facture extends WFO {
 	  }
 
 	  $mail = new PHPMailer();
-	  $mail->SetLanguage('en');
+	  $mail->CharSet = 'UTF-8';
 
 	  foreach($emails as $email)
 		  $mail->AddAddress($email);

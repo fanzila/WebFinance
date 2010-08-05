@@ -60,8 +60,8 @@ if(isset($_POST['action'],$_POST['id'],$_POST['mails2']) &&
 
 	$fromname = $_POST['from_name'];
 
-	$subject = stripslashes(utf8_decode($_POST['subject'])) ;
-    $body = stripslashes(utf8_decode($_POST['body'])) ;
+	$subject = stripslashes($_POST['subject']) ;
+    $body = stripslashes($_POST['body']) ;
 
 	$invoice = new Facture;
 	if(!$invoice->sendByEmail($id_invoice, $mails, $from, $fromname, $subject,
