@@ -16,19 +16,7 @@
     along with Webfinance; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-?>
-<?php
-//
-// This file is part of « Webfinance »
-//
-// Copyright (c) 2004-2006 NBI SARL
-// Author : Nicolas Bouthors <nbouthors@nbi.fr>
-//
-// You can use and redistribute this file under the term of the GNU GPL v2.0
-//
-// $Id: preferences.php 531 2007-06-13 12:32:31Z thierry $
-//
-//
+
 require("../inc/main.php");
 must_login();
 
@@ -89,7 +77,12 @@ function mainFormChanged(f) {
 }
 </script>
 
-<?= $_SESSION['message']; unset($_SESSION['message']); ?>
+<?
+if(isset($_SESSION['message'])) {
+	echo $_SESSION['message'];
+	unset($_SESSION['message']);
+}
+?>
 
 <table width="600" border="0" cellspacing="0" cellpadding="0" class="fiche_prospect">
 <tr class="onglets">
