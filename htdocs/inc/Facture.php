@@ -729,11 +729,7 @@ class Facture extends WFO {
 	  // Remove attachment
 	  unlink($filename);
 
-	  // Set invoice as sent
-	  mysql_query('UPDATE webfinance_invoices '.
-				  'SET is_envoye=1 '.
-				  "WHERE id_facture=$id_invoice")
-		  or die(mysql_error());
+	  Facture::setSent($id_invoice);
 
 	  // Log invoice as sent
 	  logmessage(_("Send invoice")." #$invoice->num_facture fa:$id_invoice ".
@@ -742,6 +738,15 @@ class Facture extends WFO {
 	  return true;
   }
 
+
+  /** Marque une facture comme "envoyée"
+   */
+  function setSent($id_facture) {
+	  mysql_query('UPDATE webfinance_invoices '.
+				  'SET is_envoye=1, date_sent=NOW() '.
+				  "WHERE id_facture=$id_facture")
+		  or die(mysql_error());
+  }
 }
 
 ?>
