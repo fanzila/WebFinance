@@ -61,18 +61,42 @@ while(list($id_invoice) = mysql_fetch_row($result)){
 	$id_new_invoice = $Invoice->duplicate($id_invoice);
 	echo "Debug: Invoice duplicated as ID $id_new_invoice\n";
 
-	// Add dynamic start date and deadline in invoice details
-	$deadline_human_readable=strftime("%e %B %Y", strtotime($next_deadline));
-	$start_date_human_readable=strftime("%e %B %Y", strtotime(
-											$invoice->periodic_next_deadline));
-	$query='UPDATE webfinance_invoice_rows '.
-		"SET description=CONCAT(description, ' du $start_date_human_readable au $deadline_human_readable') ".
-		"WHERE id_facture=$id_new_invoice ".
-		'ORDER BY ordre '.
-		'LIMIT 1';
+	// Delete setup fees that only have to be paid once
+	$query='DELETE FROM webfinance_invoice_rows '.
+		"WHERE (description LIKE '%Frais d\'accès au service%' " .
+		"OR description LIKE '%Frais d\'installation%') " .
+		"AND id_facture=$id_new_invoice";
 	mysql_query($query)
 		or die("$query:" . mysql_error());
 
+	// Add dynamic start date and deadline in invoice details
+	$query='SELECT id_facture_ligne, description '.
+		'FROM webfinance_invoice_rows ' .
+		"WHERE id_facture=$id_new_invoice";
+	$res=mysql_query($query)
+		or die("$query:" . mysql_error());
+
+    while($invoice_row = mysql_fetch_array($res)) {
+
+		if(!preg_match('/ du \d{4}-\d{2}-\d{2} au \d{4}-\d{2}-\d{2}/',
+					   $invoice_row['description']))
+			continue;
+
+		$invoice_row['description'] = mysql_real_escape_string(
+			preg_replace(
+				'/ du (\d{4}-\d{2}-\d{2}) au (\d{4}-\d{2}-\d{2})/',
+				" du $invoice->periodic_next_deadline au $next_deadline",
+				$invoice_row['description']));
+
+		$query='UPDATE webfinance_invoice_rows '.
+			"SET description='$invoice_row[description]'".
+			"WHERE id_facture_ligne=$invoice_row[id_facture_ligne]";
+
+		mysql_query($query)
+			or die("$query:" . mysql_error());
+	}
+
+	// Manage invoice delivery
 	switch ($invoice->delivery) {
 
 		// Send invoice by email to the client
