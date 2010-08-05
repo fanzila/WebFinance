@@ -465,6 +465,16 @@ class Facture extends WFO {
 			  $ligne->$n = preg_replace("/EUROSYMBOL/", chr(128), $ligne->$n );
 		  }
 
+		  setlocale(LC_TIME, "fr_FR.UTF8");
+		  // Replace dates like YYYY-MM-DD with nice expanded date
+		  $ligne->description = preg_replace_callback(
+			  '/\d{4}-\d{2}-\d{2}/',
+			  create_function(
+				  '$matches',
+				  'return utf8_decode(strftime("%e %B %Y", strtotime($matches[0])));'
+				  ),
+			  $ligne->description);
+
 		  $y_start = $pdf->getY();
 		  $pdf->SetFont('Arial', '', '10');
 		  $pdf->MultiCell(110, 6, $ligne->description, "LR"  );
