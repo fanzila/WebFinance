@@ -224,7 +224,9 @@ if ($action == "save_facture") {
 	  !empty($_POST['prix_ht_new']) && !empty($_POST['line_new'])) {
     // Enregistrement d'une nouvelle ligne de facturation pour une facture.
     $q = sprintf("INSERT INTO webfinance_invoice_rows (id_facture,description,prix_ht,qtt) VALUES(%d, '%s', '%s', '%s')",
-                 $_POST['id_facture'], $_POST['line_new'], $_POST['prix_ht_new'], $_POST['qtt_new'] );
+                 $_POST['id_facture'],
+				 mysql_real_escape_string($_POST['line_new']),
+				 $_POST['prix_ht_new'], $_POST['qtt_new'] );
     $result = mysql_query($q) or wf_mysqldie();
     mysql_query("UPDATE webfinance_invoices SET date_generated=NULL WHERE id_facture=".$_POST['id_facture']) or wf_mysqldie();
   }
