@@ -18,25 +18,12 @@
     along with Webfinance; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-?>
-<?php
-//
-// This file is part of « Webfinance »
-//
-// Copyright (c) 2004-2006 NBI SARL
-// Author : Nicolas Bouthors <nbouthors@nbi.fr>
-//
-// You can use and redistribute this file under the term of the GNU GPL v2.0
-//
-?>
-<?
-require("../inc/main.php");
+
+require_once("../inc/main.php");
 must_login();
-?>
-<?php
 
 //$Id: save_facture.php 561 2007-08-02 09:15:44Z gassla $
-  //echo "<pre>"; print_r($_POST);
+
 $Facture = new Facture();
 $id_facture=-1;
 
@@ -116,21 +103,21 @@ function renum() {
   mysql_free_result($result);
 }
 
-if ($GLOBALS['HTTP_SERVER_VARS']['REQUEST_METHOD'] == "POST") {
-  $action = $_POST['action'];
-} else {
-  $action = $_GET['action'];
-}
+$action='';
+
+if(isset($_GET['action']))
+	$action = $_GET['action'];
+
+if(isset($_POST['action']))
+	$action = $_POST['action'];
 
 if ($action == "save_facture") {
-  // save_facture
-  // Enregistrement d'une facture existante
-//   print "<pre>";
-//   print_r($_POST);
-  extract($_POST);
+	extract($_POST);
 
-  if(!isset($id_compte))
-    header("Location: ../admin/societe");
+	if(!isset($id_compte)) {
+		header("Location: ../admin/societe");
+		exit;
+	}
 
   if(!isset($is_envoye))
     $is_envoye='off';
@@ -172,6 +159,11 @@ if ($action == "save_facture") {
   list($dup_num_inv) = mysql_fetch_array($res);
   mysql_free_result($res);
 
+  // Generate periodic_next_deadline if needed
+  if($periodic_next_deadline=='0000-00-00' and $period!='none') {
+	  $periodic_next_deadline=$Facture->nextDeadline(date('Y-m-d'), $period);
+  }
+
   $q = sprintf("UPDATE webfinance_invoices SET ".
 	       "type_paiement='%s', ".
 	       "is_paye=%d, ".
@@ -190,9 +182,12 @@ if ($action == "save_facture") {
 	       "is_envoye=%d, ".
 	       "tax='%s', ".
 	       "exchange_rate='%s', ".
-	       "period='%s' ".
+	       "period='%s', ".
+	       "periodic_next_deadline='%s', ".
+	       "payment_method='%s', ".
+	       "delivery='%s' ".
 	       "%s ".
-	       "WHERE id_facture='%d'",
+	       "WHERE id_facture=%d",
                $type_paiement,
 	       ($is_paye=="on")?1:0,
 	       ($is_paye=="on"  || $type_prev>0)?"date_paiement='$date_paiement', ":"date_paiement='$date_facture' , ",
@@ -211,16 +206,22 @@ if ($action == "save_facture") {
 	       $tax,
 	       (empty($exchange_rate))?1:$exchange_rate,
 	       $period,
+		   $periodic_next_deadline,
+		   $payment_method,
+		   $delivery,
 	       ($dup_num_inv==0)?",num_facture='$num_facture' ":"" ,
                $id_facture);
 
-  mysql_query($q) or wf_mysqldie();
+  mysql_query($q)
+	  or die(mysql_error());
+
   logmessage(_("Save invoice")." (#$num_facture) fa:".$_POST['id_facture']." client:$facture->id_client");
 
   if(empty($_POST['prix_ht_new']))
 	  $_POST['prix_ht_new']='0.0';
 
-  if ((is_numeric($_POST['prix_ht_new'])) && (is_numeric($_POST['qtt_new'])) && !empty($_POST['prix_ht_new'])) {
+  if ((is_numeric($_POST['prix_ht_new'])) && (is_numeric($_POST['qtt_new'])) &&
+	  !empty($_POST['prix_ht_new']) && !empty($_POST['line_new'])) {
     // Enregistrement d'une nouvelle ligne de facturation pour une facture.
     $q = sprintf("INSERT INTO webfinance_invoice_rows (id_facture,description,prix_ht,qtt) VALUES(%d, '%s', '%s', '%s')",
                  $_POST['id_facture'], $_POST['line_new'], $_POST['prix_ht_new'], $_POST['qtt_new'] );
@@ -232,11 +233,11 @@ if ($action == "save_facture") {
   foreach ($_POST as $k=>$v) {
     if (preg_match("/^line_([0-9]+)$/", $k, $matches)) {
       $q = sprintf("UPDATE webfinance_invoice_rows SET description='%s', prix_ht='%s', qtt='%s' WHERE id_facture_ligne=%d",
-                   $_POST['line_'.$matches[1]],
+                   mysql_real_escape_string($_POST['line_'.$matches[1]]),
                    str_replace(' ','',$_POST['prix_ht_'.$matches[1]]),
                    $_POST['qtt_'.$matches[1]],
                    $matches[1] );
-      mysql_query($q) or wf_mysqldie();
+      mysql_query($q) or die(mysql_error());
     }
   }
 
@@ -271,8 +272,10 @@ if ($action == "save_facture") {
   }
 
   header("Location: edit_facture.php?id_facture=".$_POST['id_facture']);
+  exit;
+}
 
-} elseif ($action == "delete_facture") {
+if ($action == "delete_facture") {
   $id_client="";
 
   // delete_facture
@@ -293,8 +296,10 @@ if ($action == "save_facture") {
 
   }
   header("Location: fiche_prospect.php?onglet=biling&tab=biling&id=$id_client");
+  exit;
+}
 
-} elseif ($action == "duplicate") {
+if ($action == "duplicate") {
   extract($_GET);
 
   $Invoice = new Facture();
@@ -312,7 +317,9 @@ if ($action == "save_facture") {
   }
   die();
 
-  }else if($action == "send"){
+  }
+
+if($action == "send"){
 
   extract($_POST);
   require("/usr/share/php/libphp-phpmailer/class.phpmailer.php");
@@ -390,13 +397,14 @@ if ($action == "save_facture") {
     header("Location: edit_facture.php?id_facture=$id");
     die();
 
-  }else
-    echo _("Please add mail address!");
-
-
- }else {
-  die("Don't know what to do when asked to $action an invoice");
+  }
+  else {
+	  echo _("Please add mail address!");
+	  exit;
+  }
 }
+
+  die("Don't know what to do when asked to $action an invoice");
 
 
 ?>

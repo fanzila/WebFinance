@@ -258,16 +258,45 @@ function ask_confirmation(txt) {
 	<td nowrap>
 	<select name="period" style="width: 120px;">
 	  <option value="none"><?=_("doesn't repeat")?></option>
-	  <option value="end of month" <?= ($facture->period=="end of month")?"selected":"" ?>><?=_('end of month')?></option>
-	  <option value="end of quarter" <?= ($facture->period=="end of quarter")?"selected":"" ?>  ><?=_('end of quarter')?></option>
-	  <option value="end of year" <?= ($facture->period=="end of year")?"selected":"" ?>  ><?=_('end of year')?></option>
-	  <option value="end of term" <?= ($facture->period=="end of term")?"selected":"" ?>  ><?= _('end of term')?></option>
+	  <option value="monthly" <?= ($facture->period=="monthly")?"selected":"" ?>><?=_('monthly')?></option>
+	  <option value="quarterly" <?= ($facture->period=="quarterly")?"selected":"" ?>  ><?=_('quarterly')?></option>
+	  <option value="yearly" <?= ($facture->period=="yearly")?"selected":"" ?>  ><?=_('yearly')?></option>
 	</select>
 	  <img src="/imgs/icons/help.png"
 	      onmouseover="return escape('<?= addslashes(_('This option allows to periodically duplicate an invoice')) ?>');" />
 
 	</td>
     </tr>
+
+    <tr>
+      <td nowrap><?=_('Next deadline')?></td>
+      <td>
+	  <input style="width:65px; text-align: center;" type="text" name="periodic_next_deadline" value="<?=$facture->periodic_next_deadline?>"/>
+      </td>
+    </tr>
+
+    <tr>
+	<td nowrap><?=_('Payment method')?></td>
+	<td>
+	<select name="payment_method" style="width: 120px;">
+	  <option value="unknown"><?=_('Unknown')?></option>
+	  <option value="direct_debit" <?= ($facture->payment_method=="direct_debit")?"selected":"" ?>><?=_('Direct debit')?></option>
+	  <option value="check" <?= ($facture->payment_method=="check")?"selected":"" ?>><?= _('Check')?></option>
+	  <option value="wire_transfer" <?= ($facture->payment_method=="wire_transfer")?"selected":"" ?>><?=_('Wire transfer')?></option>
+	</select>
+	</td>
+    </tr>
+
+    <tr>
+	<td nowrap><?=_('Delivery')?></td>
+	<td>
+	<select name="delivery" style="width: 120px;">
+	  <option value="email"><?=_('Email')?></option>
+	  <option value="postal" <?= ($facture->delivery=="postal")?"selected":"" ?>><?=_('Postal')?></option>
+	</select>
+	</td>
+    </tr>
+
     <tr>
 	<td nowrap><?=_('Payment expected')?></td>
 	<td>
@@ -282,6 +311,7 @@ function ask_confirmation(txt) {
               onmouseover="return escape('Cette option permet de d&eacute;caler la date de la transaction par rapport &agrave; la date de la facture');" />
 	</td>
     </tr>
+
     <tr>
       <td nowrap><?=_('Account')?></td>
       <td>
@@ -330,7 +360,7 @@ function ask_confirmation(txt) {
       </tr>
       <tr>
       <td>
- <input type="checkbox" name="is_paye" <?= $facture->is_paye?"checked":"" ?> />&nbsp;<?=_('Accepted')?>
+ <input type="checkbox" name="is_paye" <?= $facture->is_paye?"checked":"" ?> />&nbsp;<?=_('Paid')?>
       </td>
        <td><?
 	  if(empty($facture->timestamp_date_paiement) or $facture->timestamp_date_paiement < $facture->timestamp_date_facture){

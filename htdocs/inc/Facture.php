@@ -20,6 +20,7 @@
 */
 
 require_once("WFO.php");
+require_once(dirname(__FILE__)."/../inc/main.php");
 require_once("/usr/share/php/libphp-phpmailer/class.phpmailer.php");
 require_once("/usr/share/fpdf/fpdf.php");
 
@@ -57,19 +58,19 @@ class Facture extends WFO {
     if (!is_numeric($id_facture)) {
       die("Facture:getInfos no id");
     }
-    $result = $this->SQL("SELECT c.id_client as id_client,c.nom as nom_client, c.addr1, c.addr2, c.addr3, c.cp, c.ville, c.vat_number, c.pays, f.periodic_last_run_date, f.delivery,
-                                  date_format(f.date_created,'%d/%m/%Y') as nice_date_created,
-                                  date_format(f.date_paiement, '%d/%m/%Y') as nice_date_paiement,
-                                  date_format(f.date_sent, '%d/%m/%Y') as nice_date_sent,
-                                  date_format(f.date_facture, '%d/%m/%Y') as nice_date_facture,
-                                  unix_timestamp(f.date_facture) as timestamp_date_facture,
-                                  unix_timestamp(f.date_paiement) as timestamp_date_paiement,
-                                  unix_timestamp(f.date_sent) as timestamp_date_sent,
-                                  date_format(f.date_facture, '%Y%m') as mois_facture,
+    $result = $this->SQL("SELECT c.id_client AS id_client, c.nom AS nom_client, c.addr1, c.addr2, c.addr3, c.cp, c.ville, c.vat_number, c.pays, f.periodic_next_deadline, f.delivery, f.payment_method,
+                                  date_format(f.date_created,'%d/%m/%Y') AS nice_date_created,
+                                  date_format(f.date_paiement, '%d/%m/%Y') AS nice_date_paiement,
+                                  date_format(f.date_sent, '%d/%m/%Y') AS nice_date_sent,
+                                  date_format(f.date_facture, '%d/%m/%Y') AS nice_date_facture,
+                                  unix_timestamp(f.date_facture) AS timestamp_date_facture,
+                                  unix_timestamp(f.date_paiement) AS timestamp_date_paiement,
+                                  unix_timestamp(f.date_sent) AS timestamp_date_sent,
+                                  date_format(f.date_facture, '%Y%m') AS mois_facture,
                                   UPPER(LEFT(f.type_doc, 2)) AS code_type_doc,
-                                  is_envoye as is_sent,
+                                  is_envoye AS is_sent,
                                   f.type_paiement, f.is_paye, f.ref_contrat, f.extra_top, f.extra_bottom, f.num_facture, f.period, f.tax, f.id_compte, f.exchange_rate, f.*
-                           FROM webfinance_clients as c, webfinance_invoices as f
+                           FROM webfinance_clients AS c, webfinance_invoices AS f
                            WHERE f.id_client=c.id_client
                            AND f.id_facture=$id_facture")
 		or die(mysql_error());
@@ -102,11 +103,13 @@ class Facture extends WFO {
     return $facture;
   }
 
-  /** Marque chaque ligne d'une facture comme "payée"
+  /** Marque une facture comme "payée"
    */
   function setPaid($id_facture) {
-    // Marque toutes les lignes comme "payées"
-    $this->SQL("UPDATE webfinance_invoices SET date_paiement=now(),is_payee=1 WHERE id_facture=$id_facture");
+	  mysql_query('UPDATE webfinance_invoices '.
+				  'SET date_paiement=NOW() ,is_paye=1 '.
+				  "WHERE id_facture=$id_facture")
+		  or die(mysql_error());
   }
 
 
@@ -296,20 +299,22 @@ class Facture extends WFO {
 
   }
 
-  function nextDeadline($last_run_date, $period) {
-	  list($year, $month, $day) = explode('-', $last_run_date);
+  function nextDeadline($current_deadline, $period) {
+	  list($year, $month, $day) = explode('-', $current_deadline);
 
 	  switch($period) {
-		  case 'end of month':
-			  return mktime(0, 0, 0, $month+1, 1, $year);
+		  case 'monthly':
+			  return date('Y-m-d', mktime(0, 0, 0, $month+1, 1, $year));
 
-		  case 'end of quarter':
+		  case 'quarterly':
 			  # Inspired by quarterByDate() as seen on
 			  # http://php.net/manual/function.date.php
-			  return mktime(0,0,0,((int) floor($month / 3.1) + 1)*3+1, 1, $year);
+			  return date('Y-m-d',
+						  mktime(0,0,0,((int) floor($month / 3.1) + 1)*3+1, 1,
+								 $year));
 
-		  case 'end of year':
-			  return mktime(0, 0, 0, 1, 1, $year+1);
+		  case 'yearly':
+			  return date('Y-m-d', mktime(0, 0, 0, 1, 1, $year+1));
 	}
   }
 
@@ -364,7 +369,8 @@ class Facture extends WFO {
 	  fwrite($logo_tmp, $logo_data);
 	  fclose($logo_tmp);
 
-	  define('EURO',chr(128));
+	  if(!defined('EURO'))
+		  define('EURO',chr(128));
 
 	  $facture = Facture::getInfos($id_invoice);
 
@@ -537,7 +543,9 @@ class Facture extends WFO {
 
 	  $cpt = unserialize(base64_decode($cpt));
 	  if (!is_object($cpt)) {
-		  die("compte Impossible de generer la facture. <a href='../admin/societe'>Vous devez saisir au moins un compte bancaire dans les options pour emettre des factures</a>");
+		  die("compte Impossible de generer la facture. <a ".
+			  "href='../admin/societe'>Vous devez saisir au moins un compte ".
+			  "bancaire dans les options pour emettre des factures</a>");
 	  }
 	  foreach ($cpt as $n=>$v) {
 		  $cpt->$n = utf8_decode($cpt->$n);
@@ -583,8 +591,8 @@ class Facture extends WFO {
   }
 
   // Only $id_compte is mandatory
-  function sendByEmail($id_invoice, array $emails, $from, $fromname, $subject,
-					   $body) {
+  function sendByEmail($id_invoice, array $emails=array(), $from='',
+					   $fromname='', $subject='', $body='') {
 
 	  // Fetch company information
 	  $result = mysql_query('SELECT value ' .
@@ -615,9 +623,13 @@ class Facture extends WFO {
 			  "moins un compte bancaire dans les options pour emettre des ".
 			  "factures");
 	  }
-	  foreach ($cpt as $n=>$v) {
+	  foreach ($cpt as $n=>$v)
 		  $cpt->$n = utf8_decode($cpt->$n);
-	  }
+
+	  // Fetch preference information
+	  $result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='mail_invoice'") or wf_mysqldie();
+	  list($data) = mysql_fetch_array($result);
+	  $pref = unserialize(base64_decode($data));
 
 	  if(empty($from))
 		  $from = $societe->email;
@@ -626,7 +638,7 @@ class Facture extends WFO {
 		  $fromname = $societe->raison_sociale;
 
 	  if(empty($emails)) {
-		  $emails = explode(',',$Client['email']);
+		  $emails = explode(',',$Client->email);
 	  }
 
 	  if(empty($subject))
@@ -670,7 +682,7 @@ class Facture extends WFO {
 		  $mail->AddAddress($email);
 
 	  $mail->From = $from;
-	  $mail->FromName=$fromname;
+	  $mail->FromName = $fromname;
 	  $mail->Subject = $subject;
 	  $mail->Body = $body;
 	  $mail->WordWrap = 80;
@@ -686,6 +698,16 @@ class Facture extends WFO {
 
 	  // Remove attachment
 	  unlink($filename);
+
+	  // Set invoice as sent
+	  mysql_query('UPDATE webfinance_invoices '.
+				  'SET is_envoye=1 '.
+				  "WHERE id_facture=$id_invoice")
+		  or die(mysql_error());
+
+	  // Log invoice as sent
+	  logmessage(_("Send invoice")." #$invoice->num_facture fa:$id_invoice ".
+				 "client:$invoice->id_client");
 
 	  return true;
   }
