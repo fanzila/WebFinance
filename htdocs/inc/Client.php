@@ -51,7 +51,9 @@ class Client extends WFO {
                            WHERE id_client=".$this->id) or wf_mysqldie("Client::_getInfos");
     if (mysql_num_rows($result)) {
       $data = mysql_fetch_assoc($result);
-      foreach ($data as $n=>$v) { $this->$n = $v; }
+      foreach ($data as $n=>$v)
+		  $this->$n = $v;
+
       mysql_free_result($result);
     }
 
