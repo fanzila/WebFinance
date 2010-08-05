@@ -20,7 +20,8 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-require_once(dirname(__FILE__) . '/../htdocs/inc/dbconnect.php');
+  //putenv('WF_DEFAULT_LANGUAGE=fr_FR');
+require_once(dirname(__FILE__) . '/../htdocs/inc/main.php');
 require_once(dirname(__FILE__) . '/../htdocs/inc/Facture.php');
 require_once(dirname(__FILE__) . '/../htdocs/inc/Client.php');
 require_once('/usr/share/php/libphp-phpmailer/class.phpmailer.php');
