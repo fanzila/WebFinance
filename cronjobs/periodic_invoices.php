@@ -20,7 +20,7 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-  //putenv('WF_DEFAULT_LANGUAGE=fr_FR');
+putenv('WF_DEFAULT_LANGUAGE=fr_FR');
 require_once(dirname(__FILE__) . '/../htdocs/inc/main.php');
 require_once(dirname(__FILE__) . '/../htdocs/inc/Facture.php');
 require_once(dirname(__FILE__) . '/../htdocs/inc/Client.php');

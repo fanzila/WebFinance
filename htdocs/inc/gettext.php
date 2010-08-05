@@ -45,11 +45,11 @@ if (isset($language) and $language!='en_US') {
   setlocale(LC_ALL, $language.".UTF-8")
     or die("local LC_ALL language failed $language");
 
-  bindtextdomain('webfinance', $_SERVER['DOCUMENT_ROOT'] . '/../lang')
-    or die("Set gettext bindtextdomain language failed");
+  bindtextdomain('webfinance', dirname(__FILE__) . '/../../lang')
+	  or die("Set gettext bindtextdomain language failed\n");
 
   textdomain('webfinance')
-    or die("Set gettext textdomain language failed");
+    or die("Set gettext textdomain language failed\n");
 }
 
 ?>

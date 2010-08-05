@@ -172,7 +172,9 @@ class Facture extends WFO {
                  f1.type_doc=f2.type_doc,
                  f1.id_compte=f2.id_compte,
                  f1.tax=f2.tax,
-                 f1.exchange_rate=f2.exchange_rate
+                 f1.exchange_rate=f2.exchange_rate,
+                 f1.payment_method=f2.payment_method,
+                 f1.delivery=f2.delivery
                WHERE f1.id_facture=$id_new_facture
                  AND f2.id_facture=$id");
 
@@ -304,17 +306,17 @@ class Facture extends WFO {
 
 	  switch($period) {
 		  case 'monthly':
-			  return date('Y-m-d', mktime(0, 0, 0, $month+1, 1, $year));
+			  return date('Y-m-d', mktime(0, 0, 0, $month+1, $day, $year));
 
 		  case 'quarterly':
 			  # Inspired by quarterByDate() as seen on
 			  # http://php.net/manual/function.date.php
 			  return date('Y-m-d',
-						  mktime(0,0,0,((int) floor($month / 3.1) + 1)*3+1, 1,
+						  mktime(0,0,0,((int) floor($month / 3.1) + 1)*3+1, $day,
 								 $year));
 
 		  case 'yearly':
-			  return date('Y-m-d', mktime(0, 0, 0, 1, 1, $year+1));
+			  return date('Y-m-d', mktime(0, 0, 0, $month, $day, $year+1));
 	}
   }
 
