@@ -45,7 +45,8 @@ while (!feof($handle)) {
     list($variable, $value) = explode('=', $buffer);
     $variable=trim($variable);
     $value=trim($value);
-    define('WF_' . $variable, $value);
+	if(!defined('WF_' . $variable))
+		define('WF_' . $variable, $value);
   }
 }
 fclose($handle);
