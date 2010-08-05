@@ -61,13 +61,15 @@ while(list($id_invoice) = mysql_fetch_row($result)){
 	$id_new_invoice = $Invoice->duplicate($id_invoice);
 	echo "Debug: Invoice duplicated as ID $id_new_invoice\n";
 
-	// Expand _START_DATE_ and _DEADLINE_ in invoice details
+	// Add dynamic start date and deadline in invoice details
 	$deadline_human_readable=strftime("%e %B %Y", strtotime($next_deadline));
 	$start_date_human_readable=strftime("%e %B %Y", strtotime(
 											$invoice->periodic_next_deadline));
 	$query='UPDATE webfinance_invoice_rows '.
-		"SET description=REPLACE(REPLACE(description, '_DEADLINE_', '$deadline_human_readable'), '_START_DATE_', '$start_date_human_readable') ".
-		"WHERE id_facture=$id_new_invoice";
+		"SET description=CONCAT(description, ' du $start_date_human_readable au $deadline_human_readable') ".
+		"WHERE id_facture=$id_new_invoice ".
+		'ORDER BY ordre '.
+		'LIMIT 1';
 	mysql_query($query)
 		or die("$query:" . mysql_error());
 
@@ -91,7 +93,8 @@ while(list($id_invoice) = mysql_fetch_row($result)){
 	if($invoice->payment_method=='direct_debit') {
 		$send_mail_direct_debit=true;
 		$recap_prelevement_auto.="Client: $invoice->nom_client\n";
-		$recap_prelevement_auto.="Amount incl. VAT: $invoice->total_ttc EUR\n\n";
+		$recap_prelevement_auto.="Amount incl. VAT: $invoice->nice_total_ttc ".
+			"EUR\n\n";
 
 		echo "Debug: Set invoice as paid by direct debit\n";
 		$Invoice->setPaid($id_new_invoice);
