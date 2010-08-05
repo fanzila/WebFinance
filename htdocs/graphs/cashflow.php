@@ -19,7 +19,8 @@
 ?>
 <?php
 require("../inc/main.php");
-require_once("/usr/share/phplot/phplot_data.php");
+if(file_exists("/usr/share/phplot/phplot_data.php"))
+	require_once("/usr/share/phplot/phplot_data.php");
 
 must_login();
 

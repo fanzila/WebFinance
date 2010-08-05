@@ -36,7 +36,9 @@ if (isset($language) and $language!='en_US') {
 
   if (!file_exists("$gettext_dictionnary_filename.mo") or
       filemtime("$gettext_dictionnary_filename.po") > filemtime("$gettext_dictionnary_filename.mo")) {
-    system("msgfmt $gettext_dictionnary_filename.po -o $gettext_dictionnary_filename.mo");
+	  system("msgfmt $gettext_dictionnary_filename.po -o $gettext_dictionnary_filename.mo", $retval);
+	  if($retval!=0)
+		  die("Error running msgfmt in __FILE__ (retcode=$retval)");
   }
 
   setlocale(LC_ALL, $language.".UTF-8")

@@ -18,16 +18,6 @@
     along with Webfinance; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-?>
-<?php
-//
-// This file is part of « Webfinance »
-//
-// Copyright (c) 2004-2006 NBI SARL
-// Author : Nicolas Bouthors <nbouthors@nbi.fr>
-//
-// You can use and redistribute this file under the term of the GNU GPL v2.0
-//
 
 include("inc/main.php");
 ?>
@@ -38,7 +28,7 @@ include("inc/main.php");
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <link rel=stylesheet type=text/css href=/css/themes/main/main.css />
-  <title>Webfinance<?= ($title=="")?"":" - $title" ?></title>
+	  <title>Webfinance<?=(empty($title)?"":" - $title") ?></title>
   <script type="text/javascript" language="javascript" src="/js/preloader.js.php"></script>
   <?include "extra_js.php" ?>
 </head>
