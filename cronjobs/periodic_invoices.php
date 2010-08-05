@@ -116,9 +116,14 @@ while(list($id_invoice) = mysql_fetch_row($result)) {
 
 	// Process direct debit invoices
 	if($invoice->payment_method=='direct_debit') {
+		$new_invoice = $Invoice->getInfos($id_new_invoice);
+
 		$send_mail_direct_debit=true;
-		$recap_prelevement_auto.="Client: $invoice->nom_client\n";
-		$recap_prelevement_auto.="Amount incl. VAT: $invoice->nice_total_ttc ".
+		$url="http://webfinance.isvtec.com/prospection/edit_facture.php?id_facture=$new_invoice->id_facture";
+		$recap_prelevement_auto.="Client: $new_invoice->nom_client\n";
+		$recap_prelevement_auto.="Invoice number: $new_invoice->num_facture\n";
+		$recap_prelevement_auto.="Link to invoice: $url\n";
+		$recap_prelevement_auto.="Amount incl. VAT: $new_invoice->nice_total_ttc ".
 			"EUR\n\n";
 
 		echo "Debug: Set invoice as paid by direct debit\n";
