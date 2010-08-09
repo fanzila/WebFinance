@@ -539,6 +539,12 @@ class Facture extends WFO {
 	  $pdf->Cell(30, 6, preg_replace("/\./", ",", sprintf("%.2f".EURO,(1+($facture->taxe/100))*$total_ht - $facture->accompte )), "", 0, "R");
 	  $pdf->Ln();
 
+	  $pdf->Ln();
+	  $pdf->SetFont('Arial', '', '8');
+	  $pdf->Cell(30, 6, utf8_decode("En cas de défaut de paiement à la date d'exigibilité de la facture, le débiteur s'engage à payer à titre de clause pénale et conformément aux"));
+	  $pdf->Ln();
+	  $pdf->Cell(30, 6, utf8_decode("dispositions de l'article 1226 du Code Civil, une majoration de 15% en sus du principal sans qu'une mise en demeure ne soit nécessaire."));
+
 	  // Extra data
 	  $pdf->SetFont('Arial', '', '11');
 	  $pdf->SetXY(10, 210);
