@@ -379,7 +379,7 @@ class Facture extends WFO {
 	  // Generate PDF filename
 	  $filename=sys_get_temp_dir() .'/'. ucfirst($facture->type_doc) . "_" .
 		  $facture->num_facture . "_" .
-		  preg_replace("/[ ]/", "_", utf8_encode($facture->nom_client)). ".pdf";
+		  preg_replace("/[ ]/", "_", $facture->nom_client). ".pdf";
 
 	  foreach ($facture as $n=>$v) {
 		  if (!is_array($v)) {
