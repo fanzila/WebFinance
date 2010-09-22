@@ -61,7 +61,7 @@ if(!defined('WF_DEBUG_ALL')){
   define('WF_DEBUG_ALL',0);
  }
 
-$dbi = mysql_pconnect(WF_SQL_HOST,WF_SQL_LOGIN, WF_SQL_PASS)
+$dbi = mysql_connect(WF_SQL_HOST,WF_SQL_LOGIN, WF_SQL_PASS)
   or die("Could not connect to mysql : ".mysql_error());
 mysql_select_db(WF_SQL_BASE) or die("Could not select database : ".mysql_error());
 
