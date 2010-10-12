@@ -30,8 +30,6 @@ if (!$User->isAuthorized("admin,manager")) {
   header("Location: /prospection/fiche_prospect.php?id=".$_POST['id_client']);
   die();
 }
-// print_r($User->getInfos());
-// die();
 
 if (isset($_GET['action']) && $_GET['action'] == "delete") {
 
@@ -104,9 +102,6 @@ foreach($email as $mail){
 }
 $emails = preg_replace('/,$/', '', $emails);
 
-//echo "<pre/>";
-//print_r($_POST);
-
 if(!empty($login)){
 
   if(empty($password)){
@@ -144,11 +139,23 @@ $q = sprintf("UPDATE webfinance_clients SET ".
 	     "vat_number='%s', siren='%s' , id_company_type='%d' , id_user=%d , password='%s'
               WHERE id_client=%d",
 
-             $nom, $addr1, $addr2, $addr3, $cp,
-	     $ville, $pays, $tel, $fax, $web,
-	     $emails,
-	     $vat_number, $siren, $id_company_type, $_POST['id_user'] , $password,
-             $id_client );
+			 mysql_real_escape_string($nom), mysql_real_escape_string($addr1),
+			 mysql_real_escape_string($addr2),
+			 mysql_real_escape_string($addr3),
+			 mysql_real_escape_string($cp),
+			 mysql_real_escape_string($ville),
+			 mysql_real_escape_string($pays),
+			 mysql_real_escape_string($tel),
+			 mysql_real_escape_string($fax),
+			 mysql_real_escape_string($web),
+			 mysql_real_escape_string($emails),
+			 mysql_real_escape_string($vat_number),
+			 mysql_real_escape_string($siren),
+			 mysql_real_escape_string($id_company_type),
+			 mysql_real_escape_string($_POST['id_user']),
+			 mysql_real_escape_string($password),
+             mysql_real_escape_string($id_client)
+	);
 
 //echo $q;
 mysql_query($q) or wf_mysqldie();
