@@ -139,7 +139,8 @@ $q = sprintf("UPDATE webfinance_clients SET ".
 	     "vat_number='%s', siren='%s' , id_company_type='%d' , id_user=%d , password='%s'
               WHERE id_client=%d",
 
-			 mysql_real_escape_string($nom), mysql_real_escape_string($addr1),
+			 mysql_real_escape_string($nom),
+			 mysql_real_escape_string($addr1),
 			 mysql_real_escape_string($addr2),
 			 mysql_real_escape_string($addr3),
 			 mysql_real_escape_string($cp),
