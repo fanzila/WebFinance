@@ -110,7 +110,7 @@ while(list($id_invoice) = mysql_fetch_row($result)) {
 		case 'postal':
 			echo "Debug: Generating PDF\n";
 			$send_mail_print_invoice=true;
-			$attachments[] = $Invoice->generatePDF($id_new_invoice);
+			$attachments[] = $Invoice->generatePDF($id_new_invoice, true);
 			$Invoice->setSent($id_new_invoice);
 			break;
 	}

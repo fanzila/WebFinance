@@ -319,8 +319,9 @@ class Facture extends WFO {
 			  return date('Y-m-d', mktime(0, 0, 0, $month, $day, $year+1));
 	}
   }
-
-  function generatePDF($id_invoice) {
+	// If the $introduction_letter argument is true, then the PDF will contain
+	// an additional page with an introduction letter. Default to false.
+	function generatePDF($id_invoice, $introduction_letter = false) {
 
 	  if (!is_numeric($id_invoice))
 		  die('$id_invoice not defined');
@@ -396,6 +397,64 @@ class Facture extends WFO {
 	  }
 
 	  $pdf = new FPDF('P', 'mm', 'A4');
+
+
+	  // Generate introduction letter, if needed
+	  if($introduction_letter !== false) {
+		  $pdf->AddPage();
+		  $pdf->Image(dirname(__FILE__). '/../../lib/A4.png', 4, 4, 205);
+
+		  // Address
+		  $pdf->SetFont('Arial','B',11);
+		  $pdf->SetXY(115, 50);
+		  $pdf->Cell(80,5, $facture->nom_client, 0, 0 );
+		  $pdf->SetFont('Arial','',11);
+		  $y = 54;
+		  for ($i=0 ; $i<3 ; $i++) {
+			  $n = sprintf("addr%d", $i+1);
+			  if ($facture->$n != "") {
+				  $pdf->SetXY(115, $y);
+				  $pdf->Cell(80,5, $facture->$n, 0, 0 );
+				  $y += 5;
+			  }
+		  }
+		  $pdf->SetXY(115, $y);
+		  $pdf->Cell(80, 4, $facture->cp." ".$facture->ville, 0, 0 );
+		  $pdf->SetXY(115, $y+5);
+		  $pdf->Cell(80, 4, $facture->pays, 0, 0 );
+
+		  // Date and city
+		  $pdf->SetXY(20, 80);
+		  $pdf->Cell(80, 4, utf8_decode(
+						 'Paris, le ' . strftime("%e %B %Y", mktime())));
+
+		  // Object
+		  $pdf->SetFont('Arial','B',11);
+		  $pdf->SetXY(20, 95);
+		  $pdf->Cell(80, 4, utf8_decode(
+						 'Objet: Facture infogérance serveurs informatiques'));
+
+		  // Greetings
+		  $pdf->SetFont('Arial','',11);
+		  $pdf->SetXY(40, 110);
+		  $pdf->Cell(80, 4, utf8_decode('Madame, Monsieur,'));
+
+		  // Main text
+		  $pdf->SetXY(20, 125);
+		  $pdf->MultiCell(170, 5, utf8_decode("Veuillez trouver ci-joint la dernière facture correspondant à l'infogérance et/ou hébergement des serveurs informatiques que vous avez bien voulu nous confier.
+
+Cette facture sera prélevée de manière automatique sur le compte bancaire de votre société dans les jours qui viennent si vous nous avez fournis votre RIB. Merci de nous faire parvenir le règlement par chèque ou virement le cas échéant.
+
+Espérant avoir répondu à vos attentes quant aux services fournis et vous remerciant de la confiance que vous avez bien voulu nous témoigner.
+
+Veuillez agréer cher Client, l'expression de nos salutations les meilleures."));
+
+		  $pdf->SetXY(120, 230);
+		  $pdf->Cell(80, 4, utf8_decode('Camille Lévèque'));
+
+	  }
+
+
 	  $pdf->SetMargins(10, 10, 10);
 	  $pdf->SetDisplayMode('fullwidth');
 	  $pdf->SetAutoPageBreak(true);
@@ -412,7 +471,7 @@ class Facture extends WFO {
 	  $pdf->SetXY(10,$logo_height+8);
 	  $pdf->Cell(190, 5, $societe->invoice_top_line2, "B", 0, "C");
 
-	  // Adresse
+	  // Address
 	  $pdf->SetFont('Arial','B',11);
 	  $pdf->SetXY(115, 50);
 	  $pdf->Cell(80,5, $facture->nom_client, 0, 0 );
