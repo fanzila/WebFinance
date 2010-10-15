@@ -416,7 +416,7 @@ class Facture extends WFO {
 
 		  $pdf->SetFont('Arial','',11);
 		  $pdf->SetXY(115, 50);
-		  $pdf->MultiCell(170, 5, utf8_decode($address));
+		  $pdf->MultiCell(170, 5, $address);
 
 		  // Date and city
 		  $pdf->SetXY(20, 90);
