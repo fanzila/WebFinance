@@ -405,42 +405,37 @@ class Facture extends WFO {
 		  $pdf->Image(dirname(__FILE__). '/../../lib/A4.png', 4, 4, 205);
 
 		  // Address
-		  $pdf->SetFont('Arial','B',11);
-		  $pdf->SetXY(115, 50);
-		  $pdf->Cell(80,5, $facture->nom_client, 0, 0 );
-		  $pdf->SetFont('Arial','',11);
-		  $y = 54;
+		  $address = "$facture->nom_client\n";
 		  for ($i=0 ; $i<3 ; $i++) {
 			  $n = sprintf("addr%d", $i+1);
 			  if ($facture->$n != "") {
-				  $pdf->SetXY(115, $y);
-				  $pdf->Cell(80,5, $facture->$n, 0, 0 );
-				  $y += 5;
+				  $address .= $facture->$n . "\n";
 			  }
 		  }
-		  $pdf->SetXY(115, $y);
-		  $pdf->Cell(80, 4, $facture->cp." ".$facture->ville, 0, 0 );
-		  $pdf->SetXY(115, $y+5);
-		  $pdf->Cell(80, 4, $facture->pays, 0, 0 );
+		  $address .= "$facture->cp $facture->ville\n$facture->pays";
+
+		  $pdf->SetFont('Arial','',11);
+		  $pdf->SetXY(115, 60);
+		  $pdf->MultiCell(170, 5, utf8_decode($address));
 
 		  // Date and city
-		  $pdf->SetXY(20, 80);
+		  $pdf->SetXY(20, 90);
 		  $pdf->Cell(80, 4, utf8_decode(
 						 'Paris, le ' . strftime("%e %B %Y", mktime())));
 
 		  // Object
 		  $pdf->SetFont('Arial','B',11);
-		  $pdf->SetXY(20, 95);
+		  $pdf->SetXY(20, 105);
 		  $pdf->Cell(80, 4, utf8_decode(
 						 'Objet: Facture infogérance serveurs informatiques'));
 
 		  // Greetings
 		  $pdf->SetFont('Arial','',11);
-		  $pdf->SetXY(40, 110);
+		  $pdf->SetXY(40, 120);
 		  $pdf->Cell(80, 4, utf8_decode('Madame, Monsieur,'));
 
 		  // Main text
-		  $pdf->SetXY(20, 125);
+		  $pdf->SetXY(20, 135);
 		  $pdf->MultiCell(170, 5, utf8_decode("Veuillez trouver ci-joint la dernière facture correspondant à l'infogérance et/ou hébergement des serveurs informatiques que vous avez bien voulu nous confier.
 
 Cette facture sera prélevée de manière automatique sur le compte bancaire de votre société dans les jours qui viennent si vous nous avez fournis votre RIB. Merci de nous faire parvenir le règlement par chèque ou virement le cas échéant.
