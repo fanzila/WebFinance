@@ -145,6 +145,7 @@ while(list($id_invoice) = mysql_fetch_row($result)) {
 
 $mail = new PHPMailer();
 $mail->AddAddress('administratif@isvtec.com');
+$mail->CharSet = 'UTF-8';
 $mail->From = 'webfinance@isvtec.com';
 $mail->FromName = 'Webfinance';
 
