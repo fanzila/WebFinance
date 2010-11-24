@@ -1,0 +1,39 @@
+#!/usr/bin/php -q
+<?php # -*- mode: php -*-
+/*
+ Copyright (C) 2004-2006 NBI SARL, ISVTEC SARL
+
+   This file is part of Webfinance.
+
+   Webfinance is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+    Webfinance is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Webfinance; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+putenv('WF_DEFAULT_LANGUAGE=fr_FR');
+require_once(dirname(__FILE__) . '/../htdocs/inc/main.php');
+require_once(dirname(__FILE__) . '/../htdocs/inc/Facture.php');
+require_once(dirname(__FILE__) . '/../htdocs/inc/Client.php');
+require_once('/usr/share/php/libphp-phpmailer/class.phpmailer.php');
+
+$Invoice = new Facture();
+
+# Define French locale in order to generate French dates
+setlocale(LC_TIME, "fr_FR.UTF8");
+
+for ($i=1; $i < $argc; $i++) {
+	$id_invoice = $argv[$i];
+	echo $Invoice->generatePDF($id_invoice) . "\n";
+}
+
+?>
