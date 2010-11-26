@@ -454,7 +454,7 @@ foreach ($facture->lignes as $l) {
   print <<<EOF
 <tr onmouseover="hoverLigne($l->id_facture_ligne);">
   <td><img border="0" src="/imgs/icons/facture_row_handle.gif" alt="" usemap="#facture_row_handle" /></td>
-  <td><textarea style="height: 50px; width: 300px;" name="line_$l->id_facture_ligne">$l->description</textarea></td>
+  <td><textarea style="height: 100px; width: 300px;" name="line_$l->id_facture_ligne">$l->description</textarea></td>
   <td align="center">
     <table border="0" cellspacing="0" cellpadding="0">
       <tr><td><input type="text" id="qtt_$l->id_facture_ligne" name="qtt_$l->id_facture_ligne" style="width: 40px; text-align: center" value="$l->qtt" /></td>
@@ -474,7 +474,7 @@ EOF;
 
 <tr style="background: #cecece">
   <td></td>
-  <td><textarea style="height: 30px; width: 300px;" name="line_new"></textarea></td>
+  <td><textarea style="height: 100px; width: 300px;" name="line_new"></textarea></td>
   <td align="center">
     <table border="0" cellspacing="0" cellpadding="0">
       <tr><td><input type="text" id="qtt_new" name="qtt_new" style="width: 40px; text-align: center" value="1" /></td>
