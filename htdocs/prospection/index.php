@@ -118,10 +118,10 @@ while ($found = mysql_fetch_object($result)) {
   $client->ca_total_ht_year = ($client->ca_total_ht_year==0)?"-&nbsp;&nbsp;":number_format($client->ca_total_ht_year, 0, ',', ' ')."&euro; HT";
 
   print "<tr align=center class=row_".(($count%2 == 0)?"even":"odd").">\n"
-    ."  <td><a href=fiche_prospect.php?id=".$client->id_client."&onglet=facturation>"
+    ."  <td><a href=fiche_prospect.php?onglet=biling&id=".$client->id_client."&onglet=facturation>"
     ."    <img src=\"/imgs/icons/".(($client->has_unpaid)?"not_paid":(($client->has_devis)?"paid_orange":"paid")).".gif\" /></a>\n"
     ."    <a href=edit_facture.php?id_facture=new&id_client=".$client->id_client."><img src=\"/imgs/icons/add.png\"></a></td>\n"
-    ."  <td><a href=fiche_prospect.php?id=".$client->id_client.">".$client->nom."</a>".
+    ."  <td><a href=fiche_prospect.php?onglet=biling&id=".$client->id_client.">".$client->nom."</a>".
     "</td>\n"
     ."  <td style=\"text-align: right;\">".$client->ca_total_ht."</td>\n"
     ."  <td style=\"text-align: right;\">".$client->ca_total_ht_year."</td>\n"

@@ -73,18 +73,21 @@ global $Client, $User;
 //              }
              $pdf = sprintf('&nbsp;<a href="gen_facture.php?id=%d"><img src="/imgs/icons/pdf.png" alt="FA" /></a>', $facture->id_facture);
 
-             $icon = "";
-             if ($facture->type_doc == "facture") {
+             if ($facture->type_doc == "facture")
                $icon = $facture->is_paye?"paid.gif":"not_paid.gif";
-             } else {
+             else
                $icon = $facture->is_paye?"ok.gif":"";
-             }
+
+             $icon_period='';
+             if ($facture->period !== 'none')
+               $icon_period = $facture->period;
+
              printf('<tr class="facture_line" onmouseover="return escape(\'%s\');" valign=middle>
                        <td nowrap>%s</td>
                        <td>%s%s</td>
                        <td class="euro" nowrap>%s %s HT</td>
                        <td class="euro" nowrap>%s %s TTC</td>
-                       <td width="100%%" style="text-align: right;" nowrap><img src="/imgs/icons/%s" alt=""><a href="edit_facture.php?id_facture=%d"><img src="/imgs/icons/edit.png" border="0"></a>%s</td>
+                       <td width="100%%" style="text-align: right;" nowrap>%s<img src="/imgs/icons/%s" alt=""><a href="edit_facture.php?id_facture=%d"><img src="/imgs/icons/edit.png" border="0"></a>%s</td>
                      </tr>',
 		    $description,
 		    $facture->nice_date_facture, // FIXME : nice_date = option dans partie admin heritee par tous les objets penser 6 pour 2006
@@ -92,6 +95,7 @@ global $Client, $User;
 		    number_format($facture->total_ht, 2, ',', ' '), $currency,
 		    number_format($facture->total_ttc, 2, ',', ' '), // FIXME : Taux de TVA par facture
 		    $currency,
+		    $icon_period,
 		    $icon,
 		    $facture->id_facture,
 		    $pdf);
