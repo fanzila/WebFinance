@@ -533,7 +533,7 @@ Veuillez agréer cher Client, l'expression de nos salutations les meilleures."))
 
 		  $y_start = $pdf->getY();
 		  $pdf->SetFont('Arial', '', '10');
-		  $pdf->MultiCell(110, 6, $ligne->description, "LR"  );
+		  $pdf->MultiCell(110, 6, $ligne->description, "LR", 'L');
 		  $x = $pdf->getX();
 		  $y = $pdf->getY();
 		  $pdf->setXY(120, $y_start);
