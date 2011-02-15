@@ -26,10 +26,11 @@ require_once(dirname(__FILE__) . '/../htdocs/inc/Facture.php');
 require_once(dirname(__FILE__) . '/../htdocs/inc/Client.php');
 require_once('/usr/share/php/libphp-phpmailer/class.phpmailer.php');
 
-$send_mail_print_invoice=false;
-$send_mail_direct_debit=false;
-$recap_prelevement_auto="Information about automatic direct debit:\n\n";
-$attachments=array();
+$send_mail_print_invoice = false;
+$send_mail_direct_debit = false;
+$prelevement_auto_recap = "Information about automatic direct debit:\n\n";
+$prelevement_auto_total = 0;
+$attachments = array();
 $Invoice = new Facture();
 
 # Define French locale in order to generate French dates
@@ -121,11 +122,13 @@ while(list($id_invoice) = mysql_fetch_row($result)) {
 
 		$send_mail_direct_debit=true;
 		$url="http://webfinance.isvtec.com/prospection/edit_facture.php?id_facture=$new_invoice->id_facture";
-		$recap_prelevement_auto.="Client: $new_invoice->nom_client\n";
-		$recap_prelevement_auto.="Invoice number: $new_invoice->num_facture\n";
-		$recap_prelevement_auto.="Link to invoice: $url\n";
-		$recap_prelevement_auto.="Amount incl. VAT: $new_invoice->nice_total_ttc ".
+		$prelevement_auto_recap.="Client: $new_invoice->nom_client\n";
+		$prelevement_auto_recap.="Invoice number: $new_invoice->num_facture\n";
+		$prelevement_auto_recap.="Link to invoice: $url\n";
+		$prelevement_auto_recap.="Amount incl. VAT: $new_invoice->nice_total_ttc ".
 			"EUR\n\n";
+
+		$prelevement_auto_total += $new_invoice->nice_total_ttc;
 
 		echo "Debug: Set invoice as paid by direct debit\n";
 		$Invoice->setPaid($id_new_invoice);
@@ -152,7 +155,8 @@ $mail->FromName = 'Webfinance';
 if($send_mail_direct_debit) {
 	echo "Debug: Mail direct debit to process\n";
 	$mail->Subject = 'Direct debit to process';
-	$mail->Body = $recap_prelevement_auto;
+	$mail->Body = $prelevement_auto_recap;
+	$mail->Body .= "\n\nTotal: $prelevement_auto_total EUR";
 	$mail->Send();
 }
 
