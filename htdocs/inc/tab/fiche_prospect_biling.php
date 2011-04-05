@@ -76,7 +76,7 @@ global $Client, $User;
              if ($facture->type_doc == "facture")
                $icon = $facture->is_paye?"paid.gif":"not_paid.gif";
              else
-               $icon = $facture->is_paye?"ok.gif":"";
+               $icon = "ok.gif";
 
              $icon_period='';
              if ($facture->period !== 'none')
