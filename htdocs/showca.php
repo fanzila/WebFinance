@@ -38,7 +38,7 @@ Afficher :
 // On récupère la date de création de la société et on calcule son age en mois.
 $result = mysql_query("SELECT value FROM webfinance_pref WHERE owner=-1 AND type_pref='societe'");
 list($data) = mysql_fetch_array($result);
-mysql_free_result();
+mysql_free_result($result);
 $data = unserialize(base64_decode($data));
 preg_match("!(..)/(..)/(....)!", $data->date_creation, $matches);
 $ts_start_company = mktime(0, 0, 0, $matches[2], $matches[1]-1, $matches[3]);
@@ -59,9 +59,10 @@ foreach ($choices as $n=>$v) {
 }
 ?>
 </select>
-largeur image : <input class="bordered" style="width: 50px; text-align: center;" type="text" name="width" value="<?= $width ?>" />
-hauteur image : <input class="bordered" style="width: 50px; text-align: center;" type="text" name="height" value="<?= $height ?>" />
-<input type="checkbox" name="grid" <?= $grid?"checked":"" ?> /> Dessiner la grille
+<?= _("Image width") ?>: <input onchange="this.form.submit()" class="bordered" style="width: 50px; text-align: center;" type="text" name="width" value="<?= $width ?>" />
+<?= _("Image height") ?> : <input onchange="this.form.submit()" class="bordered" style="width: 50px; text-align: center;" type="text" name="height" value="<?= $height ?>" />
+<input onchange="this.form.submit()" type="checkbox" name="grid" <?= $grid?"checked":"" ?> /><?= _("Draw graph grid") ?>
+
 </form><br/>
 
 <h2><?= _('Total Income per month') // FIXME : comment dit-on hors taxes en anglais ? ?></h2>
