@@ -16,21 +16,6 @@
     along with Webfinance; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-?>
-<?php
-//
-// This file is part of « Webfinance »
-//
-// Copyright (c) 2004-2006 NBI SARL
-// Author : Nicolas Bouthors <nbouthors@nbi.fr>
-//
-// You can use and redistribute this file under the term of the GNU GPL v2.0
-//
-// $Id: showca.php 531 2007-06-13 12:32:31Z thierry $
-//
-// Affiche le graph de CA en grand et un formulaire pour choisir ce que l'on
-// affiche
-//
 
 include("inc/main.php");
 $roles='manager,accounting,employee';
@@ -46,8 +31,8 @@ if (!isset($nb_months)) { $nb_months = 24; }
 <h1><?= _('Activity graphics') ?></h1>
 <br/>
 Afficher :
-<form onchange="this.submit();" action="showca.php" method="get">
-<select name="nb_months">
+<form method="get">
+<select onchange="this.form.submit();" name="nb_months">
 <?php
 
 // On récupère la date de création de la société et on calcule son age en mois.
