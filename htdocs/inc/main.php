@@ -18,18 +18,6 @@
     along with Webfinance; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-?>
-<?php
-//
-// This file is part of « Webfinance »
-//
-// Copyright (c) 2004-2006 NBI SARL
-// Author : Nicolas Bouthors <nbouthors@nbi.fr>
-//
-// You can use and redistribute this file under the term of the GNU GPL v2.0
-//
-// $Id: main.php 552 2007-08-02 07:07:04Z gassla $
-
 @ini_set('session.gc_maxlifetime',3600);
 session_start();
 
