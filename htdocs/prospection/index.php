@@ -21,10 +21,6 @@
 # $Id: index.php 551 2007-08-02 05:16:27Z gassla $
 
 require("../inc/main.php");
-$title = _("Companies");
-$roles="manager,employee,accounting";
-include("../top.php");
-include("nav.php");
 
 global $User;
 $User->getInfos();
@@ -95,6 +91,10 @@ if(isset($_GET['namelike']) and mysql_num_rows($result) == 1) {
   exit;
 }
 
+$title = _("Companies");
+$roles="manager,employee,accounting";
+include("../top.php");
+include("nav.php");
 ?>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr valign="top"><td rowspan="2">
