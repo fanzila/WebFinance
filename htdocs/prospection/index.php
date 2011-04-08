@@ -60,25 +60,11 @@ if (isset($_GET['q']) && ($_GET['q']!=0)) {
 }
 
 if ( isset($_GET['namelike']) and preg_match("/[a-zA-Z ]+/", $_GET['namelike']) ) {
-  $where_clause .= " AND c.nom LIKE '%".$_GET['namelike']."%'";
+  $where_clause .= " AND c.nom LIKE '%".  mysql_real_escape_string($_GET['namelike'])."%'";
 }
 $where_clause .= " AND c.id_company_type=ct.id_company_type ";
 
 $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w+\\&*+/", "", $GLOBALS['_SERVER']['QUERY_STRING']);
-
-?>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr valign="top"><td rowspan="2">
-
-<table border="0" width="500" cellspacing=0 cellpadding=3 class="framed">
-<tr class="row_header" style="text-align: center;">
-  <td><a href="?sort=du&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>">&euro;</a></td>
-  <td width="200"><a href="?sort=nom&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Company name') ?></a></td>
-  <td><a href="?sort=ca_total_ht&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Total Income') ?></a></td>
-  <td><a href="?sort=ca_total_ht_year&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Year Income') ?></a></td>
-  <td><a href="?sort=total_du_ht&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Owed') ?></a></td>
-</tr>
-<?php
 
 $critere = "has_unpaid desc,has_devis desc, c.nom";
 if( !isset($_GET['sort']) ) {
@@ -100,6 +86,29 @@ $result = mysql_query("SELECT c.nom, c.id_client,ct.id_company_type
                        FROM webfinance_clients c,webfinance_company_types ct
                        WHERE $where_clause
                        ORDER BY $critere") or wf_mysqldie();
+
+// Redirect to "fiche_prospect" if the user is searching a company and there is
+// only one result
+if(isset($_GET['namelike']) and mysql_num_rows($result) == 1) {
+  $row = mysql_fetch_assoc($result);
+  header("Location: fiche_prospect.php?onglet=biling&id=$row[id_client]");
+  exit;
+}
+
+?>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr valign="top"><td rowspan="2">
+
+<table border="0" width="500" cellspacing=0 cellpadding=3 class="framed">
+<tr class="row_header" style="text-align: center;">
+  <td><a href="?sort=du&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>">&euro;</a></td>
+  <td width="200"><a href="?sort=nom&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Company name') ?></a></td>
+  <td><a href="?sort=ca_total_ht&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Total Income') ?></a></td>
+  <td><a href="?sort=ca_total_ht_year&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Year Income') ?></a></td>
+  <td><a href="?sort=total_du_ht&<?= $GLOBALS['_SERVER']['QUERY_STRING'] ?>"><?= _('Owed') ?></a></td>
+</tr>
+<?php
+
 $client = new Client(1);
 $grand_total_ca_ht=0;
 $grand_total_ca_ht_year=0;
