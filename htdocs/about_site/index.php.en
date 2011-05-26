@@ -126,7 +126,6 @@ echo '30 7  * * *  www-data  php /path/to/webfinance/htdocs/inc/scheduler.php' >
   <li>Cyril Bouthors &lt;cyril@isvtec.com&gt; <i>Initial cash-flow specifications, bug reports, feature requests, gettext support</i></li>
   <li>Nicolas Bouthors &lt;nbouthors@nbi.fr&gt; <i>Initial developpement for client, clientlog, contacts, and invoice managing, gettext french translation</i></li>
   <li>Pierre Doleans &lt;pierre@isvtec.com&gt; <i>Bug reports, feature requests</i></li>
-  <li>Thierry Randrianiriana &lt;thierry@isvtec.com&gt; <i>A lot of code, bugfixes and features</i></li>
 </ul>
 
 <i>$Id: index.php.en 496 2006-10-02 13:32:42Z cyb $</i>
