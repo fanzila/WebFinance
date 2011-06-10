@@ -1,0 +1,8 @@
+AuthUserFile /etc/webfinance/api-htpasswd
+AuthGroupFile /dev/null
+AuthName "Webfinance API"
+AuthType Basic
+
+<Limit GET POST>
+    require valid-user
+</Limit>
