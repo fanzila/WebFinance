@@ -1,0 +1,66 @@
+#!/usr/bin/php -q
+<?php # -*- mode: php -*-
+/*
+ Copyright (C) 2004-2011 NBI SARL, ISVTEC SARL
+
+   This file is part of Webfinance.
+
+   Webfinance is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+    Webfinance is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Webfinance; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+putenv('WF_DEFAULT_LANGUAGE=fr_FR');
+require_once(dirname(__FILE__) . '/../htdocs/inc/main.php');
+require_once(dirname(__FILE__) . '/../htdocs/inc/Facture.php');
+require_once(dirname(__FILE__) . '/../htdocs/inc/Client.php');
+require_once('/usr/share/php/libphp-phpmailer/class.phpmailer.php');
+
+$Invoice = new Facture();
+
+# Define French locale in order to generate French dates
+setlocale(LC_TIME, "fr_FR.UTF8");
+
+if(empty($argv[1]) or empty($argv[2])) {
+	error_log("$argv[0]: Too few argument");
+	error_log("Usage: $argv[0] DATE_START DATE_END");
+	error_log("Example: $argv[0] 2010-09-01 2011-08-31");
+	exit(1);
+}
+
+$date_start = $argv[1];
+$date_end   = $argv[2];
+
+$result = mysql_query(
+	"SELECT id_facture, IF(is_paye=1, 'paid', 'unpaid') AS status, ".
+	 "num_facture, DATE_FORMAT(date_paiement, '%Y-%m') AS date_paiement ".
+	'FROM webfinance_invoices '.
+	"WHERE date_paiement BETWEEN '$date_start' AND '$date_end' ".
+	'ORDER BY date_paiement')
+	or die(mysql_error());
+
+if(mysql_num_rows($result)==0) {
+	echo "Debug: no invoice to process\n";
+	exit;
+}
+
+$dir = '/tmp/bilan';
+while($row = mysql_fetch_assoc($result)) {
+	$file = $dir . "/$row[status]/$row[date_paiement]/FA$row[num_facture].pdf";
+	#ugly
+	system('mkdir -p ' . dirname($file));
+	echo "$file\n";
+	rename($Invoice->generatePDF($row['id_facture']), $file);
+}
+
+?>
