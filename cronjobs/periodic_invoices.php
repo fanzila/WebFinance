@@ -162,6 +162,11 @@ if($send_mail_direct_debit) {
 
 if($send_mail_print_invoice) {
 	echo "Debug: Mail invoices to print and mail\n";
+	$mail->From = 'administratif@isvtec.com';
+	$mail->FromName = 'ISVTEC invoices';
+	$mail->ClearAddresses();
+	$mail->AddAddress('franck.guillo@verytance.com');
+	$mail->AddAddress('cyril.bouthors@isvtec.com');
 	$mail->Subject = 'Invoices to print and mail';
 	$mail->Body = 'Print the invoices and send them to clients';
 
