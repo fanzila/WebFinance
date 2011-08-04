@@ -36,7 +36,7 @@ include("top.php");
 <table border="0" cellspacing="5" cellpadding="0" class="mosaique">
 <tr>
   <td>
-    Chiffre d'affaire mensuel (18 derniers mois, total, incluant les impayés <a href="showca.php">plus</a>)<br/>
+    Chiffre d'affaires mensuel (18 derniers mois, total, incluant les impayés <a href="showca.php">plus</a>)<br/>
     <a href="showca.php"><img src="/graphs/ca_mensuel.php?width=600&height=250&nb_months=18&grid=0" /></a>
   </td>
   <td width="350">
