@@ -46,6 +46,7 @@ $result = mysql_query(
 	 "num_facture, DATE_FORMAT(date_paiement, '%Y-%m') AS date_paiement ".
 	'FROM webfinance_invoices '.
 	"WHERE date_paiement BETWEEN '$date_start' AND '$date_end' ".
+	"AND type_doc='facture' ".
 	'ORDER BY date_paiement')
 	or die(mysql_error());
 
