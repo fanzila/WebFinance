@@ -332,10 +332,10 @@ msgid "Activity graphics"
 msgstr "Graphiques d'activité"
 
 msgid "Total income per month"
-msgstr "Chiffre d'affaire par mois"
+msgstr "Chiffre d'affaires par mois"
 
 msgid "Total income per client"
-msgstr "Chiffre d'affaire par client"
+msgstr "Chiffre d'affaires par client"
 
 msgid "Debt per client"
 msgstr "Encours par client"
