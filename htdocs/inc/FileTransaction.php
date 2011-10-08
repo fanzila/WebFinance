@@ -31,16 +31,16 @@ class FileTransaction extends File{
     parent::File($id_file);
   }
 
-  function getFiles($id_fk){
+  function getFiles($id_fk, $wf_type='transaction'){
     return parent::getFiles($id_fk , $this->getType());
   }
 
   //$file = $_FILES['file']
-  function addFile( $file, $fk_id){
+  function addFile( $file, $fk_id, $wf_type='transaction'){
     return parent::addFile($file,$fk_id,$this->getType());
   }
 
-  function deleteAllFiles($fk_id){
+  function deleteAllFiles($fk_id, $wf_type='transaction'){
     parent::deleteAllFiles($fk_id,$this->getType());
   }
 

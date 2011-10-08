@@ -377,7 +377,7 @@ function ask_confirmation(txt) {
        <td><input type="checkbox" name="is_envoye" <?= $facture->is_envoye?"checked":"" ?> />&nbsp;<?=_('Sent')?></td>
        <td><?
           if(empty($facture->timestamp_date_sent)){
-	    makeDateField('date_sent', mktime());
+	    makeDateField('date_sent', time());
 	  }else{
 	    makeDateField('date_sent', $facture->timestamp_date_sent);
 	  }
@@ -389,7 +389,7 @@ function ask_confirmation(txt) {
        <td><input type="checkbox" name="is_paye" <?=$facture->is_paye?"checked":""?> />&nbsp;<?=_('Paid')?></td>
        <td><?
 	  if(empty($facture->timestamp_date_paiement) or $facture->timestamp_date_paiement < $facture->timestamp_date_facture){
-	    makeDateField('date_paiement', mktime());
+	    makeDateField('date_paiement', time());
 	  }else{
 	    makeDateField('date_paiement', $facture->timestamp_date_paiement);
 	  }
