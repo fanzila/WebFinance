@@ -41,7 +41,7 @@ try{
 		# Redirect to the auth page if ticket is invalid and no information is
 		# given
 		if(!isset($_GET['cybsso_ticket'], $_GET['cybsso_email']))
-			throw new SoapFault('Invalid SSO ticket');
+			throw new SoapFault('inc/sso.php', 'Invalid SSO ticket');
 
 		# If the user has just logged in, then we set the session and redirect
 		# to ourself
