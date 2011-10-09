@@ -5,3 +5,7 @@ SQL_PASS=
 
 DEBUG=0
 DEBUG_ALL=0
+
+CYBSSO_URL=https://login.isvtec.com/
+CYBSSO_LOGIN=billing
+CYBSSO_PASSWORD=password

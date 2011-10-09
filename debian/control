@@ -1,0 +1,18 @@
+Source: webfinance
+Section: admin
+Priority: optional
+Maintainer: Cyril Bouthors <cyb@debian.org>
+Uploaders: Cyril Bouthors <cyril@bouthors.org>
+Build-Depends: debhelper (>= 5), phpunit, php5-xdebug, cybphp
+Standards-Version: 3.9.1
+
+Package: webfinance
+Architecture: all
+Depends: libapache2-mod-php5 | php5-cgi,
+    apache2,
+    php5-cli,
+    cybphp,
+    ${misc:Depends}
+Description: Manage invoices
+ Web application based on PHP/MySQL to manage invoices, handle clients contacts,
+ manage cash-flow history and make cash-flow previsions.

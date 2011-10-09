@@ -20,46 +20,8 @@
 
     $Id: dbconnect.php 539 2007-08-01 12:15:10Z gassla $
 */
-?>
-<?php
-$filename=dirname(__FILE__)."/../../etc/wf.conf";
-if (!file_exists($filename)) {
-   $filename='/etc/webfinance/wf.conf';
- }
 
-$perms = fileperms($filename);
-if ($perms & 0x0004) {
-  echo "<font color=\"red\">SECURITY WARNING: $filename contains a clear MySQL password and is world readable!<br>";
-  echo "You can fix it with: chmod go-rwx $filename</font>";
-}
-
-if (!$handle = fopen($filename, 'r')) {
-  echo "Cannot open file ($filename)";
-  exit;
-}
-
-while (!feof($handle)) {
-  $buffer = fgets($handle, 4096);
-
-  if (preg_match('/=/', $buffer)) {
-    list($variable, $value) = explode('=', $buffer);
-    $variable=trim($variable);
-    $value=trim($value);
-	if(!defined('WF_' . $variable))
-		define('WF_' . $variable, $value);
-  }
-}
-fclose($handle);
-
-if (!defined('WF_SQL_PASS')) {
-  define('WF_SQL_PASS', '');
-}
-if(!defined('WF_DEBUG')){
-  define('WF_DEBUG',1);
- }
-if(!defined('WF_DEBUG_ALL')){
-  define('WF_DEBUG_ALL',0);
- }
+require_once('config.php');
 
 $dbi = mysql_connect(WF_SQL_HOST,WF_SQL_LOGIN, WF_SQL_PASS)
   or die("Could not connect to mysql : ".mysql_error());

@@ -77,6 +77,7 @@ CREATE TABLE `webfinance_clients` (
   `id_user` int(11) NOT NULL default '0',
   `password` varchar(100) default NULL,
   PRIMARY KEY  (`id_client`),
+  UNIQUE KEY (nom),
   KEY `id_company_type` (`id_company_type`),
   KEY `id_user` (`id_user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -307,7 +308,7 @@ CREATE TABLE `webfinance_users` (
   `id_user` int(11) NOT NULL auto_increment,
   `last_name` varchar(100) default NULL,
   `first_name` varchar(100) default NULL,
-  `login` varchar(10) NOT NULL,
+  `login` varchar(255) NOT NULL,
   `password` varchar(100) default NULL,
   `email` varchar(255) default NULL,
   `disabled` tinyint(4) NOT NULL default '1',
@@ -317,7 +318,8 @@ CREATE TABLE `webfinance_users` (
   `modification_date` datetime default NULL,
   `prefs` blob,
   PRIMARY KEY  (`id_user`),
-  UNIQUE KEY `login` (`login`)
+  UNIQUE KEY `login` (`login`),
+  UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `webfinance_roles`;
@@ -378,6 +380,16 @@ CREATE TABLE `webfinance_transaction_invoice` (
   KEY `id_invoice` (`id_invoice`),
   CONSTRAINT `webfinance_transaction_invoice_ibfk_2` FOREIGN KEY (`id_invoice`) REFERENCES `webfinance_invoices` (`id_facture`) ON DELETE CASCADE,
   CONSTRAINT `webfinance_transaction_invoice_ibfk_1` FOREIGN KEY (`id_transaction`) REFERENCES `webfinance_transactions` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS `webfinance_clients2users`;
+CREATE TABLE `webfinance_clients2users` (
+  `id` int(11) UNSIGNED NOT NULL auto_increment,
+  `id_client` int(11) UNSIGNED NOT NULL,
+  `id_user` int(11) UNSIGNED NOT NULL,
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `client2user` (`id_client`, `id_user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
