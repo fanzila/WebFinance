@@ -31,21 +31,10 @@ try{
 	$user = new WebfinanceUser($_SESSION['cybsso_user']['email']);
 
 	# Ask the user to create a company if he/she doesn't own one
-	if(count($user->GetCompanies() == 0)) {
+	if(count($user->GetCompanies()) == 0) {
 		header('Location: /company/new');
 		exit;
 	}
-	 
-/*
-Si l'utilisateur n'a pas de societe, on lui demande d'en creer une et on
-l'associe à son compte
-redirect /company/new
-CompanyCreate(nom, addr1, addr2, addr3, cp, ville, pays, $_SESSION['cybsso_user']['email']);
-table: webfinance_clients
-champs: nom, addr1, addr2, addr3, cp, ville, pays
-table: webfinance_clients2users
-champs: id_client, id_user
-*/
 
 /*
 si return_url est définie, alors on redirige (dans le cas de la creation d'un
@@ -54,10 +43,10 @@ redirect $return_url
 */
 
 /*
-Si l'utilisateur a >=1 societe, on affiche ses devis, factures, coordonnées, etc.
-redirect /company/ID
-*/
 
+Si l'utilisateur a >=1 societe, on affiche les devis, factures, coordonnées,
+etc. de la première entreprise
+redirect /company/ID */
 /*
 Prévoir drop down de selection des différentes societes + javascript
 */
