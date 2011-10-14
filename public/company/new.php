@@ -1,4 +1,3 @@
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <?php
 //
 // Copyright (C) 2011 Cyril Bouthors <cyril@bouthors.org>
@@ -18,75 +17,30 @@
 //
 
 require_once('../../htdocs/inc/sso.php');
-require_once('../../template/header.php');
-?>
+require_once('../../htdocs/inc/smarty.php');
 
-<h1> Create company </h1>
-
-<?
 try{
 
-	// print_r($_POST);exit;
-	if(isset($_POST['Create_company'])) {
-		# Add email to POST arguments
-		$_POST['email'] = $_SESSION['cybsso_user']['email'];
+  if(isset($_POST['Create_company'])) {
+    // Add email to POST arguments
+    $_POST['email'] = $_SESSION['cybsso_user']['email'];
 
-		# Create company
-		$company_id = WebfinanceCompany::Create($_POST);
+    // Create company
+    $company_id = WebfinanceCompany::Create($_POST);
 
-		# Redirect to company page
-		header("Location: ./?company_id=$company_id");
-		exit;
-	}
+    // Redirect to company page
+    header("Location: ./?company_id=$company_id");
+    exit;
+  }
 }
 catch(SoapFault $fault) {
-	echo '<font color="red">'.$fault->getMessage() . '</font>';
+  $smarty->assign('error', $fault->getMessage());
 }
 catch(Exception $fault) {
-	echo '<font color="red">'.$fault->getMessage() . '</font>';
+  $smarty->assign('error', $fault->getMessage());
 }
 
-# Display HTML form
+$smarty->assign('params', $_POST);
+$smarty->assign('countries', CybPHP_Country::$countries);
+$smarty->display('company/new.tpl');
 ?>
-
-<form method="POST">
-  Company name:
-	  <input type="text" name="name"
-	  value="<?=(isset($_POST['name'])?$_POST['name']:'');?>" /> <br/>
-
-  Address:
-	  <input type="text" name="address1"
-	  value="<?=(isset($_POST['address1'])?$_POST['address1']:'');?>" /> <br/>
-
-	  <input type="text" name="address2"
-	  value="<?=(isset($_POST['address2'])?$_POST['address2']:'');?>" /> <br/>
-
-	  <input type="text" name="address3"
-	  value="<?=(isset($_POST['address3'])?$_POST['address3']:'');?>" /> <br/>
-
-  Zip code:
-	  <input type="text" name="zip_code"
-	  value="<?=(isset($_POST['zip_code'])?$_POST['zip_code']:'');?>" /> <br/>
-
-  City:
-	  <input type="text" name="city"
-	  value="<?=(isset($_POST['city'])?$_POST['city']:'');?>" /> <br/>
-
-  Country:
-	<select name="country">
-	<?
-	foreach(CybPHP_Country::$countries as $code => $country) {
-		echo "<option value=\"$code\"";
-		if(isset($_POST['country']) and $_POST['country'] == $code)
-			echo ' selected';
-		echo ">$country</option>\n";
-	}
-    ?>
-	</select> <br/>
-
-	<input type="submit" name="Create company" value="Create company">
-
-</form>
-
-<?
-require_once('../../template/footer.php');

@@ -17,24 +17,24 @@
 //
 
 require_once('../htdocs/inc/sso.php');
-require_once('../template/header.php');
+require_once('../htdocs/inc/smarty.php');
 
 try{
-	# Create user if he/she does not exist yet
-	try{
-		WebfinanceUser::ValidateExists($_SESSION['cybsso_user']['email']);
-	}
-	catch(Exception $e) {
-		WebfinanceUser::Create($_SESSION['cybsso_user']['email']);
-	}
+  // Create user if he/she does not exist yet
+  try{
+    WebfinanceUser::ValidateExists($_SESSION['cybsso_user']['email']);
+  }
+  catch(Exception $e) {
+    WebfinanceUser::Create($_SESSION['cybsso_user']['email']);
+  }
 
-	$user = new WebfinanceUser($_SESSION['cybsso_user']['email']);
+  $user = new WebfinanceUser($_SESSION['cybsso_user']['email']);
 
-	# Ask the user to create a company if he/she doesn't own one
-	if(count($user->GetCompanies()) == 0) {
-		header('Location: /company/new');
-		exit;
-	}
+  // Ask the user to create a company if he/she doesn't own one
+  if(count($user->GetCompanies()) == 0) {
+    header('Location: /company/new');
+    exit;
+  }
 
 /*
 si return_url est définie, alors on redirige (dans le cas de la creation d'un
@@ -52,7 +52,9 @@ Prévoir drop down de selection des différentes societes + javascript
 */
 }
 catch(SoapFault $fault) {
-	echo $fault->getMessage();
+  $smarty->assign('error', $fault->getMessage());
 }
 
-require_once('../template/footer.php');
+echo '<pre>';
+$smarty->display('index.tpl');
+?>

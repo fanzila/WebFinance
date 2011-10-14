@@ -2,6 +2,8 @@
 
 {if isset($error)}
 <font color="red">{$error}</font>
+<br/>
+<br/>
 {/if}
 
 <h1> {$company_info.name} </h1>
