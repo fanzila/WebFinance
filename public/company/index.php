@@ -1,4 +1,3 @@
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <?php
 //
 // Copyright (C) 2011 Cyril Bouthors <cyril@bouthors.org>
@@ -18,76 +17,28 @@
 //
 
 require_once('../../htdocs/inc/sso.php');
-require_once('../../template/header.php');
+require_once('../../htdocs/inc/smarty.php');
 
-try{
-	# Check permissions
-	$company = new WebfinanceCompany($_GET['company_id']);
-	$company->ValidatePermission($_SESSION['cybsso_user']['email']);
+try{                            /*  */
+  // Check permissions
+  $company = new WebfinanceCompany($_GET['company_id']);
+  $company->ValidatePermission($_SESSION['cybsso_user']['email']);
 
-	$company_info = $company->GetInfo();
+  // Display localized amounts and dates
+  setlocale(LC_ALL, $_SESSION['cybsso_user']['language'] . '.utf8');
 
-	echo "<h1> $company_info[name] </h1>\n";
-	# Show invoices and quotations
-
-	?>
-		<h2> Invoices </h2>
-		<table border="1">
-			 <tr>
-			 <th> <?=_('Type');?> </th>
-			 <th> <?=_('Reference');?> </th>
-			 <th> <?=_('Date');?> </th>
-			 <th> <?=_('Amount');?> </th>
-			 <th> <?=_('Actions');?> </th>
-			 </tr>
-
-<?
-	# Display localized amounts and dates
-	setlocale(LC_ALL, $_SESSION['cybsso_user']['language'] . '.utf8');
-
-	foreach($company->InvoicesGet() as $invoice) {
-		echo "<tr> <td> $invoice[type] </td>";
-		echo "<td> $invoice[invoice_reference] </td>";
-		echo '<td>'. strftime('%x', $invoice['date']) . '</td>';
-		echo '<td>'. money_format('%.2n', $invoice['amount']) . '</td>';
-		echo '<td> ';
-		if($invoice['paid'])
-			echo 'paid.ico';
-		else
-			echo 'unpaid.ico';
-		echo " <a href=\"download?invoice_id=$invoice[id]\">PDF</a> </td></tr>";
-	}
-	echo '</table>';
-
-	# Link to the other companies, if any
-	$user = new WebfinanceUser($_SESSION['cybsso_user']['email']);
-	$companies = $user->GetCompanies();
-
-	if(count($companies) > 1) {
-?>
-	<form>
-		<select name="company_id">
-<?
-		foreach($companies as $company) {
-			echo "<option value=\"$company[id]\"";
-			if($company['id'] == $_GET['company_id'])
-				echo ' selected';
-			echo ">$company[name]</option>\n";
-		}
-
-?>
-		</select>
- 	    <input type="submit" name="Change company" value="Change company">
-	</form>
-<?
-	}
+  $user = new WebfinanceUser($_SESSION['cybsso_user']['email']);
+  $smarty->assign('this_company_id', $_GET['company_id']);
+  $smarty->assign('companies', $user->GetCompanies());
+  $smarty->assign('company_info', $company->GetInfo());
+  $smarty->assign('invoices', $company->InvoicesGet());
 }
 catch(SoapFault $fault) {
-	echo '<font color="red">'.$fault->getMessage() . '</font>';
+  $smarty->assign('error', $fault->getMessage());
 }
 catch(Exception $fault) {
-	echo '<font color="red">'.$fault->getMessage() . '</font>';
+  $smarty->assign('error', $fault->getMessage());
 }
 
-require_once('../../template/footer.php');
+$smarty->display('company/index.tpl');
 ?>

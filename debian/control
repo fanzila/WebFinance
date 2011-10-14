@@ -12,6 +12,8 @@ Depends: libapache2-mod-php5 | php5-cgi,
     apache2,
     php5-cli,
     cybphp,
+    smarty,
+    smarty-gettext,
     ${misc:Depends}
 Description: Manage invoices
  Web application based on PHP/MySQL to manage invoices, handle clients contacts,
