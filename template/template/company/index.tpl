@@ -23,7 +23,7 @@
     <td> {$invoice.type} </td>
     <td> {$invoice.invoice_reference} </td>
     <td> {$invoice.date|date_format:"%x"} </td>
-    <td> {$invoice.amount|string_format:"%.2f"}&nbsp;&euro;</td>
+    <td> {money_format price=$invoice.amount} </td>
     <td>
       {if $invoice.paid == true}
       paid.ico

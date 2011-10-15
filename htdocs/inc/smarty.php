@@ -25,4 +25,13 @@ $smarty->template_dir = $smarty_home .'/template';
 $smarty->compile_dir = $smarty->config_dir = $smarty->cache_dir
   = $smarty_home . '/cache';
 
+$smarty->register_function('money_format', 'smarty_money_format');
+
+function smarty_money_format($params, &$smarty) {
+  if(empty($params['price']))
+    $params['price'] = 0;
+
+  return money_format('%.2n', $params['price']);
+}
+
 ?>
