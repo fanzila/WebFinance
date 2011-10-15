@@ -78,10 +78,37 @@ switch ($_GET['sort']) {
 
 $total_dehors = 0;
 // Find matching companies
-$result = mysql_query("SELECT c.nom, c.id_client,ct.id_company_type
-                       FROM webfinance_clients c,webfinance_company_types ct
-                       WHERE $where_clause
-                       ORDER BY $critere") or wf_mysqldie();
+$query = sprintf("SELECT c.nom, c.id_client,ct.id_company_type "
+                 . "FROM webfinance_clients as c " 
+                 . "JOIN webfinance_company_types as ct USING (id_company_type)  "
+                 . "LEFT JOIN ("
+                 . "    SELECT f.id_client as id_client,round(sum(fl.qtt*fl.prix_ht),0) as ca_total_ht "
+                 . "    FROM webfinance_invoice_rows as fl, webfinance_invoices as f "
+                 . "    WHERE fl.id_facture=f.id_facture "
+                 . "    AND f.type_doc='facture' "
+                 . "    GROUP BY f.id_client "
+                 . ") as sub1 ON sub1.id_client = c.id_client "
+                 . "LEFT JOIN ("
+                 . "    SELECT f.id_client as id_client,round(sum(fl.qtt*fl.prix_ht),0) as ca_total_ht_year "
+                 . "    FROM webfinance_invoice_rows as fl, webfinance_invoices as f "
+                 . "    WHERE fl.id_facture=f.id_facture "
+                 . "    AND f.type_doc='facture' "
+                 . "    AND f.date_facture>=date_sub(now(), INTERVAL 1 YEAR)"
+                 . "    GROUP BY f.id_client "
+                 . ") as sub2 ON sub2.id_client = c.id_client "
+                 . "LEFT JOIN ("
+                 . "    SELECT sum(prix_ht*qtt) as total_du_ht, f.id_client "
+                 . "    FROM webfinance_invoice_rows fl, webfinance_invoices f "
+                 . "    WHERE f.is_paye=0 "
+                 . "    AND f.type_doc='facture' "
+                 . "    AND f.date_facture<=now() "
+                 . "    AND f.id_facture=fl.id_facture "
+                 . "    GROUP BY f.id_client"
+                 . ") as sub3 ON sub3.id_client = c.id_client "
+                 . "WHERE %s" 
+                 . "ORDER BY %s", $where_clause, $critere);
+
+$result = mysql_query($query) or wf_mysqldie();
 
 // Redirect to "fiche_prospect" if the user is searching a company and there is
 // only one result

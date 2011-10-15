@@ -35,56 +35,6 @@ else if (isset($_GET['id_facture']) && is_numeric($_GET['id_facture']))
 if($id_facture>0)
   $facture = $Facture->getInfos($id_facture);
 
-function update_ca() {
-  global $facture;
-
-  // FIXME : fucking mysql triggers somewhen ?
-  mysql_query("UPDATE webfinance_clients SET ca_total_ht=0 where ca_total_ht!=0");
-  $result = mysql_query("SELECT f.id_client as id_client,round(sum(fl.qtt*fl.prix_ht),0) as ca_total_ht
-                          FROM webfinance_invoice_rows as fl, webfinance_invoices as f
-                          WHERE fl.id_facture=f.id_facture
-                          AND f.type_doc='facture'
-                          GROUP BY f.id_client") or wf_mysqldie();
-  while ($ca = mysql_fetch_object($result)) {
-    $q = sprintf("UPDATE webfinance_clients SET ca_total_ht='%.2f' WHERE id_client=%d",
-                 $ca->ca_total_ht, $ca->id_client );
-    mysql_query($q) or wf_mysqldie();
-
-  }
-  mysql_free_result($result);
-
-  mysql_query("UPDATE webfinance_clients SET ca_total_ht_year=0 where ca_total_ht_year!=0");
-  $result = mysql_query("SELECT f.id_client as id_client,round(sum(fl.qtt*fl.prix_ht),0) as ca_total_ht_year
-                          FROM webfinance_invoice_rows as fl, webfinance_invoices as f
-                          WHERE fl.id_facture=f.id_facture
-                          AND f.type_doc='facture'
-                          AND f.date_facture>=date_sub(now(), INTERVAL 1 YEAR)
-                          GROUP BY f.id_client") or wf_mysqldie();
-  while ($ca = mysql_fetch_object($result)) {
-    $q = sprintf("UPDATE webfinance_clients SET ca_total_ht_year='%.2f' WHERE id_client=%d",
-                 $ca->ca_total_ht_year, $ca->id_client );
-    mysql_query($q) or wf_mysqldie();
-
-  }
-  mysql_free_result($result);
-
-  // TOTAL DU HT
-  mysql_query("UPDATE webfinance_clients SET total_du_ht=0");
-  $result = mysql_query("SELECT sum(prix_ht*qtt) as total_du_ht, f.id_client
-                         FROM webfinance_invoice_rows fl, webfinance_invoices f
-                         WHERE f.is_paye=0
-                         AND f.type_doc='facture'
-                         AND f.date_facture<=now()
-                         AND f.id_facture=fl.id_facture
-                         GROUP BY f.id_client") or wf_mysqldie();
-  while ($du = mysql_fetch_object($result)) {
-    $q = sprintf("UPDATE webfinance_clients SET total_du_ht='%.2f' WHERE id_client=%d", $du->total_du_ht, $du->id_client );
-    mysql_query($q) or wf_mysqldie();
-  }
-
-
-}
-
 function regenerate($id) {
   mysql_query("UPDATE webfinance_invoices SET date_generated=NULL,facture_file=NULL where id_facture=$id") or wf_mysqldie();
 }
@@ -259,7 +209,6 @@ if ($action == "save_facture") {
   $q = sprintf("UPDATE webfinance_clients SET vat_number='%s' WHERE id_client=%d", $vat_number, $facture->id_client);
   mysql_query($q);
 
-  update_ca();
   regenerate($_POST['id_facture']);
 
   if($dup_num_inv){
