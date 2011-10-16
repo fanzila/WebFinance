@@ -1,0 +1,7 @@
+
+# /doc/
+/doc/html
+/doc/latex
+
+# /etc/
+/etc/*.conf

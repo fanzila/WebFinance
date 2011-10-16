@@ -88,34 +88,34 @@ class Client extends WFO {
         $this->link_societe = 
             sprintf('<a href="http://www.societe.com/cgi-bin/liste?nom=%s&dep=%s">
                           <img src="/imgs/icons/societe.com.gif" class="bouton" onmouseover="return escape(\'%s\');" /></a>',
-                                  (isset($this->nom))?urlencode($this->nom):'', (isset($this->departement))?$this->departement:'',
-                                  addslashes( _('Cannot link to societe.com if no RCS or siren specified. Click icon to perform a search.') ) );
-    if ( isset($this->siren) and $this->siren != "") {
-      // Trim non-digits from value
-      $this->siren = preg_replace("/[^0-9]/", "", $this->siren);
-      switch (strlen($this->siren)) {
-        case 9: // RCS
-          $this->link_societe = sprintf('<a href="http://www.societe.com/cgi-bin/recherche?rncs=%s"><img src="/imgs/icons/societe.com.gif" class="bouton" onmouseover="return escape(\'%s\');" /></a>',
-                                        $this->siren, addslashes( _('See financial info about this company on Societe.com') )
+                    (isset($this->nom))?urlencode($this->nom):'', (isset($this->departement))?$this->departement:'',
+                    addslashes( _('Cannot link to societe.com if no RCS or siren specified. Click icon to perform a search.') ) );
+        if ( isset($this->siren) and $this->siren != "") {
+            // Trim non-digits from value
+            $this->siren = preg_replace("/[^0-9]/", "", $this->siren);
+            switch (strlen($this->siren)) {
+            case 9: // RCS
+                $this->link_societe = sprintf('<a href="http://www.societe.com/cgi-bin/recherche?rncs=%s"><img src="/imgs/icons/societe.com.gif" class="bouton" onmouseover="return escape(\'%s\');" /></a>',
+                                              $this->siren, addslashes( _('See financial info about this company on Societe.com') )
+                                              );
+                $this->siren = preg_replace("!([0-9]{3})([0-9]{3})([0-9]{3})!", '\\1 \\2 \\3', $this->siren);
+                break;
+            case 14: // INSEE
+                $this->link_societe = sprintf('<a href="http://www.societe.com/cgi-bin/recherche?rncs=%s"><img src="/imgs/icons/societe.com.gif" class="bouton" onmouseover="return escape(\'%s\');" /></a>',
+                                              substr($this->siren, 0, 9), addslashes( _('See financial info about this company on Societe.com') )
                                        );
-          $this->siren = preg_replace("!([0-9]{3})([0-9]{3})([0-9]{3})!", '\\1 \\2 \\3', $this->siren);
-          break;
-        case 14: // INSEE
-          $this->link_societe = sprintf('<a href="http://www.societe.com/cgi-bin/recherche?rncs=%s"><img src="/imgs/icons/societe.com.gif" class="bouton" onmouseover="return escape(\'%s\');" /></a>',
-                                        substr($this->siren, 0, 9), addslashes( _('See financial info about this company on Societe.com') )
-                                       );
-          $this->siren = preg_replace("!([0-9]{3})([0-9]{3})([0-9]{3})([0-9]{5})!", '\\1 \\2 \\3 \\4', $this->siren);
-          break;
+                $this->siren = preg_replace("!([0-9]{3})([0-9]{3})([0-9]{3})([0-9]{5})!", '\\1 \\2 \\3 \\4', $this->siren);
+                break;
       }
     }
 
-    $this->login = "";
-    if(isset($this->id_user) and $this->id_user>0){
-      $login_res = $this->SQL("SELECT login FROM webfinance_users WHERE id_user=".$this->id_user);
-      if(mysql_num_rows($login_res)>0)
-      list($this->login) = mysql_fetch_array($login_res);
-    }
-
+        $this->login = "";
+        if(isset($this->id_user) and $this->id_user>0){
+            $login_res = $this->SQL("SELECT login FROM webfinance_users WHERE id_user=".$this->id_user);
+            if(mysql_num_rows($login_res)>0)
+                list($this->login) = mysql_fetch_array($login_res);
+        }
+        
 
   }
 
@@ -127,18 +127,18 @@ class Client extends WFO {
   }
 
   function setId($id) {
-    if (is_numeric($id)) {
-      $this->id = $id;
-      $this->_getInfos();
-    }
+      if (is_numeric($id)) {
+          $this->id = $id;
+          $this->_getInfos();
+      }
   }
-
+  
   function exists($id = null){
-    if($id == null)
-      $id = $this->id;
-
-    $result = $this->SQL("SELECT count(*) FROM webfinance_clients WHERE id_client=$id");
-    list($exists) = mysql_fetch_array($result);
-    return $exists;
+      if($id == null)
+          $id = $this->id;
+      
+      $result = $this->SQL("SELECT count(*) FROM webfinance_clients WHERE id_client=$id");
+      list($exists) = mysql_fetch_array($result);
+      return $exists;
   }
 }

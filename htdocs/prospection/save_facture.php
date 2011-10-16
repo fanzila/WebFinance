@@ -173,10 +173,15 @@ if ($action == "save_facture") {
   if ((is_numeric($_POST['prix_ht_new'])) && (is_numeric($_POST['qtt_new'])) &&
 	  !empty($_POST['prix_ht_new']) && !empty($_POST['line_new'])) {
     // Enregistrement d'une nouvelle ligne de facturation pour une facture.
-    $q = sprintf("INSERT INTO webfinance_invoice_rows (id_facture,description,prix_ht,qtt) VALUES(%d, '%s', '%s', '%s')",
+    
+    $q = sprintf("INSERT INTO webfinance_invoice_rows (id_facture,description,prix_ht,qtt,ordre) ".
+                 "SELECT %d, '%s', %s, %s, MAX(ordre) + 1 ".
+		 "FROM webfinance_invoice_rows ".
+		 "WHERE id_facture=%d",
                  $_POST['id_facture'],
 				 mysql_real_escape_string($_POST['line_new']),
-				 $_POST['prix_ht_new'], $_POST['qtt_new'] );
+		 $_POST['prix_ht_new'], $_POST['qtt_new'], $_POST['id_facture']);
+
     $result = mysql_query($q) or wf_mysqldie();
     mysql_query("UPDATE webfinance_invoices SET date_generated=NULL WHERE id_facture=".$_POST['id_facture']) or wf_mysqldie();
   }
@@ -193,18 +198,6 @@ if ($action == "save_facture") {
     }
   }
 
-  if (preg_match("/^raise:([0-9]+)$/", $_POST['raise_lower'], $matches)) {
-    mysql_query("UPDATE webfinance_invoice_rows SET ordre=ordre-3 WHERE id_facture_ligne=".$matches[1]) or wf_mysqldie();
-    renum();
-  }
-  if (preg_match("/^lower:([0-9]+)$/", $_POST['raise_lower'], $matches)) {
-    mysql_query("UPDATE webfinance_invoice_rows SET ordre=ordre+3 WHERE id_facture_ligne=".$matches[1]) or wf_mysqldie();
-    renum();
-  }
-  if (preg_match("/^delete:([0-9]+)$/", $_POST['raise_lower'], $matches)) {
-    mysql_query("DELETE FROM webfinance_invoice_rows WHERE id_facture_ligne=".$matches[1]) or wf_mysqldie();
-    renum();
-  }
 
   $q = sprintf("UPDATE webfinance_clients SET vat_number='%s' WHERE id_client=%d", $vat_number, $facture->id_client);
   mysql_query($q);
@@ -243,7 +236,6 @@ if ($action == "delete_facture") {
     //mysql_query("DELETE FROM webfinance_invoice_rows WHERE id_facture=".$_GET['id_facture']); <- ON DELETE CASCADE
     mysql_query("DELETE FROM webfinance_transactions WHERE id_invoice=".$_GET['id_facture']." AND type<>'real'") or wf_mysqldie();;
     $_SESSION['message'] .= "<br/>"._('Transaction deleted');
-    update_ca();
 
   }
   header("Location: fiche_prospect.php?onglet=biling&tab=biling&id=$id_client");

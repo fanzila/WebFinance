@@ -83,6 +83,7 @@ $search_button_on = '/imgs/boutons/'.urlencode(_('Search')."_on_".$User->prefs->
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <link rel="stylesheet" type="text/css" href="<?= $css_theme ?>" />
   <title><?= ($title=="")?"":"$title - " ?>Webfinance</title>
+  <script type="text/javascript" language="javascript" src="/js/jquery.js"></script>
   <script type="text/javascript" language="javascript" src="/js/preloader.js.php"></script>
   <?include "extra_js.php" ?>
 </head>

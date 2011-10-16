@@ -140,30 +140,6 @@ function subQtt(id,tva) {
   updateTotal(tva);
 }
 
-var id_facture_ligne = 0;
-
-function hoverLigne(i) {
-  id_facture_ligne = i;
-}
-
-function raise_ligne() {
-  f = document.getElementById('main_form');
-  f.raise_lower.value = 'raise:'+id_facture_ligne;
-  f.submit();
-}
-
-function lower_ligne() {
-  f = document.getElementById('main_form');
-  f.raise_lower.value = 'lower:'+id_facture_ligne;
-  f.submit();
-}
-
-function del_ligne() {
-  f = document.getElementById('main_form');
-  f.raise_lower.value = 'delete:'+id_facture_ligne;
-  f.submit();
-}
-
 function ask_confirmation(txt) {
   resultat = confirm(txt);
   if(resultat=="1"){
@@ -177,22 +153,11 @@ function ask_confirmation(txt) {
 
 <?=( isset($_SESSION['message']) && !empty($_SESSION['message']) )?$_SESSION['message']:'' ?>
 
-<map name="facture_row_handle">
-<!-- #$-:Image Map file created by GIMP Imagemap Plugin -->
-<!-- #$-:GIMP Imagemap Plugin by Maurits Rijk -->
-<!-- #$-:Please do not edit lines starting with "#$" -->
-<!-- #$VERSION:2.0 -->
-<!-- #$AUTHOR:Nicolas Bouthors -->
-<area shape="rect" coords="0,0,16,16" alt="Up" href="javascript:raise_ligne();" />
-<area shape="rect" coords="0,16,16,32" alt="Down" href="javascript:lower_ligne();" />
-<area shape="rect" coords="0,32,16,48" alt="Supprimer" href="javascript:del_ligne();" />
-</map>
-
 <form id="main_form" onsubmit="return submitForm(this.form);" onchange="changedData(this);" action="save_facture.php" method="post">
 <h1><?= ucfirst($facture->type_doc) ?> <?= $facture->num_facture ?> <?= $facture->nom_client ?></h1>
 <input type="hidden" name="action" value="save_facture" />
 <input type="hidden" name="id_facture" value="<?= $facture->id_facture ?>" />
-<input type="hidden" name="raise_lower" value="" />
+<input type="hidden" id="raise_lower" name="raise_lower" value="" />
 <table class="facture" width="100%" border="0" cellspacing="0" cellpadding="3"><?//Main Layout Table ?>
 <tr class="row_header">
   <td>Informations <?= $facture->type_doc ?></td>
@@ -452,8 +417,13 @@ foreach ($facture->lignes as $l) {
   $total_ligne = $l->qtt * $l->prix_ht;
   $prix = number_format($l->prix_ht, 2, '.', ' ');
   print <<<EOF
-<tr onmouseover="hoverLigne($l->id_facture_ligne);">
-  <td><img border="0" src="/imgs/icons/facture_row_handle.gif" alt="" usemap="#facture_row_handle" /></td>
+<tr>
+  <td>
+    <div onclick="location.href='change_rows.php?id_facture=$facture->id_facture&id_facture_ligne=$l->id_facture_ligne&raise_lower=raise';" style="cursor:pointer;width:10px;height:10px;position:relative;top:39px;left:2px;"></div>
+    <div onclick="location.href='change_rows.php?id_facture=$facture->id_facture&id_facture_ligne=$l->id_facture_ligne&raise_lower=lower';" style="cursor:pointer;width:10px;height:10px;position:relative;top:40px;left:2px;"></div>
+    <div onclick="location.href='change_rows.php?id_facture=$facture->id_facture&id_facture_ligne=$l->id_facture_ligne&raise_lower=delete';" style="cursor:pointer;width:10px;height:10px;position:relative;top:48px;left:2px;"></div>
+    <img border="0" src="/imgs/icons/facture_row_handle.gif" alt=""  />
+  </td>
   <td><textarea style="height: 100px; width: 300px;" name="line_$l->id_facture_ligne">$l->description</textarea></td>
   <td align="center">
     <table border="0" cellspacing="0" cellpadding="0">
