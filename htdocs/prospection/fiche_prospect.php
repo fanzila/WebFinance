@@ -58,20 +58,21 @@ include("nav.php");
 
 <script type="text/javascript">
 var isModified = 0;
+$(document).ready(function(){
+        $("#main_form").change(function() {
+                $("#submit_button").css("background", '#009f00');
+                $("#submit_button").css("fontWeight", 'bold');
+                $("#submit_button").css("color", 'white');
 
-function formChanged() {
-  f = document.getElementById('main_form');
+                $("#cancel_button").css("background", '#ff0000');
+                $("#cancel_button").css("fontWeight", 'bold');
+                $("#cancel_button").css("color", 'white');
 
-  f.submit_button.style.background = '#009f00';
-  f.submit_button.style.fontWeight = 'bold';
-  f.submit_button.style.color = 'white';
+                isModified = 1;
+            }
+        );
+});
 
-  f.cancel_button.style.background = '#ff0000';
-  f.cancel_button.style.fontWeight = 'bold';
-  f.cancel_button.style.color = 'white';
-
-  isModified = 1;
-}
 
 function submitForm(f) {
   if (!isModified) return;
