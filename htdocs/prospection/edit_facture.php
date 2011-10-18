@@ -178,11 +178,23 @@ function ask_confirmation(txt) {
     <textarea style="width: 300px; height: 40px" name="extra_top"><?= $facture->extra_top ?></textarea>
     </table>
   </td>
+<?php
 
+$query = "SELECT id_client, nom "
+       . "FROM webfinance_clients ";
+
+$result = mysql_query($query);
+$options = '';
+while ($response = mysql_fetch_object($result)) {
+  $options .= "<option ".($response->id_client==$facture->id_client ? 'selected="selected"' : '') 
+           . " value='". $response->id_client . "'>".$response->nom."</option>";
+}
+
+?>
   <td valign="top">
   <?// Adresse = 5 champs valeur par dÃ©faut = addr client si modifiÃ© => adresse facturation affectÃ©e ?>
   <div style="width: 180px; border: dashed 1px #cecece; padding: 10px;">
-  <b><?= $facture->nom_client ?></b><br/>
+  <select name="id_client"><?=$options?></select><br/>
   <?= $facture->addr1 ?><br/>
   <?= $facture->addr2 ?><br/>
   <?= $facture->addr3 ?><br/>

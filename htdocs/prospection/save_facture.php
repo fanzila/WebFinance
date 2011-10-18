@@ -115,53 +115,55 @@ if ($action == "save_facture") {
   }
 
   $q = sprintf("UPDATE webfinance_invoices SET ".
-	       "type_paiement='%s', ".
-	       "is_paye=%d, ".
-	       "%s  ".
-	       "is_envoye=%d, ".
-	       "%s  ".
-	       "ref_contrat='%s', ".
-	       "extra_top='%s', ".
-	       "extra_bottom='%s', ".
-	       "accompte='%s', ".
-	       "date_facture='%s', ".
-	       "type_doc='%s', ".
-	       "commentaire='%s', ".
-	       "id_type_presta=%d, ".
-	       "id_compte=%d, ".
-	       "is_envoye=%d, ".
-	       "tax='%s', ".
-	       "exchange_rate='%s', ".
-	       "period='%s', ".
-	       "periodic_next_deadline='%s', ".
-	       "payment_method='%s', ".
-	       "delivery='%s' ".
-	       "%s ".
-	       "WHERE id_facture=%d",
+               "id_client=%d, " .
+               "type_paiement='%s', ".
+               "is_paye=%d, ".
+               "%s  ".
+               "is_envoye=%d, ".
+               "%s  ".
+               "ref_contrat='%s', ".
+               "extra_top='%s', ".
+               "extra_bottom='%s', ".
+               "accompte='%s', ".
+               "date_facture='%s', ".
+               "type_doc='%s', ".
+               "commentaire='%s', ".
+               "id_type_presta=%d, ".
+               "id_compte=%d, ".
+               "is_envoye=%d, ".
+               "tax='%s', ".
+               "exchange_rate='%s', ".
+               "period='%s', ".
+               "periodic_next_deadline='%s', ".
+               "payment_method='%s', ".
+               "delivery='%s' ".
+               "%s ".
+               "WHERE id_facture=%d",
+               $id_client,
                $type_paiement,
-	       ($is_paye=="on")?1:0,
-	       ($is_paye=="on"  || $type_prev>0)?"date_paiement='$date_paiement', ":"date_paiement='$date_facture' , ",
-	       ($is_envoye=="on")?1:0,
-	       ($is_envoye=="on")?"date_sent='$date_sent', ":"date_sent='$date_facture' , ",
-	       $ref_contrat,
-	       $extra_top,
-	       $extra_bottom,
-	       WFO::stripMonetaryFormat($accompte),
-	       $date_facture,
-	       $type_doc,
-	       $commentaire,
-	       $id_type_presta,
-	       $id_compte,
-	       ($is_envoye=="on")?1:0,
-	       $tax,
-	       (empty($exchange_rate))?1:$exchange_rate,
-	       $period,
-		   $periodic_next_deadline,
-		   $payment_method,
-		   $delivery,
-	       ($dup_num_inv==0)?",num_facture='$num_facture' ":"" ,
+               ($is_paye=="on")?1:0,
+               ($is_paye=="on"  || $type_prev>0)?"date_paiement='$date_paiement', ":"date_paiement='$date_facture' , ",
+               ($is_envoye=="on")?1:0,
+               ($is_envoye=="on")?"date_sent='$date_sent', ":"date_sent='$date_facture' , ",
+               $ref_contrat,
+               $extra_top,
+               $extra_bottom,
+               WFO::stripMonetaryFormat($accompte),
+               $date_facture,
+               $type_doc,
+               $commentaire,
+               $id_type_presta,
+               $id_compte,
+               ($is_envoye=="on")?1:0,
+               $tax,
+               (empty($exchange_rate))?1:$exchange_rate,
+               $period,
+               $periodic_next_deadline,
+               $payment_method,
+               $delivery,
+               ($dup_num_inv==0)?",num_facture='$num_facture' ":"" ,
                $id_facture);
-
+  
   mysql_query($q)
 	  or die(mysql_error());
 
@@ -173,6 +175,7 @@ if ($action == "save_facture") {
   if ((is_numeric($_POST['prix_ht_new'])) && (is_numeric($_POST['qtt_new'])) &&
 	  !empty($_POST['prix_ht_new']) && !empty($_POST['line_new'])) {
     // Enregistrement d'une nouvelle ligne de facturation pour une facture.
+    
     
     $q = sprintf("INSERT INTO webfinance_invoice_rows (id_facture,description,prix_ht,qtt,ordre) ".
                  "SELECT %d, '%s', %s, %s, MAX(ordre) + 1 ".
