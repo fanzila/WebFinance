@@ -7,7 +7,7 @@ $action           = isset($_GET['raise_lower']) ?$_GET['raise_lower'] : 0;
 $authorized       = array ("raise", "lower", "delete");
 
 if (empty($id_facture_ligne) || empty($id_facture)) {
-    exit("facture des not exists");
+    exit("invoice dos not exist");
 }
 
 if (! in_array($action, $authorized)) {
