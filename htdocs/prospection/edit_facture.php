@@ -56,15 +56,19 @@ print $lignes;
 
 
 ?>
-function changedData(f) {
-  document.getElementById('submit_button').style.background = '#009f00';
-  document.getElementById('submit_button').style.fontWeight = 'bold';
-  document.getElementById('submit_button').style.color = 'white';
 
-  document.getElementById('cancel_button').style.background = '#ff0000';
-  document.getElementById('cancel_button').style.fontWeight = 'bold';
-  document.getElementById('cancel_button').style.color = 'white';
-}
+$(document).ready(function(){
+        $("#main_form").change(function() {
+                $("#submit_button").css("background", '#009f00');
+                $("#submit_button").css("fontWeight", 'bold');
+                $("#submit_button").css("color", 'white');
+
+                $("#cancel_button").css("background", '#ff0000');
+                $("#cancel_button").css("fontWeight", 'bold');
+                $("#cancel_button").css("color", 'white');
+            }
+        );
+});
 
 function submitForm(f) {
   <?php if ($facture->immuable) {
@@ -186,8 +190,9 @@ $query = "SELECT id_client, nom "
 $result = mysql_query($query);
 $options = '';
 while ($response = mysql_fetch_object($result)) {
-  $options .= "<option ".($response->id_client==$facture->id_client ? 'selected="selected"' : '') 
-           . " value='". $response->id_client . "'>".$response->nom."</option>";
+   $nom = (strlen($response->nom) > 28 ? substr($response->nom, 0, 25). "..." : $response->nom);
+$options .= "<option ".($response->id_client==$facture->id_client ? 'selected="selected"' : '') 
+           . " value='". $response->id_client . "'>".$nom."</option>";
 }
 
 ?>
