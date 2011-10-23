@@ -121,7 +121,7 @@ while(list($id_invoice) = mysql_fetch_row($result)) {
 		$new_invoice = $Invoice->getInfos($id_new_invoice);
 
 		$send_mail_direct_debit=true;
-		$url="http://webfinance.isvtec.com/prospection/edit_facture.php?id_facture=$new_invoice->id_facture";
+		$url="https://webfinance.isvtec.com/prospection/edit_facture.php?id_facture=$new_invoice->id_facture";
 		$prelevement_auto_recap.="Client: $new_invoice->nom_client\n";
 		$prelevement_auto_recap.="Invoice number: $new_invoice->num_facture\n";
 		$prelevement_auto_recap.="Link to invoice: $url\n";
