@@ -299,6 +299,8 @@ CREATE TABLE `webfinance_userlog` (
   `log` blob,
   `date` datetime default NULL,
   `id_user` int(11) default NULL,
+  id_facture INTEGER,
+  id_client  INTEGER,
   PRIMARY KEY  (`id_userlog`),
   KEY `id_user` (`id_user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
