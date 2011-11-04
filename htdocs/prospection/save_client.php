@@ -75,7 +75,7 @@ if(isset($_GET['action']) && $_GET['action'] == "send_info"){
 
     $_SESSION['message']=$_SESSION['tmp_message'];
     $_SESSION['tmp_message']="";
-    logmessage(_('Send info ')." ".$client.":".$id );
+    logmessage(_('Send info ')." ".$client.":".$id, $id);
   }else{
     $_SESSION['message'] = _('Login isn\'t correct!');
     $_SESSION['error'] = 1;
@@ -166,7 +166,7 @@ if(isset($_SESSION['message']))
 else
   $_SESSION['message'] = _('Update customer');
 
-logmessage(_('Update customer')." client:$id_client ($nom)");
+logmessage(_('Update customer')." client:$id_client ($nom)",$id_client);
 
 header("Location: /prospection/fiche_prospect.php?id=$id_client&onglet=".$focused_onglet);
 exit;

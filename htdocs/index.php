@@ -28,10 +28,10 @@
 //
 // $Id: index.php 552 2007-08-02 07:07:04Z gassla $
 
-require("inc/main.php");
+require_once("inc/main.php");
 $title = _("Home");
 $roles="manager,accounting,employee";
-include("top.php");
+require_once("top.php");
 ?>
 <table border="0" cellspacing="5" cellpadding="0" class="mosaique">
 <tr>
@@ -46,28 +46,44 @@ include("top.php");
 </tr>
 <tr valign="top">
   <td>
-<!--  <a href="/cashflow/"><img alt="<?= _('Cashflow') ?>" src="/graphs/cashflow.php?account=&end_date=&width=600&height=250&movingaverage=1" /></a> -->
   </td>
   <td width="250">
     100 derniers évènements (<a href="/admin/events.php"><?=_('show all')?></a>)
     <div style="overflow: auto; height: 250px;">
     <table width="100%" border="0" cellspacing="0" cellpadding="5">
     <?php
-    $result = mysql_query("SELECT id_userlog,log,date,id_user,date_format(date,'%d/%m/%Y %k:%i') as nice_date FROM webfinance_userlog ORDER BY date DESC LIMIT 100");
-    $count=1;
-    while ($log = mysql_fetch_object($result)) {
-      $class = ($count%2)==0?"odd":"even";
-      $result2 = mysql_query("SELECT login FROM webfinance_users WHERE id_user=".$log->id_user);
-      list($login) = mysql_fetch_array($result2);
-      mysql_free_result($result2);
+       $query= "SELECT id_userlog,log,date,wul.id_user,wu.login,wi.id_facture,wi.num_facture,wc.id_client," .
+               "       wc.nom as nom_client, date_format(date,'%d/%m/%y %k:%i') as nice_date " .
+               "FROM webfinance_userlog wul ".
+               "JOIN webfinance_users wu on (wu.id_user = wul.id_user)  " .
+               "LEFT JOIN webfinance_invoices wi on wul.id_facture = wi.id_facture " .
+               "LEFT JOIN webfinance_clients wc on wul.id_client = wc.id_client " .
+               "ORDER BY date DESC limit 100";
 
-      $message = parselogline($log->log);
+       $result = mysql_query($query);
+       $count=1;
+   
+       while ($log = mysql_fetch_object($result)) {
+           $class = ($count%2)==0?"odd":"even";
 
+           $message = $log->log;
+           $message = ((!empty($log->id_facture)) ? 
+                          str_replace('fa:'.$log->id_facture, '<a href="/prospection/edit_facture.php?id_facture='.$log->id_facture.'">'
+                          .$log->num_facture.'</a> <a href="/prospection/gen_facture.php?id='
+                          .$log->id_facture.'"><img src="/imgs/icons/pdf.png" valign="bottom"></a>',$message) : $message);
+          
+           $message = ((!empty($log->login)) ?  
+                           str_replace('user:'.$log->id_user,'<a href="/admin/fiche_user.php?id='.$log->id_user.'">'.$log->login.'</a>', $message) : $message);
+
+           $message = ((!empty($log->nom_client)) ?
+                           str_replace('client:'.$log->id_client,'<a href="/prospection/fiche_prospect.php?id='.$log->id_client.'">'.$log->nom_client.'</a>',$message) : $message);
+                       
+         
       print <<<EOF
     <tr class="row_$class">
       <td style="border:none;" nowrap>$log->nice_date</td>
       <td style="border:none;">$message</td>
-      <td style="border:none;">$login</td>
+      <td style="border:none;">$log->login</td>
     </tr>
 EOF;
       $count++;

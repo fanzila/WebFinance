@@ -26,39 +26,50 @@ global $User;
 $User->getInfos();
 
 //msg
-if(isset($_SESSION['message']) and !empty($_SESSION['message'])){
+if(isset($_SESSION['message']) and !empty($_SESSION['message'])) {
   echo $_SESSION['message'];
   $_SESSION['message']='';
- }
+}
 
 // House keeping : lister les factures inpayées et marquer les clients qui en ont.
 // FIXME : should go in save_facture.php
-mysql_query("UPDATE webfinance_clients SET has_unpaid=false,has_devis=false") or wf_mysqldie();
-$result = mysql_query("select c.id_client,count(*) as has_unpaid
-                       FROM webfinance_invoices as f,webfinance_clients as c
-                       WHERE f.is_paye=0
-                       AND f.type_doc='facture'
-                       AND f.date_facture<=now()
-                       AND f.id_client=c.id_client
-                       group by c.id_client") or wf_mysqldie();
-while (list($id_client) = mysql_fetch_array($result)) {
-  mysql_query("UPDATE webfinance_clients SET has_unpaid=true WHERE id_client=$id_client");
-}
-$result = mysql_query("SELECT c.id_client,count(*) as has_unpaid from webfinance_invoices as f,webfinance_clients as c WHERE f.is_paye=0 AND f.type_doc='devis' AND f.id_client=c.id_client group by c.id_client");
-while (list($id_client) = mysql_fetch_array($result)) {
-  mysql_query("UPDATE webfinance_clients SET has_devis=true WHERE id_client=$id_client");
-}
+$query = 
+    "UPDATE webfinance_clients SET " .
+    "  has_unpaid = false, has_devis = false ";
+mysql_query($query) or wf_mysqldie();
+
+$query = 
+    "UPDATE webfinance_clients SET ".
+    "  has_unpaid = true " .
+    "WHERE id_client  IN ( " .
+    "  SELECT id_client " . 
+    "  FROM webfinance_invoices " .
+    "  WHERE is_paye = 0 " .
+    "  AND type_doc = 'facture' " . 
+    "  AND date_facture <= now() " .
+    ")";
+
+$result = mysql_query($query) or wf_mysqldie();
+
+$query = 
+    "UPDATE webfinance_clients SET " .
+    "  has_devis=true  " .
+    "WHERE id_client IN ( " .
+    "  SELECT id_client " .
+    "  FROM webfinance_invoices " .
+    "  WHERE is_paye = 0 " .
+    "  AND type_doc = 'devis' " .
+    ")";
 
 // Begin where clause
 $where_clause = "1";
 if (isset($_GET['q']) && ($_GET['q']!=0)) {
-  $where_clause = "ct.id_company_type=".$_GET['q'];
+  $where_clause = "c.id_company_type=".$_GET['q'];
 }
 
 if ( isset($_GET['namelike']) and preg_match("/[a-zA-Z ]+/", $_GET['namelike']) ) {
   $where_clause .= " AND c.nom LIKE '%".  mysql_real_escape_string($_GET['namelike'])."%'";
 }
-$where_clause .= " AND c.id_company_type=ct.id_company_type ";
 
 $GLOBALS['_SERVER']['QUERY_STRING'] = preg_replace("/sort=\w+\\&*+/", "", $GLOBALS['_SERVER']['QUERY_STRING']);
 
@@ -78,34 +89,8 @@ switch ($_GET['sort']) {
 
 $total_dehors = 0;
 // Find matching companies
-$query = sprintf("SELECT c.nom, c.id_client,ct.id_company_type "
-                 . "FROM webfinance_clients as c " 
-                 . "JOIN webfinance_company_types as ct USING (id_company_type)  "
-                 . "LEFT JOIN ("
-                 . "    SELECT f.id_client as id_client,round(sum(fl.qtt*fl.prix_ht),0) as ca_total_ht "
-                 . "    FROM webfinance_invoice_rows as fl, webfinance_invoices as f "
-                 . "    WHERE fl.id_facture=f.id_facture "
-                 . "    AND f.type_doc='facture' "
-                 . "    GROUP BY f.id_client "
-                 . ") as sub1 ON sub1.id_client = c.id_client "
-                 . "LEFT JOIN ("
-                 . "    SELECT f.id_client as id_client,round(sum(fl.qtt*fl.prix_ht),0) as ca_total_ht_year "
-                 . "    FROM webfinance_invoice_rows as fl, webfinance_invoices as f "
-                 . "    WHERE fl.id_facture=f.id_facture "
-                 . "    AND f.type_doc='facture' "
-                 . "    AND f.date_facture>=date_sub(now(), INTERVAL 1 YEAR)"
-                 . "    GROUP BY f.id_client "
-                 . ") as sub2 ON sub2.id_client = c.id_client "
-                 . "LEFT JOIN ("
-                 . "    SELECT sum(prix_ht*qtt) as total_du_ht, f.id_client "
-                 . "    FROM webfinance_invoice_rows fl, webfinance_invoices f "
-                 . "    WHERE f.is_paye=0 "
-                 . "    AND f.type_doc='facture' "
-                 . "    AND f.date_facture<=now() "
-                 . "    AND f.id_facture=fl.id_facture "
-                 . "    GROUP BY f.id_client"
-                 . ") as sub3 ON sub3.id_client = c.id_client "
-                 . "WHERE %s" 
+$query = sprintf(Client::getRequest()
+                 . "WHERE %s " 
                  . "ORDER BY %s", $where_clause, $critere);
 
 $result = mysql_query($query) or wf_mysqldie();
@@ -122,6 +107,7 @@ $title = _("Companies");
 $roles="manager,employee,accounting";
 include("../top.php");
 include("nav.php");
+
 ?>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr valign="top"><td rowspan="2">
@@ -136,15 +122,12 @@ include("nav.php");
 </tr>
 <?php
 
-$client = new Client(1);
 $grand_total_ca_ht=0;
 $grand_total_ca_ht_year=0;
 $count=0;
-while ($found = mysql_fetch_object($result)) {
+while ($client = mysql_fetch_object($result)) {
   $count++;
-
-  $client->setId($found->id_client); // Populate $client with calculated values from Client object
-
+  
   $grand_total_ca_ht += $client->ca_total_ht;
   $grand_total_ca_ht_year += $client->ca_total_ht_year;
   $total_dehors += $client->total_du_ht;
@@ -168,27 +151,27 @@ mysql_free_result($result);
 
 // CA total sur l'année N-2
 $result = mysql_query("SELECT sum(fl.qtt*prix_ht), sum((1+tax/100)*prix_ht*fl.qtt)
-                       FROM webfinance_invoice_rows fl, webfinance_invoices f
-                       WHERE f.id_facture=fl.id_facture
-                       AND f.type_doc='facture'
+                       FROM webfinance_invoice_rows fl 
+                       JOIN webfinance_invoices f ON (f.id_facture=fl.id_facture)
+                       WHERE f.type_doc='facture'
                        AND year(f.date_facture) = year(now()) - 2") or wf_mysqldie();
 list($ca_total_ht_annee_nmoisun,$ca_total_ttc_annee_nmoisun) = mysql_fetch_array($result);
 mysql_free_result($result);
 
 // CA total sur l'année N-1
 $result = mysql_query("SELECT sum(fl.qtt*prix_ht), sum((1+tax/100)*prix_ht*fl.qtt)
-                       FROM webfinance_invoice_rows fl, webfinance_invoices f
-                       WHERE f.id_facture=fl.id_facture
-                       AND f.type_doc='facture'
+                       FROM webfinance_invoice_rows fl 
+                       JOIN webfinance_invoices f ON (f.id_facture=fl.id_facture)
+                       WHERE f.type_doc='facture'
                        AND year(f.date_facture) = year(now()) - 1") or wf_mysqldie();
 list($ca_total_ht_annee_precedente, $ca_total_ttc_annee_precedente) = mysql_fetch_array($result);
 mysql_free_result($result);
 
 // CA Total sur année en cours
 $result = mysql_query("SELECT sum(fl.qtt*prix_ht), sum((1+tax/100)*prix_ht*fl.qtt)
-                       FROM webfinance_invoice_rows fl, webfinance_invoices f
-                       WHERE f.id_facture=fl.id_facture
-                       AND f.type_doc='facture'
+                       FROM webfinance_invoice_rows fl
+                       JOIN webfinance_invoices f ON (f.id_facture=fl.id_facture)
+                       WHERE f.type_doc='facture'
                        AND year(f.date_facture) = year(now())") or wf_mysqldie();
 list($ca_total_ht_annee_encours,$ca_total_ttc_annee_encours) = mysql_fetch_array($result);
 mysql_free_result($result);

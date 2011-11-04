@@ -31,12 +31,24 @@
 
 # $Id: Client.php 551 2007-08-02 05:16:27Z gassla $
 
-class Client extends WFO {
+class Client extends WFO 
+{
   var $id = -1;
   var $data = null;
 
-  function _getInfos() {
-      $query = sprintf(
+
+  /**
+   * return all information on a client 
+   */
+
+  /**
+   * return the main request
+   *
+   * @return (string) main request
+   */
+  public static function getRequest() 
+  {
+      return 
               "SELECT c.id_client as id, c.id_client, c.nom, c.date_created,c.tel, c.fax, c.web,"
             . "c.addr1, c.addr2, c.addr3, c.cp, c.ville, c.pays, c.email, left(cp, 2) as departement,"
             . "c.has_devis, c.has_unpaid, sub1.ca_total_ht, sub2.ca_total_ht_year, sub3.total_du_ht,"
@@ -66,17 +78,22 @@ class Client extends WFO {
             . "    AND f.date_facture<=now() "
             . "    AND f.id_facture=fl.id_facture "
             . "    GROUP BY f.id_client"
-            . ") as sub3 ON sub3.id_client = c.id_client "
-              . "WHERE c.id_client = %d",$this->id);
+              . ") as sub3 ON sub3.id_client = c.id_client ";
+  }
+
+  function _getInfos() 
+  {
+      $query = sprintf(self::getRequest() 
+                       . "WHERE c.id_client = %d",$this->id);
 
         $result = $this->SQL(sprintf($query, $this->id)) or wf_mysqldie("Client::_getInfos");
 
-    if (mysql_num_rows($result)) {
-      $data = mysql_fetch_assoc($result);
-      foreach ($data as $n=>$v)
-		  $this->$n = $v;
+        if (mysql_num_rows($result)) {
+            $data = mysql_fetch_assoc($result);
+            foreach ($data as $n=>$v)
+                $this->$n = $v;
 
-      mysql_free_result($result);
+            mysql_free_result($result);
     }
 
     // If user specified data in the siren field it can be either the RCS number

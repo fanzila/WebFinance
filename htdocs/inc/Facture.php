@@ -795,7 +795,7 @@ Veuillez agréer cher Client, l'expression de nos salutations les meilleures."))
 
 	  // Log invoice as sent
 	  logmessage(_("Send invoice")." #$invoice->num_facture fa:$id_invoice ".
-				 "client:$invoice->id_client");
+				 "client:$invoice->id_client", $invoice->id_client, $invoice->id_invoice);
 
 	  return true;
   }

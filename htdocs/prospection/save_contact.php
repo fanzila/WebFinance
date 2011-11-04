@@ -49,7 +49,7 @@ if ($_POST['action'] == "create") {
 
   $_SESSION['message'] = _("Contact added");
 
-  logmessage(_('Add contact')." ".$_POST['nom']." ".$_POST['prenom']. " ( client:".$_POST['client'].")"  );
+  logmessage(_('Add contact')." ".$_POST['nom']." ".$_POST['prenom']. " ( client:".$_POST['client'].")",$_POST['client']);
 
 } elseif ($_POST['action'] == "save") {
 
@@ -65,12 +65,12 @@ if ($_POST['action'] == "create") {
   $res=mysql_query("SELECT client FROM webfinance_personne WHERE id_personne=".$_POST['id_personne']);
   list($client)=mysql_fetch_array($res);
 
-  logmessage(_('Update contact')." ".$_POST['nom']." ".$_POST['prenom']." ( client:$client)" );
+  logmessage(_('Update contact')." ".$_POST['nom']." ".$_POST['prenom']." ( client:$client)", $client);
 
 } elseif ($_POST['action'] == "delete") {
   $res=mysql_query("SELECT nom, prenom, client FROM webfinance_personne WHERE id_personne=".$_POST['id_personne']);
   list($nom, $prenom,$client)=mysql_fetch_array($res);
-  logmessage(_('Delete contact')." $nom $prenom client:$client " );
+  logmessage(_('Delete contact')." $nom $prenom client:$client ", $client);
 
   mysql_query("DELETE FROM webfinance_personne WHERE id_personne=".$_POST['id_personne']);
 

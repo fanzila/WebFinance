@@ -167,7 +167,7 @@ if ($action == "save_facture") {
   mysql_query($q)
 	  or die(mysql_error());
 
-  logmessage(_("Save invoice")." (#$num_facture) fa:".$_POST['id_facture']." client:$facture->id_client");
+  logmessage(_("Save invoice")." (#$num_facture) fa:".$_POST['id_facture']." client:$facture->id_client", $facture->id_client, $_POST['id_facture']);
 
   if(empty($_POST['prix_ht_new']))
 	  $_POST['prix_ht_new']='0.0';
@@ -231,7 +231,7 @@ if ($action == "delete_facture") {
   if (is_numeric($_GET['id_facture']) AND $Facture->exists($_GET['id_facture'])) {
     $facture = $Facture->getInfos($_GET['id_facture']);
 
-    logmessage(_("Delete invoice")." #$facture->num_facture for client:$facture->id_client");
+    logmessage(_("Delete invoice")." #$facture->num_facture for client:$facture->id_client", $facture->id_client);
     $id_client=$facture->id_client;
 
     mysql_query("DELETE FROM webfinance_invoices WHERE id_facture=".$_GET['id_facture']) or wf_mysqldie();
@@ -252,7 +252,7 @@ if ($action == "duplicate") {
   $id_new_facture = $Invoice->duplicate($id);
 
   if($id_new_facture){
-    logmessage("New invoice fa:$id_new_facture duplicated of fa:$id ");
+      logmessage("New invoice fa:$id_new_facture duplicated of fa:$id ", NULL, $id);
     $Invoice->updateTransaction($id_new_facture);
     $_SESSION['message'] = _("Invoice duplicated");
     header("Location: edit_facture.php?id_facture=$id_new_facture");
@@ -327,7 +327,7 @@ if($action == "send"){
 	  or wf_mysqldie();
 	$_SESSION['message'] .= "<br/>"._('Invoice updated');
 
-	logmessage(_("Send invoice")." #$invoice->num_facture fa:$id client:$invoice->id_client");
+	logmessage(_("Send invoice")." #$invoice->num_facture fa:$id client:$invoice->id_client", $invoice->id_client,$id);
       }
 
       //delete the file generated

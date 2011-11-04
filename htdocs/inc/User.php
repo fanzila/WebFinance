@@ -35,11 +35,12 @@ class User {
   function User() {
   }
 
-  function getInfo($id_user = "") {
-    if ($id_user == "") {
-      $id_user = $_SESSION['id_user'];
-    }
-    $result = mysql_query("SELECT id_user, last_name, first_name, login,
+  function getInfo($id_user = "") 
+  {
+      if ($id_user == "") {
+          $id_user = $_SESSION['id_user'];
+      }
+      $result = mysql_query("SELECT id_user, last_name, first_name, login,
                                   email, disabled, last_login, creation_date,
                                   role, modification_date,
                                   date_format(creation_date,'%d/%m/%Y') as nice_creation_date,
@@ -117,23 +118,36 @@ class User {
 //     return $is_admin;
 //   }
 
-  function isAuthorized($roles, $id_user=null){
-    if ($id_user == null)
-      $id_user = $_SESSION['id_user'];
-
-    if ($roles == "any") // The special "any" role is granted to all users (and non users for that matter)
-      return true;
-
-    $req=mysql_query("SELECT role FROM webfinance_users  WHERE id_user=$id_user") or wf_mysqldie();
-    list($user_roles)=mysql_fetch_array($req);
-
-    $user_roles=explode(",",$user_roles);
-    foreach($user_roles as $role){
-      if(preg_match("!(,|^)$role(,|$)!",$roles)) {
-        return true;
+  function isAuthorized($roles, $id_user=null)
+  {
+      if ($id_user == null) {
+          $id_user = $_SESSION['id_user'];
       }
-    }
-    return false;
+      
+      if ($roles == "any") {// The special "any" role is granted to all users (and non users for that matter)
+          return true;
+      }
+      
+      if (isset($_SESSION["auth"][$id_user]) && !empty($_SESSION["auth"][$id_user]))  {
+          $user_roles = unserialize($_SESSION["auth"][$id_user]);
+      } else {
+          $query = sprintf("SELECT role FROM webfinance_users  WHERE id_user=%d", $id_user);
+          $req=mysql_query($query) or wf_mysqldie();
+      
+          list($user_roles)=mysql_fetch_array($req);
+          $user_roles=explode(",",$user_roles);
+
+          //on place le resultat en session pour eviter d'apeller
+          //cette requete trop de fois
+          $_SESSION["auth"][$id_user] = serialize($user_roles);
+      }
+      
+      foreach($user_roles as $role){
+          if(preg_match("!(,|^)$role(,|$)!",$roles)) {
+              return true;
+          }
+      }
+      return false;
   }
 
 
@@ -309,17 +323,18 @@ class User {
   }
 
   // Expects an object
-  function getPrefs() {
-    $result = mysql_query("SELECT value FROM webfinance_pref WHERE owner=".$_SESSION['id_user']." AND type_pref='user_pref'") or wf_mysqldie();
-    list($data) = mysql_fetch_array($result);
-    $this->prefs = unserialize(base64_decode($data));
-
-    if (!isset($this->prefs->theme)) {
-      $this->prefs->theme = "main";
-    }
-    if(!isset($this->prefs->graphgrid)){
-      $this->prefs->graphgrid = 0;
-    }
+  function getPrefs() 
+  {
+      $result = mysql_query("SELECT value FROM webfinance_pref WHERE owner=".$_SESSION['id_user']." AND type_pref='user_pref'") or wf_mysqldie();
+      list($data) = mysql_fetch_array($result);
+      $this->prefs = unserialize(base64_decode($data));
+      
+      if (!isset($this->prefs->theme)) {
+          $this->prefs->theme = "main";
+      }
+      if(!isset($this->prefs->graphgrid)){
+          $this->prefs->graphgrid = 0;
+      }
   }
 
   function sendInfo($id_user,$passwd){

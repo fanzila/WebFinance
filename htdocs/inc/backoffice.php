@@ -87,12 +87,18 @@ function randomPass() {
 }
 
 // Logs a message ala syslog
-function logmessage($msg) {
-  $id = (empty($_SESSION['id_user']))?-1:$_SESSION['id_user'];
-  $msg = preg_replace("/'/", "\\'", $msg );
-  $msg = preg_replace('/"/', "\\'", $msg );
-  mysql_query("INSERT INTO webfinance_userlog (log,date,id_user) VALUES('$msg', now(), $id)") or wf_mysqldie();
+function logmessage($msg, $id_client = 'NULL', $id_facture = 'NULL') 
+{
+    $id = (empty($_SESSION['id_user']))?-1:$_SESSION['id_user'];
+    $msg = preg_replace("/'/", "\\'", $msg );
+    $msg = preg_replace('/"/', "\\'", $msg );
+    
+    $query = 
+        sprintf("INSERT INTO webfinance_userlog " .
+                " (log,date,id_user,id_client,id_facture) VALUES('%s', now(), %s, %s, %s) ", $msg, $id, $id_client,$id_facture);
+    mysql_query($query) or wf_mysqldie();
 }
+
 
 header("Content-Type: text/html; charset=utf-8");
 
