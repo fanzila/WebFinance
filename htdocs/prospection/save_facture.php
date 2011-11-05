@@ -252,7 +252,7 @@ if ($action == "duplicate") {
   $id_new_facture = $Invoice->duplicate($id);
 
   if($id_new_facture){
-      logmessage("New invoice fa:$id_new_facture duplicated of fa:$id ", NULL, $id);
+      logmessage("New invoice fa:$id_new_facture duplicated of fa:$id ", 'NULL', $id);
     $Invoice->updateTransaction($id_new_facture);
     $_SESSION['message'] = _("Invoice duplicated");
     header("Location: edit_facture.php?id_facture=$id_new_facture");
