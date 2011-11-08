@@ -19,7 +19,11 @@
 require_once('../../htdocs/inc/sso.php');
 require_once('../../htdocs/inc/smarty.php');
 
-try{                            /*  */
+try{
+  // Check arguments
+  if(empty($_GET['company_id']))
+    throw new Exception('Missing argument');
+  
   // Check permissions
   $company = new WebfinanceCompany($_GET['company_id']);
   $company->ValidatePermission($_SESSION['cybsso_user']['email']);
