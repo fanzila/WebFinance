@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#$Id$
+#Copyright (C) 2011 ISVTEC SARL
+# $Id$
 
 __author__ = "Ousmane Wilane ♟ <ousmane@wilane.org>"
 __date__   = "Thu Nov 10 15:58:06 2011"

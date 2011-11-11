@@ -1,17 +1,20 @@
-from django.conf.urls.defaults import patterns, include, url
+#!/usr/bin/env python
+#-*- coding: utf-8 -*-
+#Copyright (C) 2011 ISVTEC SARL
+#$Id$
+__author__ = "Ousmane Wilane ♟ <ousmane@wilane.org>"
+__date__   = "Fri Nov 11 07:01:12 2011"
 
-# Uncomment the next two lines to enable the admin:
+from django.conf.urls.defaults import patterns, include, url
+from django.views.generic.simple import redirect_to
+
 from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'fo.views.home', name='home'),
-    # url(r'^fo/', include('fo.foo.urls')),
-
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
+    url(r'^$',redirect_to, {'url': '/invoice/companies', 'permanent': False}, 'home'),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^invoice/', include('fo.invoice.urls')),
+    url(r'^enterprise/', include('fo.enterprise.urls')),
+    url(r'^accounts/', include('django.contrib.auth.urls')),                       
 )

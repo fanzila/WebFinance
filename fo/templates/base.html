@@ -1,0 +1,22 @@
+{% load i18n %}
+{% load url from future %}
+
+<html>
+  <head>
+    {% block head %}
+    <title>{% block title %}{% endblock %}</title>
+    {% endblock %}
+  </head>
+
+  <body>
+    {% block content %}
+    {% endblock %}
+
+    {% block footer %}
+    <hr />
+    <a href="{% url 'list_companies' %}">{% blocktrans %}My companies {% endblocktrans %}</a> | 
+    <a href="{% url 'add_company' %}">{% blocktrans %}Add a company {% endblocktrans %}</a> | 
+    <a href="#">{% blocktrans %}Due invoices {% endblocktrans %}</a>
+    {% endblock %}
+  </body>
+</html>

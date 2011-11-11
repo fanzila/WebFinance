@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#Copyright (C) 2011 ISVTEC SARL
 #$Id$
 
 __author__ = "Ousmane Wilane ♟ <ousmane@wilane.org>"
@@ -139,7 +140,7 @@ class Transactions(models.Model):
     file_type = models.CharField(max_length=75, blank=True)
     file_name = models.CharField(max_length=150, blank=True)
     lettrage = models.IntegerField(null=True, blank=True)
-    id_invoice = models.IntegerField(null=True, blank=True)
+    id_invoice = models.ManyToManyField('Invoices', through='TransactionInvoice')
 
     class Meta:
         verbose_name = _('Transaction')
@@ -150,21 +151,6 @@ class Transactions(models.Model):
         return u"%s | %s " % (
             unicode(self.id_account),
             unicode(self.date_amount))
-
-
-class Presta(models.Model):
-    id_type_presta = models.IntegerField(primary_key=True)
-    nom = models.CharField(unique=True, max_length=255, blank=True)
-
-    class Meta:
-        verbose_name = _('Service')
-        verbose_name_plural = _('Services')
-        db_table = u'webfinance_type_presta'
-        
-    def __unicode__(self):
-        return u"%s | %s " % (
-            unicode(self.id_type_presta),
-            unicode(self.nom))
 
 
 class TypePresta(models.Model):
@@ -241,17 +227,3 @@ class TypeTva(models.Model):
             unicode(self.taux))
 
 
-class Naf(models.Model):
-    id_naf = models.IntegerField(primary_key=True)
-    code = models.CharField(max_length=12, primary_key=True)
-    nom = models.CharField(max_length=765)
-
-    class Meta:
-        verbose_name = _('NAF')
-        verbose_name_plural = _('NAF')
-        db_table = u'webfinance_naf'
-
-    def __unicode__(self):
-        return u"%s | %s " % (
-            unicode(self.nom),
-            unicode(self.taux))

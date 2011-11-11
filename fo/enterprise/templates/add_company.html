@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load url from future %}
+
+{% block content %}
+    <h2>{% blocktrans %} Add a company {% endblocktrans %}</h2>
+
+    <form method="POST">
+     <table>
+      {{ form.as_table }}
+     </table>
+     <input type="submit">
+    </form>
+{% endblock %}
