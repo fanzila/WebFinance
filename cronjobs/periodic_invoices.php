@@ -40,7 +40,8 @@ setlocale(LC_TIME, "fr_FR.UTF8");
 $result = mysql_query('SELECT id_facture '.
           'FROM webfinance_invoices '.
           "WHERE period!='none' AND ".
-          'periodic_next_deadline<=NOW()')
+          'periodic_next_deadline<=NOW() AND ' .
+          "type_doc = 'facture'")
   or die(mysql_error());
 
 if(mysql_num_rows($result)==0) {
