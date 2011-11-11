@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#Copyright (C) 2011 ISVTEC SARL
 #$Id$
 
 __author__ = "Ousmane Wilane ♟ <ousmane@wilane.org>"
@@ -73,8 +74,8 @@ class Clients(models.Model):
 # M2M Jonction table ... This doesn't showup nowhere
 class Clients2Users(models.Model):
     id = models.IntegerField(primary_key=True)
-    client = models.ForeignKey(Clients, unique=True, db_column='id_client')
-    user = models.ForeignKey(Users,unique=True, db_column='id_user')
+    client = models.ForeignKey(Clients,  db_column='id_client')
+    user = models.ForeignKey(Users, db_column='id_user')
 
     class Meta:
         verbose_name = _('Client/User')
@@ -172,17 +173,3 @@ class Roles(models.Model):
             unicode(self.description))
 
 
-class Naf(models.Model):
-    id_naf = models.IntegerField(primary_key=True)
-    code = models.CharField(max_length=12, primary_key=True)
-    nom = models.CharField(max_length=765)
-
-    class Meta:
-        verbose_name = _('NAF')
-        verbose_name_plural = _('NAF')
-        db_table = u'webfinance_naf'
-
-    def __unicode__(self):
-        return u"%s | %s " % (
-            unicode(self.nom),
-            unicode(self.taux))

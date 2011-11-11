@@ -6,11 +6,23 @@
 __author__ = "Ousmane Wilane ♟ <ousmane@wilane.org>"
 __date__   = "Thu Nov 10 13:21:00 2011"
 
-import os, sys
+import os
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 DIRNAME = os.path.dirname(__file__)
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'webfinancesqlite',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '', 
+        'PORT': '',
+    }
+}
+
 
 
 # Local time zone for this installation. Choices can be found here:
@@ -90,14 +102,13 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-#    'django.contrib.auth.middleware.RemoteUserMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
 ROOT_URLCONF = 'fo.urls'
 
 TEMPLATE_DIRS = (
-    os.path.join(DIRNAME, 'templates'),
+    os.path.join(DIRNAME, '../', 'templates'),
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -116,6 +127,7 @@ INSTALLED_APPS = (
     'fo.invoice',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'testrecorder',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -140,22 +152,3 @@ LOGGING = {
         },
     }
 }
-
-#AUTHENTICATION_BACKENDS = (
-#    'libs.auth.WFRemoteUserBackend',
-#)
-
-FIXTURE_DIRS = [os.path.join(DIRNAME, 'fixtures')]
-
-try:
-    from fo.local_settings import *
-except:
-    # No problem if you don't have local settings, guess you know what you're
-    # doing
-    pass
-
-if 'test' in sys.argv:
-    try:
-        from tests.settings import *
-    except ImportError, e:
-        print e
