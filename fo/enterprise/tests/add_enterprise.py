@@ -35,6 +35,7 @@ class AddCompanyTest(TestCase):
                                     {'id_client': 142,
                                      'has_devis': 0,
                                      'id_user': 1,
+                                     'id_company_type': 1,
                                      'nom': 'foo baz'},
                                     follow = True)
         self.assertEqual(Clients.objects.count(), count + 1)
