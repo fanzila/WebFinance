@@ -116,6 +116,7 @@ INSTALLED_APPS = (
     'fo.invoice',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'django_coverage',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -145,6 +146,7 @@ LOGGING = {
 #    'libs.auth.WFRemoteUserBackend',
 #)
 
+# Load fixtures data from data provided by Cyril (bootstrap.sql)
 FIXTURE_DIRS = [os.path.join(DIRNAME, 'fixtures')]
 
 try:
@@ -154,8 +156,9 @@ except:
     # doing
     pass
 
-if 'test' in sys.argv:
+if 'test' or 'test_coverage' in sys.argv:
     try:
         from tests.settings import *
     except ImportError, e:
-        print e
+        #If you're testing watch this.
+        pass
