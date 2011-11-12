@@ -12,7 +12,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^$',redirect_to, {'url': '/invoice/companies', 'permanent': False}, 'home'),
+    url(r'^$',redirect_to, {'url': 'invoice/companies', 'permanent': False}, 'home'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^invoice/', include('fo.invoice.urls')),
     url(r'^enterprise/', include('fo.enterprise.urls')),

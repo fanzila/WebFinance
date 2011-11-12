@@ -9,7 +9,7 @@ __date__   = "Fri Nov 11 12:01:45 2011"
 from django.contrib.auth.decorators import login_required, permission_required
 from fo.invoice.models import Invoices
 from fo.enterprise.models import Clients, Users
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.template.context import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from enterprise.form import EnterpriseForm
