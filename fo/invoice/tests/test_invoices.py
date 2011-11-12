@@ -40,6 +40,13 @@ class InvoiceTest(TestCase):
         self.client.logout()
 
 
+    def test_list_invoice404(self):
+        url = reverse("list_invoices", kwargs={'customer_id':123})        
+        self.client.login(username='admin', password='admin')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+        self.client.logout()
+        
     def test_detail_invoice(self):
         url = reverse("detail_invoice", kwargs={'invoice_id':1})
         response = self.client.get(url)
@@ -52,6 +59,14 @@ class InvoiceTest(TestCase):
         self.client.logout()
         
 
+    def test_detail_invoice404(self):
+        url = reverse("detail_invoice", kwargs={'invoice_id':123})
+        response = self.client.get(url)
+        self.client.login(username='admin', password='admin')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+        self.client.logout()
+        
 
         
         
