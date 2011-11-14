@@ -15,13 +15,13 @@ from django.http import Http404
 
 @login_required
 def list_companies(request):
-    # FIXME: We have to make the remote users linked to the User object
     try:
-        current_user = Users.objects.get(id_user=2)
+        current_user = Users.objects.get(email=request.user.email)
     except Users.DoesNotExist:
         raise Http404
-    
-    customer_list = current_user.customer.all()
+
+    # We keep a loose coupling with native Users database from the backend
+    customer_list = current_user.clients_set.all()
     return render(request,'list_companies.html',
                               {'customer_list': customer_list})
     

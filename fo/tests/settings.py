@@ -44,3 +44,7 @@ LOGGING = {
         },
     }
 }
+
+# for django.contrib.auth default tests suite
+AUTHENTICATION_BACKENDS =  ('libs.auth.WFRemoteUserBackend',
+                            'django.contrib.auth.backends.ModelBackend',) 

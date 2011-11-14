@@ -25,3 +25,5 @@ DATABASES = {
     }
 }
 
+CYBSSO_LOGIN = 'http://cybsso-dev.isvtec.com/'
+LOGIN_URL = '/ssoaccounts/login'

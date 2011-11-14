@@ -90,7 +90,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-#    'django.contrib.auth.middleware.RemoteUserMiddleware',
+    #'django.contrib.auth.middleware.RemoteUserMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
@@ -142,9 +142,11 @@ LOGGING = {
     }
 }
 
-#AUTHENTICATION_BACKENDS = (
-#    'libs.auth.WFRemoteUserBackend',
-#)
+AUTHENTICATION_BACKENDS = (
+     'libs.auth.WFRemoteUserBackend',
+)
+
+AUTH_PROFILE_MODULE = 'fo.enterprise.Users'
 
 # Load fixtures data from data provided by Cyril (bootstrap.sql)
 FIXTURE_DIRS = [os.path.join(DIRNAME, 'fixtures')]
@@ -156,7 +158,7 @@ except:
     # doing
     pass
 
-if 'test' or 'test_coverage' in sys.argv:
+if 'test' in sys.argv or 'test_coverage' in sys.argv:
     try:
         from tests.settings import *
     except ImportError, e:
