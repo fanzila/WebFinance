@@ -8,7 +8,7 @@
         {% for invoice in invoice_list %}
             <li><a href="{% url 'detail_invoice' invoice_id=invoice.id_facture %}">{{ invoice.num_facture }} | {{ invoice.date_facture }}</a></li>
         {% empty %}
-            {% blocktrans %} You have no invoice or quote for{% endblocktrans %}{{ company }}
+            {% blocktrans %} You have no invoice or quote for {{ company }} {% endblocktrans %}
         {% endfor %}
     </ul>
 {% endblock %}

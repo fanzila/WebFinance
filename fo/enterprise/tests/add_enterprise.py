@@ -9,13 +9,12 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse
 from enterprise.models import Clients
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import User
 
 class AddCompanyTest(TestCase):
     def setUp(self):
-         u = User.objects.create(username='admin')
-         u.set_password('admin')
-         u.save()
+        # We need a ticket and an account
+        self.username = 'ousmane@wilane.org'
+        self.ticket = '59b08eb3aa376bdb5fb1959a3df6c19a597a55a61f420c4bcf5554d55fec2eeb30b635e755a0b97b'
          
 
     def test_add_company(self):
@@ -24,7 +23,7 @@ class AddCompanyTest(TestCase):
 
         self.assertEqual(response.status_code, 302)
 
-        self.client.login(username='admin', password='admin')
+        self.client.login(username=self.username, ticket=self.ticket)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 

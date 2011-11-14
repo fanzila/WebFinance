@@ -8,10 +8,11 @@ __date__   = "Thu Nov 10 14:20:07 2011"
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth.models import User
 
 class Users(models.Model):
     id_user = models.IntegerField(primary_key=True)
-    customer = models.ManyToManyField('Clients', through='Clients2Users')
+    #customer = models.ManyToManyField('Clients', through='Clients2Users')
     last_name = models.CharField(max_length=300, blank=True)
     first_name = models.CharField(max_length=300, blank=True)
     login = models.CharField(unique=True, max_length=255)
@@ -38,6 +39,7 @@ class Users(models.Model):
 
 class Clients(models.Model):
     id_client = models.IntegerField(primary_key=True)
+    users = models.ManyToManyField('Users', through='Clients2Users')
     nom = models.CharField(unique=True, max_length=255, blank=True)
     tel = models.CharField(max_length=45, blank=True)
     fax = models.CharField(max_length=600, blank=True)
@@ -57,7 +59,8 @@ class Clients(models.Model):
     siren = models.CharField(max_length=150, blank=True)
     total_du_ht = models.DecimalField(null=True, max_digits=22, decimal_places=4, blank=True)
     id_company_type = models.IntegerField()
-    id_user = models.IntegerField()
+    # This is the user who created this I guess
+    id_user = models.ForeignKey(Users, related_name='creator', db_column='id_user') #models.IntegerField()
     password = models.CharField(max_length=300, blank=True)
 
     class Meta:
@@ -106,7 +109,7 @@ class Userlog(models.Model):
     id_userlog = models.IntegerField(primary_key=True)
     log = models.TextField(blank=True)
     date = models.DateTimeField(null=True, blank=True)
-    id_user = models.IntegerField(null=True, blank=True)
+    id_user = models.ForeignKey(Users, db_column='id_user') #models.IntegerField(null=True, blank=True)
     id_facture = models.IntegerField(null=True, blank=True)
     id_client = models.IntegerField(null=True, blank=True)
 

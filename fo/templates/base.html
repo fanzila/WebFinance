@@ -16,7 +16,7 @@
     <hr />
     <a href="{% url 'list_companies' %}">{% blocktrans %}My companies {% endblocktrans %}</a> | 
     <a href="{% url 'add_company' %}">{% blocktrans %}Add a company {% endblocktrans %}</a> | 
-    <a href="#">{% blocktrans %}Due invoices {% endblocktrans %}</a>
+    <a href="#">{% blocktrans %}Due invoices {% endblocktrans %}</a> | <a href="{% url 'logout_cybsso' %}">{% trans 'Logout' %}</a>
     {% endblock %}
   </body>
 </html>
