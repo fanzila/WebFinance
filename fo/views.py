@@ -23,11 +23,11 @@ def ssologin(request):
 
     # We've just logged in and back from the SSO login page, save to session
     if request.GET.get('cybsso_ticket', False) and request.GET.get('cybsso_email', False):
-        request.session['cybsso_ticket'] = request.GET.get('cybsso_ticket')
-        request.session['cybsso_email'] = request.GET.get('cybsso_email')
         user = authenticate(username=request.GET['cybsso_email'],
                             ticket=request.GET['cybsso_ticket'])
         if user:
+            request.session['cybsso_ticket'] = request.GET.get('cybsso_ticket')
+            request.session['cybsso_email'] = request.GET.get('cybsso_email')
             login(request, user)
             return redirect(request.session.get('next'))
         
