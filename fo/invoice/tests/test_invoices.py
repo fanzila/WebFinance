@@ -101,8 +101,7 @@ class InvoiceTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.client.login(username=self.username, ticket=self.ticket)
         response = self.client.get(url, follow=True)
-        print dir(response)
-        self.assertContains(response, _("Invoices/Quotes for company"))
+        self.assertEqual(response['Content-Type'], "application/pdf")
         self.client.logout()
 
 

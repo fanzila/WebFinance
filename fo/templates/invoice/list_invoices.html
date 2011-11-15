@@ -13,6 +13,9 @@
                 </a> |
                 <a href="{% url 'hipay_invoice' invoice_id=invoice.id_facture %}">
                                     {% trans 'Pay invoice with HiPay' %}
+                </a> |
+                <a href="{% url 'download_invoice' invoice_id=invoice.id_facture %}">
+                                    {% trans 'Download invoice' %}
                 </a>
             </li>
         {% empty %}
