@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load url from future %}
+
+{% block content %}
+    <h1>{% blocktrans %}Invoices/Quotes for company {% endblocktrans %}{{ company }}</h1>
+    {% if invoice_list %}<h2>{% trans 'Invoices' %}</h2>{% endif %}
+    <ul>
+        {% for invoice in invoice_list %}
+            <li><a href="{% url 'detail_invoice' invoice_id=invoice.id_facture %}">
+                                    {{ invoice.num_facture }} | 
+                                    {{ invoice.date_facture }}
+                </a> |
+                <a href="{% url 'hipay_invoice' invoice_id=invoice.id_facture %}">
+                                    {% trans 'Pay invoice with HiPay' %}
+                </a>
+            </li>
+        {% empty %}
+            {% blocktrans %} You have no pending invoice for {{ company }} {% endblocktrans %}
+        {% endfor %}
+    </ul>
+
+    {% if quote_list %}<h2>{% trans 'Quotes' %}</h2>{% endif %}
+    <ul>
+        {% for invoice in quote_list %}
+            <li><a href="{% url 'detail_invoice' invoice_id=invoice.id_facture %}">
+                                    {{ invoice.num_facture }} | 
+                                    {{ invoice.date_facture }}
+                </a> |
+                <a href="{% url 'accept_quote' invoice_id=invoice.id_facture %}">
+                                    {% trans 'Accpet quote' %}
+                </a>
+            </li>
+        {% empty %}
+            {% blocktrans %} You have no pending quote for {{ company }} {% endblocktrans %}
+        {% endfor %}
+    </ul>
+
+{% endblock %}

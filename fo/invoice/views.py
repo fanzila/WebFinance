@@ -5,44 +5,67 @@
 __author__ = "Ousmane Wilane ♟ <ousmane@wilane.org>"
 __date__   = "Fri Nov 11 09:43:42 2011"
 
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
 from fo.invoice.models import Invoices
 from fo.enterprise.models import Clients, Users
-from django.shortcuts import render
-from django.template.context import RequestContext
-from django.utils.translation import ugettext_lazy as _
-from django.http import Http404
+from django.shortcuts import render, redirect, get_object_or_404, Http404
+from subprocess import call
+from django.conf import settings
+from django.http import HttpResponse
+from os.path import join
 
 @login_required
 def list_companies(request):
-    try:
-        current_user = Users.objects.get(email=request.user.email)
-    except Users.DoesNotExist:
-        raise Http404
+    current_user = get_object_or_404(Users, email=request.user.email)
 
     # We keep a loose coupling with native Users database from the backend
-    customer_list = current_user.clients_set.all()
-    return render(request,'list_companies.html',
+    customer_list = current_user.clients_set.all() | current_user.creator.all()
+    return render(request,'invoice/list_companies.html',
                               {'customer_list': customer_list})
     
 @login_required
 def list_invoices(request, customer_id):
-    try:
-        customer = Clients.objects.get(id_client=customer_id)
-    except Clients.DoesNotExist:
-        raise Http404
-    
-    return render(request, 'list_invoices.html',
-                              {'invoice_list': customer.invoices_set.all(),
+
+    customer = get_object_or_404(Clients, id_client=customer_id)    
+    return render(request, 'invoice/list_invoices.html',
+                              {'invoice_list': customer.invoices_set.filter(type_doc='facture', is_paye=False),
+                               'quote_list': customer.invoices_set.filter(type_doc='devis'),
                                'company': customer})
 
 @login_required
 def detail_invoice(request, invoice_id):
-    try:
-        invoice = Invoices.objects.get(id_facture=invoice_id)
-    except Invoices.DoesNotExist:
-        raise Http404
+    invoice = get_object_or_404(Invoices, id_facture=invoice_id)
     
-    return render(request, 'detail_invoices.html',
+    return render(request, 'invoice/detail_invoices.html',
                               {'invoice':invoice,
                                'invoice_details': invoice.invoicerows_set.order_by('ordre')})
+
+@login_required
+def accept_quote(request, invoice_id):
+    quote = get_object_or_404(Invoices, id_facture=invoice_id)
+    quote.type_doc = 'facture'
+    quote.save()
+    return redirect('list_invoices', customer_id=quote.client.id_client)
+
+@login_required
+def hipay_invoice(request, invoice_id):
+
+    quote = get_object_or_404(Invoices, id_facture=invoice_id)
+    return redirect('list_invoice', customer_id=quote.client.id_client)
+
+
+@login_required
+def download_invoice(request, invoice_id):
+    #FIXME: Make the the called script accept a configurable directory, Cyril
+    #can you fix that please.
+    
+    invoice = get_object_or_404(Invoices, id_facture=invoice_id)
+    if not call([settings.INVOICE_PDF_GENERATOR, str(invoice.id_facture)]):
+        filename = 'Facture_%s_%s.pdf' %(invoice.num_facture, invoice.client.nom)
+        filepath = join(settings.INVOICE_PDF_DIR, filename)        
+        response = HttpResponse(mimetype='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename=%s' %(filename,)
+        response.write(open(filepath).read())
+        return response
+
+    raise Http404

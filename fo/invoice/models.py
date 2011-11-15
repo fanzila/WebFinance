@@ -42,7 +42,7 @@ class Invoices(models.Model):
     date_generated = models.DateTimeField(null=True, blank=True)
     date_sent = models.DateTimeField(null=True, blank=True)
     date_paiement = models.DateTimeField(null=True, blank=True)
-    is_paye = models.IntegerField(null=True, blank=True)
+    is_paye = models.NullBooleanField(default=False)
     num_facture = models.CharField(unique=True, max_length=30, blank=True)
     type_paiement = models.CharField(max_length=765, blank=True)
     ref_contrat = models.CharField(max_length=765, blank=True)

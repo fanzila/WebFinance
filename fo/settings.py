@@ -150,6 +150,8 @@ AUTH_PROFILE_MODULE = 'fo.enterprise.Users'
 
 # Load fixtures data from data provided by Cyril (bootstrap.sql)
 FIXTURE_DIRS = [os.path.join(DIRNAME, 'fixtures')]
+INVOICE_PDF_GENERATOR = os.path.join(DIRNAME, '../bin/build_invoice_by_id')
+INVOICE_PDF_DIR = '/tmp'
 
 try:
     from fo.local_settings import *

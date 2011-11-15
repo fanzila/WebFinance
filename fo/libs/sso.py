@@ -6,7 +6,7 @@ __author__ = "Ousmane Wilane ♟ <ousmane@wilane.org>"
 __date__   = "Mon Nov 14 11:33:29 2011"
 
 
-from elementtree.ElementTree import Element, SubElement, QName, tostring, parse, ElementTree
+from xml.etree.ElementTree import Element, SubElement, QName, tostring, parse, ElementTree
 import base64, urlparse, urllib2, StringIO
 from SOAPpy import parseSOAPRPC
 from SOAPpy.Types import faultType
