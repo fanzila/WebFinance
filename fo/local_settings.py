@@ -19,7 +19,6 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'webfinance',
         'USER': 'root',
-        #'PASSWORD': 'lptevtg',
         'HOST': '10.42.0.1', 
         'PORT': '',
     }

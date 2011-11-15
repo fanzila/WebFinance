@@ -11,7 +11,6 @@ from libs.sso import *
 from datetime import datetime
 
 class WFRemoteUserBackend(ModelBackend):
-    
     def authenticate(self, username=None, ticket=None):
         cybsso = CYBSSOService(CYBSSO_URL)
         tc = cybsso.TicketCheck(ticket, username)
@@ -26,4 +25,3 @@ class WFRemoteUserBackend(ModelBackend):
 
         return None
 
-        
