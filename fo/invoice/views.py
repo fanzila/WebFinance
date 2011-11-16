@@ -16,10 +16,14 @@ from os.path import join
 
 @login_required
 def list_companies(request):
-    current_user = get_object_or_404(Users, email=request.user.email)
+    try:
+        current_user = Users.objects.get(email=request.user.email)
+        # We keep a loose coupling with native Users database from the backend
+        customer_list = current_user.clients_set.all() | current_user.creator.all()
+        
+    except Users.DoesNotExist:
+        customer_list = None
 
-    # We keep a loose coupling with native Users database from the backend
-    customer_list = current_user.clients_set.all() | current_user.creator.all()
     return render(request,'invoice/list_companies.html',
                               {'customer_list': customer_list})
     

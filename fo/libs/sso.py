@@ -12,6 +12,7 @@ from SOAPpy import parseSOAPRPC
 from SOAPpy.Types import faultType
 from datetime import datetime
 
+# FIXME: Move these to settings or better yet read wf.conf
 CYBSSO_LOGIN = "ousmane"
 CYBSSO_PASSWORD = "LqayCNP126KV41cq8FI59hS5HBIPfVEs2EHdsuD8SNEabVulofP5ThTg6xLwvnHg"
 credentials = dict(username=CYBSSO_LOGIN, password=CYBSSO_PASSWORD)
