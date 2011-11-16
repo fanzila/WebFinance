@@ -47,5 +47,7 @@ def ssologin(request):
 @require_http_methods(["GET"])
 def ssologout(request):
     logout(request)
-    return redirect(settings.CYBSSO_LOGIN)
+    # FIXME: Create a HP that doesn't require auth or just leave the user at the
+    # sso once logged out ?
+    return redirect('%s?action=logout' %settings.CYBSSO_LOGIN)
     

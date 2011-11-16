@@ -14,7 +14,7 @@ class InvoiceTest(TestCase):
         # We need a ticket and an account for test to pass before we use
         # selenium and friends
         self.username = 'ousmane@wilane.org'
-        self.ticket = '4972240c0cbffe0fe1a52f754a87accc9eab90bc4af43372a89e7c41d6e21d7ca7b5e912cf813130'
+        self.ticket = '1337100a05f384304f18220a49921be7cb37ee2c251b8533f59fc70c35c6f81c4f6de7575c6566c3'
 
     def test_list_companies(self):
         url = reverse("list_companies")
