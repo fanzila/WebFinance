@@ -117,6 +117,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'django_coverage',
+    'hipay',
 )
 
 # A sample logging configuration. The only tangible logging
