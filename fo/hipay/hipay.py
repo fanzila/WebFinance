@@ -7,6 +7,9 @@ __date__   = "Wed Nov 16 07:40:23 2011"
 
 import re
 import os
+import urllib2
+from urllib import urlencode
+import hashlib
 import xml.etree.ElementTree as ET
 #FIXME: use regular gettext to get this library Django independant or make it a
 #full django app django-hipay
@@ -58,16 +61,16 @@ class HiPayTree(object):
     def asTree(self):
         return ET.ElementTree(self.root)
 
-    def validate(self):
+    def validate(self, xml=None):
         """Validate against xsd schema the provided schema
         https://payment.hipay.com/schema/mapi.xsd"""
         schema = XMLSchema(file=open(os.path.join(DIRNAME, 'mapi.xsd'), 'rb'), attribute_defaults=True)
         parser = XMLParser(schema=schema, attribute_defaults=True)        
-        
+        if not xml:
+            xml = ET.tostring(self.asTree().getroot())
         try:
-            root = fromstring(ET.tostring(self.asTree().getroot()), parser)
+            root = fromstring(xml, parser)
         except Exception, e:
-            print e
             return False
         return isinstance(root, _Element)
         
@@ -440,7 +443,7 @@ class Order(HiPayTree):
                            str(k['orderCategory']).isdigit() and
                            isinstance(k['insuranceTax'], Tax) and
                            isinstance(k['fixedCostTax'], Tax) and
-                           isinstance(k['affiliate'], Affiliate) for k in orders]):
+                           ('affiliate' not in orders or ('affiliate' in orders and isinstance(k['affiliate'], Affiliate))) for k in orders]):
             for o in orders:
                 element = ET.Element('HIPAY_MAPI_Order')
                 element = setTag(o, element)
@@ -453,6 +456,7 @@ class HiPay(HiPayTree):
 
     def __init__(self, params):
         self.params = params
+        self.user_agent = "Hipay Python Mapi"
 
     def SimplePayment(self, orders, products):
         self.params.setPaymentMethod(0)
@@ -465,14 +469,40 @@ class HiPay(HiPayTree):
         self.root = ET.Element('HIPAY_MAPI_MultiplePayment')
         self.root.extend([self.params.asTree().getroot(), orders.asTree().getroot(), installements.asTree().getroot()])
 
-    def SendPayment(self):
-        pass
-
+        self.root = ET.Element('order')
+        
+        
+    def SendPayment(self, gw):
+        self.mapi =  ET.Element('mapi')
+        self.mapi = setTag({'mapiversion':'1.0'}, self.mapi)
+        m = hashlib.md5()
+        m.update(ET.tostring(self.asTree().getroot()))
+        self.mapi = setTag({'md5content':m.hexdigest()}, self.mapi)        
+        self.mapi.append(self.root)
+        #xml = """<?xml version="1.0" ?>%s""" %(ET.tostring(ET.ElementTree(self.mapi).getroot(), encoding="utf-8"),)
+        xml = ET.tostring(ET.ElementTree(self.mapi).getroot(), encoding="utf-8")
+        opener = urllib2.build_opener()
+        opener.addheaders = [("Content-Type", "text/xml"),
+                             ("Content-Length", str(len(xml))),
+                             ("User-Agent", self.user_agent)]
+        urllib2.install_opener(opener)
+        
+        request = urllib2.Request(gw,urlencode({'xml':xml}))
+        response = opener.open(request)
+        self.response = response
+        self.ProcessAnswer()
+        
     def getPaymentXML(self):
         pass
     
     def ProcessAnswer(self):
-        pass
-
-
+        try:
+            response = self.response.read()
+        except:
+            raise ValueError(_("Empty enswer"))
+        tree = ET.fromstring(response)
+        #<mapi><mapiversion>1.0</mapiversion><md5content>993bd2cf4e37b6de5c953981a66d9887</md5content><result><status>error</status><message>Invalid merchant website password !</message></result></mapi>
+        if tree.find('result/status').text == 'error':
+            #print "Error:", tree.find("result/message").text
+            raise ValueError(_("""Error: %s""" %(tree.find("result/message"),)))
 

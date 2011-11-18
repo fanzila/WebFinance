@@ -13,6 +13,8 @@ from subprocess import call
 from django.conf import settings
 from django.http import HttpResponse
 from os.path import join
+import operator
+from django.db.models import Q
 
 @login_required
 def list_companies(request):
@@ -29,8 +31,8 @@ def list_companies(request):
     
 @login_required
 def list_invoices(request, customer_id):
-
-    customer = get_object_or_404(Clients, id_client=customer_id)    
+    current_user = Users.objects.get(email=request.user.email)
+    customer = get_object_or_404(current_user.clients_set, id_client=customer_id)    
     return render(request, 'invoice/list_invoices.html',
                               {'invoice_list': customer.invoices_set.filter(type_doc='facture', is_paye=False),
                                'quote_list': customer.invoices_set.filter(type_doc='devis'),
@@ -38,7 +40,9 @@ def list_invoices(request, customer_id):
 
 @login_required
 def detail_invoice(request, invoice_id):
-    invoice = get_object_or_404(Invoices, id_facture=invoice_id)
+    current_user = Users.objects.get(email=request.user.email)
+    qs  = reduce(operator.or_,[c.invoices_set.all() for c in current_user.clients_set.all()])
+    invoice = get_object_or_404(qs, id_facture=invoice_id)    
     
     return render(request, 'invoice/detail_invoices.html',
                               {'invoice':invoice,
@@ -46,15 +50,18 @@ def detail_invoice(request, invoice_id):
 
 @login_required
 def accept_quote(request, invoice_id):
-    quote = get_object_or_404(Invoices, id_facture=invoice_id)
+    current_user = Users.objects.get(email=request.user.email)
+    qs  = reduce(operator.or_,[c.invoices_set.all() for c in current_user.clients_set.all()])
+    quote = get_object_or_404(qs, id_facture=invoice_id)    
     quote.type_doc = 'facture'
     quote.save()
     return redirect('list_invoices', customer_id=quote.client.id_client)
 
 @login_required
 def hipay_invoice(request, invoice_id):
-
-    quote = get_object_or_404(Invoices, id_facture=invoice_id)
+    current_user = Users.objects.get(email=request.user.email)
+    qs  = reduce(operator.or_,[c.invoices_set.all() for c in current_user.clients_set.all()])    
+    quote = get_object_or_404(qs, id_facture=invoice_id)    
     return redirect('list_invoice', customer_id=quote.client.id_client)
 
 
@@ -62,8 +69,9 @@ def hipay_invoice(request, invoice_id):
 def download_invoice(request, invoice_id):
     #FIXME: Make the the called script accept a configurable directory, Cyril
     #can you fix that please.
-    
-    invoice = get_object_or_404(Invoices, id_facture=invoice_id)
+    current_user = Users.objects.get(email=request.user.email)
+    qs  = reduce(operator.or_,[c.invoices_set.all() for c in current_user.clients_set.all()])    
+    invoice = get_object_or_404(qs, id_facture=invoice_id)
     if not call([settings.INVOICE_PDF_GENERATOR, str(invoice.id_facture)]):
         filename = 'Facture_%s_%s.pdf' %(invoice.num_facture, invoice.client.nom)
         filepath = join(settings.INVOICE_PDF_DIR, filename)        

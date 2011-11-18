@@ -6,6 +6,7 @@
 __author__ = "Ousmane Wilane ♟ <ousmane@wilane.org>"
 __date__   = "Thu Nov 10 13:25:50 2011"
 
+from django.conf import settings
 
 ADMINS = (
     ('Cyril Bouthors', 'cyril.bouthors@isvtec.com'),
@@ -26,3 +27,10 @@ DATABASES = {
 
 CYBSSO_LOGIN = 'http://cybsso-dev.isvtec.com/'
 LOGIN_URL = '/ssoaccounts/login'
+
+
+# Hipay
+HIPAY_PAYMENT_GW="https://payment.hipay.com/order/"
+if settings.DEBUG:
+    HIPAY_PAYMENT_GW="https://test-payment.hipay.com/order/"
+
