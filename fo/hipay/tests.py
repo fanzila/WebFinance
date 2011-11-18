@@ -215,7 +215,7 @@ class HiPayTest(TestCase):
         pay = hipay.HiPay(s)        
         pay.MultiplePayment(order, inst)
         self.assertEqual(hashlib.sha224(ET.tostring(pay.asTree().getroot())).hexdigest(),
-                         '07a8062d33f61ad8bb05fcccf6dd672da21edee128e37f2970076a4e')
+                         'bc88377a2c2a1b62a874a96dc3cbc842970e88f66306db8cfbd0b9a3')
         root = fromstring(ET.tostring(pay.asTree().getroot()), self.parser)
         # Validate against the provided schema  https://payment.hipay.com/schema/mapi.xs
         self.assertIsInstance(root, _Element)
