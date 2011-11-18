@@ -202,20 +202,21 @@ class HiPayTest(TestCase):
             mestax=[dict(taxName='TVA', taxVal='19.6', percentage='true')]
             taxes[root].setTaxes(mestax)
         
-        data = [{'shippingAmount':1.50, 'insuranceAmount':2.00, 'fixedCostAmount':2.25, 'fixedCostTax':taxes['fixedCostTax'], 'insuranceTax': taxes['insuranceTax'], 'shippingTax':taxes['shippingTax'], 'orderTitle':'Mon ordre 2', 'orderInfo':'Box 2', 'orderCategory':91, 'affiliate':af}, {'shippingAmount':1.50, 'insuranceAmount':2.00, 'fixedCostAmount':2.25, 'fixedCostTax':taxes['fixedCostTax'], 'insuranceTax': taxes['insuranceTax'], 'shippingTax':taxes['shippingTax'], 'orderTitle':'Mon ordre', 'orderInfo':'Box', 'orderCategory':91, 'affiliate':af}]
-        order.setOrders(data)
+        order_data = [{'shippingAmount':1.50, 'insuranceAmount':2.00, 'fixedCostAmount':2.25, 'fixedCostTax':taxes['fixedCostTax'], 'insuranceTax': taxes['insuranceTax'], 'shippingTax':taxes['shippingTax'], 'orderTitle':'Mon ordre 2', 'orderInfo':'Box 2', 'orderCategory':91, 'affiliate':af}, {'shippingAmount':1.50, 'insuranceAmount':2.00, 'fixedCostAmount':2.25, 'fixedCostTax':taxes['fixedCostTax'], 'insuranceTax': taxes['insuranceTax'], 'shippingTax':taxes['shippingTax'], 'orderTitle':'Mon ordre', 'orderInfo':'Box', 'orderCategory':91, 'affiliate':af}]
+        order.setOrders(order_data)
 
         inst = hipay.Installement()
         mta = hipay.Tax('tax')
         mestax=[dict(taxName='TVA 19.6', taxVal='19.6', percentage='true'), dict(taxName='TVA 5.5', taxVal='5.5', percentage='true')]
         mta.setTaxes(mestax)        
-        data = [{'price':100, 'first':'true','paymentDelay':'1D', 'tax':mta},{'price':100, 'first':'false','paymentDelay':'1M', 'tax':mta}]
-        inst.setInstallements(data)
+        inst_data = [{'price':100, 'first':'true','paymentDelay':'1D', 'tax':mta},{'price':100, 'first':'false','paymentDelay':'1M', 'tax':mta}]
+        inst.setInstallements(inst_data)
         
         pay = hipay.HiPay(s)        
         pay.MultiplePayment(order, inst)
         self.assertEqual(hashlib.sha224(ET.tostring(pay.asTree().getroot())).hexdigest(),
                          'bc88377a2c2a1b62a874a96dc3cbc842970e88f66306db8cfbd0b9a3')
+        print "Tree", ET.tostring(pay.asTree().getroot())
         root = fromstring(ET.tostring(pay.asTree().getroot()), self.parser)
         # Validate against the provided schema  https://payment.hipay.com/schema/mapi.xs
         self.assertIsInstance(root, _Element)
