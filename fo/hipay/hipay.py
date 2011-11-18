@@ -5,15 +5,18 @@
 __author__ = "Ousmane Wilane ♟ <ousmane@wilane.org>"
 __date__   = "Wed Nov 16 07:40:23 2011"
 
+import re
+import os
 import xml.etree.ElementTree as ET
 #FIXME: use regular gettext to get this library Django independant or make it a
 #full django app django-hipay
 from django.utils.translation import ugettext_lazy as _
-import re
 from xml.dom import minidom
+from lxml.etree import XMLSchema, XMLParser, fromstring, _Element
+DIRNAME = os.path.dirname(__file__)
 
-
-# Borrowed from Django
+# Borrowed from Django to avoid django dependency for those who whish to use the
+# library standalone
 URL_RE = re.compile(
     r'^(?:http|ftp)s?://' # http:// or https://
     r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
@@ -28,6 +31,7 @@ EMAIL_RE = re.compile(
 
 
 def setTag(tags, etree, attrs=None):
+    # FIXME: Use the attrs if any
     for key, value in tags.iteritems():
         if getattr(value, 'asTree', False):
             etree.append(value.asTree().getroot())
@@ -53,6 +57,20 @@ class HiPayTree(object):
 
     def asTree(self):
         return ET.ElementTree(self.root)
+
+    def validate(self):
+        """Validate against xsd schema the provided schema
+        https://payment.hipay.com/schema/mapi.xsd"""
+        schema = XMLSchema(file=open(os.path.join(DIRNAME, 'mapi.xsd'), 'rb'), attribute_defaults=True)
+        parser = XMLParser(schema=schema, attribute_defaults=True)        
+        
+        try:
+            root = fromstring(ET.tostring(self.asTree().getroot()), parser)
+        except Exception, e:
+            print e
+            return False
+        return isinstance(root, _Element)
+        
 
     def prettify(self):
         """Return a pretty-printed XML string for the Element.
@@ -116,7 +134,8 @@ class PaymentParams(HiPayTree):
         before the HIPAY_MAPI_CAPTURE_MAX_DAYS period expires, or the transaction is
         cancelled and this amount is made available once again to the customer."""
         self.captureday = captureday
-        if (captureday in ('HIPAY_MAPI_CAPTURE_IMMEDIATE', 'HIPAY_MAPI_CAPTURE_MANUAL')) or (str(captureday).isdigit() and 0 < int(captureday) < 7):
+        if (captureday in ('HIPAY_MAPI_CAPTURE_IMMEDIATE',
+                           'HIPAY_MAPI_CAPTURE_MANUAL')) or (str(captureday).isdigit() and 0 < int(captureday) < 7):
             self.root = setTag(dict(captureDay=captureday), self.root)            
 
         else:
@@ -141,7 +160,7 @@ class PaymentParams(HiPayTree):
         replace setDefaultLang which is obsolete"""
         self.defaultlang = defaultlang
         if defaultlang in ('fr_FR', 'fr_BE', 'de_DE', 'en_GB', 'en_US', 'es_ES', 'nl_NL', 'nl_BE', 'pt_PT'):
-            self.root = setTag(dict(defaultlang=defaultlang), self.root)
+            self.root = setTag(dict(defaultLang=defaultlang), self.root)
         else:
             raise ValueError(_("""Unknown locale %s""" %defaultlang))
             
@@ -222,8 +241,10 @@ class PaymentParams(HiPayTree):
 
     def setPaymentMethod(self, paymentmethod):
         """Defines whether the payment is single or recurring.  Possible values
-        are: HIPAY_MAPI_METHOD_SIMPLE: Single payment.  HIPAY_MAPI_METHOD_MULTI :
-        Recurring payment."""
+        are: HIPAY_MAPI_METHOD_SIMPLE: Single payment.  HIPAY_MAPI_METHOD_MULTI
+        : Recurring payment.  Note that you don't need to set this, the HiPay
+        class will do the right thing depending on the called method Simple vs
+        Multiple Payment"""
         self.paymentmethod = paymentmethod
         if paymentmethod in ('HIPAY_MAPI_METHOD_SIMPLE', 'HIPAY_MAPI_METHOD_MULTI', 0, 1):
             self.root = setTag(dict(paymentMethod=paymentmethod), self.root)
@@ -239,7 +260,7 @@ class PaymentParams(HiPayTree):
         +16 : For ages 16 and over.
         +18 : For ages 18 and over"""
         self.rating = rating
-        if media in ('ALL', '+12', '+16', '+18'):
+        if rating in ('ALL', '+12', '+16', '+18'):
             self.root = setTag(dict(rating=rating), self.root)
         else:
             raise ValueError(_("""Invalid rating  %s""" %rating))
@@ -309,7 +330,7 @@ class PaymentParams(HiPayTree):
         if EMAIL_RE.search(id_shop):
             self.root = setTag(dict(shopId=id_shop), self.root)
         else:
-            raise ValueError(_("""Invalid email address %s""" %id_chop))
+            raise ValueError(_("""Invalid email address %s""" %id_shop))
         
 
     def check(self):
@@ -338,9 +359,6 @@ class Tax(HiPayTree):
         else:
             raise ValueError(_("""taxVal and percentage should be numbers %s""" %taxes))
                 
-                
-        
-
 
 class Affiliate(HiPayTree):
     def __init__(self):
@@ -381,7 +399,11 @@ class Product(HiPayTree):
     def setProducts(self, products): #list of dict(name,info, quantity,ref,
         #category, price, tax), tax is a Tax instance
         self.products = products
-        if products and all([(isinstance(k['quantity'], int) or k['quantity'].isdigit()) and (isinstance(k['price'], float) or is_number(k['price'])) and  isinstance(k['tax'], Tax)] for k in products):
+        if products and all([(isinstance(k['quantity'], int) or
+                              k['quantity'].isdigit()) and
+                             (isinstance(k['price'], float) or
+                              is_number(k['price'])) and
+                             isinstance(k['tax'], Tax)] for k in products):
             for p in products:
                 element = ET.Element('HIPAY_MAPI_Product')
                 element = setTag(p, element)
@@ -396,16 +418,15 @@ class Installement(HiPayTree):
 
     def setInstallements(self, installements):
         self.installements = installements
-        if installements and all([is_number(k['price']) and isinstance(k['tax'], Tax) and k['first'] in ('true', 'false') for k in installements]):
+        if installements and all([is_number(k['price']) and
+                                  isinstance(k['tax'], Tax) and
+                                  k['first'] in ('true', 'false') for k in installements]):
             for i in installements:
                 element = ET.Element('HIPAY_MAPI_Installment')
                 element = setTag(i, element)
                 self.root.append(element)
         else:
-            raise ValueError(_("""Invalid installement specifications, the price should be numbers and first should be true or false %s""" %products))
-            
-
-
+            raise ValueError(_("""Invalid installement specifications, the price should be numbers and first should be true or false %s""" %installements))
         
 class Order(HiPayTree):
     def __init__(self):
@@ -413,13 +434,19 @@ class Order(HiPayTree):
         
     def setOrders(self, orders):
         self.orders = orders
-        if orders and all([is_number(k['shippingAmount']) and is_number(k['insuranceAmount']) and is_number(k['fixedCostAmount']) and str(k['orderCategory']).isdigit() and isinstance(k['insuranceTax'], Tax) and isinstance(k['fixedCostTax'], Tax) and isinstance(k['affiliate'], Affiliate) for k in orders]):
+        if orders and all([is_number(k['shippingAmount']) and
+                           is_number(k['insuranceAmount']) and
+                           is_number(k['fixedCostAmount']) and
+                           str(k['orderCategory']).isdigit() and
+                           isinstance(k['insuranceTax'], Tax) and
+                           isinstance(k['fixedCostTax'], Tax) and
+                           isinstance(k['affiliate'], Affiliate) for k in orders]):
             for o in orders:
                 element = ET.Element('HIPAY_MAPI_Order')
                 element = setTag(o, element)
                 self.root.append(element)
         else:
-            raise ValueError(_("""Invalid order specifications, shippingAmount, insuranceAmount, fixedCostAmount should numbers, orderCategory is an integer insuranceTax, fixedCostTax should be Tax instances and affiliate should be an Affiliate instance%s""" %products))
+            raise ValueError(_("""Invalid order specifications, shippingAmount, insuranceAmount, fixedCostAmount should numbers, orderCategory is an integer insuranceTax, fixedCostTax should be Tax instances and affiliate should be an Affiliate instance%s""" %orders))
 
 
 class HiPay(HiPayTree):
@@ -432,11 +459,11 @@ class HiPay(HiPayTree):
         self.root = ET.Element('HIPAY_MAPI_SimplePayment')
         self.root.extend([self.params.asTree().getroot(), orders.asTree().getroot(), products.asTree().getroot()])
         
-    def MultiplePayment(self, firstorder, subsorder, firstinstallement, subsinstallement):
+    def MultiplePayment(self, orders, installements):
         self.params.setPaymentMethod(0)        
         self.params.paymentmethod = 1
         self.root = ET.Element('HIPAY_MAPI_MultiplePayment')
-        self.root.extend([self.params.asTree().getroot(), firstorder.asTree().getroot(), subsorder.asTree().getroot(), firstinstallement.asTree().getroot(), subsinstallement.asTree().getroot()])
+        self.root.extend([self.params.asTree().getroot(), orders.asTree().getroot(), installements.asTree().getroot()])
 
     def SendPayment(self):
         pass
@@ -446,3 +473,6 @@ class HiPay(HiPayTree):
     
     def ProcessAnswer(self):
         pass
+
+
+
