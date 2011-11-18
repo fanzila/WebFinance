@@ -117,7 +117,7 @@ class HiPayTest(TestCase):
                          '125146d17f12c8c198a30076bb318213a3fa71aedbe2d4d477d9e0af')
 
     def test_simplepayment(self):
-        s = hipay.PaymentParams("123", "124", "125", "126", "127")
+        s = hipay.PaymentParams("84971", "84971", "84971", "84971", "84971")
         s.setBackgroundColor('#234567')
         s.setCaptureDay('6')
         s.setCurrency('EUR')
@@ -158,15 +158,64 @@ class HiPayTest(TestCase):
         pay = hipay.HiPay(s)        
         pay.SimplePayment(order, pr)
         self.assertEqual(hashlib.sha224(ET.tostring(pay.asTree().getroot())).hexdigest(),
-                         '19ff392c2404aedfdb8b06e23ea674633f4530df7032e65d2967912a')
+                         'e70d425bd61c9b41767d4cf54dcced64d5d5d21e01e80b7859ba380a')
         root = fromstring(ET.tostring(pay.asTree().getroot()), self.parser)
         # Validate against the provided schema  https://payment.hipay.com/schema/mapi.xs
         self.assertIsInstance(root, _Element)
         self.assertTrue(pay.validate())
 
+    def test_send_simplepayment(self):
+        s = hipay.PaymentParams("84971", "84971", "84971", "84971", "84971")
+        s.setBackgroundColor('#234567')
+        s.setCaptureDay('6')
+        s.setCurrency('EUR')
+        s.setLocale('fr_FR')
+        s.setEmailAck('test@example.org')
+        s.setLogin('84971', '313666')
+        s.setMedia('WEB')
+        s.setRating('+18')
+        s.setIdForMerchant('142545')
+        s.setMerchantSiteId('3194')
+        s.setMerchantDatas({'alpha':23, 'beta':34})
+        s.setURLOk("http://example.org/hipay/result/ok")
+        s.setURLNok("http://example.org/hipay/result/ko")
+        s.setURLCancel("http://example.org/hipay/result/cancel")
+        s.setURLAck("http://example.org/hipay/result/ack")
+        s.setLogoURL("http://example.org/hipay/shop/logo")        
+        pr = hipay.Product()
+        mta = hipay.Tax('tax')
+        mestax=[dict(taxName='TVA 19.6', taxVal='19.6', percentage='true'), dict(taxName='TVA 5.5', taxVal='5.5', percentage='true')]
+        mta.setTaxes(mestax)
+        
+        products = [{'name':'The Fall of  Hyperion','info':u'Simmons, Dan – ISBN 0575076380', 'quantity':'10', 'ref':'10', 'category':'91', 'price':'120', 'tax':mta},
+                {'name':'The Fall of  Hyperion','info':u'Simmons, Dan – ISBN 0575076380', 'quantity':'10', 'ref':'10', 'category':'91', 'price':'120', 'tax':mta}]
+        pr.setProducts(products)
+        
+        order = hipay.Order()
+        af = hipay.Affiliate()
+        affiliates = [dict(customerId='123', accountId='764527',percentageTarget='12', val='120')]
+        af.setValue(affiliates)        
+        taxes = dict()
+        for root in 'shippingTax', 'insuranceTax', 'fixedCostTax':
+            taxes[root] = hipay.Tax(root)
+            mestax=[dict(taxName='TVA', taxVal='19.6', percentage='true')]
+            taxes[root].setTaxes(mestax)
+        
+        data = [{'shippingAmount':1.50, 'insuranceAmount':2.00, 'fixedCostAmount':2.25, 'fixedCostTax':taxes['fixedCostTax'], 'insuranceTax': taxes['insuranceTax'], 'shippingTax':taxes['shippingTax'], 'orderTitle':'Mon ordre', 'orderInfo':'Box', 'orderCategory':91}]
+        order.setOrders(data)
+        pay = hipay.HiPay(s)        
+        pay.SimplePayment(order, pr)
+        root = fromstring(ET.tostring(pay.asTree().getroot()), self.parser)
+        # Validate against the provided schema  https://payment.hipay.com/schema/mapi.xs
+        self.assertIsInstance(root, _Element)
+        self.assertTrue(pay.validate())
+        response = pay.SendPayment("https://test-payment.hipay.com/order/")
+        self.assertEquals(response['status'], 'Accepted')
+        
+
 
     def test_multiplepayment(self):
-        s = hipay.PaymentParams("123", "124", "125", "126", "127")
+        s = hipay.PaymentParams("84971", "84971", "84971", "84971", "84971")
         s.setBackgroundColor('#234567')
         s.setCaptureDay('6')
         s.setCurrency('EUR')
@@ -215,9 +264,64 @@ class HiPayTest(TestCase):
         pay = hipay.HiPay(s)        
         pay.MultiplePayment(order, inst)
         self.assertEqual(hashlib.sha224(ET.tostring(pay.asTree().getroot())).hexdigest(),
-                         'bc88377a2c2a1b62a874a96dc3cbc842970e88f66306db8cfbd0b9a3')
-        print "Tree", ET.tostring(pay.asTree().getroot())
+                         '319b6b3829f244cb34c5083b14c9feb5075f20d628210060d851f3d6')
         root = fromstring(ET.tostring(pay.asTree().getroot()), self.parser)
         # Validate against the provided schema  https://payment.hipay.com/schema/mapi.xs
         self.assertIsInstance(root, _Element)
         self.assertTrue(pay.validate())
+
+    def test_send_multiplepayment(self):
+        s = hipay.PaymentParams("84971", "84971", "84971", "84971", "84971")
+        s.setBackgroundColor('#234567')
+        s.setCaptureDay('6')
+        s.setCurrency('EUR')
+        s.setLocale('fr_FR')
+        s.setEmailAck('test@example.org')
+        s.setLogin('84971', '313666')
+        s.setMedia('WEB')
+        s.setRating('+18')
+        s.setIdForMerchant('142545')
+        s.setMerchantSiteId('3194')
+        s.setMerchantDatas({'alpha':23, 'beta':34})
+        s.setURLOk("http://example.org/hipay/result/ok")
+        s.setURLNok("http://example.org/hipay/result/ko")
+        s.setURLCancel("http://example.org/hipay/result/cancel")
+        s.setURLAck("http://example.org/hipay/result/ack")
+        s.setLogoURL("http://example.org/hipay/shop/logo")        
+        pr = hipay.Product()
+        mta = hipay.Tax('tax')
+        mestax=[dict(taxName='TVA 19.6', taxVal='19.6', percentage='true'), dict(taxName='TVA 5.5', taxVal='5.5', percentage='true')]
+        mta.setTaxes(mestax)
+        
+        products = [{'name':'The Fall of  Hyperion','info':u'Simmons, Dan – ISBN 0575076380', 'quantity':'10', 'ref':'10', 'category':'91', 'price':'120', 'tax':mta},
+                    {'name':'The Fall of  Hyperion','info':u'Simmons, Dan – ISBN 0575076380', 'quantity':'10', 'ref':'10', 'category':'91', 'price':'120', 'tax':mta}]
+        pr.setProducts(products)
+        
+        order = hipay.Order()
+        af = hipay.Affiliate()
+        affiliates = [dict(customerId='123', accountId='764527',percentageTarget='12', val='120')]
+        af.setValue(affiliates)        
+        taxes = dict()
+        for root in 'shippingTax', 'insuranceTax', 'fixedCostTax':
+            taxes[root] = hipay.Tax(root)
+            mestax=[dict(taxName='TVA', taxVal='19.6', percentage='true')]
+            taxes[root].setTaxes(mestax)
+        
+        order_data = [{'shippingAmount':1.50, 'insuranceAmount':2.00, 'fixedCostAmount':2.25, 'fixedCostTax':taxes['fixedCostTax'], 'insuranceTax': taxes['insuranceTax'], 'shippingTax':taxes['shippingTax'], 'orderTitle':'Mon ordre 2', 'orderInfo':'Box 2', 'orderCategory':91}, {'shippingAmount':1.50, 'insuranceAmount':2.00, 'fixedCostAmount':2.25, 'fixedCostTax':taxes['fixedCostTax'], 'insuranceTax': taxes['insuranceTax'], 'shippingTax':taxes['shippingTax'], 'orderTitle':'Mon ordre', 'orderInfo':'Box', 'orderCategory':91}]
+        order.setOrders(order_data)
+
+        inst = hipay.Installement()
+        mta = hipay.Tax('tax')
+        mestax=[dict(taxName='TVA 19.6', taxVal='19.6', percentage='true'), dict(taxName='TVA 5.5', taxVal='5.5', percentage='true')]
+        mta.setTaxes(mestax)        
+        inst_data = [{'price':100, 'first':'true','paymentDelay':'1D', 'tax':mta},{'price':100, 'first':'false','paymentDelay':'1M', 'tax':mta}]
+        inst.setInstallements(inst_data)
+        
+        pay = hipay.HiPay(s)        
+        pay.MultiplePayment(order, inst)
+        root = fromstring(ET.tostring(pay.asTree().getroot()), self.parser)
+        # Validate against the provided schema  https://payment.hipay.com/schema/mapi.xs
+        self.assertIsInstance(root, _Element)
+        self.assertTrue(pay.validate())
+        response = pay.SendPayment("https://test-payment.hipay.com/order/")
+        self.assertEquals(response['status'], 'Accepted')
