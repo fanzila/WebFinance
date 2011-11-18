@@ -14,8 +14,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from os.path import join
 import operator
-from django.db.models import Q
-
+from fo.hipay import hipay as HP
 @login_required
 def list_companies(request):
     try:
@@ -61,8 +60,59 @@ def accept_quote(request, invoice_id):
 def hipay_invoice(request, invoice_id):
     current_user = Users.objects.get(email=request.user.email)
     qs  = reduce(operator.or_,[c.invoices_set.all() for c in current_user.clients_set.all()])    
-    quote = get_object_or_404(qs, id_facture=invoice_id)    
-    return redirect('list_invoice', customer_id=quote.client.id_client)
+    invoice = get_object_or_404(qs, id_facture=invoice_id)
+    s = HP.PaymentParams("84971", "84971", "84971", "84971", "84971")
+    s.setBackgroundColor('#234567')
+    s.setCaptureDay('6')
+    s.setCurrency('EUR')
+    s.setLocale('fr_FR')
+    s.setEmailAck('test@example.org')
+    s.setLogin('84971', '313666')
+    s.setMedia('WEB')
+    s.setRating('+18')
+    s.setIdForMerchant('142545')
+    s.setMerchantSiteId('3194')
+    s.setMerchantDatas({'alpha':23, 'beta':34})
+    s.setURLOk("http://example.org/hipay/result/ok")
+    s.setURLNok("http://example.org/hipay/result/ko")
+    s.setURLCancel("http://example.org/hipay/result/cancel")
+    s.setURLAck("http://example.org/hipay/result/ack")
+    s.setLogoURL("http://example.org/hipay/shop/logo")
+
+    products = HP.Product()
+    taxes = HP.Tax('tax')
+    mestax=[dict(taxName='TVA', taxVal=invoice.tax, percentage='true')]
+    taxes.setTaxes(mestax)
+    list_products = list()
+    for ligne in invoice.invoicerows_set.all():
+        list_products.append({'name':ligne.description,
+                         'info':ligne.description,
+                         'quantity':int(ligne.qtt),
+                         'ref':invoice.num_facture,
+                         'category':'91',
+                         'price':ligne.prix_ht,
+                         'tax':taxes})
+    products.setProducts(list_products)
+        
+    order = HP.Order()
+        
+    data = [{'shippingAmount':0,
+             'insuranceAmount':0,
+             'fixedCostAmount':sum([l.qtt*l.prix_ht for l in invoice.invoicerows_set.all()]),
+             'orderTitle':'Mon ordre',
+             'orderInfo':'Box',
+             'orderCategory':91}]
+    order.setOrders(data)
+    pay = HP.HiPay(s)
+    
+    pay.SimplePayment(order, products)
+
+    response = pay.SendPayment("https://test-payment.hipay.com/order/")
+
+    if response['status'] == 'Accepted':
+        return redirect(response['message'])
+    else:
+        raise ValueError(response)
 
 
 @login_required

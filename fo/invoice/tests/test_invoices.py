@@ -14,7 +14,7 @@ class InvoiceTest(TestCase):
         # We need a ticket and an account for test to pass before we use
         # selenium and friends
         self.username = 'ousmane@wilane.org'
-        self.ticket = 'e941a823d7dc6c32e65b47f334e8c361598711581fb4e47e55b2ee85fba5431c186e22dca26d6184'
+        self.ticket = '5e70507c80853100fd5d41b252ae63882a64e06ca089debc90a5efa81a8f2297967374e7e1dc833c'
 
     def test_list_companies(self):
         url = reverse("list_companies")
@@ -104,7 +104,12 @@ class InvoiceTest(TestCase):
         self.assertEqual(response['Content-Type'], "application/pdf")
         self.client.logout()
 
+    def test_hipay_invoice(self):
+        url = reverse("hipay_invoice", kwargs={'invoice_id':1})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+        self.client.login(username=self.username, ticket=self.ticket)
+        res = self.client.get(url)
+        self.assertEqual(res.status_code, 302)
+        self.client.logout()
 
-
-        
-        
