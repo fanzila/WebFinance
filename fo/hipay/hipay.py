@@ -464,13 +464,9 @@ class HiPay(HiPayTree):
         self.root.extend([self.params.asTree().getroot(), orders.asTree().getroot(), products.asTree().getroot()])
         
     def MultiplePayment(self, orders, installements):
-        self.params.setPaymentMethod(0)        
-        self.params.paymentmethod = 1
+        self.params.setPaymentMethod(1)
         self.root = ET.Element('HIPAY_MAPI_MultiplePayment')
         self.root.extend([self.params.asTree().getroot(), orders.asTree().getroot(), installements.asTree().getroot()])
-
-        self.root = ET.Element('order')
-        
         
     def SendPayment(self, gw):
         self.mapi =  ET.Element('mapi')
@@ -490,10 +486,8 @@ class HiPay(HiPayTree):
         request = urllib2.Request(gw,urlencode({'xml':xml}))
         response = opener.open(request)
         self.response = response
-        self.ProcessAnswer()
+        return self.ProcessAnswer()
         
-    def getPaymentXML(self):
-        pass
     
     def ProcessAnswer(self):
         try:
@@ -501,8 +495,12 @@ class HiPay(HiPayTree):
         except:
             raise ValueError(_("Empty enswer"))
         tree = ET.fromstring(response)
-        #<mapi><mapiversion>1.0</mapiversion><md5content>993bd2cf4e37b6de5c953981a66d9887</md5content><result><status>error</status><message>Invalid merchant website password !</message></result></mapi>
         if tree.find('result/status').text == 'error':
-            #print "Error:", tree.find("result/message").text
-            raise ValueError(_("""Error: %s""" %(tree.find("result/message"),)))
+            return dict(status='Error', message=tree.find("result/message").text)
+            #raise ValueError(_("""Error: %s""" %(tree.find("result/message"),)))
+        elif tree.find('result/status').text == 'accepted':
+            return dict(status='Accepted',message=tree.find("result/url").text)
+        else:
+            return dict(status='Unknown', message=response)
+
 
