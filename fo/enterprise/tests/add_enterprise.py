@@ -36,6 +36,11 @@ class AddCompanyTest(TestCase):
                                     follow = True)
         self.assertFormError(response, 'form', 'email', [_("Enter a valid e-mail address.")])
         response = self.client.post(url,
+                                    {'email':'test@example.org'},
+                                    follow = True)
+        self.assertFormError(response, 'form', 'nom', [_("This field is required.")])
+        
+        response = self.client.post(url,
                                     {'nom': 'foo baz',
                                      'email':'test@example.org'},
                                     follow = True)

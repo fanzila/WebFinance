@@ -40,7 +40,7 @@ class Users(models.Model):
 class Clients(models.Model):
     id_client = models.AutoField(primary_key=True)
     users = models.ManyToManyField('Users', through='Clients2Users')
-    nom = models.CharField(_('Company name'), unique=True, max_length=255, blank=True)
+    nom = models.CharField(_('Company name'), unique=True, max_length=255)
     tel = models.CharField(_('Phone'), max_length=15, blank=True)
     fax = models.CharField(_('Fax'), max_length=200, blank=True)
     web = models.CharField(_('Website'), max_length=100, blank=True)
