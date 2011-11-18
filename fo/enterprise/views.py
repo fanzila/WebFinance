@@ -20,7 +20,7 @@ def add_company(request):
         try:
             customer.id_user = Users.objects.get(email=request.user.email)
         except Users.DoesNotExist:
-            user = Users.objects.create(email=request.user.email)
+            user = Users.objects.create(email=request.user.email, login=request.user.email)
             customer.id_user = user
         customer.save()
         Clients2Users.objects.create(user=customer.id_user, client=customer)
