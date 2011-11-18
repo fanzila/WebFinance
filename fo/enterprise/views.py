@@ -9,7 +9,7 @@ __date__   = "Fri Nov 11 12:01:45 2011"
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from enterprise.form import EnterpriseForm
-from enterprise.models import Users, Clients, Clients2Users
+from enterprise.models import Users, Clients, Clients2Users, CompanyTypes
 from django.utils.translation import ugettext_lazy as _
 
 @login_required
@@ -22,6 +22,7 @@ def add_company(request):
         except Users.DoesNotExist:
             user = Users.objects.create(email=request.user.email, login=request.user.email)
             customer.id_user = user
+        customer.id_company_type = CompanyTypes.objects.get(pk=1)
         customer.save()
         Clients2Users.objects.create(user=customer.id_user, client=customer)
 

@@ -12,4 +12,4 @@ from enterprise.models import Clients
 class EnterpriseForm(ModelForm):
     class Meta:
         model = Clients
-        exclude = ['users', 'id_user', 'total_du_ht', 'has_devis', 'has_unpaid', 'id_client', 'password']
+        exclude = ['users', 'id_user', 'total_du_ht', 'has_devis', 'has_unpaid', 'id_client', 'password', 'id_company_type', 'ca_total_ht_year', 'ca_total_ht']
