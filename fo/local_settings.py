@@ -28,9 +28,3 @@ DATABASES = {
 CYBSSO_LOGIN = 'http://cybsso-dev.isvtec.com/'
 LOGIN_URL = '/ssoaccounts/login'
 
-
-# Hipay
-HIPAY_PAYMENT_GW="https://payment.hipay.com/order/"
-if settings.DEBUG:
-    HIPAY_PAYMENT_GW="https://test-payment.hipay.com/order/"
-
