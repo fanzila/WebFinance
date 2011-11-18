@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <xsd:simpleType name='hipayFloat'>
+        <xsd:restriction base='xsd:decimal'>
+            <xsd:totalDigits value='25' />
+            <xsd:fractionDigits value='14' />
+            <xsd:minInclusive value='0' />
+            <xsd:maxInclusive value='9999999999.99999999999999' /> <!-- 14 digits après la virgule pour rétro-compatibilité, en réalité 2 digits sont pris en compte -->
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name='hipayExtendedFloat'>
+        <xsd:restriction base='xsd:decimal'>
+            <xsd:totalDigits value='25' />
+            <xsd:fractionDigits value='14' />
+            <xsd:minInclusive value='-9999999999.99999999999999' />
+            <xsd:maxInclusive value='9999999999.99999999999999' /> <!-- 14 digits après la virgule pour rétro-compatibilité, en réalité 2 digits sont pris en compte -->
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name='hipayIntegerBoolean'>
+        <xsd:restriction base='xsd:integer'>
+            <xsd:pattern value='0|1' />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name='hipayLiteralBoolean'>
+        <xsd:restriction base='xsd:string'>
+            <xsd:pattern value='true|false' />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:element name="HIPAY_MAPI_PaymentParams">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element name="noPassword" type="hipayLiteralBoolean" minOccurs="0" nillable="true" />
+                <xsd:element name="login" type="xsd:positiveInteger" />
+                <xsd:element name="password" type="xsd:string" />
+                <xsd:element name="itemAccount" type="xsd:positiveInteger" />
+                <xsd:element name="taxAccount" type="xsd:positiveInteger" />
+                <xsd:element name="insuranceAccount" type="xsd:positiveInteger" />
+                <xsd:element name="fixedCostAccount" type="xsd:positiveInteger" />
+                <xsd:element name="shippingCostAccount" type="xsd:positiveInteger" />
+                <!-- <xsd:element name="defaultLang" type='xsd:language' />-->
+                <xsd:element name="defaultLang" type='xsd:string' />
+                <xsd:element name="media" type="xsd:string" />
+                <xsd:element name="rating" type="xsd:string" />
+                <xsd:element name="paymentMethod" type="hipayIntegerBoolean" />
+                <xsd:element name="captureDay" type="xsd:string" />
+                <xsd:element name="currency" type="xsd:string" />
+                <xsd:element name="idForMerchant" type="xsd:anyType" nillable="true" />
+                <xsd:element name="merchantSiteId" type="xsd:positiveInteger" />
+                <xsd:element name="statsGroupId" type="xsd:string" minOccurs="0" />
+                <xsd:element name="locale" type="xsd:string" minOccurs="0" />
+                <xsd:element name="issuerAccountLogin" type="xsd:string" minOccurs="0" />
+                <xsd:element name="merchantDescription" type="xsd:string" minOccurs="0" />
+                <xsd:element name="informations" type="xsd:string" minOccurs="0" />
+                <xsd:element name="shopId" type="xsd:string" minOccurs="0" />
+                <xsd:element name="cguChecked" type="hipayIntegerBoolean" minOccurs="0" />
+                <xsd:element name="merchantDatas">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:any processContents="skip" minOccurs="0" maxOccurs="unbounded" />
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="url_ok" type="xsd:anyURI" nillable="true" />
+                <xsd:element name="url_nok" type="xsd:anyURI" nillable="true" />
+                <xsd:element name="url_cancel" type="xsd:anyURI" nillable="true" />
+                <xsd:element name="url_ack" type="xsd:anyURI" nillable="true" />
+                <xsd:element name="ack_wd" type="xsd:string" minOccurs="0" nillable="true" />
+                <xsd:element name="email_ack" type="xsd:string" nillable="true" />
+                <xsd:element name="bg_color" type="xsd:string" nillable="true" />
+                <xsd:element name="logo_url" type="xsd:anyURI" nillable="true" />
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:complexType name="tax">
+        <xsd:sequence>
+            <xsd:element name="HIPAY_MAPI_Tax" minOccurs="0" maxOccurs="unbounded">
+                <xsd:complexType>
+                    <xsd:all>
+                        <xsd:element name="taxName" type="xsd:string" />
+                        <xsd:element name="taxVal" type="hipayFloat" />
+                        <xsd:element name="percentage" type="hipayLiteralBoolean" />
+                    </xsd:all>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:element name="HIPAY_MAPI_Order">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element name="shippingAmount" type="hipayFloat" minOccurs="0" />  <!-- peut ne pas exister -->
+                <xsd:element name="shippingTax" type="tax" minOccurs="0" />  <!-- peut ne pas exister -->
+                <xsd:element name="insuranceAmount" type="hipayFloat" minOccurs="0" />  <!-- peut ne pas exister -->
+                <xsd:element name="insuranceTax" type="tax" minOccurs="0" />  <!-- peut ne pas exister -->
+                <xsd:element name="fixedCostAmount" type="hipayFloat" minOccurs="0" />  <!-- peut ne pas exister -->
+                <xsd:element name="fixedCostTax" type="tax" minOccurs="0" />  <!-- peut ne pas exister -->
+                <xsd:element name="affiliate" minOccurs="0">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="HIPAY_MAPI_Affiliate" minOccurs="0" maxOccurs="unbounded">
+                                <xsd:complexType>
+                                    <xsd:all>
+                                        <xsd:element name="customerId" type="xsd:positiveInteger" />
+                                        <xsd:element name="accountId" type="xsd:positiveInteger" />
+                                        <xsd:element name="val" type="hipayFloat" />
+                                        <xsd:element name="percentageTarget" type="xsd:unsignedByte" />
+                                    </xsd:all>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="orderTitle" type="xsd:string" />
+                <xsd:element name="orderInfo" type="xsd:string" minOccurs="0" />
+                <xsd:element name="orderCategory" type="xsd:string" />
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="HIPAY_MAPI_SimplePayment">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element ref="HIPAY_MAPI_PaymentParams" />
+                <xsd:element name="order">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element ref="HIPAY_MAPI_Order" />
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="items">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="HIPAY_MAPI_Product" minOccurs="1" maxOccurs="unbounded">
+                                <xsd:complexType>
+                                    <xsd:all>
+                                        <xsd:element name="name" type="xsd:string" />
+                                        <xsd:element name="info" type="xsd:string" nillable="true" minOccurs="0" /> <!-- peut ne plus exister ou peut être à vide-->
+                                        <xsd:element name="quantity" type="xsd:positiveInteger" />
+                                        <xsd:element name="ref" type="xsd:string" nillable="true" minOccurs="0" /> <!-- peut ne plus exister ou peut être à vide-->
+                                        <xsd:element name="category" type="xsd:positiveInteger" />
+                                        <xsd:element name="price" type="hipayExtendedFloat" />
+                                        <xsd:element name="tax" type="tax" minOccurs="0" />   <!-- peut ne plus exister -->
+                                    </xsd:all>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="HIPAY_MAPI_MultiplePayment">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element ref="HIPAY_MAPI_PaymentParams" />
+                <xsd:element name="order">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element ref="HIPAY_MAPI_Order" minOccurs="2" maxOccurs="2" />
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="items">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="HIPAY_MAPI_Installment" minOccurs="2" maxOccurs="2">
+                                <xsd:complexType>
+                                    <xsd:all>
+                                        <xsd:element name="price" type="hipayFloat" />
+                                        <xsd:element name="tax" type="tax" />
+                                        <xsd:element name="first" type="hipayLiteralBoolean" />
+                                        <xsd:element name="paymentDelay">
+                                            <xsd:simpleType>
+                                                <xsd:restriction base='xsd:string'>
+                                                    <xsd:pattern value='([0-9]{1,2})([HDM]{1})' />
+                                                </xsd:restriction>
+                                            </xsd:simpleType>
+                                        </xsd:element>
+                                    </xsd:all>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="mapi">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="mapiversion">
+                    <xsd:simpleType>
+                        <xsd:restriction base='xsd:string'>
+                            <xsd:pattern value='1.0' />
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="md5content" type="xsd:string" />
+                <xsd:choice>
+                    <xsd:element ref="HIPAY_MAPI_SimplePayment" />
+                    <xsd:element ref="HIPAY_MAPI_MultiplePayment" />
+                </xsd:choice>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+</xsd:schema>
