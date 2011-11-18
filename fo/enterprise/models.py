@@ -11,14 +11,14 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 
 class Users(models.Model):
-    id_user = models.IntegerField(primary_key=True)
+    id_user = models.AutoField(primary_key=True)
     #customer = models.ManyToManyField('Clients', through='Clients2Users')
     last_name = models.CharField(max_length=300, blank=True)
     first_name = models.CharField(max_length=300, blank=True)
     login = models.CharField(unique=True, max_length=255)
     password = models.CharField(max_length=300, blank=True)
-    email = models.CharField(unique=True, max_length=255, blank=True)
-    disabled = models.IntegerField()
+    email = models.EmailField(unique=True, max_length=255, blank=True)
+    disabled = models.NullBooleanField(default=False)
     last_login = models.DateTimeField(null=True, blank=True)
     creation_date = models.DateTimeField(null=True, blank=True)
     role = models.CharField(max_length=192, blank=True)
