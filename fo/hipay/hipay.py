@@ -403,7 +403,7 @@ class Product(HiPayTree):
         #category, price, tax), tax is a Tax instance
         self.products = products
         if products and all([(isinstance(k['quantity'], int) or
-                              k['quantity'].isdigit()) and
+                              str(int(k['quantity'])).isdigit()) and
                              (isinstance(k['price'], float) or
                               is_number(k['price'])) and
                              isinstance(k['tax'], Tax)] for k in products):
@@ -441,8 +441,8 @@ class Order(HiPayTree):
                            is_number(k['insuranceAmount']) and
                            is_number(k['fixedCostAmount']) and
                            str(k['orderCategory']).isdigit() and
-                           isinstance(k['insuranceTax'], Tax) and
-                           isinstance(k['fixedCostTax'], Tax) and
+                           ('insuranceTax' not in orders or ('insuranceTax' in orders and isinstance(k['insuranceTax'], Tax))) and
+                           ('fixedCostTax' not in orders or ('fixedCostTax' in orders and isinstance(k['fixedCostTax'], Tax))) and
                            ('affiliate' not in orders or ('affiliate' in orders and isinstance(k['affiliate'], Affiliate))) for k in orders]):
             for o in orders:
                 element = ET.Element('HIPAY_MAPI_Order')
