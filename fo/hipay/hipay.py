@@ -32,10 +32,11 @@ EMAIL_RE = re.compile(
     r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-\011\013\014\016-\177])*"' # quoted-string
     r')@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$', re.IGNORECASE)  # domain
     
-class FOElement(ET.Element):
+def FOElement(element):
     """Backport of the method from 2.7"""
-    def extend(self, elements):
-        self._children.extend(elements)
+    ret = ET.Element(element)
+    ret.__class__.extend = lambda self, elements: self._children.extend(elements)
+    return ret
         
 def setTag(tags, etree, attrs=None):
     # FIXME: Use the attrs if any
