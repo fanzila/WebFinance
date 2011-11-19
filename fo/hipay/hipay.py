@@ -31,15 +31,19 @@ EMAIL_RE = re.compile(
     r"(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*"  # dot-atom
     r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-\011\013\014\016-\177])*"' # quoted-string
     r')@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$', re.IGNORECASE)  # domain
-
-
+    
+class FOElement(ET.Element):
+    """Backport of the method from 2.7"""
+    def extend(self, elements):
+        self._children.extend(elements)
+        
 def setTag(tags, etree, attrs=None):
     # FIXME: Use the attrs if any
     for key, value in tags.iteritems():
         if getattr(value, 'asTree', False):
             etree.append(value.asTree().getroot())
             continue
-        tag =  ET.Element(key)
+        tag =  FOElement(key)
         tag.text = unicode(value)
         if etree.find(key) is not None:
             etree.find(key).text = unicode(value)
@@ -56,7 +60,7 @@ def is_number(s):
 
 class HiPayTree(object):
     def __init__(self):
-        self.root = ET.Element('root')
+        self.root = FOElement('root')
 
     def asTree(self):
         return ET.ElementTree(self.root)
@@ -88,7 +92,7 @@ class PaymentParams(HiPayTree):
     def __init__(self, itemaccount, taxaccount, insuranceaccount,
                  fixedcostaccount, shippingcostaccount):
         
-        self.root = ET.Element('HIPAY_MAPI_PaymentParams')
+        self.root = FOElement('HIPAY_MAPI_PaymentParams')
         
         self.itemaccount = itemaccount
         self.taxaccount = taxaccount
@@ -228,7 +232,7 @@ class PaymentParams(HiPayTree):
         #FIXME: Multiple calls cleanup
         self.merchantdatas = merchantdatas
         if isinstance(merchantdatas, dict):
-            element = ET.Element('merchantDatas')
+            element = FOElement('merchantDatas')
             element = setTag(merchantdatas, element)
             self.root.append(element)
             
@@ -346,7 +350,7 @@ class PaymentParams(HiPayTree):
 class Tax(HiPayTree):
     def __init__(self, root):
         # root may be equal to tax or shippingTax or insuranceTax or fixedCostTax
-        self.root = ET.Element(root)
+        self.root = FOElement(root)
 
     def setTaxes(self, taxes):
         """Sets the value of the tax.  The value can be a fixed amount or a
@@ -356,7 +360,7 @@ class Tax(HiPayTree):
         self.taxes = taxes # list of dict(taxName=k, taxVal=v, percentage=p)
         if taxes and all([k['percentage'] in ('true', 'false') and is_number(k['taxVal']) for k in taxes]):
             for taxe in taxes:
-                element = ET.Element('HIPAY_MAPI_Tax')
+                element = FOElement('HIPAY_MAPI_Tax')
                 element = setTag(taxe, element)
                 self.root.append(element)
         else:
@@ -365,7 +369,7 @@ class Tax(HiPayTree):
 
 class Affiliate(HiPayTree):
     def __init__(self):
-        self.root = ET.Element('affiliate')
+        self.root = FOElement('affiliate')
 
     def setValue(self, affiliates):
         """
@@ -387,7 +391,7 @@ class Affiliate(HiPayTree):
         self.affiliates = affiliates # list of dict(customerId=k, accountId=v, percentageTarget=p)
         if affiliates and all(is_number(k['percentageTarget']) for k in affiliates):
             for aff in affiliates:
-                element = ET.Element('HIPAY_MAPI_Affiliate')
+                element = FOElement('HIPAY_MAPI_Affiliate')
                 element = setTag(aff, element)
                 self.root.append(element)
         else:
@@ -397,7 +401,7 @@ class Affiliate(HiPayTree):
 
 class Product(HiPayTree):
     def __init__(self):
-        self.root = ET.Element('items')
+        self.root = FOElement('items')
 
     def setProducts(self, products): #list of dict(name,info, quantity,ref,
         #category, price, tax), tax is a Tax instance
@@ -408,7 +412,7 @@ class Product(HiPayTree):
                               is_number(k['price'])) and
                              isinstance(k['tax'], Tax)] for k in products):
             for p in products:
-                element = ET.Element('HIPAY_MAPI_Product')
+                element = FOElement('HIPAY_MAPI_Product')
                 element = setTag(p, element)
                 self.root.append(element)
         else:
@@ -417,7 +421,7 @@ class Product(HiPayTree):
 
 class Installement(HiPayTree):
     def __init__(self):
-        self.root = ET.Element('items')        
+        self.root = FOElement('items')        
 
     def setInstallements(self, installements):
         self.installements = installements
@@ -425,7 +429,7 @@ class Installement(HiPayTree):
                                   isinstance(k['tax'], Tax) and
                                   k['first'] in ('true', 'false') for k in installements]):
             for i in installements:
-                element = ET.Element('HIPAY_MAPI_Installment')
+                element = FOElement('HIPAY_MAPI_Installment')
                 element = setTag(i, element)
                 self.root.append(element)
         else:
@@ -433,7 +437,7 @@ class Installement(HiPayTree):
         
 class Order(HiPayTree):
     def __init__(self):
-        self.root = ET.Element('order')
+        self.root = FOElement('order')
         
     def setOrders(self, orders):
         self.orders = orders
@@ -445,7 +449,7 @@ class Order(HiPayTree):
                            ('fixedCostTax' not in orders or ('fixedCostTax' in orders and isinstance(k['fixedCostTax'], Tax))) and
                            ('affiliate' not in orders or ('affiliate' in orders and isinstance(k['affiliate'], Affiliate))) for k in orders]):
             for o in orders:
-                element = ET.Element('HIPAY_MAPI_Order')
+                element = FOElement('HIPAY_MAPI_Order')
                 element = setTag(o, element)
                 self.root.append(element)
         else:
@@ -460,16 +464,16 @@ class HiPay(HiPayTree):
 
     def SimplePayment(self, orders, products):
         self.params.setPaymentMethod(0)
-        self.root = ET.Element('HIPAY_MAPI_SimplePayment')
+        self.root = FOElement('HIPAY_MAPI_SimplePayment')
         self.root.extend([self.params.asTree().getroot(), orders.asTree().getroot(), products.asTree().getroot()])
         
     def MultiplePayment(self, orders, installements):
         self.params.setPaymentMethod(1)
-        self.root = ET.Element('HIPAY_MAPI_MultiplePayment')
+        self.root = FOElement('HIPAY_MAPI_MultiplePayment')
         self.root.extend([self.params.asTree().getroot(), orders.asTree().getroot(), installements.asTree().getroot()])
         
     def SendPayment(self, gw):
-        self.mapi =  ET.Element('mapi')
+        self.mapi =  FOElement('mapi')
         self.mapi = setTag({'mapiversion':'1.0'}, self.mapi)
         m = hashlib.md5()
         m.update(ET.tostring(self.asTree().getroot()))
