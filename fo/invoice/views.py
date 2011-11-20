@@ -20,7 +20,7 @@ def list_companies(request):
     try:
         current_user = Users.objects.get(email=request.user.email)
         # We keep a loose coupling with native Users database from the backend
-        customer_list = current_user.clients_set.all() | current_user.creator.all()
+        customer_list = current_user.clients_set.all()
         
     except Users.DoesNotExist:
         customer_list = None
@@ -40,7 +40,10 @@ def list_invoices(request, customer_id):
 @login_required
 def detail_invoice(request, invoice_id):
     current_user = Users.objects.get(email=request.user.email)
-    qs  = reduce(operator.or_,[c.invoices_set.all() for c in current_user.clients_set.all()])
+    invoices = [c.invoices_set.all() for c in current_user.clients_set.all()]
+    if not invoices:
+        raise Http404
+    qs  = reduce(operator.or_, invoices)
     invoice = get_object_or_404(qs, id_facture=invoice_id)    
     
     return render(request, 'invoice/detail_invoices.html',
@@ -50,7 +53,12 @@ def detail_invoice(request, invoice_id):
 @login_required
 def accept_quote(request, invoice_id):
     current_user = Users.objects.get(email=request.user.email)
-    qs  = reduce(operator.or_,[c.invoices_set.all() for c in current_user.clients_set.all()])
+    invoices = [c.invoices_set.all() for c in current_user.clients_set.all()]
+    if not invoices:
+        # It's likely that you've keyed in an invoice id
+        raise Http404
+    
+    qs  = reduce(operator.or_,invoices)
     quote = get_object_or_404(qs, id_facture=invoice_id)    
     quote.type_doc = 'facture'
     quote.save()
@@ -59,8 +67,14 @@ def accept_quote(request, invoice_id):
 @login_required
 def hipay_invoice(request, invoice_id):
     current_user = Users.objects.get(email=request.user.email)
-    qs  = reduce(operator.or_,[c.invoices_set.all() for c in current_user.clients_set.all()])    
+    invoices = [c.invoices_set.all() for c in current_user.clients_set.all()]
+    if not invoices:
+        raise Http404
+    
+    qs  = reduce(operator.or_,invoices)
     invoice = get_object_or_404(qs, id_facture=invoice_id)
+    # FIXME: All these params are shop parameters, the website might have more
+    # than one configured shops
     s = HP.PaymentParams("84971", "84971", "84971", "84971", "84971")
     s.setBackgroundColor('#234567')
     s.setCaptureDay('6')
@@ -114,13 +128,16 @@ def hipay_invoice(request, invoice_id):
     else:
         raise ValueError(response)
 
-
 @login_required
 def download_invoice(request, invoice_id):
     #FIXME: Make the the called script accept a configurable directory, Cyril
     #can you fix that please.
     current_user = Users.objects.get(email=request.user.email)
-    qs  = reduce(operator.or_,[c.invoices_set.all() for c in current_user.clients_set.all()])    
+    invoices = [c.invoices_set.all() for c in current_user.clients_set.all()]
+    if not invoices:
+        raise Http404
+
+    qs  = reduce(operator.or_,invoices)
     invoice = get_object_or_404(qs, id_facture=invoice_id)
     if not call([settings.INVOICE_PDF_GENERATOR, str(invoice.id_facture)]):
         filename = 'Facture_%s_%s.pdf' %(invoice.num_facture, invoice.client.nom)

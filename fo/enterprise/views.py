@@ -18,10 +18,11 @@ def add_company(request):
     if form.is_valid():
         customer = form.save(commit=False)
         try:
-            customer.id_user = Users.objects.get(email=request.user.email)
+            customer.id_user = Users.objects.get(login=request.user.email)
         except Users.DoesNotExist:
             user = Users.objects.create(email=request.user.email, login=request.user.email)
             customer.id_user = user
+        #Cyril wants this to be always 1
         customer.id_company_type = CompanyTypes.objects.get(pk=1)
         customer.save()
         Clients2Users.objects.create(user=customer.id_user, client=customer)
