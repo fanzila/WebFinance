@@ -9,6 +9,7 @@ __date__   = "Thu Nov 10 14:20:07 2011"
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
+from uuid import uuid4
 
 class Users(models.Model):
     id_user = models.AutoField(primary_key=True)
@@ -35,6 +36,9 @@ class Users(models.Model):
             unicode(self.last_name),
             unicode(self.first_name),
             unicode(self.login))
+    
+    def get_full_name(self):
+        return u"%s %s" %(self.first_name, self.last_name)
 
 
 class Clients(models.Model):
@@ -69,9 +73,8 @@ class Clients(models.Model):
         db_table = u'webfinance_clients'
         
     def __unicode__(self):
-        return u"%s | %s" % (
-            unicode(self.nom),
-            unicode(self.siren))
+        return u"%s" % (
+            unicode(self.nom))
 
 
 # M2M Jonction table ... This doesn't showup nowhere
@@ -176,3 +179,25 @@ class Roles(models.Model):
             unicode(self.description))
 
 
+class Invitation(models.Model):
+    token = models.CharField(max_length=255)
+    email = models.EmailField(_('Email address'))
+    first_name = models.CharField(_('First name'), max_length=255)
+    last_name = models.CharField(_('Last name'), max_length=255)
+    company = models.ForeignKey(Clients)
+
+
+    def __unicode__(self):
+        return u"%s | %s %s" % (
+            unicode(self.token),
+            unicode(self.first_name),
+            unicode(self.last_name))
+
+    def save(self, *args, **kwargs):
+        if not self.token:
+            self.token = uuid4().hex
+            super(Invitation, self).save(*args, **kwargs)
+
+    def get_full_name(self):
+        return u"%s %s" %(self.first_name, self.last_name)
+            

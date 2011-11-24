@@ -14,7 +14,7 @@ class InvoiceTest(TestCase):
         # We need a ticket and an account for test to pass before we use
         # selenium and friends
         self.username = 'ousmane@wilane.org'
-        self.ticket = '5e70507c80853100fd5d41b252ae63882a64e06ca089debc90a5efa81a8f2297967374e7e1dc833c'
+        self.ticket = 'a822990ca9e45db5e9965a7f0c8e6d8ac96434b23e90e098804cccd35f16507ad0d3efb1986c4ca8'
 
     def test_list_companies(self):
         url = reverse("list_companies")
@@ -83,7 +83,6 @@ class InvoiceTest(TestCase):
         response = self.client.get(url)
         self.client.login(username=self.username, ticket=self.ticket)
         response = self.client.get(url)
-        print response.content
         self.assertEqual(response.status_code, 404)
         self.client.logout()
 
@@ -105,11 +104,19 @@ class InvoiceTest(TestCase):
         self.client.logout()
 
     def test_hipay_invoice(self):
-        url = reverse("hipay_invoice", kwargs={'invoice_id':1})
+        url = reverse('hipay_invoice', kwargs={'invoice_id':1})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
         self.client.login(username=self.username, ticket=self.ticket)
-        res = self.client.get(url)
-        self.assertEqual(res.status_code, 302)
+        self.assertRaises(ValueError, self.client.get, url)
         self.client.logout()
 
+    def test_hipay_urls(self):
+        keywords = {'ok':'successful', 'nook':'failed', 'cancel':'canceled'}
+        for key, val in keywords.items():
+            url = reverse("hipay_payment_url", kwargs={'action':key, 'invoice_id':1})
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 200)
+            self.assertTemplateUsed(response, 'invoice/hipay/%s_payment.html' %(key,))
+            self.assertContains(response, _(val))
+            self.client.logout()

@@ -480,7 +480,6 @@ class HiPay(HiPayTree):
         m.update(ET.tostring(self.asTree().getroot()))
         self.mapi = setTag({'md5content':m.hexdigest()}, self.mapi)        
         self.mapi.append(self.root)
-        #xml = """<?xml version="1.0" ?>%s""" %(ET.tostring(ET.ElementTree(self.mapi).getroot(), encoding="utf-8"),)
         xml = ET.tostring(ET.ElementTree(self.mapi).getroot(), encoding="utf-8")
         opener = urllib2.build_opener()
         opener.addheaders = [("Content-Type", "text/xml"),
@@ -498,7 +497,7 @@ class HiPay(HiPayTree):
         try:
             response = self.response.read()
         except:
-            raise ValueError(_("Empty enswer"))
+            raise ValueError(_("Empty answer"))
         tree = ET.fromstring(response)
         if tree.find('result/status').text == 'error':
             return dict(status='Error', message=tree.find("result/message").text)
@@ -509,3 +508,37 @@ class HiPay(HiPayTree):
             return dict(status='Unknown', message=response)
 
 
+def ParseAck(ack=None):
+    if not ack:
+        return None
+    tree = ET.fromstring(ack)
+    body = tree.find('result')
+    m = hashlib.md5()
+    m.update(ET.tostring(ET.ElementTree(body).getroot()))
+        
+    # If this is a subscription
+    try:
+        subscriptionId = tree.find('result/subscriptionId').text
+    except:
+        subscriptionId = None
+            
+
+                        
+    if tree.find('result/merchantDatas') is not None:
+        merchantDatas = dict([(i.tag, i.text) for i in tree.find('result/merchantDatas')])
+    else:
+        merchantDatas = None
+    return {'operation':tree.find('result/operation').text,
+            'status':tree.find('result/status').text,
+            'date':tree.find('result/date').text,
+            'time':tree.find('result/time').text,
+            'transid':tree.find('result/transid').text,
+            'origAmount':tree.find('result/origAmount').text,
+            'origCurrency': tree.find('result/origCurrency').text,
+            'idForMerchant': tree.find('result/idForMerchant').text,
+            'emailClient': tree.find('result/emailClient').text,
+            'merchantDatas':merchantDatas,
+            'subscriptionId':subscriptionId,
+            'refProduct': tree.find('result/refProduct0').text,
+            'not_tempered_with': tree.find('md5content').text == m.hexdigest()
+             }

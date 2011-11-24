@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load url from future %}
+
+{% block content %}
+    <h2>{% trans 'Invoice Payment' %} {{ invoice.num_facture }}</h2>
+
+    <p>{% blocktrans %}The payment have been canceled{% endblocktrans %}</p>
+{% endblock %}
