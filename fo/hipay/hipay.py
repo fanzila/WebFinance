@@ -8,6 +8,7 @@ __date__   = "Wed Nov 16 07:40:23 2011"
 import re
 import os
 import urllib2
+from datetime import datetime
 from urllib import urlencode
 import hashlib
 import xml.etree.ElementTree as ET
@@ -535,8 +536,8 @@ def ParseAck(ack=None):
         merchantDatas = None
     return {'operation':tree.find('result/operation').text,
             'status':tree.find('result/status').text,
-            'date':tree.find('result/date').text,
-            'time':tree.find('result/time').text,
+            'date':datetime.strptime(tree.find('result/date').text, "%Y-%m-%d"),
+            'time':datetime.strptime(tree.find('result/time').text[:7], '%H:%M:%S'),
             'transid':tree.find('result/transid').text,
             'origAmount':tree.find('result/origAmount').text,
             'origCurrency': tree.find('result/origCurrency').text,

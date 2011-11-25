@@ -8,6 +8,7 @@ __date__   = "Fri Nov 11 16:54:17 2011"
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
+from invoice.models import Invoices, Transaction
 
 class InvoiceTest(TestCase):
     def setUp(self):
@@ -120,3 +121,25 @@ class InvoiceTest(TestCase):
             self.assertTemplateUsed(response, 'invoice/hipay/%s_payment.html' %(key,))
             self.assertContains(response, _(val))
             self.client.logout()
+            
+    def test_parse_ack(self):
+        ack = u"""<?xml version="1.0" encoding="UTF-8"?> <mapi>
+<mapiversion>1.0</mapiversion> <md5content>c0783cc613bf025087b8bf5edecac824</md5content> <result>
+<operation>capture</operation> <status>ok</status>
+<date>2010-02-23</date>
+<time>10:32:12 UTC+0000</time> <transid>4B83AEA905C49</transid> <origAmount>10.20</origAmount> <origCurrency>EUR</origCurrency> <idForMerchant>REF6522</idForMerchant> <emailClient>email_client@hipay.com</emailClient> <merchantDatas>
+<_aKey_id_client>2000</_aKey_id_client>
+<_aKey_credit>10</_aKey_credit> </merchantDatas>
+<subscriptionId>753EA685B55651DC40F0C2784D5E1170</subscriptionId>
+<refProduct0>REF6522</refProduct0>
+</result> </mapi>"""
+        url = reverse('hipay_ipn_ack', kwargs={'invoice_id':1})
+        self.client.login(username=self.username, ticket=self.ticket)
+        response = self.client.post(url, {'xml': ack.decode('utf-8')})
+        invoice = Invoices.objects.get(id_facture=1)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Transaction.objects.count(), 1)        
+        self.assertEqual(invoice.is_paye, True)        
+
+
+        

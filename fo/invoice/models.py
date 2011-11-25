@@ -226,4 +226,24 @@ class TypeTva(models.Model):
             unicode(self.nom),
             unicode(self.taux))
 
-
+    
+class Transaction(models.Model):
+    status = models.CharField(max_length=255)
+    emailClient = models.EmailField()
+    date = models.DateField()
+    operation = models.CharField(max_length=255, null=True, blank=True)
+    transid =  models.CharField(max_length=255, null=True, blank=True)
+    merchantDatas = models.CharField(max_length=255, null=True, blank=True)
+    origCurrency = models.CharField(max_length=255)
+    origAmount  = models.CharField(max_length=255)
+    idForMerchant = models.CharField(max_length=255)
+    refProduct = models.CharField(max_length=255)
+    time = models.TimeField()
+    subscriptionId = models.CharField(max_length=255, null=True, blank=True)
+    not_tempered_with = models.BooleanField()
+    
+    def __unicode__(self):
+        return u"%s | %s | %s" % (
+            unicode(self.status),
+            unicode(self.transid),
+            unicode(self.refProduct))

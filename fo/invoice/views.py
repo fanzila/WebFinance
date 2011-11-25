@@ -17,7 +17,7 @@ from subprocess import call
 import operator
 from fo.hipay import hipay as HP
 from fo.enterprise.models import Users
-from fo.invoice.models import Invoices
+from fo.invoice.models import Invoices, Transaction
 
 @login_required
 def list_companies(request):
@@ -180,11 +180,15 @@ def hipay_ipn_ack(request, invoice_id):
         raise Http404 #Just for the 
     qs  = reduce(operator.or_,invoices)
     invoice = get_object_or_404(qs, id_facture=invoice_id)
-    
+
     res = HP.ParseAck(request.POST.get('xml', None))
     if res.get('status', None) == 'ok':
         invoice.is_paye = True
         invoice.save()
+
+    # Save the transaction for future reference
+    Transaction.objects.create(**res)
+
     # This is a bot that doesn't care
     return HttpResponse("")
                          

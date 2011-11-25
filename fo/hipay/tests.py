@@ -12,6 +12,7 @@ import xml.etree.ElementTree as ET
 from lxml.etree import XMLSchema, XMLParser, fromstring, _Element
 import hipay
 from django.test import TestCase
+import datetime
 DIRNAME = os.path.dirname(__file__)
 
 class HiPayTest(TestCase):
@@ -342,7 +343,7 @@ class HiPayTest(TestCase):
         expected_res = {'status': 'ok',
                         'origAmount': '10.20',
                         'emailClient':'email_client@hipay.com',
-                        'date': '2010-02-23',
+                        'date': datetime.datetime(2010, 2, 23, 0, 0),
                         'operation': 'capture',
                         'transid': '4B83AEA905C49',
                         'merchantDatas': {'_aKey_id_client': '2000',
@@ -350,7 +351,7 @@ class HiPayTest(TestCase):
                         'origCurrency': 'EUR',
                         'idForMerchant': 'REF6522',
                         'refProduct': 'REF6522',
-                        'time': '10:32:12 UTC+0000',
+                        'time': datetime.datetime(1900, 1, 1, 10, 32, 1),
                         'subscriptionId': '753EA685B55651DC40F0C2784D5E1170',
                         'not_tempered_with': False}
 
