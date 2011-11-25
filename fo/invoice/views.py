@@ -152,7 +152,7 @@ def download_invoice(request, invoice_id):
     invoice = get_object_or_404(qs, id_facture=invoice_id)
     if not call([settings.INVOICE_PDF_GENERATOR, str(invoice.id_facture)]):
         filename = 'Facture_%s_%s.pdf' %(invoice.num_facture, invoice.client.nom)
-        filename.reaplce(' ', '_')
+        filename.replace(' ', '_')
         filepath = join(settings.INVOICE_PDF_DIR, filename)        
         response = HttpResponse(mimetype='application/pdf')
         response['Content-Disposition'] = 'attachment; filename=%s' %(filename,)
