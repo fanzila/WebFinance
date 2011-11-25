@@ -19,6 +19,8 @@ from django.core.urlresolvers import reverse
 
 @login_required
 def add_company(request):
+    # FIXME: Make this view honor the returned_url if any for other apps that
+    # will call it
     form = EnterpriseForm(request.POST or None)
     if form.is_valid():
         customer = form.save(commit=False)
@@ -41,7 +43,8 @@ def add_company(request):
 
 @login_required
 def change_company(request, customer_id):
-
+    # FIXME: Make this view honor the returned_url if any for other apps that
+    # will call it
     customer = get_object_or_404(Clients,id_client=customer_id)
     
     form = EnterpriseForm(request.POST or None, instance=customer)
@@ -65,7 +68,7 @@ def invite_user(request):
         invitation = form.save()
         base_host = "http%s://%s" %('s' if request.is_secure() else '',
                                     request.get_host())
-        subject = _("Invitation to join %s from %s" %(invitation.company.nom, current_user.get_full_name()))
+        subject = _("Invitation to join %(name)s from %(full_name)s" %{'name':invitation.company.nom, 'full_name':current_user.get_full_name()})
         message_template = loader.get_template('enterprise/emails/invitation.txt')
         message_context = Context({'recipient_name': invitation.get_full_name(),
                                    'sender_name': current_user.get_full_name(),
@@ -80,6 +83,8 @@ def invite_user(request):
 
 @login_required
 def accept_invitation(request, token):
+    # FIXME: Send an email to let the owner know that the invitation have been
+    # accepted
     try:
         current_user = Users.objects.get(login=request.user.email)
     except Users.DoesNotExist:

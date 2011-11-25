@@ -82,7 +82,6 @@ def hipay_invoice(request, invoice_id):
 
     base_host = "http%s://%s" %('s' if request.is_secure() else '',
                                 request.get_host())
-    kwargs = {'invoice_id':invoice_id}
     # FIXME: All these params are shop parameters, the website might have more
     # than one configured shops
     s = HP.PaymentParams("84971", "84971", "84971", "84971", "84971")
