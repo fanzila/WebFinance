@@ -11,6 +11,7 @@ from enterprise.models import Clients, Invitation
 from django.utils.translation import ugettext_lazy as _
 
 class EnterpriseForm(forms.ModelForm):
+    required_css_class = 'required'    
     class Meta:
         model = Clients
         exclude = ['users', 'id_user', 'total_du_ht', 'has_devis', 'has_unpaid',
@@ -19,6 +20,7 @@ class EnterpriseForm(forms.ModelForm):
 
 
 class InvitationForm(forms.ModelForm):
+    required_css_class = 'required'
     def __init__(self, *args, **kwargs):
         qs = kwargs.pop('qs')
         super(InvitationForm, self).__init__(*args, **kwargs)

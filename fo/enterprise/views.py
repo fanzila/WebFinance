@@ -25,8 +25,12 @@ def add_company(request):
         try:
             customer.id_user = Users.objects.get(login=request.user.email)
         except Users.DoesNotExist:
-            user = Users.objects.create(email=request.user.email, login=request.user.email)
-            customer.id_user = user
+            try:
+                user = Users.objects.create(email=request.user.email, login=request.user.email)
+                customer.id_user = user
+            except:
+                # The login is not the email ('admin'), if this fail then crash.
+                customer.id_user = Users.objects.get(email=request.user.email)            
         #Cyril wants this to be always 1
         customer.id_company_type = CompanyTypes.objects.get(pk=1)
         customer.save()

@@ -16,7 +16,7 @@ class AddCompanyTest(TestCase):
     def setUp(self):
         # We need a ticket and an account
         self.username = 'ousmane@wilane.org'
-        self.ticket = 'a822990ca9e45db5e9965a7f0c8e6d8ac96434b23e90e098804cccd35f16507ad0d3efb1986c4ca8'
+        self.ticket = '2c314030278b9af4724352ba773ba2934bce6e59b12f776e01bdd0c2b47eeed10e551c53de697eda'
          
 
     def test_add_company(self):
@@ -43,7 +43,11 @@ class AddCompanyTest(TestCase):
         self.assertFormError(response, 'form', 'nom', [_("This field is required.")])
         
         response = self.client.post(url,
-                                    {'nom': 'foo baz'},
+                                    {'nom': 'foo baz',
+                                     'addr1': 'no where',
+                                     'cp': 142,
+                                     'ville': 'Dakar',
+                                     'pays':u'SN'},
                                     follow = True)
 
         self.assertEqual(Clients.objects.count(), count + 1)

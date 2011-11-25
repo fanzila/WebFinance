@@ -118,6 +118,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'django_coverage',
     'hipay',
+    'django_countries',
 )
 
 # A sample logging configuration. The only tangible logging
