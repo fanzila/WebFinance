@@ -45,9 +45,9 @@ def setTag(tags, etree, attrs=None):
             etree.append(value.asTree().getroot())
             continue
         tag =  FOElement(key)
-        tag.text = unicode(value)
+        tag.text = unicode(str(value).decode('utf-8'))
         if etree.find(key) is not None:
-            etree.find(key).text = unicode(value)
+            etree.find(key).text = unicode(str(value).decode('utf-8'))
         else:
             etree.append(tag)
     return etree
