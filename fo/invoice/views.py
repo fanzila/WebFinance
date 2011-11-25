@@ -181,7 +181,7 @@ def hipay_ipn_ack(request, invoice_id):
     qs  = reduce(operator.or_,invoices)
     invoice = get_object_or_404(qs, id_facture=invoice_id)
     
-    res = hipay.ParseAck(request.POST.get('xml', None))
+    res = HP.ParseAck(request.POST.get('xml', None))
     if res.get('status', None) == 'ok':
         invoice.is_paye = True
         invoice.save()
