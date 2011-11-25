@@ -18,5 +18,5 @@ urlpatterns = patterns('',
     url(r'^enterprise/', include('fo.enterprise.urls')),
     url(r'^ssoaccounts/login', 'fo.views.ssologin', name='login_cybsso'),
     url(r'^ssoaccounts/logout', 'fo.views.ssologout', name='logout_cybsso'),
-    url(r'^api/', include('fo.api.urls')),                       
+    #url(r'^api/', include('fo.api.urls')),                       
 )
