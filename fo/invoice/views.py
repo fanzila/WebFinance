@@ -18,6 +18,7 @@ import operator
 from fo.hipay import hipay as HP
 from fo.enterprise.models import Users
 from fo.invoice.models import Invoices, Transaction
+from django.views.decorators.csrf import csrf_exempt
 
 @login_required
 def list_companies(request):
@@ -169,6 +170,7 @@ def hipay_payment_url(request, invoice_id, action):
     
 
 @require_http_methods(["POST"])
+@csrf_exempt
 def hipay_ipn_ack(request, invoice_id):
     """URL that get the ack from HIPAY"""
     # FIXME: We should check where this is coming from, if not, anybody could
