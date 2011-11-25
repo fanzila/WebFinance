@@ -173,21 +173,15 @@ def hipay_ipn_ack(request, invoice_id):
     """URL that get the ack from HIPAY"""
     # FIXME: We should check where this is coming from, if not, anybody could
     # pretend notifying for a payment that actually never happened ? I can't
-    # figure out how they do this with the
-    current_user = Users.objects.get(email=request.user.email)
-    invoices = [c.invoices_set.all() for c in current_user.clients_set.all()]
-    if not invoices:
-        raise Http404 #Just for the 
-    qs  = reduce(operator.or_,invoices)
-    invoice = get_object_or_404(qs, id_facture=invoice_id)
-
+    # figure out how they do this with MAPI
+ 
+    invoice = get_object_or_404(Invoices, id_facture=invoice_id)
     res = HP.ParseAck(request.POST.get('xml', None))
-    if res.get('status', None) == 'ok':
+    if res and res.get('status', None) == 'ok':
         invoice.is_paye = True
         invoice.save()
-
-    # Save the transaction for future reference
-    Transaction.objects.create(**res)
+        # Save the transaction for future reference
+        Transaction.objects.create(**res)
 
     # This is a bot that doesn't care
     return HttpResponse("")
