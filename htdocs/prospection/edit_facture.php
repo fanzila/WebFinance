@@ -190,7 +190,10 @@ $query = "SELECT id_client, nom "
 $result = mysql_query($query);
 $options = '';
 while ($response = mysql_fetch_object($result)) {
-   $nom = (strlen($response->nom) > 28 ? substr($response->nom, 0, 25). "..." : $response->nom);
+  $nom = $response->nom;
+  if(mb_strwidth($response->nom) > 28)
+    $nom = mb_strimwidth($response->nom, 0, 26) . '…';
+
 $options .= "<option ".($response->id_client==$facture->id_client ? 'selected="selected"' : '') 
            . " value='". $response->id_client . "'>".$nom."</option>";
 }
