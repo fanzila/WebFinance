@@ -10,6 +10,12 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django_countries import CountryField
 from uuid import uuid4
+import hmac
+try:
+    from hashlib import sha1
+except ImportError:
+    import sha
+    sha1 = sha.sha
 
 class Users(models.Model):
     id_user = models.AutoField(primary_key=True)
@@ -195,7 +201,8 @@ class Invitation(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.token:
-            self.token = uuid4().hex
+            new_uuid = uuid4()
+            self.token = hmac.new(str(new_uuid), digestmod=sha1).hexdigest()
             super(Invitation, self).save(*args, **kwargs)
 
     def get_full_name(self):

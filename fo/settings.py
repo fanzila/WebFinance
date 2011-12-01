@@ -119,6 +119,7 @@ INSTALLED_APPS = (
     'django_coverage',
     'hipay',
     'django_countries',
+    'tastypie',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -168,3 +169,4 @@ if 'test' in sys.argv or 'test_coverage' in sys.argv:
     except ImportError, e:
         #If you're testing watch this.
         pass
+TASTYPIE_FULL_DEBUG=True

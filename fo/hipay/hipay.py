@@ -14,11 +14,12 @@ import hashlib
 import xml.etree.ElementTree as ET
 #FIXME: use regular gettext to get this library Django independant or make it a
 #full django app django-hipay
-from django.utils.translation import ugettext_lazy as _
+import gettext
 from xml.dom import minidom
 from lxml.etree import XMLSchema, XMLParser, fromstring, _Element
 DIRNAME = os.path.dirname(__file__)
 
+gettext.install('hipay')
 # Borrowed from Django to avoid django dependency for those who whish to use the
 # library standalone
 URL_RE = re.compile(
@@ -537,7 +538,7 @@ def ParseAck(ack=None):
     return {'operation':tree.find('result/operation').text,
             'status':tree.find('result/status').text,
             'date':datetime.strptime(tree.find('result/date').text, "%Y-%m-%d"),
-            'time':datetime.strptime(tree.find('result/time').text[:7], '%H:%M:%S'),
+            'time':datetime.strptime(tree.find('result/time').text[:7], '%H:%M:%S'), # FIXME: use dateutil
             'transid':tree.find('result/transid').text,
             'origAmount':tree.find('result/origAmount').text,
             'origCurrency': tree.find('result/origCurrency').text,

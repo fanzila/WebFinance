@@ -14,7 +14,7 @@ from django.db import models
 from fo.enterprise.models import Clients
 
 class InvoiceRows(models.Model):
-    id_facture_ligne = models.IntegerField(primary_key=True)
+    id_facture_ligne = models.AutoField(primary_key=True, db_column='id_facture_ligne')
     id_facture = models.ForeignKey('Invoices', db_column='id_facture')
     description = models.TextField(blank=True)
     qtt = models.DecimalField(null=True, max_digits=7, decimal_places=2, blank=True)
@@ -33,12 +33,50 @@ class InvoiceRows(models.Model):
             unicode(self.qtt),
             unicode(self.prix_ht))
 
+class SubscriptionRow(models.Model):
+    subscription = models.ForeignKey('Subscription')
+    description = models.CharField(max_length=1024)
+    qty = models.DecimalField(null=True, max_digits=5, decimal_places=2, blank=True)
+    price_excl_vat = models.DecimalField(null=True, max_digits=20, decimal_places=5, blank=True)
 
+    class Meta:
+        verbose_name = _('Subscription row')
+        verbose_name_plural = _('Subscription rows')
+        db_table = u'webfinance_subscription_rows'
+        
+    def __unicode__(self):
+        return u"%s | %s | %s | %s" % (
+            unicode(self.subscription),
+            unicode(self.description),
+            unicode(self.qty),
+            unicode(self.price_excl_vat),)
 
+class Subscription(models.Model):
+    client = models.ForeignKey(Clients)
+    ref_contrat = models.CharField(max_length=255)
+    period = models.CharField(max_length=16, choices=[(k, _(k)) for k in ('monthly', 'quarterly', 'yearly')], default='monthly')
+    periodic_next_deadline = models.DateField()
+    delivery = models.CharField(max_length=16, choices=[(k, _(k)) for k in ('email', 'postal')], default='email')
+    payment_method = models.CharField(max_length=16, choices=[(k, _(k)) for k in ('unknown', 'direct_debit', 'check', 'wire_transfer')], default='unknown')
+    tax = models.DecimalField(max_digits=5, decimal_places=2,default='19.60')
+    type_doc = models.CharField(max_length=16, choices=[(k, _(k)) for k in ('quote','invoice')], default='invoice') 
+    
+    class Meta:
+        verbose_name = _('Subscription')
+        verbose_name_plural = _('Subscriptions')
+        db_table = u'webfinance_subscription'
+        
+    def __unicode__(self):
+        return u"%s | %s | %s " % (
+            unicode(self.ref_contrat),
+            unicode(self.delivery),
+            unicode(self.tax))
+
+  
 class Invoices(models.Model):
-    id_facture = models.IntegerField(primary_key=True)
+    id_facture = models.AutoField(primary_key=True, db_column='id_facture')
     client = models.ForeignKey(Clients, db_column='id_client')
-    date_created = models.DateTimeField(null=True, blank=True)
+    date_created = models.DateTimeField(null=True, blank=True, auto_now_add=True)
     date_generated = models.DateTimeField(null=True, blank=True)
     date_sent = models.DateTimeField(null=True, blank=True)
     date_paiement = models.DateTimeField(null=True, blank=True)
@@ -48,109 +86,114 @@ class Invoices(models.Model):
     ref_contrat = models.CharField(max_length=765, blank=True)
     extra_top = models.TextField(blank=True)
     facture_file = models.CharField(max_length=765, blank=True)
-    accompte = models.DecimalField(null=True, max_digits=12, decimal_places=4, blank=True)
+    accompte = models.DecimalField(null=True, max_digits=12, decimal_places=4, blank=True, default=0.0000)
     extra_bottom = models.TextField(blank=True)
     date_facture = models.DateTimeField(null=True, blank=True)
-    type_doc = models.CharField(max_length=27, blank=True)
+    type_doc = models.CharField(max_length=27, blank=True, default='facture')
     commentaire = models.TextField(blank=True)
     id_type_presta = models.IntegerField(null=True, blank=True)
-    id_compte = models.IntegerField()
+    id_compte = models.IntegerField(default=34)
     is_envoye = models.IntegerField(null=True, blank=True)
-    period = models.CharField(max_length=27, blank=True)
-    periodic_next_deadline = models.DateField(null=True, blank=True)
-    delivery = models.CharField(max_length=18, blank=True)
-    payment_method = models.CharField(max_length=39, blank=True)
-    tax = models.DecimalField(max_digits=7, decimal_places=2)
-    exchange_rate = models.DecimalField(max_digits=10, decimal_places=2)
+    period = models.CharField(max_length=27, blank=True, default='monthly') #FIXME: remove me
+    periodic_next_deadline = models.DateField(null=True, blank=True) #FIXME: remove me
+    delivery = models.CharField(max_length=18, blank=True, default='email') #FIXME: remove me
+    payment_method = models.CharField(max_length=39, blank=True, default='unknown') #FIXME: remove me
+    tax = models.DecimalField(default=19.60, max_digits=7, decimal_places=2)
+    exchange_rate = models.DecimalField(default=1.00, max_digits=10, decimal_places=2)
 
+
+    @property
+    def id_facture_id(self):
+        """Heu yeah awry ... tastypie search this thing somehow with a rather
+        fancy exception, thanks Python"""
+        return self.facture
+    
     class Meta:
         verbose_name = _('Invoice')
         verbose_name_plural = _('Invoices')
         db_table = u'webfinance_invoices'
         
     def __unicode__(self):
-        return u"%s | %s | %s | %s" % (
+        return u"%s | %s | %s " % (
             unicode(self.num_facture),
-            unicode(self.client),
             unicode(self.id_type_presta),
             unicode(self.period))
 
 
+# class Paybox(models.Model):
+#     id_paybox = models.IntegerField(primary_key=True)
+#     id_invoice = models.IntegerField()
+#     email = models.CharField(max_length=765, blank=True)
+#     reference = models.CharField(unique=True, max_length=255)
+#     state = models.CharField(max_length=21)
+#     amount = models.DecimalField(max_digits=16, decimal_places=2)
+#     currency = models.IntegerField()
+#     autorisation = models.CharField(max_length=192)
+#     transaction_id = models.CharField(max_length=192)
+#     payment_type = models.CharField(max_length=192)
+#     card_type = models.CharField(max_length=192)
+#     transaction_sole_id = models.CharField(max_length=192)
+#     error_code = models.CharField(max_length=192)
+#     date = models.DateTimeField(null=True, blank=True)
 
-class Paybox(models.Model):
-    id_paybox = models.IntegerField(primary_key=True)
-    id_invoice = models.IntegerField()
-    email = models.CharField(max_length=765, blank=True)
-    reference = models.CharField(unique=True, max_length=255)
-    state = models.CharField(max_length=21)
-    amount = models.DecimalField(max_digits=16, decimal_places=2)
-    currency = models.IntegerField()
-    autorisation = models.CharField(max_length=192)
-    transaction_id = models.CharField(max_length=192)
-    payment_type = models.CharField(max_length=192)
-    card_type = models.CharField(max_length=192)
-    transaction_sole_id = models.CharField(max_length=192)
-    error_code = models.CharField(max_length=192)
-    date = models.DateTimeField(null=True, blank=True)
 
-
-    class Meta:
-        verbose_name = _('PayBox')
-        verbose_name_plural = _('PayBox')
-        db_table = u'webfinance_paybox'
+#     class Meta:
+#         verbose_name = _('PayBox')
+#         verbose_name_plural = _('PayBox')
+#         db_table = u'webfinance_paybox'
         
-    def __unicode__(self):
-        return u"%s | %s | %s | %s" % (
-            unicode(self.email),
-            unicode(self.reference),
-            unicode(self.amount),
-            unicode(self.state))
+#     def __unicode__(self):
+#         return u"%s | %s | %s | %s" % (
+#             unicode(self.email),
+#             unicode(self.reference),
+#             unicode(self.amount),
+#             unicode(self.state))
 
 
         
-class TransactionInvoice(models.Model):
-    id_transaction = models.ForeignKey('Transactions', db_column='id_transaction')
-    id_invoice = models.ForeignKey('Invoices', db_column='id_invoice')
-    date_update = models.DateTimeField()
+# class TransactionInvoice(models.Model):
+#     id_transaction = models.ForeignKey('Transactions', db_column='id_transaction')
+#     id_invoice = models.ForeignKey('Invoices', db_column='id_invoice')
+#     date_update = models.DateTimeField()
 
-    class Meta:
-        verbose_name = _("Transaction's invoice")
-        verbose_name_plural = _("Transaction's invoices")
-        db_table = u'webfinance_transaction_invoice'
+#     class Meta:
+#         verbose_name = _("Transaction's invoice")
+#         verbose_name_plural = _("Transaction's invoices")
+#         db_table = u'webfinance_transaction_invoice'
         
-    def __unicode__(self):
-        return u"%s | %s " % (
-            unicode(self.id_invoice),
-            unicode(self.date_update))
+#     def __unicode__(self):
+#         return u"%s | %s " % (
+#             unicode(self.id_invoice),
+#             unicode(self.date_update))
 
 
-class Transactions(models.Model):
-    id = models.IntegerField(primary_key=True)
-    id_account = models.IntegerField()
-    id_category = models.IntegerField()
-    text = models.CharField(max_length=765)
-    amount = models.DecimalField(max_digits=16, decimal_places=2)
-    exchange_rate = models.DecimalField(max_digits=10, decimal_places=2)
-    type = models.CharField(max_length=27, blank=True)
-    document = models.CharField(max_length=384, blank=True)
-    date = models.DateField()
-    date_update = models.DateTimeField()
-    comment = models.TextField(blank=True)
-    file = models.TextField(blank=True)
-    file_type = models.CharField(max_length=75, blank=True)
-    file_name = models.CharField(max_length=150, blank=True)
-    lettrage = models.IntegerField(null=True, blank=True)
-    id_invoice = models.ManyToManyField('Invoices', through='TransactionInvoice')
+# class Transactions(models.Model):
+#     id = models.IntegerField(primary_key=True)
+#     id_account = models.IntegerField()
+#     id_category = models.IntegerField()
+#     text = models.CharField(max_length=765)
+#     amount = models.DecimalField(max_digits=16, decimal_places=2)
+#     exchange_rate = models.DecimalField(max_digits=10, decimal_places=2)
+#     type = models.CharField(max_length=27, blank=True)
+#     document = models.CharField(max_length=384, blank=True)
+#     date = models.DateField()
+#     date_update = models.DateTimeField()
+#     comment = models.TextField(blank=True)
+#     file = models.TextField(blank=True)
+#     file_type = models.CharField(max_length=75, blank=True)
+#     file_name = models.CharField(max_length=150, blank=True)
+#     lettrage = models.IntegerField(null=True, blank=True)
+#     id_invoice = models.ManyToManyField('Invoices', through='TransactionInvoice')
 
-    class Meta:
-        verbose_name = _('Transaction')
-        verbose_name_plural = _('Transactions')
-        db_table = u'webfinance_transactions'
+#     class Meta:
+#         verbose_name = _('Transaction')
+#         verbose_name_plural = _('Transactions')
+#         db_table = u'webfinance_transactions'
         
-    def __unicode__(self):
-        return u"%s | %s " % (
-            unicode(self.id_account),
-            unicode(self.date_amount))
+#     def __unicode__(self):
+#         return u"%s | %s " % (
+#             unicode(self.id_account),
+#             unicode(self.date_amount))
 
 
 class TypePresta(models.Model):

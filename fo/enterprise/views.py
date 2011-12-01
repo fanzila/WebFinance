@@ -28,6 +28,7 @@ def add_company(request):
             customer.id_user = Users.objects.get(login=request.user.email)
         except Users.DoesNotExist:
             try:
+                # FIXME: Remove these and do it just when the connection is first made
                 user = Users.objects.create(email=request.user.email, login=request.user.email)
                 customer.id_user = user
             except:
