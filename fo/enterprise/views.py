@@ -21,6 +21,8 @@ from django.core.urlresolvers import reverse
 def add_company(request):
     # FIXME: Make this view honor the returned_url if any for other apps that
     # will call it
+    return_url = request.GET.get('return_url', None)
+
     form = EnterpriseForm(request.POST or None)
     if form.is_valid():
         customer = form.save(commit=False)
@@ -39,6 +41,8 @@ def add_company(request):
         customer.save()
         Clients2Users.objects.create(user=customer.id_user, client=customer)
 
+        if return_url:
+            return redirect(return_url)
         return redirect('home')
     return render(request, 'enterprise/add_company.html', {'form':form, 'title':_("Add company")})
 
@@ -47,12 +51,15 @@ def change_company(request, customer_id):
     # FIXME: Make this view honor the returned_url if any for other apps that
     # will call it
     customer = get_object_or_404(Clients,id_client=customer_id)
-    
+    return_url = request.GET.get('return_url', None)
     form = EnterpriseForm(request.POST or None, instance=customer)
     if form.is_valid():
         customer = form.save(commit=False)
         customer.id_user = Users.objects.get(email=request.user.email)
         customer.save()
+
+        if return_url:
+            return redirect(return_url)
 
         return redirect('home')
     return render(request, 'enterprise/add_company.html', {'form':form, 'title':_("Change company")})

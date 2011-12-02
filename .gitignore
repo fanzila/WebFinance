@@ -1,7 +1,10 @@
-
 # /doc/
-/doc/html
-/doc/latex
-
-# /etc/
-/etc/*.conf
+/docs/html
+/docs/latex
+/docs/_*
+/docs/*~
+.gitignore
+*.bat
+*.pyc
+.ropeproject
+.DS_Store

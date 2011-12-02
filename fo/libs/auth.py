@@ -22,9 +22,13 @@ class WFRemoteUserBackend(ModelBackend):
                 # This will fail on admin: Duplicate key entry, we don't need
                 # admin anyway 
                 user = User.objects.get(email=username)
-            except:
+            except User.DoesNotExist:
                 user = User.objects.create_user(username,username, password=None)
-                user = Users.objects.create(email=username, login=username) 
+
+            try:
+                current_user = Users.objects.get(email=username)
+            except Users.DoesNotExist:
+                current_user = Users.objects.create(email=username, login=username)
             return user
 
         return None

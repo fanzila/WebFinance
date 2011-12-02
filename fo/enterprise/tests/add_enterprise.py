@@ -16,7 +16,7 @@ class AddCompanyTest(TestCase):
     def setUp(self):
         # We need a ticket and an account
         self.username = 'ousmane@wilane.org'
-        self.ticket = '2c314030278b9af4724352ba773ba2934bce6e59b12f776e01bdd0c2b47eeed10e551c53de697eda'
+        self.ticket = 'cc4968bc66d75b2212b3a8be5b5aae7161f9263ba8988a269bad2fd7b70b2a93cc1e12e752443c9b'
          
 
     def test_add_company(self):
@@ -52,6 +52,18 @@ class AddCompanyTest(TestCase):
 
         self.assertEqual(Clients.objects.count(), count + 1)
         self.assertContains(response, _("My companies"))
+
+
+        # Test return_url
+        response = self.client.post("%s?return_url=http://example.org" %url,
+                                    {'nom': 'foo baz',
+                                     'addr1': 'no where',
+                                     'cp': 142,
+                                     'ville': 'Dakar',
+                                     'pays':u'SN'},
+                                    follow = True)
+
+        self.assertEqual(response.status_code, 200)
         self.client.logout()
         
 
