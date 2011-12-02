@@ -7,14 +7,16 @@ __date__   = "Fri Nov 11 16:54:17 2011"
 
 from django.test import TestCase
 from django.core.urlresolvers import reverse
-from enterprise.models import Clients
+from enterprise.models import Clients, Invitation
 from django.utils.translation import ugettext_lazy as _
+from django.core import mail
+
 
 class AddCompanyTest(TestCase):
     def setUp(self):
         # We need a ticket and an account
         self.username = 'ousmane@wilane.org'
-        self.ticket = '5e70507c80853100fd5d41b252ae63882a64e06ca089debc90a5efa81a8f2297967374e7e1dc833c'
+        self.ticket = '2c314030278b9af4724352ba773ba2934bce6e59b12f776e01bdd0c2b47eeed10e551c53de697eda'
          
 
     def test_add_company(self):
@@ -42,7 +44,10 @@ class AddCompanyTest(TestCase):
         
         response = self.client.post(url,
                                     {'nom': 'foo baz',
-                                     'email':'test@example.org'},
+                                     'addr1': 'no where',
+                                     'cp': 142,
+                                     'ville': 'Dakar',
+                                     'pays':u'SN'},
                                     follow = True)
 
         self.assertEqual(Clients.objects.count(), count + 1)
@@ -64,3 +69,31 @@ class AddCompanyTest(TestCase):
         self.client.logout()
         
         
+    def test_invite_user(self):
+        url = reverse("invite_user")
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 302)
+
+        self.client.login(username=self.username, ticket=self.ticket)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        self.assertTemplateUsed(response, 'enterprise/invite_user.html')
+
+        count = Invitation.objects.count()
+        
+        response = self.client.post(url,
+                                    {'first_name': 'Foo',
+                                     'last_name': 'Baz',
+                                     'company':1,
+                                     'email':'test@example.org'},
+                                    follow = True)
+
+
+        self.assertEqual(Invitation.objects.count(), count + 1)
+        self.assertContains(response, _("My companies"))
+        self.assertEqual(len(mail.outbox), 1)
+        #subject = _("Invitation to join ISVTEC from ")
+        #self.assertEqual(mail.outbox[0].subject, subject)        
+        self.client.logout()

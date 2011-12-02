@@ -1,0 +1,11 @@
+{% load i18n %}
+{% block header %}
+{% endblock %}
+{% block body %}
+{% endblock %}
+{% block footer %}
+{% blocktrans %}
+Best regards,
+{% endblocktrans %}
+{% include "enterprise/emails/address.txt" %}
+{% endblock %}

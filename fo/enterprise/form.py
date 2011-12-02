@@ -6,10 +6,27 @@ __author__ = "Ousmane Wilane ♟ <ousmane@wilane.org>"
 __date__   = "Fri Nov 11 16:20:46 2011"
 
 
-from django.forms import ModelForm
-from enterprise.models import Clients
+from django import forms
+from enterprise.models import Clients, Invitation
+from django.utils.translation import ugettext_lazy as _
 
-class EnterpriseForm(ModelForm):
+class EnterpriseForm(forms.ModelForm):
+    required_css_class = 'required'    
     class Meta:
         model = Clients
-        exclude = ['users', 'id_user', 'total_du_ht', 'has_devis', 'has_unpaid', 'id_client', 'password', 'id_company_type', 'ca_total_ht_year', 'ca_total_ht']
+        exclude = ['users', 'id_user', 'total_du_ht', 'has_devis', 'has_unpaid',
+                   'id_client', 'password', 'id_company_type', 'ca_total_ht_year',
+                   'ca_total_ht']
+
+
+class InvitationForm(forms.ModelForm):
+    required_css_class = 'required'
+    def __init__(self, *args, **kwargs):
+        qs = kwargs.pop('qs')
+        super(InvitationForm, self).__init__(*args, **kwargs)
+        self.fields['company'] = forms.ModelChoiceField(queryset=qs, empty_label=_("Choose a company"))
+
+    class Meta:
+        model = Invitation
+        exclude = ['token']
+        

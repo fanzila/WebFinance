@@ -8,7 +8,14 @@ __date__   = "Thu Nov 10 14:20:07 2011"
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import User
+from django_countries import CountryField
+from uuid import uuid4
+import hmac
+try:
+    from hashlib import sha1
+except ImportError:
+    import sha
+    sha1 = sha.sha
 
 class Users(models.Model):
     id_user = models.AutoField(primary_key=True)
@@ -35,22 +42,25 @@ class Users(models.Model):
             unicode(self.last_name),
             unicode(self.first_name),
             unicode(self.login))
+    
+    def get_full_name(self):
+        return u"%s %s" %(self.first_name, self.last_name)
 
 
 class Clients(models.Model):
     id_client = models.AutoField(primary_key=True)
     users = models.ManyToManyField('Users', through='Clients2Users')
     nom = models.CharField(_('Company name'), unique=True, max_length=255)
+    cp = models.CharField(_('Postal code'), max_length=10)
+    ville = models.CharField(_('City'), max_length=100)
+    addr1 = models.CharField(_('Address 1'), max_length=265)    
+    addr2 = models.CharField(_('Address 2'), max_length=265, blank=True)
+    addr3 = models.CharField(_('Address 3'), max_length=265, blank=True)
+    pays = CountryField(_('Country'), max_length=50)
     tel = models.CharField(_('Phone'), max_length=15, blank=True)
     fax = models.CharField(_('Fax'), max_length=200, blank=True)
     web = models.CharField(_('Website'), max_length=100, blank=True)
-    cp = models.CharField(_('Postal code'), max_length=10, blank=True)
-    ville = models.CharField(_('City'), max_length=100, blank=True)
-    addr1 = models.CharField(_('Address 1'), max_length=265, blank=True)    
-    addr2 = models.CharField(_('Address 2'), max_length=265, blank=True)
-    addr3 = models.CharField(_('Address 3'), max_length=265, blank=True)
-    pays = models.CharField(_('Country'), max_length=50, blank=True)
-    vat_number = models.CharField(_('VAT number'), max_length=40, blank=True)
+    vat_number = models.CharField(_('VAT number'), max_length=40, blank=True, null=True)
     has_unpaid = models.NullBooleanField(_('Has unpaid'), default=False)
     ca_total_ht = models.DecimalField(_('Total turnover'), null=True, max_digits=22, decimal_places=4, blank=True)
     ca_total_ht_year = models.DecimalField(_('Total pre-taxed turnover'), null=True, max_digits=22, decimal_places=4, blank=True)
@@ -69,9 +79,8 @@ class Clients(models.Model):
         db_table = u'webfinance_clients'
         
     def __unicode__(self):
-        return u"%s | %s" % (
-            unicode(self.nom),
-            unicode(self.siren))
+        return u"%s" % (
+            unicode(self.nom))
 
 
 # M2M Jonction table ... This doesn't showup nowhere
@@ -176,3 +185,26 @@ class Roles(models.Model):
             unicode(self.description))
 
 
+class Invitation(models.Model):
+    token = models.CharField(max_length=255)
+    email = models.EmailField(_('Email address'))
+    first_name = models.CharField(_('First name'), max_length=255)
+    last_name = models.CharField(_('Last name'), max_length=255)
+    company = models.ForeignKey(Clients)
+
+
+    def __unicode__(self):
+        return u"%s | %s %s" % (
+            unicode(self.token),
+            unicode(self.first_name),
+            unicode(self.last_name))
+
+    def save(self, *args, **kwargs):
+        if not self.token:
+            new_uuid = uuid4()
+            self.token = hmac.new(str(new_uuid), digestmod=sha1).hexdigest()
+            super(Invitation, self).save(*args, **kwargs)
+
+    def get_full_name(self):
+        return u"%s %s" %(self.first_name, self.last_name)
+            

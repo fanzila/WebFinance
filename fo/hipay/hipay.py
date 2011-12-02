@@ -8,16 +8,18 @@ __date__   = "Wed Nov 16 07:40:23 2011"
 import re
 import os
 import urllib2
+from datetime import datetime
 from urllib import urlencode
 import hashlib
 import xml.etree.ElementTree as ET
 #FIXME: use regular gettext to get this library Django independant or make it a
 #full django app django-hipay
-from django.utils.translation import ugettext_lazy as _
+import gettext
 from xml.dom import minidom
 from lxml.etree import XMLSchema, XMLParser, fromstring, _Element
 DIRNAME = os.path.dirname(__file__)
 
+gettext.install('hipay')
 # Borrowed from Django to avoid django dependency for those who whish to use the
 # library standalone
 URL_RE = re.compile(
@@ -45,9 +47,15 @@ def setTag(tags, etree, attrs=None):
             etree.append(value.asTree().getroot())
             continue
         tag =  FOElement(key)
-        tag.text = unicode(value)
+        try:
+            tag.text = unicode(str(value).decode('utf-8'))
+        except UnicodeEncodeError:
+            tag.text = unicode(value)
         if etree.find(key) is not None:
-            etree.find(key).text = unicode(value)
+            try:
+                etree.find(key).text = unicode(str(value).decode('utf-8'))
+            except UnicodeEncodeError:
+                etree.find(key).text = unicode(value)
         else:
             etree.append(tag)
     return etree
@@ -158,7 +166,7 @@ class PaymentParams(HiPayTree):
         if currency in ('EUR', 'USD', 'CAD', 'AUD', 'CHF', 'SEK', 'GBP'):
             self.root = setTag(dict(currency=currency), self.root)
         else:
-            raise ValueError(_("""Unknown currency %s""" %currency))
+            raise ValueError(_("""Unknown currency %(currency)s""" %{'currency':currency}))
         
 
     def setLocale(self, defaultlang):
@@ -170,7 +178,7 @@ class PaymentParams(HiPayTree):
         if defaultlang in ('fr_FR', 'fr_BE', 'de_DE', 'en_GB', 'en_US', 'es_ES', 'nl_NL', 'nl_BE', 'pt_PT'):
             self.root = setTag(dict(defaultLang=defaultlang), self.root)
         else:
-            raise ValueError(_("""Unknown locale %s""" %defaultlang))
+            raise ValueError(_("""Unknown locale %(defaultlang)s""" %{'defaultlang':defaultlang}))
             
 
     def setEmailAck(self, email_ack):
@@ -181,7 +189,7 @@ class PaymentParams(HiPayTree):
         if EMAIL_RE.search(email_ack):
             self.root = setTag(dict(email_ack=email_ack), self.root)
         else:
-            raise ValueError(_("""Invalid email address %s""" %email_ack))
+            raise ValueError(_("""Invalid email address %(email_ack)s""" %{'email_ack':email_ack}))
 
     def setIdForMerchant(self, idformerchant):
         """Defines the identifier of this sale in the merchant’s system.
@@ -215,7 +223,7 @@ class PaymentParams(HiPayTree):
         if URL_RE.search(logo_URL):
             self.root = setTag(dict(logo_url=logo_URL), self.root)
         else:
-            raise ValueError(_("""Invalid url %s""" %logo_URL))
+            raise ValueError(_("""Invalid url %(log_url)s""" %{'logo_url':logo_URL}))
         
 
     def setMedia(self, media):
@@ -225,7 +233,7 @@ class PaymentParams(HiPayTree):
         if media in ('WEB',):
             self.root = setTag(dict(media=media), self.root)
         else:
-            raise ValueError(_("""Invalid media %s""" %media))
+            raise ValueError(_("""Invalid media %(media)s""" %{'media':media}))
 
     def setMerchantDatas(self, merchantdatas):
         """Sets the merchant’s data in the form of key-value dict.  These data
@@ -257,7 +265,7 @@ class PaymentParams(HiPayTree):
         if paymentmethod in ('HIPAY_MAPI_METHOD_SIMPLE', 'HIPAY_MAPI_METHOD_MULTI', 0, 1):
             self.root = setTag(dict(paymentMethod=paymentmethod), self.root)
         else:
-            raise ValueError(_("""Invalid payment method  %s""" %paymentmethod))
+            raise ValueError(_("""Invalid payment method  %(paymentmethod)s""" %{'paymentmethod':paymentmethod}))
         
 
     def setRating(self, rating):
@@ -271,7 +279,7 @@ class PaymentParams(HiPayTree):
         if rating in ('ALL', '+12', '+16', '+18'):
             self.root = setTag(dict(rating=rating), self.root)
         else:
-            raise ValueError(_("""Invalid rating  %s""" %rating))
+            raise ValueError(_("""Invalid rating  %(rating)s""" %{'rating':rating}))
         
 
     def setURLAck(self, URL_ack):
@@ -281,7 +289,7 @@ class PaymentParams(HiPayTree):
         if URL_RE.search(URL_ack):
             self.root = setTag(dict(url_ack=URL_ack), self.root)
         else:
-            raise ValueError(_("""Invalid url %s""" %URL_ack))
+            raise ValueError(_("""Invalid url %(url_ack)s""" %{'url_ack':URL_ack}))
         
 
     def setURLCancel(self, URL_cancel):
@@ -291,7 +299,7 @@ class PaymentParams(HiPayTree):
         if URL_RE.search(URL_cancel):
             self.root = setTag(dict(url_cancel=URL_cancel), self.root)
         else:
-            raise ValueError(_("""Invalid url %s""" %URL_cancel))
+            raise ValueError(_("""Invalid url %(url_cancel)s""" %{'url_cancel':URL_cancel}))
         
 
     def setURLNok(self, URL_nok):
@@ -301,7 +309,7 @@ class PaymentParams(HiPayTree):
         if URL_RE.search(URL_nok):
             self.root = setTag(dict(url_nok=URL_nok), self.root)
         else:
-            raise ValueError(_("""Invalid url %s""" %URL_nok))
+            raise ValueError(_("""Invalid url %(url_nok)s""" %{'url_nok':URL_nok}))
         
 
     def setURLOk(self, URL_ok):
@@ -311,7 +319,7 @@ class PaymentParams(HiPayTree):
         if URL_RE.search(URL_ok):
             self.root = setTag(dict(url_ok=URL_ok), self.root)
         else:
-            raise ValueError(_("""Invalid url %s""" %URL_ok))
+            raise ValueError(_("""Invalid url %(url_ok)s""" %{'url_ok':URL_ok}))
         
 
     def setInformations(self, text):
@@ -328,7 +336,7 @@ class PaymentParams(HiPayTree):
         if EMAIL_RE.search(hipay_account_login):
             self.root = setTag(dict(emailClient=hipay_account_login), self.root)
         else:
-            raise ValueError(_("""Invalid email address %s""" %hipay_account_login))
+            raise ValueError(_("""Invalid email address %(hipay_account_login)s""" %{'hipay_account_login':hipay_account_login}))
         
 
     def setShopId(self, id_shop):
@@ -338,7 +346,7 @@ class PaymentParams(HiPayTree):
         if EMAIL_RE.search(id_shop):
             self.root = setTag(dict(shopId=id_shop), self.root)
         else:
-            raise ValueError(_("""Invalid email address %s""" %id_shop))
+            raise ValueError(_("""Invalid email address %(id_shop)s""" %{'id_shop':id_shop}))
         
 
     def check(self):
@@ -365,7 +373,7 @@ class Tax(HiPayTree):
                 element = setTag(taxe, element)
                 self.root.append(element)
         else:
-            raise ValueError(_("""taxVal and percentage should be numbers %s""" %taxes))
+            raise ValueError(_("""taxVal and percentage should be numbers %(taxes)s""" %{'taxes':taxes}))
                 
 
 class Affiliate(HiPayTree):
@@ -396,7 +404,7 @@ class Affiliate(HiPayTree):
                 element = setTag(aff, element)
                 self.root.append(element)
         else:
-            raise ValueError(_("""Invalid percentageTarget %s""" %affiliates))
+            raise ValueError(_("""Invalid percentageTarget %(affiliates)s""" %{'affiliates':affiliates}))
             
             
 
@@ -417,7 +425,7 @@ class Product(HiPayTree):
                 element = setTag(p, element)
                 self.root.append(element)
         else:
-            raise ValueError(_("""Invalid products specifications, the quantity and the price should be numbers %s""" %products))
+            raise ValueError(_("""Invalid products specifications, the quantity and the price should be numbers %(products)s""" %{'products':products}))
         
 
 class Installement(HiPayTree):
@@ -434,7 +442,7 @@ class Installement(HiPayTree):
                 element = setTag(i, element)
                 self.root.append(element)
         else:
-            raise ValueError(_("""Invalid installement specifications, the price should be numbers and first should be true or false %s""" %installements))
+            raise ValueError(_("""Invalid installement specifications, the price should be numbers and first should be true or false %(installments)s""" %{'installements':installements}))
         
 class Order(HiPayTree):
     def __init__(self):
@@ -454,7 +462,7 @@ class Order(HiPayTree):
                 element = setTag(o, element)
                 self.root.append(element)
         else:
-            raise ValueError(_("""Invalid order specifications, shippingAmount, insuranceAmount, fixedCostAmount should numbers, orderCategory is an integer insuranceTax, fixedCostTax should be Tax instances and affiliate should be an Affiliate instance%s""" %orders))
+            raise ValueError(_("""Invalid order specifications, shippingAmount, insuranceAmount, fixedCostAmount should numbers, orderCategory is an integer insuranceTax, fixedCostTax should be Tax instances and affiliate should be an Affiliate instance %(orders)s""" %{'orders':orders}))
 
 
 class HiPay(HiPayTree):
@@ -480,7 +488,6 @@ class HiPay(HiPayTree):
         m.update(ET.tostring(self.asTree().getroot()))
         self.mapi = setTag({'md5content':m.hexdigest()}, self.mapi)        
         self.mapi.append(self.root)
-        #xml = """<?xml version="1.0" ?>%s""" %(ET.tostring(ET.ElementTree(self.mapi).getroot(), encoding="utf-8"),)
         xml = ET.tostring(ET.ElementTree(self.mapi).getroot(), encoding="utf-8")
         opener = urllib2.build_opener()
         opener.addheaders = [("Content-Type", "text/xml"),
@@ -498,14 +505,47 @@ class HiPay(HiPayTree):
         try:
             response = self.response.read()
         except:
-            raise ValueError(_("Empty enswer"))
+            raise ValueError(_("Empty answer"))
         tree = ET.fromstring(response)
         if tree.find('result/status').text == 'error':
             return dict(status='Error', message=tree.find("result/message").text)
-            #raise ValueError(_("""Error: %s""" %(tree.find("result/message"),)))
         elif tree.find('result/status').text == 'accepted':
             return dict(status='Accepted',message=tree.find("result/url").text)
         else:
             return dict(status='Unknown', message=response)
 
 
+def ParseAck(ack=None):
+    if not ack:
+        return None
+    tree = ET.fromstring(ack)
+    body = tree.find('result')
+    m = hashlib.md5()
+    m.update(ET.tostring(ET.ElementTree(body).getroot()))
+        
+    # If this is a subscription
+    try:
+        subscriptionId = tree.find('result/subscriptionId').text
+    except:
+        subscriptionId = None
+            
+
+                        
+    if tree.find('result/merchantDatas') is not None:
+        merchantDatas = dict([(i.tag, i.text) for i in tree.find('result/merchantDatas')])
+    else:
+        merchantDatas = None
+    return {'operation':tree.find('result/operation').text,
+            'status':tree.find('result/status').text,
+            'date':datetime.strptime(tree.find('result/date').text, "%Y-%m-%d"),
+            'time':datetime.strptime(tree.find('result/time').text[:7], '%H:%M:%S'), # FIXME: use dateutil
+            'transid':tree.find('result/transid').text,
+            'origAmount':tree.find('result/origAmount').text,
+            'origCurrency': tree.find('result/origCurrency').text,
+            'idForMerchant': tree.find('result/idForMerchant').text,
+            'emailClient': tree.find('result/emailClient').text,
+            'merchantDatas':merchantDatas,
+            'subscriptionId':subscriptionId,
+            'refProduct': tree.find('result/refProduct0').text,
+            'not_tempered_with': tree.find('md5content').text == m.hexdigest()
+             }

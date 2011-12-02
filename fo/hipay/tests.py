@@ -12,6 +12,7 @@ import xml.etree.ElementTree as ET
 from lxml.etree import XMLSchema, XMLParser, fromstring, _Element
 import hipay
 from django.test import TestCase
+import datetime
 DIRNAME = os.path.dirname(__file__)
 
 class HiPayTest(TestCase):
@@ -325,3 +326,34 @@ class HiPayTest(TestCase):
         self.assertTrue(pay.validate())
         response = pay.SendPayment("https://test-payment.hipay.com/order/")
         self.assertEquals(response['status'], 'Accepted')
+
+
+    def test_parse_ack(self):
+        ack = """<?xml version="1.0" encoding="UTF-8"?> <mapi>
+<mapiversion>1.0</mapiversion> <md5content>c0783cc613bf025087b8bf5edecac824</md5content> <result>
+<operation>capture</operation> <status>ok</status>
+<date>2010-02-23</date>
+<time>10:32:12 UTC+0000</time> <transid>4B83AEA905C49</transid> <origAmount>10.20</origAmount> <origCurrency>EUR</origCurrency> <idForMerchant>REF6522</idForMerchant> <emailClient>email_client@hipay.com</emailClient> <merchantDatas>
+<_aKey_id_client>2000</_aKey_id_client>
+<_aKey_credit>10</_aKey_credit> </merchantDatas>
+<subscriptionId>753EA685B55651DC40F0C2784D5E1170</subscriptionId> (si la transaction est liée à un abonnement)
+<refProduct0>REF6522</refProduct0>
+</result> </mapi>"""
+        res = hipay.ParseAck(ack)
+        expected_res = {'status': 'ok',
+                        'origAmount': '10.20',
+                        'emailClient':'email_client@hipay.com',
+                        'date': datetime.datetime(2010, 2, 23, 0, 0),
+                        'operation': 'capture',
+                        'transid': '4B83AEA905C49',
+                        'merchantDatas': {'_aKey_id_client': '2000',
+                                          '_aKey_credit': '10'},
+                        'origCurrency': 'EUR',
+                        'idForMerchant': 'REF6522',
+                        'refProduct': 'REF6522',
+                        'time': datetime.datetime(1900, 1, 1, 10, 32, 1),
+                        'subscriptionId': '753EA685B55651DC40F0C2784D5E1170',
+                        'not_tempered_with': False}
+
+        self.assertEqual(res, expected_res)
+        

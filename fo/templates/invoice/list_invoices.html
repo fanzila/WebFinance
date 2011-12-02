@@ -4,6 +4,12 @@
 
 {% block content %}
     <h1>{% blocktrans %}Invoices/Quotes for company {% endblocktrans %}{{ company }}</h1>
+
+    {% if message %}
+    <p>{{ message}} </p>
+    {% endif %}
+
+
     {% if invoice_list %}<h2>{% trans 'Invoices' %}</h2>{% endif %}
     <ul>
         {% for invoice in invoice_list %}
