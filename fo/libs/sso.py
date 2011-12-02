@@ -80,6 +80,8 @@ class WFHTTPClient:
 
         # Fix missing ns that break the parser
         afile = StringIO.StringIO()
+        #FIXME: Check that we've got something back from the SSO and report
+        #error to the user if we can't reach the SSO
         content = h.read()
         #Patch to avoid empty ns
         content = content.replace('xmlns:ns1=""','xmlns:ns1="http://xml.apache.org/xml-soap"')

@@ -11,13 +11,13 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.core.urlresolvers import reverse
-from django.utils.translation import ugettext_lazy as _
 from os.path import join
 from subprocess import call
 import operator
-from fo.hipay import hipay as HP
 from fo.enterprise.models import Users
 from fo.invoice.models import Invoices, Transaction
+from fo.libs import hipay
+from fo.hipay.hipay import ParseAck
 from django.views.decorators.csrf import csrf_exempt
 
 @login_required
@@ -77,63 +77,9 @@ def hipay_invoice(request, invoice_id):
     if not invoices:
         raise Http404
 
-
     qs  = reduce(operator.or_,invoices)
     invoice = get_object_or_404(qs, id_facture=invoice_id)
-
-    base_host = "http%s://%s" %('s' if request.is_secure() else '',
-                                request.get_host())
-    # FIXME: All these params are shop parameters, the website might have more
-    # than one configured shops
-    s = HP.PaymentParams("84971", "84971", "84971", "84971", "84971")
-    s.setBackgroundColor('#FFFFFF')
-    s.setCaptureDay('6')
-    s.setCurrency('EUR')
-    s.setLocale('fr_FR')
-    s.setEmailAck('test@example.org')
-    s.setLogin('84971', '313666')
-    s.setMedia('WEB')
-    s.setRating('+18')
-    s.setIdForMerchant('142545')
-    s.setMerchantSiteId('3194')
-    
-    # Will get this back from the IPN ACK 
-    s.setMerchantDatas({'invoice_id':invoice_id, 'customer':invoice.client.id_client})
-    s.setURLOk("%s%s" % (base_host, reverse('hipay_payment_url', kwargs={'invoice_id':invoice_id, 'action':'ok'})))
-    s.setURLNok("%s%s" % (base_host, reverse('hipay_payment_url', kwargs={'invoice_id':invoice_id,'action':'nook'})))
-    s.setURLCancel("%s%s" % (base_host, reverse('hipay_payment_url', kwargs={'invoice_id':invoice_id,'action':'cancel'})))
-    s.setURLAck("%s%s" % (base_host, reverse('hipay_ipn_ack', kwargs={'invoice_id':invoice_id})))
-    s.setLogoURL("%s%s" % (base_host, reverse('hipay_shop_logo')))
-
-    products = HP.Product()
-    taxes = HP.Tax('tax')
-    mestax=[dict(taxName='TVA', taxVal=invoice.tax, percentage='true')]
-    taxes.setTaxes(mestax)
-    list_products = []
-    for ligne in invoice.invoicerows_set.all():
-        list_products.append({'name':ligne.description,
-                         'info':ligne.description,
-                         'quantity':int(ligne.qtt),
-                         'ref':invoice.num_facture,
-                         'category':'91', # https://test-payment.hipay.com/order/list-categories/id/3194
-                         'price':ligne.prix_ht,
-                         'tax':taxes})
-    products.setProducts(list_products)
-        
-    order = HP.Order()
-        
-    data = [{'shippingAmount':0,
-             'insuranceAmount':0,
-             'fixedCostAmount':0, #sum([l.qtt*l.prix_ht for l in invoice.invoicerows_set.all()]),
-             'orderTitle':'Mon ordre',
-             'orderInfo':'Box',
-             'orderCategory':91}]
-    order.setOrders(data)
-    pay = HP.HiPay(s)
-    
-    pay.SimplePayment(order, products)
-
-    response = pay.SendPayment(settings.HIPAY_GATEWAY)
+    response = hipay.simplepayment(invoice, sender_host=request.get_host(), secure=request.is_secure())
 
     if response['status'] == 'Accepted':
         return redirect(response['message'])
@@ -178,7 +124,7 @@ def hipay_ipn_ack(request, invoice_id):
     # figure out how they do this with MAPI
  
     invoice = get_object_or_404(Invoices, id_facture=invoice_id)
-    res = HP.ParseAck(request.POST.get('xml', None))
+    res = ParseAck(request.POST.get('xml', None))
     if res and res.get('status', None) == 'ok':
         invoice.is_paye = True
         invoice.save()
