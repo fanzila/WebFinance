@@ -86,7 +86,7 @@ class Invoices(models.Model):
     ref_contrat = models.CharField(max_length=765, blank=True)
     extra_top = models.TextField(blank=True)
     facture_file = models.CharField(max_length=765, blank=True)
-    accompte = models.DecimalField(null=True, max_digits=12, decimal_places=4, blank=True, default=0.0000)
+    accompte = models.DecimalField(null=True, max_digits=12, decimal_places=4, blank=True, default='0')
     extra_bottom = models.TextField(blank=True)
     date_facture = models.DateTimeField(null=True, blank=True)
     type_doc = models.CharField(max_length=27, blank=True, default='facture')
@@ -98,8 +98,8 @@ class Invoices(models.Model):
     periodic_next_deadline = models.DateField(null=True, blank=True) #FIXME: remove me
     delivery = models.CharField(max_length=18, blank=True, default='email') #FIXME: remove me
     payment_method = models.CharField(max_length=39, blank=True, default='unknown') #FIXME: remove me
-    tax = models.DecimalField(default=19.60, max_digits=7, decimal_places=2)
-    exchange_rate = models.DecimalField(default=1.00, max_digits=10, decimal_places=2)
+    tax = models.DecimalField(default='19.60', max_digits=7, decimal_places=2)
+    exchange_rate = models.DecimalField(default='1.00', max_digits=10, decimal_places=2)
 
 
     @property
