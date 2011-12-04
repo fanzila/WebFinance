@@ -45,4 +45,45 @@
         {% endfor %}
     </ul>
 
+
+
+
+    {% if subscription_list %}<h2>{% trans 'Subscriptions' %}</h2>{% endif %}
+    <ul>
+        {% for invoice in subscription_list %}
+            <li><a href="{% url 'detail_subscription' subscription_id=invoice.pk %}">
+                                    {{ invoice.ref_contrat }} |
+                                    {{ invoice.periodic_next_deadline }} |
+                                    {{ invoice.period }}
+                </a> |
+                <a href="{% url 'hipay_paysubs' subscription_id=invoice.pk %}">
+                                    {% trans 'Pay subscription with HiPay' %}
+                </a> |
+                <a href="{% url 'download_subscription' subscription_id=invoice.pk %}">
+                                    {% trans 'Download subscription invoice' %}
+                </a>
+            </li>
+        {% empty %}
+            {% blocktrans %} You have no pending subscription for {{ company }} {% endblocktrans %}
+        {% endfor %}
+    </ul>
+
+    {% if subscriptionquote_list %}<h2>{% trans 'Subscription quotes' %}</h2>{% endif %}
+    <ul>
+        {% for invoice in subscriptionquote_list %}
+            <li><a href="{% url 'detail_subscription' subscription_id=invoice.pk %}">
+                                    {{ invoice.ref_contrat }} |
+                                    {{ invoice.periodic_next_deadline }} |
+                                    {{ invoice.period }}
+                </a> |
+                <a href="{% url 'accept_qubscriptionquote' subscription_id=invoice.pk %}">
+                                    {% trans 'Accpet subscription quote' %}
+                </a>
+            </li>
+        {% empty %}
+            {% blocktrans %} You have no pending quote for {{ company }} {% endblocktrans %}
+        {% endfor %}
+    </ul>
+
+
 {% endblock %}

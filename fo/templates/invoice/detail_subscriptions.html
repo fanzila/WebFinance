@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load url from future %}
+
+{% block content %}
+    <h2>{% trans 'Subscription' %} {{ subscription.ref_contrat }}</h2>
+    <ul>
+        {% for row in subscription_details %}
+            <li>{{ row.description }} | {{ row.qty }} | {{ row.prix_excl_vat}}</li>
+        {% empty %}
+            {% blocktrans %} This subscription have no details{% endblocktrans %}
+        {% endfor %}
+    </ul>
+{% endblock %}

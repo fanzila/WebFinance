@@ -151,7 +151,7 @@ class PaymentParams(HiPayTree):
         cancelled and this amount is made available once again to the customer."""
         self.captureday = captureday
         if (captureday in ('HIPAY_MAPI_CAPTURE_IMMEDIATE',
-                           'HIPAY_MAPI_CAPTURE_MANUAL')) or (str(captureday).isdigit() and 0 < int(captureday) < 7):
+                           'HIPAY_MAPI_CAPTURE_MANUAL')) or (str(captureday).isdigit() and 0 <= int(captureday) < 7):
             self.root = setTag(dict(captureDay=captureday), self.root)            
 
         else:

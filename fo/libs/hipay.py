@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-def simplepayment(invoice, sender_host, secure=False, urls={}, extra={}):
+def getParams(invoice_id, customer_id, sender_host, secure=False, urls=None, extra=None):
     base_host = "http%s://%s" %('s' if secure else '', sender_host)
     # FIXME: All these params are shop parameters, the website might have more
     # than one configured shops itemaccount, taxaccount, insuranceaccount,
@@ -29,16 +29,16 @@ def simplepayment(invoice, sender_host, secure=False, urls={}, extra={}):
                extra.get('password', None) or settings.HIPAY_PASSWORD)
     s.setMedia(extra.get('media', None) or settings.HIPAY_MEDIA)
     s.setRating(extra.get('rating', None) or settings.HIPAY_RATING)
-    s.setIdForMerchant('142545')
-    s.setMerchantSiteId('3194')
+    s.setIdForMerchant(extra.get('ifformerchant', None) or settings.HIPAY_ID_FOR_MERCHANT)
+    s.setMerchantSiteId(extra.get('merchantsiteid', None) or settings.HIPAY_MERCHANT_SITE_ID)
     
     # Will get this back from the IPN ACK 
-    s.setMerchantDatas({'invoice_id':invoice.pk, 'customer':invoice.client.id_client})
+    s.setMerchantDatas({'invoice_id':invoice_id, 'customer':customer_id})
 
-    URL_OK = urls.get('URL_OK', None) or "%s%s" % (base_host, reverse('hipay_payment_url', kwargs={'invoice_id':invoice.pk, 'action':'ok'}))
-    URL_NOOK = urls.get('URL_NOOK', None) or "%s%s" % (base_host, reverse('hipay_payment_url', kwargs={'invoice_id':invoice.pk,'action':'nook'}))
-    URL_CANCEL = urls.get('URL_CANCEL', None) or "%s%s" % (base_host, reverse('hipay_payment_url', kwargs={'invoice_id':invoice.pk,'action':'cancel'}))
-    URL_ACK = urls.get('URL_ACK', None) or "%s%s" % (base_host, reverse('hipay_ipn_ack', kwargs={'invoice_id':invoice.pk}))
+    URL_OK = urls.get('URL_OK', None) or "%s%s" % (base_host, reverse('hipay_payment_url', kwargs={'invoice_id':invoice_id, 'action':'ok'}))
+    URL_NOOK = urls.get('URL_NOOK', None) or "%s%s" % (base_host, reverse('hipay_payment_url', kwargs={'invoice_id':invoice_id,'action':'nook'}))
+    URL_CANCEL = urls.get('URL_CANCEL', None) or "%s%s" % (base_host, reverse('hipay_payment_url', kwargs={'invoice_id':invoice_id,'action':'cancel'}))
+    URL_ACK = urls.get('URL_ACK', None) or "%s%s" % (base_host, reverse('hipay_ipn_ack', kwargs={'invoice_id':invoice_id}))
     LOGO_URL = urls.get('LOGO_URL', None) or "%s%s" % (base_host, reverse('hipay_shop_logo'))
     
     s.setURLOk(URL_OK)
@@ -46,10 +46,16 @@ def simplepayment(invoice, sender_host, secure=False, urls={}, extra={}):
     s.setURLCancel(URL_CANCEL)
     s.setURLAck(URL_ACK)
     s.setLogoURL(LOGO_URL)
+    return s
+
+def simplepayment(invoice, sender_host, secure=False, urls=None, extra=None):
+    urls = urls or {}
+    extra = extra or {}
+    params = getParams(invoice.pk, invoice.client.pk, sender_host, secure, urls, extra)
 
     products = HP.Product()
     taxes = HP.Tax('tax')
-    mestax=[dict(taxName='TVA', taxVal=invoice.tax, percentage='true')]
+    mestax=[dict(taxName='TVA %s'%(invoice.tax,), taxVal=invoice.tax, percentage='true')]
     taxes.setTaxes(mestax)
     list_products = []
     for ligne in invoice.invoicerows_set.all():
@@ -71,7 +77,52 @@ def simplepayment(invoice, sender_host, secure=False, urls={}, extra={}):
              'orderInfo':'Box',
              'orderCategory':extra.get('category', None) or settings.HIPAY_DEFAULT_CATEGORY}]
     order.setOrders(data)
-    pay = HP.HiPay(s)
+    pay = HP.HiPay(params)
     pay.SimplePayment(order, products)
     return pay.SendPayment(settings.HIPAY_GATEWAY)
     
+
+def subscriptionpayment(subscription, sender_host, secure=False, urls=None, extra=None):
+    urls = urls or {}
+    extra = extra or {}
+
+    params = getParams(subscription.pk, subscription.client.pk, sender_host, secure, urls, extra)
+
+    price_excl_vat = sum(ligne.price_excl_vat for ligne in  subscription.subscriptionrow_set.all())
+
+    order = HP.Order()
+
+    # FIXME: Introduce Affiliates
+
+    # FIXME: Have to find a better way to format this
+    order_info = " | ".join(ligne.description for ligne in  subscription.subscriptionrow_set.all())
+
+    order_data = [{'shippingAmount':0, 'insuranceAmount':0, 'fixedCostAmount':0, 'orderTitle':'Subscription # %s'%subscription.ref_contrat,
+                   'orderInfo':order_info,
+                   'orderCategory':extra.get('category',None) or settings.HIPAY_DEFAULT_SUBSCRIPTION_CATEGORY},
+                  {'shippingAmount':0, 'insuranceAmount':0, 'fixedCostAmount':0,
+                   'orderTitle':'Subscription # %s'%subscription.ref_contrat,
+                   'orderInfo':order_info,
+                   'orderCategory':extra.get('category',None) or settings.HIPAY_DEFAULT_SUBSCRIPTION_CATEGORY}
+                   ]
+    order.setOrders(order_data)
+
+    inst = HP.Installement()
+    mta = HP.Tax('tax')
+    mestax=[dict(taxName='TVA %s'%subscription.tax, taxVal=int(subscription.tax), percentage='true')]
+    mta.setTaxes(mestax)
+    DELAYS = {'monthly':'1M',
+              'quarterly':'3M',
+              'yearly':'12M'}
+    inst_data = [{'price':price_excl_vat, 'first':'true',
+                  'paymentDelay': settings.HIPAY_DEFAULT_SUBSCRIPTION_FIRST_PAYMENT_DELAY, #use the field periodic_next_deadline
+                  'tax':mta},
+                 {'price':price_excl_vat, 'first':'false',
+                  'paymentDelay':extra.get('paymentdelay',None) or DELAYS.get(subscription.period, None) or settings.HIPAY_DEFAULT_SUBSCRIPTION_SUBS_PAYMENT_DELAY,
+                  'tax':mta}]
+    inst.setInstallements(inst_data)
+
+    pay = HP.HiPay(params)
+    pay.MultiplePayment(order, inst)
+
+    return pay.SendPayment(settings.HIPAY_GATEWAY)

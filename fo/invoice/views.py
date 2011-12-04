@@ -40,6 +40,8 @@ def list_invoices(request, customer_id, message=None):
     return render(request, 'invoice/list_invoices.html',
                               {'invoice_list': customer.invoices_set.filter(type_doc='facture', is_paye=False),
                                'quote_list': customer.invoices_set.filter(type_doc='devis'),
+                               'subscription_list': customer.subscription_set.filter(type_doc='invoice'),
+                               'subscrptionquote_list': customer.subscription_set.filter(type_doc='quote'),
                                'company': customer,
                                'message':message})
 
@@ -56,6 +58,20 @@ def detail_invoice(request, invoice_id):
                               {'invoice':invoice,
                                'invoice_details': invoice.invoicerows_set.order_by('ordre')})
 
+
+@login_required
+def detail_subscription(request, subscription_id):
+    current_user = Users.objects.get(email=request.user.email)
+    subscriptions = [c.subscription_set.all() for c in current_user.clients_set.all()]
+    if not subscriptions:
+        raise Http404
+    qs  = reduce(operator.or_, subscriptions)
+    subscription = get_object_or_404(qs, pk=subscription_id)
+
+    return render(request, 'invoice/detail_subscriptions.html',
+                              {'subscription':subscription,
+                               'subscription_details': subscription.subscriptionrow_set.order_by('id')})
+
 @login_required
 def accept_quote(request, invoice_id):
     current_user = Users.objects.get(email=request.user.email)
@@ -67,6 +83,21 @@ def accept_quote(request, invoice_id):
     qs  = reduce(operator.or_,invoices)
     quote = get_object_or_404(qs, id_facture=invoice_id)    
     quote.type_doc = 'facture'
+    quote.save()
+    return redirect('list_invoices', customer_id=quote.client.id_client)
+
+
+@login_required
+def accept_subscriptionquote(request, subscription_id):
+    current_user = Users.objects.get(email=request.user.email)
+    subscriptions = [c.subscription_set.all() for c in current_user.clients_set.all()]
+    if not subscriptions:
+        # It's likely that you've keyed in an invoice id
+        raise Http404
+
+    qs  = reduce(operator.or_,subscriptions)
+    quote = get_object_or_404(qs, pk=subscription_id)
+    quote.type_doc = 'invoice'
     quote.save()
     return redirect('list_invoices', customer_id=quote.client.id_client)
 
@@ -87,6 +118,22 @@ def hipay_invoice(request, invoice_id):
         raise ValueError(response)
 
 @login_required
+def hipay_subscription(request, subscription_id):
+    current_user = Users.objects.get(email=request.user.email)
+    subscriptions = [c.subscription_set.all() for c in current_user.clients_set.all()]
+    if not subscriptions:
+        raise Http404
+
+    qs  = reduce(operator.or_, subscriptions)
+    subscription = get_object_or_404(qs, pk=subscription_id)
+    response = hipay.subscriptionpayment(subscription, sender_host=request.get_host(), secure=request.is_secure())
+
+    if response['status'] == 'Accepted':
+        return redirect(response['message'])
+    else:
+        raise ValueError(response)
+
+@login_required
 def download_invoice(request, invoice_id):
     #FIXME: Make the the called script accept a configurable directory, Cyril
     #can you fix that please.
@@ -100,7 +147,7 @@ def download_invoice(request, invoice_id):
     if not call([settings.INVOICE_PDF_GENERATOR, str(invoice.id_facture)]):
         filename = 'Facture_%s_%s.pdf' %(invoice.num_facture, invoice.client.nom)
         filename = filename.replace(' ', '_')
-        filepath = join(settings.INVOICE_PDF_DIR, filename)        
+        filepath = join(settings.INVOICE_PDF_DIR, filename)
         response = HttpResponse(mimetype='application/pdf')
         response['Content-Disposition'] = 'attachment; filename=%s' %(filename,)
         response.write(open(filepath).read())
@@ -108,6 +155,28 @@ def download_invoice(request, invoice_id):
 
     raise Http404
 
+
+@login_required
+def download_subscription(request, subscription_id):
+    #FIXME: Make the the called script accept a configurable directory, Cyril
+    #can you fix that please.
+    current_user = Users.objects.get(email=request.user.email)
+    subscriptions = [c.subscription_set.all() for c in current_user.clients_set.all()]
+    if not subscriptions:
+        raise Http404
+
+    qs  = reduce(operator.or_,subscriptions)
+    subscription = get_object_or_404(qs, pk=subscription_id)
+    if not call([settings.INVOICE_PDF_GENERATOR, str(subscription.pk)]):
+        filename = 'Facture_%s_%s.pdf' %(subscription.ref_contrat, subscription.client.nom)
+        filename = filename.replace(' ', '_')
+        filepath = join(settings.INVOICE_PDF_DIR, filename)
+        response = HttpResponse(mimetype='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename=%s' %(filename,)
+        response.write(open(filepath).read())
+        return response
+
+    raise Http404
 
 def hipay_payment_url(request, invoice_id, action):
     """URL to redirect the client on canceled payment by the customer"""
