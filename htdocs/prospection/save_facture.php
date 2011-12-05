@@ -211,7 +211,7 @@ if ($action == "save_facture") {
     $_SESSION['message'] = _('Duplicate invoice number')."<br/>"._('Invoice updated') ;
     $_SESSION['error'] = 1;
   } else
-    $_SESSION['message'] = _('Invoice updated');
+    /* $_SESSION['message'] = _('Invoice updated'); */
 
   if($type_doc=="facture" || ($type_doc=="devis" &&  $is_paye=="on" )){
     $Facture->updateTransaction($_POST['id_facture'],$type_prev);
