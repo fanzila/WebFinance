@@ -15,7 +15,7 @@ from os.path import join
 from subprocess import call
 import operator
 from fo.enterprise.models import Users
-from fo.invoice.models import Invoices, Transaction
+from fo.invoice.models import Invoices, InvoiceTransaction, SubscriptionTransaction, Subscription
 from fo.libs import hipay
 from fo.hipay.hipay import ParseAck
 from django.views.decorators.csrf import csrf_exempt
@@ -110,11 +110,16 @@ def hipay_invoice(request, invoice_id):
 
     qs  = reduce(operator.or_,invoices)
     invoice = get_object_or_404(qs, id_facture=invoice_id)
-    response = hipay.simplepayment(invoice, sender_host=request.get_host(), secure=request.is_secure())
+    tr = InvoiceTransaction(invoice=invoice)
+    tr.save()
+    response = hipay.simplepayment(invoice, sender_host=request.get_host(), secure=request.is_secure(), internal_transid=tr.pk, payment_type="invoice")
 
     if response['status'] == 'Accepted':
+        tr.redirect_url = response['message']
+        tr.save()
         return redirect(response['message'])
     else:
+        tr.delete()
         raise ValueError(response)
 
 @login_required
@@ -126,9 +131,15 @@ def hipay_subscription(request, subscription_id):
 
     qs  = reduce(operator.or_, subscriptions)
     subscription = get_object_or_404(qs, pk=subscription_id)
-    response = hipay.subscriptionpayment(subscription, sender_host=request.get_host(), secure=request.is_secure())
+    tr = SubscriptionTransaction(subscription=subscription)
+    tr.save()
+
+    response = hipay.subscriptionpayment(subscription, sender_host=request.get_host(), secure=request.is_secure(), internal_transid=tr.pk, payment_type="subscription")
 
     if response['status'] == 'Accepted':
+        tr.redirect_url = response['message']
+        tr.save()
+
         return redirect(response['message'])
     else:
         raise ValueError(response)
@@ -178,27 +189,41 @@ def download_subscription(request, subscription_id):
 
     raise Http404
 
-def hipay_payment_url(request, invoice_id, action):
+def hipay_payment_url(request, invoice_id, internal_transid, action, payment_type):
     """URL to redirect the client on canceled payment by the customer"""
-    invoice = get_object_or_404(Invoices, id_facture=invoice_id)
-    return render(request, 'invoice/hipay/%s_payment.html'%(action,), {'invoice':invoice})
+    if payment_type == 'invoice':
+        c_object = get_object_or_404(Invoices, id_facture=invoice_id)
+        tr = c_object.invoicetransaction_set.get(pk=internal_transid)
+    else:
+        c_object = get_object_or_404(Subscription, pk=invoice_id)
+        tr = c_object.subscriptiontransaction_set.get(pk=internal_transid)
+    tr.first_status = action
+    tr.save()
+    return render(request, 'invoice/hipay/%s_payment.html'%(action,), {'payment_type':payment_type,'invoice':c_object})
     
 
 @require_http_methods(["POST"])
 @csrf_exempt
-def hipay_ipn_ack(request, invoice_id):
+def hipay_ipn_ack(request, internal_transid, invoice_id, payment_type):
     """URL that get the ack from HIPAY"""
     # FIXME: We should check where this is coming from, if not, anybody could
     # pretend notifying for a payment that actually never happened ? I can't
     # figure out how they do this with MAPI
- 
-    invoice = get_object_or_404(Invoices, id_facture=invoice_id)
+
+    if payment_type == 'invoice':
+        c_object = get_object_or_404(Invoices, pk=invoice_id)
+        qs = c_object.invoicetransaction_set.filter(pk=internal_transid)
+    else:
+        c_object = get_object_or_404(Subscription, pk=invoice_id)
+        qs = c_object.subscriptiontransaction_set.filter(pk=internal_transid)
+
     res = ParseAck(request.POST.get('xml', None))
     if res and res.get('status', None) == 'ok':
-        invoice.is_paye = True
-        invoice.save()
+        if payment_type == 'invoice':
+            c_object.is_paye = True
+            c_object.save()
         # Save the transaction for future reference
-        Transaction.objects.create(**res)
+        qs.update(**res)
 
     # This is a bot that doesn't care
     return HttpResponse("")

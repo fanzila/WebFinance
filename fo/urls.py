@@ -8,7 +8,7 @@ __date__   = "Fri Nov 11 07:01:12 2011"
 from django.conf.urls.defaults import patterns, include, url
 from django.views.generic.simple import redirect_to
 from tastypie.api import Api
-from fo.api.resources import InvoiceResource, ClientResource, InvoiceRowsResource, SubscriptionResource, SubscriptionRowResource
+from fo.api.resources import InvoiceResource, ClientResource, InvoiceRowsResource, SubscriptionResource, SubscriptionRowResource, HiPayInvoice, HiPaySubscription
 from django.contrib import admin
 admin.autodiscover()
 
@@ -20,6 +20,9 @@ v1_api.register(InvoiceRowsResource())
 
 v1_api.register(SubscriptionResource())
 v1_api.register(SubscriptionRowResource())
+
+v1_api.register(HiPayInvoice())
+v1_api.register(HiPaySubscription())
 
 urlpatterns = patterns('',
     url(r'^$',redirect_to, {'url': 'invoice/companies', 'permanent': False}, 'home'),

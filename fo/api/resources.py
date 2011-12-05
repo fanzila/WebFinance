@@ -6,13 +6,16 @@ __author__ = "Ousmane Wilane ♟ <ousmane@wilane.org>"
 __date__   = "Sat Nov 26 12:12:29 2011"
 
 
-from tastypie.resources import ModelResource
+from tastypie.resources import ModelResource, Resource
+
 from fo.invoice.models import Invoices, Clients, InvoiceRows, Subscription, SubscriptionRow
 from fo.enterprise.models import Users, Clients2Users, CompanyTypes
+from fo.libs.hipay import simplepayment, subscriptionpayment
 from tastypie import fields
 from tastypie.authentication import ApiKeyAuthentication
 from tastypie.utils.urls import trailing_slash
 from tastypie.authorization import DjangoAuthorization, Authorization
+from tastypie.bundle import Bundle
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.conf.urls.defaults import url
 from tastypie.http import *
@@ -246,3 +249,116 @@ class SubscriptionRowResource(ModelResource):
         resource_name = 'subscriptionrow'
         authentication = ApiKeyAuthentication()
         authorization = Authorization()
+
+class HiPaySubscription(Resource):
+    subscription = fields.ToOneField(SubscriptionResource, 'subscription', null=True)
+    urls = fields.DictField(null=True)
+    extra = fields.DictField(null=True)
+
+    class Meta:
+        allowed_methods = ['get', 'post', 'put', 'delete']
+        detail_allowed_methods = ['get', 'post', 'put', 'delete']
+        resource_name = 'paysubscription'
+        authentication = ApiKeyAuthentication()
+        authorization = Authorization()
+
+    def get_resource_uri(self, bundle_or_obj):
+        kwargs = {
+            'resource_name': self._meta.resource_name,
+        }
+
+        if isinstance(bundle_or_obj, Bundle):
+            kwargs['pk'] = bundle_or_obj.subscription.pk
+        else:
+            kwargs['pk'] = bundle_or_obj.subscription
+
+        if self._meta.api_name is not None:
+            kwargs['api_name'] = self._meta.api_name
+
+        return self._build_reverse_url("api_dispatch_detail", kwargs=kwargs)
+
+
+    def get_object_list(self, request):
+        pass
+
+    def obj_get_list(self, request=None, **kwargs):
+        pass
+
+    def obj_get(self, request=None, **kwargs):
+        pass
+
+    def obj_create(self, bundle, request=None, **kwargs):
+        pass
+
+    def obj_update(self, bundle, request=None, **kwargs):
+        pass
+
+    def obj_delete_list(self, request=None, **kwargs):
+        pass
+
+    def obj_delete(self, request=None, **kwargs):
+        pass
+
+    def rollback(self, bundles):
+        pass
+
+class HiPayInvoiceClass(object):
+    def __init__(self, initial=None):
+        self.__dict__['_data'] = {}
+
+        if hasattr(initial, 'items'):
+            self.__dict__['_data'] = initial
+
+    def __getattr__(self, name):
+        return self._data.get(name, None)
+
+    def __setattr__(self, name, value):
+        self.__dict__['_data'][name] = value
+
+    def to_dict(self):
+        return self._data
+
+class HiPayInvoice(Resource):
+    invoice = fields.ToOneField(InvoiceResource, 'invoice', null=True)
+    urls = fields.DictField(null=True)
+    extra = fields.DictField(null=True)
+
+    class Meta:
+        allowed_methods = ['post', 'get']
+        detail_allowed_methods = ['post', 'get']
+        resource_name = 'payinvoice'
+        authentication = ApiKeyAuthentication()
+        authorization = Authorization()
+        object_class = HiPayInvoiceClass
+
+    def get_object_list(self, request):
+        results = []
+        if not request:
+            return Invoices.objects.all()
+        current_user = Users.objects.get(email=request.user.username)
+        invoices = [c.invoices_set.all() for c in current_user.clients_set.all()]
+
+        for result in invoices:
+            new_obj = HiPayInvoiceClass(initial={'invoice':invoice.pk, 'extra':None, urls:None})
+            results.append(new_obj)
+
+        return results
+
+    def get_resource_uri(self, bundle_or_obj):
+        kwargs = {
+            'resource_name': self._meta.resource_name,
+        }
+
+        # if isinstance(bundle_or_obj, Bundle):
+        #     kwargs['pk'] = bundle_or_obj.invoice.pk
+        # else:
+        #     kwargs['pk'] = bundle_or_obj.invoice
+
+        if self._meta.api_name is not None:
+            kwargs['api_name'] = self._meta.api_name
+
+        return self._build_reverse_url("api_dispatch_detail", kwargs=kwargs)
+
+    def obj_create(self, bundle, request=None, **kwargs):
+        bundle.obj = HiPayInvoiceClass(initial=kwargs)
+        bundle = self.full_hydrate(bundle)

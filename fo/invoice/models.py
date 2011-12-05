@@ -237,7 +237,6 @@ class Suivi(models.Model):
             unicode(self.rappel))
 
 
-        
 class TypeSuivi(models.Model):
     id_type_suivi = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=600, blank=True)
@@ -270,21 +269,53 @@ class TypeTva(models.Model):
             unicode(self.taux))
 
     
-class Transaction(models.Model):
-    status = models.CharField(max_length=255)
-    emailClient = models.EmailField()
-    date = models.DateField()
+class InvoiceTransaction(models.Model):
+    invoice = models.ForeignKey(Invoices)
+    status = models.CharField(max_length=255,null=True, blank=True)
+    emailClient = models.EmailField(null=True, blank=True)
+    date = models.DateField(null=True, blank=True)
     operation = models.CharField(max_length=255, null=True, blank=True)
     transid =  models.CharField(max_length=255, null=True, blank=True)
     merchantDatas = models.CharField(max_length=255, null=True, blank=True)
-    origCurrency = models.CharField(max_length=255)
-    origAmount  = models.CharField(max_length=255)
-    idForMerchant = models.CharField(max_length=255)
-    refProduct = models.CharField(max_length=255)
-    time = models.TimeField()
+    origCurrency = models.CharField(max_length=255, default='EUR')
+    origAmount  = models.CharField(max_length=255, null=True, blank=True)
+    idForMerchant = models.CharField(max_length=255, null=True, blank=True)
+    refProduct = models.CharField(max_length=255, null=True, blank=True)
+    time = models.TimeField(null=True, blank=True)
     subscriptionId = models.CharField(max_length=255, null=True, blank=True)
-    not_tempered_with = models.BooleanField()
+    not_tempered_with = models.BooleanField(default=False)
+    url_ack = models.URLField(null=True, blank=True)
+
+    # HiPay redirect URL for debugging
+    redirect_url = models.URLField(null=True, blank=True)
+    first_status = models.CharField(max_length=16, choices=[(k, k) for k in ('cancel', 'ok', 'nook', 'pending')], default='pending')
     
+    def __unicode__(self):
+        return u"%s | %s | %s" % (
+            unicode(self.status),
+            unicode(self.transid),
+            unicode(self.refProduct))
+
+class SubscriptionTransaction(models.Model):
+    subscription = models.ForeignKey(Subscription)
+    status = models.CharField(max_length=255,null=True, blank=True)
+    emailClient = models.EmailField(null=True, blank=True)
+    date = models.DateField(null=True, blank=True)
+    operation = models.CharField(max_length=255, null=True, blank=True)
+    transid =  models.CharField(max_length=255, null=True, blank=True)
+    merchantDatas = models.CharField(max_length=255, null=True, blank=True)
+    origCurrency = models.CharField(max_length=255, default='EUR')
+    origAmount  = models.CharField(max_length=255, null=True, blank=True)
+    idForMerchant = models.CharField(max_length=255, null=True, blank=True)
+    refProduct = models.CharField(max_length=255, null=True, blank=True)
+    time = models.TimeField(null=True, blank=True)
+    subscriptionId = models.CharField(max_length=255, null=True, blank=True)
+    not_tempered_with = models.BooleanField(default=False)
+    url_ack = models.URLField(null=True, blank=True)
+
+    redirect_url = models.URLField(null=True, blank=True)
+    first_status = models.CharField(max_length=16, choices=[(k, k) for k in ('cancel', 'ok', 'nook', 'pending')], default='pending')
+
     def __unicode__(self):
         return u"%s | %s | %s" % (
             unicode(self.status),

@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-def getParams(invoice_id, customer_id, sender_host, secure=False, urls=None, extra=None):
+def getParams(invoice_id, customer_id, sender_host, internal_transid, payment_type, urls, extra, secure=False,):
     base_host = "http%s://%s" %('s' if secure else '', sender_host)
     # FIXME: All these params are shop parameters, the website might have more
     # than one configured shops itemaccount, taxaccount, insuranceaccount,
@@ -35,10 +35,10 @@ def getParams(invoice_id, customer_id, sender_host, secure=False, urls=None, ext
     # Will get this back from the IPN ACK 
     s.setMerchantDatas({'invoice_id':invoice_id, 'customer':customer_id})
 
-    URL_OK = urls.get('URL_OK', None) or "%s%s" % (base_host, reverse('hipay_payment_url', kwargs={'invoice_id':invoice_id, 'action':'ok'}))
-    URL_NOOK = urls.get('URL_NOOK', None) or "%s%s" % (base_host, reverse('hipay_payment_url', kwargs={'invoice_id':invoice_id,'action':'nook'}))
-    URL_CANCEL = urls.get('URL_CANCEL', None) or "%s%s" % (base_host, reverse('hipay_payment_url', kwargs={'invoice_id':invoice_id,'action':'cancel'}))
-    URL_ACK = urls.get('URL_ACK', None) or "%s%s" % (base_host, reverse('hipay_ipn_ack', kwargs={'invoice_id':invoice_id}))
+    URL_OK = urls.get('URL_OK', None) or "%s%s" % (base_host, reverse('hipay_payment_url', kwargs={'payment_type':payment_type,'invoice_id':invoice_id, 'action':'ok', 'internal_transid':internal_transid}))
+    URL_NOOK = urls.get('URL_NOOK', None) or "%s%s" % (base_host, reverse('hipay_payment_url', kwargs={'payment_type':payment_type,'invoice_id':invoice_id,'action':'nook', 'internal_transid':internal_transid}))
+    URL_CANCEL = urls.get('URL_CANCEL', None) or "%s%s" % (base_host, reverse('hipay_payment_url', kwargs={'payment_type':payment_type,'invoice_id':invoice_id,'action':'cancel', 'internal_transid':internal_transid}))
+    URL_ACK = urls.get('URL_ACK', None) or "%s%s" % (base_host, reverse('hipay_ipn_ack', kwargs={'payment_type':payment_type,'invoice_id':invoice_id, 'internal_transid':internal_transid}))
     LOGO_URL = urls.get('LOGO_URL', None) or "%s%s" % (base_host, reverse('hipay_shop_logo'))
     
     s.setURLOk(URL_OK)
@@ -48,10 +48,10 @@ def getParams(invoice_id, customer_id, sender_host, secure=False, urls=None, ext
     s.setLogoURL(LOGO_URL)
     return s
 
-def simplepayment(invoice, sender_host, secure=False, urls=None, extra=None):
+def simplepayment(invoice, sender_host, internal_transid, payment_type, secure=False, urls=None, extra=None):
     urls = urls or {}
     extra = extra or {}
-    params = getParams(invoice.pk, invoice.client.pk, sender_host, secure, urls, extra)
+    params = getParams(invoice.pk, invoice.client.pk, sender_host, internal_transid, payment_type, urls, extra, secure)
 
     products = HP.Product()
     taxes = HP.Tax('tax')
@@ -74,7 +74,7 @@ def simplepayment(invoice, sender_host, secure=False, urls=None, extra=None):
              'insuranceAmount':0,
              'fixedCostAmount':0, #sum([l.qtt*l.prix_ht for l in invoice.invoicerows_set.all()]),
              'orderTitle':'Facture ISVTEC #%(num_facture)s' %dict(num_facture=invoice.num_facture),
-             'orderInfo':'Box',
+             'orderInfo':'Facture ISVTEC #%(num_facture)s' %dict(num_facture=invoice.num_facture),
              'orderCategory':extra.get('category', None) or settings.HIPAY_DEFAULT_CATEGORY}]
     order.setOrders(data)
     pay = HP.HiPay(params)
@@ -82,11 +82,11 @@ def simplepayment(invoice, sender_host, secure=False, urls=None, extra=None):
     return pay.SendPayment(settings.HIPAY_GATEWAY)
     
 
-def subscriptionpayment(subscription, sender_host, secure=False, urls=None, extra=None):
+def subscriptionpayment(subscription, sender_host, internal_transid, payment_type, secure=False, urls=None, extra=None):
     urls = urls or {}
     extra = extra or {}
 
-    params = getParams(subscription.pk, subscription.client.pk, sender_host, secure, urls, extra)
+    params = getParams(subscription.pk, subscription.client.pk, sender_host, internal_transid, payment_type, urls, extra, secure)
 
     price_excl_vat = sum(ligne.price_excl_vat for ligne in  subscription.subscriptionrow_set.all())
 

@@ -8,7 +8,7 @@ __date__   = "Fri Nov 11 16:54:17 2011"
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
-from invoice.models import Invoices, Transaction
+from invoice.models import Invoices, Subscription, InvoiceTransaction, SubscriptionTransaction
 from enterprise.models import Clients, Clients2Users, Users
 from django.http import HttpRequest
 from django.contrib.auth.models import User
@@ -27,7 +27,7 @@ class InvoiceTest(TestCase):
         # We need a ticket and an account for test to pass before we use
         # selenium and friends
         self.username = 'ousmane@wilane.org'
-        self.ticket = 'a04bd5b0995405aff30436f419306b676b8e037de9ddfce100e0884945229b1250c5a8f938cd4ac1'
+        self.ticket = 'cafc1050a441abe2a72c5ff036c5663dcfde1bb580bc9ffd727051ed1bac4eda918db6a0b68522d8'
 
     def test_list_companies(self):
         url = reverse("list_companies")
@@ -71,6 +71,16 @@ class InvoiceTest(TestCase):
         self.assertContains(response, "201111100")
         self.client.logout()
         
+    def test_detail_subscription(self):
+        url = reverse("detail_subscription", kwargs={'subscription_id':1})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+        self.client.login(username=self.username, ticket=self.ticket)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'invoice/detail_subscriptions.html')
+        self.assertContains(response, "0412201101")
+        self.client.logout()
 
     def test_detail_invoice404(self):
         url = reverse("detail_invoice", kwargs={'invoice_id':123})
@@ -80,9 +90,26 @@ class InvoiceTest(TestCase):
         self.assertEqual(response.status_code, 404)
         self.client.logout()
         
+    def test_detail_subscription404(self):
+        url = reverse("detail_subscription", kwargs={'subscription_id':123})
+        response = self.client.get(url)
+        self.client.login(username=self.username, ticket=self.ticket)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+        self.client.logout()
 
     def test_accept_quote(self):
         url = reverse("accept_quote", kwargs={'invoice_id':1})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+        self.client.login(username=self.username, ticket=self.ticket)
+        response = self.client.get(url, follow=True)
+        self.assertRedirects(response, reverse('list_invoices', kwargs={'customer_id':1}))
+        self.assertContains(response, _("Invoices/Quotes for company"))
+        self.client.logout()
+
+    def test_accept_subscriptionquote(self):
+        url = reverse("accept_subscriptionquote", kwargs={'subscription_id':1})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
         self.client.login(username=self.username, ticket=self.ticket)
@@ -99,6 +126,14 @@ class InvoiceTest(TestCase):
         self.assertEqual(response.status_code, 404)
         self.client.logout()
 
+    def test_accept_subscriptionquote404(self):
+        url = reverse("accept_subscriptionquote", kwargs={'subscription_id':123})
+        response = self.client.get(url)
+        self.client.login(username=self.username, ticket=self.ticket)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+        self.client.logout()
+
     def test_download_invoice404(self):
         url = reverse("download_invoice", kwargs={'invoice_id':123})
         response = self.client.get(url)
@@ -108,6 +143,7 @@ class InvoiceTest(TestCase):
         self.client.logout()
 
     def test_download_invoice(self):
+        #FIXME: Make a subscription download test once the script is updated by Cyril
         url = reverse("download_invoice", kwargs={'invoice_id':1})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
@@ -124,10 +160,23 @@ class InvoiceTest(TestCase):
         self.assertRaises(ValueError, self.client.get, url)
         self.client.logout()
 
+    def test_hipay_subscription(self):
+        url = reverse('hipay_paysubs', kwargs={'subscription_id':1})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+        self.client.login(username=self.username, ticket=self.ticket)
+        #FIXME:   File "/Users/wilane/src/isvtec/WebFinance/fo/../fo/hipay/hipay.py", line 322, in setURLOk
+        # raise ValueError(_("""Invalid url %(url_ok)s""" %{'url_ok':URL_ok}))
+        # ValueError: Invalid url http://testserver/invoice/hipay/payment/subscription/ok/1/1
+        self.assertRaises(ValueError, self.client.get, url)
+        self.client.logout()
+
     def test_hipay_urls(self):
         keywords = {'ok':'successful', 'nook':'failed', 'cancel':'canceled'}
+        tr = InvoiceTransaction(invoice_id=1)
+        tr.save()
         for key, val in keywords.items():
-            url = reverse("hipay_payment_url", kwargs={'action':key, 'invoice_id':1})
+            url = reverse("hipay_payment_url", kwargs={'action':key, 'invoice_id':1, 'internal_transid':tr.pk, 'payment_type':'invoice'})
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
             self.assertTemplateUsed(response, 'invoice/hipay/%s_payment.html' %(key,))
@@ -145,13 +194,25 @@ class InvoiceTest(TestCase):
 <subscriptionId>753EA685B55651DC40F0C2784D5E1170</subscriptionId>
 <refProduct0>REF6522</refProduct0>
 </result> </mapi>"""
-        url = reverse('hipay_ipn_ack', kwargs={'invoice_id':1})
+        tr = InvoiceTransaction(invoice_id=1)
+        tr.save()
+        url = reverse('hipay_ipn_ack', kwargs={'internal_transid':tr.pk,'payment_type':'invoice','invoice_id':1})
         self.client.login(username=self.username, ticket=self.ticket)
         response = self.client.post(url, {'xml': ack.decode('utf-8')})
-        invoice = Invoices.objects.get(id_facture=1)
+        invoice = Invoices.objects.get(pk=1)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(Transaction.objects.count(), 1)        
-        self.assertEqual(invoice.is_paye, True)        
+        self.assertEqual(invoice.invoicetransaction_set.count(), 1)
+        self.assertEqual(invoice.is_paye, True)
+
+        tr = SubscriptionTransaction(subscription_id=1)
+        tr.save()
+        url = reverse('hipay_ipn_ack', kwargs={'internal_transid':tr.pk,'payment_type':'subscription','invoice_id':1})
+        self.client.login(username=self.username, ticket=self.ticket)
+        response = self.client.post(url, {'xml': ack.decode('utf-8')})
+        subscription = Subscription.objects.get(pk=1)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(SubscriptionTransaction.objects.count(), 1)
+        self.assertEqual(subscription.subscriptiontransaction_set.count(), 1)
 
 
 class ClientAPITestCase(TestCase):
@@ -171,7 +232,7 @@ class ClientAPITestCase(TestCase):
         resp = self.client.get('/api/v1/', data=self.data)
         self.assertEqual(resp.status_code, 200)
         deserialized = json.loads(resp.content)
-        self.assertEqual(len(deserialized), 5)
+        self.assertEqual(len(deserialized), 7)
         self.assertEqual(deserialized['client'], {'list_endpoint': '/api/v1/client/', 'schema': '/api/v1/client/schema/'})
 
         resp = self.client.get('/api/v1/client/', data=self.data)
@@ -276,7 +337,7 @@ class InvoiceAPITestCase(TestCase):
         resp = self.client.get('/api/v1/', data=self.data)
         self.assertEqual(resp.status_code, 200)
         deserialized = json.loads(resp.content)
-        self.assertEqual(len(deserialized), 5)
+        self.assertEqual(len(deserialized), 7)
         self.assertEqual(deserialized['invoice'], {'list_endpoint': '/api/v1/invoice/', 'schema': '/api/v1/invoice/schema/'})
 
         resp = self.client.get('/api/v1/invoice/', data=self.data)
@@ -365,13 +426,13 @@ class SubscriptionAPITestCase(TestCase):
         post_data = '{"client":"/api/v1/client/1/", "periodic_next_deadline":"2011-11-10T00:00:00", "ref_contrat":"141218", "subscriptionrowr":[{"description":"Premier article","prix_excl_vat":17,"qty":3},{"description":"Deuxième item","prix_excl_vat":5,"qty":10}]}'
         resp = self.client.post('/api/v1/subscription/?%s' %urlencode(self.data), data=post_data, content_type='application/json')
         self.assertEqual(resp.status_code, 201)
-        self.assertEqual(resp['location'], 'http://testserver/api/v1/subscription/1/')
+        self.assertEqual(resp['location'], 'http://testserver/api/v1/subscription/2/')
 
         # make sure posted object exists
         resp = self.client.get('/api/v1/subscription/1/', data=self.data)
         self.assertEqual(resp.status_code, 200)
         obj = json.loads(resp.content)
-        self.assertEqual(obj['ref_contrat'], u'141218')
+        self.assertEqual(obj['ref_contrat'], u'0412201101')
 
         
     def test_gets(self):
@@ -381,7 +442,7 @@ class SubscriptionAPITestCase(TestCase):
         resp = self.client.get('/api/v1/', data=self.data)
         self.assertEqual(resp.status_code, 200)
         deserialized = json.loads(resp.content)
-        self.assertEqual(len(deserialized), 5)
+        self.assertEqual(len(deserialized), 7)
         self.assertEqual(deserialized['subscription'], {'list_endpoint': '/api/v1/subscription/', 'schema': '/api/v1/subscription/schema/'})
 
         resp = self.client.get('/api/v1/subscription/', data=self.data)
@@ -389,14 +450,14 @@ class SubscriptionAPITestCase(TestCase):
         deserialized = json.loads(resp.content)
         self.assertEqual(len(deserialized), 2)
         self.assertEqual(deserialized['meta']['limit'], 20)
-        self.assertEqual(len(deserialized['objects']), 1)
-        self.assertEqual([obj['ref_contrat'] for obj in deserialized['objects']], [u'141218'])
+        self.assertEqual(len(deserialized['objects']), 2)
+        self.assertEqual([obj['ref_contrat'] for obj in deserialized['objects']], [u'0412201101',u'141218'])
 
         resp = self.client.get('/api/v1/subscription/1/', data=self.data)
         self.assertEqual(resp.status_code, 200)
         deserialized = json.loads(resp.content)
         self.assertEqual(len(deserialized), 11)
-        self.assertEqual(deserialized['ref_contrat'], u"141218")
+        self.assertEqual(deserialized['ref_contrat'], u"0412201101")
 
 
     def test_puts(self):

@@ -120,6 +120,7 @@ INSTALLED_APPS = (
     'hipay',
     'django_countries',
     'tastypie',
+#    'pyzen',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -163,7 +164,7 @@ except:
     # doing
     pass
 
-if 'test' in sys.argv or 'test_coverage' in sys.argv:
+if 'test' in sys.argv or 'test_coverage' in sys.argv or 'zen' in sys.argv:
     try:
         from tests.settings import *
     except ImportError, e:
