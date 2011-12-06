@@ -210,7 +210,7 @@ if ($action == "save_facture") {
   if($dup_num_inv){
     $_SESSION['message'] = _('Duplicate invoice number')."<br/>"._('Invoice updated') ;
     $_SESSION['error'] = 1;
-  } else
+  } /* else */
     /* $_SESSION['message'] = _('Invoice updated'); */
 
   if($type_doc=="facture" || ($type_doc=="devis" &&  $is_paye=="on" )){
@@ -321,11 +321,11 @@ if($action == "send"){
 	echo "Mailer Error: " . $mail->ErrorInfo;
 
       } else{
-	$_SESSION['message'] = _('Invoice sent');
+	/* $_SESSION['message'] = _('Invoice sent'); */
 	//mettre à jour l'état de la facture, update sql
 	mysql_query("UPDATE webfinance_invoices SET is_envoye=1 WHERE id_facture=$id ")
 	  or wf_mysqldie();
-	$_SESSION['message'] .= "<br/>"._('Invoice updated');
+	/* $_SESSION['message'] .= "<br/>"._('Invoice updated'); */
 
 	logmessage(_("Send invoice")." #$invoice->num_facture fa:$id client:$invoice->id_client", $invoice->id_client,$id);
       }

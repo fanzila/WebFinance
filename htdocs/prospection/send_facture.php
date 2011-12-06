@@ -72,13 +72,13 @@ if(isset($_POST['action'],$_POST['id'],$_POST['mails2']) &&
 		die();
     }
 
-	$_SESSION['message'] = _('Invoice sent');
+	/* $_SESSION['message'] = _('Invoice sent'); */
 	//mettre à jour l'état de la facture, update sql
 	mysql_query("UPDATE webfinance_invoices ".
 				"SET is_envoye=1 ".
 				"WHERE id_facture=$id_invoice")
 		or wf_mysqldie();
-	$_SESSION['message'] .= "<br/>"._('Invoice updated');
+	/* $_SESSION['message'] .= "<br/>"._('Invoice updated'); */
 
 	$facture = $invoice->getInfos($id_invoice);
 	logmessage(_("Send invoice")." #$facture->num_facture fa:$id_invoice ".
