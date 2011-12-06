@@ -11,6 +11,7 @@ urlpatterns = patterns('',
                        url(r'^add$', 'enterprise.views.add_company', name='add_company'),
                        url(r'^change/(?P<customer_id>\d+)$', 'enterprise.views.change_company', name='change_company'),
                        url(r'^invite$', 'enterprise.views.invite_user', name='invite_user'),
+                       url(r'^revocations$', 'enterprise.views.revoke_invitations', name='revoke_invitations'),
                        url(r'^accept/(?P<token>\w+)$', 'enterprise.views.accept_invitation', name='accept_invitation'),
-                       
+                       url(r'^revoke/(?P<token>\w+)$', 'enterprise.views.revoke_invitation', name='revoke_invitation'),
 )

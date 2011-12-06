@@ -11,4 +11,7 @@
             {% blocktrans %} This invoice have no details{% endblocktrans %}
         {% endfor %}
     </ul>
+    <a href="{% url 'hipay_invoice' invoice_id=invoice.pk %}">
+            {% trans 'Pay invoice with HiPay' %}
+    </a>
 {% endblock %}

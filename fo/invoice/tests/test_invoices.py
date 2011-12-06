@@ -27,7 +27,7 @@ class InvoiceTest(TestCase):
         # We need a ticket and an account for test to pass before we use
         # selenium and friends
         self.username = 'ousmane@wilane.org'
-        self.ticket = 'cafc1050a441abe2a72c5ff036c5663dcfde1bb580bc9ffd727051ed1bac4eda918db6a0b68522d8'
+        self.ticket = '87bcda48f701c504862191261cf1a39977d01bfb9d03d321f0d8ec63295570fd291979b0b98628f3'
 
     def test_list_companies(self):
         url = reverse("list_companies")
@@ -69,6 +69,7 @@ class InvoiceTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'invoice/detail_invoices.html')
         self.assertContains(response, "201111100")
+        self.assertContains(response, _("Pay invoice"))
         self.client.logout()
         
     def test_detail_subscription(self):
@@ -80,6 +81,7 @@ class InvoiceTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'invoice/detail_subscriptions.html')
         self.assertContains(response, "0412201101")
+        self.assertContains(response, _("Pay invoice"))
         self.client.logout()
 
     def test_detail_invoice404(self):

@@ -28,5 +28,5 @@ class InvitationForm(forms.ModelForm):
 
     class Meta:
         model = Invitation
-        exclude = ['token']
+        exclude = ['token', 'recovation_token', 'guest']
         

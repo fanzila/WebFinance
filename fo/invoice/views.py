@@ -231,3 +231,16 @@ def hipay_ipn_ack(request, internal_transid, invoice_id, payment_type):
     
 def hipay_shop_logo(request):
     pass
+
+@login_required
+def home(request):
+    try:
+        current_user = Users.objects.get(email=request.user.email)
+        # We keep a loose coupling with native Users database from the backend
+        customer_list = current_user.clients_set.all()
+    except Users.DoesNotExist:
+        customer_list = None
+
+    if  customer_list and customer_list.count() == 1:
+        return redirect(reverse('list_invoices', kwargs={'customer_id':customer_list[0].pk}))
+    return redirect(reverse('list_companies'))

@@ -11,4 +11,8 @@
             {% blocktrans %} This subscription have no details{% endblocktrans %}
         {% endfor %}
     </ul>
+    <a href="{% url 'hipay_paysubs' subscription_id=subscription.pk %}">
+            {% trans 'Pay invoice with HiPay' %}
+    </a>
+
 {% endblock %}

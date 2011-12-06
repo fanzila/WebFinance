@@ -25,7 +25,7 @@ v1_api.register(HiPayInvoice())
 v1_api.register(HiPaySubscription())
 
 urlpatterns = patterns('',
-    url(r'^$',redirect_to, {'url': 'invoice/companies', 'permanent': False}, 'home'),
+    url(r'^$', 'fo.invoice.views.home', name='home'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^invoice/', include('fo.invoice.urls')),
     url(r'^enterprise/', include('fo.enterprise.urls')),

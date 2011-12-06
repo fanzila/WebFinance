@@ -16,7 +16,7 @@ class AddCompanyTest(TestCase):
     def setUp(self):
         # We need a ticket and an account
         self.username = 'ousmane@wilane.org'
-        self.ticket = 'cafc1050a441abe2a72c5ff036c5663dcfde1bb580bc9ffd727051ed1bac4eda918db6a0b68522d8'
+        self.ticket = '87bcda48f701c504862191261cf1a39977d01bfb9d03d321f0d8ec63295570fd291979b0b98628f3'
          
 
     def test_add_company(self):
@@ -106,6 +106,10 @@ class AddCompanyTest(TestCase):
         self.assertEqual(Invitation.objects.count(), count + 1)
         self.assertContains(response, _("My companies"))
         self.assertEqual(len(mail.outbox), 1)
-        #subject = _("Invitation to join ISVTEC from ")
-        #self.assertEqual(mail.outbox[0].subject, subject)        
+        subject = _("Invitation to join ISVTEC from foo bar toto")
+        self.assertEqual(mail.outbox[0].subject, subject)
         self.client.logout()
+
+    def test_accept_invitation(self):
+        #FIXME: Need mock
+        pass

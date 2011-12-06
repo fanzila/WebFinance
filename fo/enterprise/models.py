@@ -9,6 +9,11 @@ __date__   = "Thu Nov 10 14:20:07 2011"
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django_countries import CountryField
+from django.template import loader, Context
+from django.core.urlresolvers import reverse
+from django.conf import settings
+from django.core.mail import send_mail
+import reversion
 from uuid import uuid4
 import hmac
 try:
@@ -81,7 +86,6 @@ class Clients(models.Model):
     def __unicode__(self):
         return u"%s" % (
             unicode(self.nom))
-
 
 # M2M Jonction table ... This doesn't showup nowhere
 class Clients2Users(models.Model):
@@ -186,12 +190,17 @@ class Roles(models.Model):
 
 
 class Invitation(models.Model):
-    token = models.CharField(max_length=255)
+    token = models.CharField(max_length=255, editable=False)
+    revocation_token = models.CharField(max_length=255, editable=False)
     email = models.EmailField(_('Email address'))
     first_name = models.CharField(_('First name'), max_length=255)
     last_name = models.CharField(_('Last name'), max_length=255)
     company = models.ForeignKey(Clients)
-
+    guest = models.ForeignKey(Users, editable=False)
+    accepted = models.BooleanField(default=False, editable=False)
+    revoked = models.BooleanField(default=False, editable=False)
+    acceptation_date = models.DateTimeField(blank=True, null=True, editable=False)
+    revocation_date = models.DateTimeField(blank=True, null=True, editable=False)
 
     def __unicode__(self):
         return u"%s | %s %s" % (
@@ -201,10 +210,41 @@ class Invitation(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.token:
-            new_uuid = uuid4()
+            new_uuid, revocation_uuid = uuid4(), uuid4()
             self.token = hmac.new(str(new_uuid), digestmod=sha1).hexdigest()
-            super(Invitation, self).save(*args, **kwargs)
+            self.revocation_token = hmac.new(str(revocation_uuid), digestmod=sha1).hexdigest()
+        super(Invitation, self).save(*args, **kwargs)
 
     def get_full_name(self):
         return u"%s %s" %(self.first_name, self.last_name)
-            
+
+    def send_invitation(self, host):
+        subject = _("Invitation to join %(name)s from %(full_name)s" %{'name':self.company.nom,
+                                                                       'full_name':self.guest.get_full_name()})
+        message_template = loader.get_template('enterprise/emails/invitation.txt')
+        message_context = Context({'recipient_name': self.get_full_name(),
+                                   'sender_name': self.guest.get_full_name(),
+                                   'company': self.company.nom,
+                                   'accept_url':"%s%s" %(host, reverse('accept_invitation',
+                                                                            kwargs={'token':self.token}))
+                                   })
+        message = message_template.render(message_context)
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.email])
+
+    def send_acceptation(self, host):
+        subject = _("Invitation to join %(name)s accpeted by  %(full_name)s" %{'name':self.company.nom, 'full_name':self.guest.get_full_name()})
+        message_template = loader.get_template('enterprise/emails/acceptation.txt')
+        message_context = Context({'invited': self.get_full_name(),
+                                   'guest': self.guest.get_full_name(),
+                                   'company': self.company.nom,
+                                   'revocation_url':"%s%s" %(host, reverse('revoke_invitation',
+                                                                         kwargs={'token':self.revocation_token}))
+                                  })
+        message = message_template.render(message_context)
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.guest.email])
+
+
+try:
+    reversion.register(Clients)
+except reversion.revisions.RegistrationError:
+    pass

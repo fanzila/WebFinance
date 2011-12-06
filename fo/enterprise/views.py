@@ -6,15 +6,17 @@ __author__ = "Ousmane Wilane ♟ <ousmane@wilane.org>"
 __date__   = "Fri Nov 11 12:01:45 2011"
 
 
+from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404, Http404
 from enterprise.form import EnterpriseForm, InvitationForm
 from enterprise.models import Users, Clients, Clients2Users, CompanyTypes, Invitation
 from django.utils.translation import ugettext_lazy as _
+from django.contrib import messages
 from django.core.mail import send_mail
-from django.template import loader, Context
 from django.conf import settings
 from django.core.urlresolvers import reverse
+import reversion
 
 
 @login_required
@@ -38,7 +40,10 @@ def add_company(request):
                 customer.id_user = Users.objects.get(email=request.user.email)            
         #Cyril wants this to be always 1
         customer.id_company_type = CompanyTypes.objects.get(pk=1)
-        customer.save()
+        with reversion.create_revision():
+            customer.save()
+            reversion.set_user(request.user)
+            reversion.set_comment("Company added from %s" % request.META.get('REMOTE_ADDR', None))
         Clients2Users.objects.create(user=customer.id_user, client=customer)
 
         if return_url:
@@ -56,8 +61,11 @@ def change_company(request, customer_id):
     if form.is_valid():
         customer = form.save(commit=False)
         customer.id_user = Users.objects.get(email=request.user.email)
-        customer.save()
-
+        with reversion.create_revision():
+            customer.save()
+            reversion.set_user(request.user)
+            reversion.set_comment("Company altered from %s" % request.META.get('REMOTE_ADDR', None))
+        messages.add_message(request, messages.INFO, _('Company info saved'))
         if return_url:
             return redirect(return_url)
 
@@ -71,21 +79,16 @@ def invite_user(request):
     if not qs:
         raise Http404
     
-    form = InvitationForm(request.POST or None, qs=qs)
+    form = InvitationForm(request.POST or None, qs=qs, initial={'company': qs.order_by('pk')[0] })
     if form.is_valid():
-        invitation = form.save()
+        # FIXME: Check if the user is not already in
+        invitation = form.save(commit=False)
+        invitation.guest=current_user
+        invitation.save()
         base_host = "http%s://%s" %('s' if request.is_secure() else '',
                                     request.get_host())
-        subject = _("Invitation to join %(name)s from %(full_name)s" %{'name':invitation.company.nom, 'full_name':current_user.get_full_name()})
-        message_template = loader.get_template('enterprise/emails/invitation.txt')
-        message_context = Context({'recipient_name': invitation.get_full_name(),
-                                   'sender_name': current_user.get_full_name(),
-                                   'company': invitation.company.nom,
-                                   'accept_url':"%s%s" %(base_host, reverse('accept_invitation',
-                                                                            kwargs={'token':invitation.token}))
-                                   })
-        message = message_template.render(message_context)
-        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [invitation.email])
+        invitation.send_invitation(base_host)
+        messages.add_message(request, messages.INFO, _("An email have been sent to the user, you'll be notified once the invitation is accepted"))
         return redirect('home')
     return render(request, 'enterprise/invite_user.html', {'form':form, 'title':_("Invite a user")})
 
@@ -94,9 +97,54 @@ def accept_invitation(request, token):
     # FIXME: Send an email to let the owner know that the invitation have been
     # accepted
     try:
-        current_user = Users.objects.get(login=request.user.email)
+        current_user = Users.objects.get(email=request.user.email)
     except Users.DoesNotExist:
         current_user = Users.objects.create(email=request.user.email, login=request.user.email)
-    invitation = get_object_or_404(Invitation, token=token, email=request.user.email)
-    Clients2Users.objects.create(user=current_user, client=invitation.company)
+
+    invitation = get_object_or_404(Invitation, token=token, email=request.user.email, accepted=False)
+    try:
+        Clients2Users.objects.create(user=current_user, client=invitation.company)
+    except:
+        # FIXME: Except the user is already in
+        # Fail silently for now
+        return redirect('home')
+    base_host = "http%s://%s" %('s' if request.is_secure() else '',
+                                request.get_host())
+    invitation.send_acceptation(base_host)
+    invitation.accepted = True
+    invitation.acceptation_date = datetime.now()
+    invitation.save()
+    messages.add_message(request, messages.INFO, _('Invitation Accepted'))
     return redirect('home')
+
+
+@login_required
+def revoke_invitation(request, token):
+    try:
+        current_user = Users.objects.get(email=request.user.email)
+    except Users.DoesNotExist:
+        current_user = Users.objects.create(email=request.user.email, login=request.user.email)
+    invitation = get_object_or_404(Invitation, revocation_token=token, guest=current_user, accepted=True)
+    try:
+        c2u = Clients2Users.objects.get(user=Users.objects.get(email=invitation.email), client=invitation.company)
+        c2u.delete()
+    except:
+        # FIXME: except not found
+        pass
+    #invitation.send_acceptation(base_host)
+    #Don't delete it just mark it as revoked for future reference
+    #invitation.delete()
+    invitation.revoked = True
+    invitation.revocation_date = datetime.now()
+    invitation.save()
+    messages.add_message(request, messages.INFO, _('Granted access revoked'))
+    return redirect('home')
+
+@login_required
+def revoke_invitations(request):
+    try:
+        current_user = Users.objects.get(email=request.user.email)
+    except Users.DoesNotExist:
+        current_user = Users.objects.create(email=request.user.email, login=request.user.email)
+
+    return render(request, 'enterprise/revoke_invitations.html', {'invitations':current_user.invitation_set.filter(accepted=True, revoked=False)})

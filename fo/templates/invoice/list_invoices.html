@@ -36,6 +36,9 @@
                                     {{ invoice.num_facture }} | 
                                     {{ invoice.date_facture }}
                 </a> |
+                <a href="{% url 'download_invoice' invoice_id=invoice.id_facture %}">
+                                    {% trans 'Download quote' %}
+                </a> |
                 <a href="{% url 'accept_quote' invoice_id=invoice.id_facture %}">
                                     {% trans 'Accpet quote' %}
                 </a>
@@ -81,7 +84,7 @@
                 </a>
             </li>
         {% empty %}
-            {% blocktrans %} You have no pending quote for {{ company }} {% endblocktrans %}
+            {% blocktrans %} You have no pending subscription quote for {{ company }} {% endblocktrans %}
         {% endfor %}
     </ul>
 

@@ -120,6 +120,7 @@ INSTALLED_APPS = (
     'hipay',
     'django_countries',
     'tastypie',
+    'reversion',
 #    'pyzen',
 )
 

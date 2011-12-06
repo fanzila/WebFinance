@@ -14,7 +14,6 @@ from django.conf import settings
 from django.contrib.auth import login, authenticate
 from django.contrib.auth import logout
 
-
 @never_cache
 @require_http_methods(["GET"])
 def ssologin(request):
@@ -50,4 +49,3 @@ def ssologout(request):
     # FIXME: Create a HP that doesn't require auth or just leave the user at the
     # sso once logged out ?
     return redirect('%s?action=logout' %settings.CYBSSO_LOGIN)
-    
