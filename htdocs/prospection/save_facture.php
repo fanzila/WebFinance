@@ -215,7 +215,7 @@ if ($action == "save_facture") {
 
   if($type_doc=="facture" || ($type_doc=="devis" &&  $is_paye=="on" )){
     $Facture->updateTransaction($_POST['id_facture'],$type_prev);
-    $_SESSION['message'] .=  "<br>"._('Transaction updated');
+    /* $_SESSION['message'] .=  "<br>"._('Transaction updated'); */
   }
 
   header("Location: edit_facture.php?id_facture=".$_POST['id_facture']);
