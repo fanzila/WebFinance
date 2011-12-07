@@ -33,7 +33,7 @@ def getParams(invoice_id, customer_id, sender_host, internal_transid, payment_ty
     s.setMerchantSiteId(extra.get('merchantsiteid', None) or settings.HIPAY_MERCHANT_SITE_ID)
     
     # Will get this back from the IPN ACK 
-    s.setMerchantDatas({'invoice_id':invoice_id, 'customer':customer_id})
+    s.setMerchantDatas({'internal_transid':internal_transid})
 
     URL_OK = urls.get('URL_OK', None) or "%s%s" % (base_host, reverse('hipay_payment_url', kwargs={'payment_type':payment_type,'invoice_id':invoice_id, 'action':'ok', 'internal_transid':internal_transid}))
     URL_NOOK = urls.get('URL_NOOK', None) or "%s%s" % (base_host, reverse('hipay_payment_url', kwargs={'payment_type':payment_type,'invoice_id':invoice_id,'action':'nook', 'internal_transid':internal_transid}))
@@ -48,9 +48,10 @@ def getParams(invoice_id, customer_id, sender_host, internal_transid, payment_ty
     s.setLogoURL(LOGO_URL)
     return s
 
-def simplepayment(invoice, sender_host, internal_transid, payment_type, secure=False, urls=None, extra=None):
+def simplepayment(invoice, sender_host, internal_transid,  secure=False, urls=None, extra=None):
     urls = urls or {}
     extra = extra or {}
+    payment_type = "invoice"
     params = getParams(invoice.pk, invoice.client.pk, sender_host, internal_transid, payment_type, urls, extra, secure)
 
     products = HP.Product()
@@ -82,9 +83,10 @@ def simplepayment(invoice, sender_host, internal_transid, payment_type, secure=F
     return pay.SendPayment(settings.HIPAY_GATEWAY)
     
 
-def subscriptionpayment(subscription, sender_host, internal_transid, payment_type, secure=False, urls=None, extra=None):
+def subscriptionpayment(subscription, sender_host, internal_transid, secure=False, urls=None, extra=None):
     urls = urls or {}
     extra = extra or {}
+    payment_type = "subscription"
 
     params = getParams(subscription.pk, subscription.client.pk, sender_host, internal_transid, payment_type, urls, extra, secure)
 

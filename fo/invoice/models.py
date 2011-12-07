@@ -7,11 +7,14 @@ __author__ = "Ousmane Wilane ♟ <ousmane@wilane.org>"
 __date__   = "Thu Nov 10 16:59:10 2011"
 
 
-
+import urllib2
+from urllib import urlencode
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
-
 from fo.enterprise.models import Clients
+from django.core import serializers
+import logging
+logger = logging.getLogger('wf')
 
 class InvoiceRows(models.Model):
     id_facture_ligne = models.AutoField(primary_key=True, db_column='id_facture_ligne')
@@ -283,7 +286,7 @@ class InvoiceTransaction(models.Model):
     refProduct = models.CharField(max_length=255, null=True, blank=True)
     time = models.TimeField(null=True, blank=True)
     subscriptionId = models.CharField(max_length=255, null=True, blank=True)
-    not_tempered_with = models.BooleanField(default=False)
+    not_tempered_with = models.BooleanField(default=False, editable=False)
     url_ack = models.URLField(null=True, blank=True)
 
     # HiPay redirect URL for debugging
@@ -295,6 +298,25 @@ class InvoiceTransaction(models.Model):
             unicode(self.status),
             unicode(self.transid),
             unicode(self.refProduct))
+
+    def __save__(self, *args, **kwargs):
+        if self.status and self.url_ack: #This is only updated when the ACK comes in
+            # Pinging back
+            data = serializers.serialize("json", InvoiceTransaction.objects.filter(pk=self.id))
+            opener = urllib2.build_opener()
+            opener.addheaders = [("Content-Type", "text/json"),
+                                 ("Content-Length", str(len(data))),
+                                 ("User-Agent", u"ISVTEC -- PAYMENT GATEWAY")]
+            urllib2.install_opener(opener)
+
+            request = urllib2.Request(self.url_ack,urlencode({'payment':data}))
+            try:
+                response = opener.open(request)
+                logger.info(u"Pinged back %s ... propagation, got '%s'" %(self.url_ack, response))
+            except Exception, e:
+                logger.warn(u"Unable to ping back %s, we have an ack to propage: %s" %(self.url_ack, e))
+
+        super(InvoiceTransaction, self).save(*args, **kwargs)
 
 class SubscriptionTransaction(models.Model):
     subscription = models.ForeignKey(Subscription)
@@ -310,7 +332,7 @@ class SubscriptionTransaction(models.Model):
     refProduct = models.CharField(max_length=255, null=True, blank=True)
     time = models.TimeField(null=True, blank=True)
     subscriptionId = models.CharField(max_length=255, null=True, blank=True)
-    not_tempered_with = models.BooleanField(default=False)
+    not_tempered_with = models.BooleanField(default=False, editable=False)
     url_ack = models.URLField(null=True, blank=True)
 
     redirect_url = models.URLField(null=True, blank=True)
@@ -321,3 +343,22 @@ class SubscriptionTransaction(models.Model):
             unicode(self.status),
             unicode(self.transid),
             unicode(self.refProduct))
+
+    def __save__(self, *args, **kwargs):
+        if self.status and self.url_ack:
+            data = serializers.serialize("json", SubscriptionTransaction.objects.filter(pk=self.id))
+            opener = urllib2.build_opener()
+            opener.addheaders = [("Content-Type", "text/json"),
+                                 ("Content-Length", str(len(data))),
+                                 ("User-Agent", u"ISVTEC -- PAYMENT GATEWAY")]
+            urllib2.install_opener(opener)
+
+            request = urllib2.Request(self.url_ack,urlencode({'payment':data}))
+            try:
+                response = opener.open(request)
+                logger.info(u"Pinged back %s ... propagation, got '%s'" %(self.url_ack, response))
+            except Exception, e:
+                logger.warn(u"Unable to ping back %s, we have an ack to propage: %s" %(self.url_ack, e))
+
+        super(SubscriptionTransaction, self).save(*args, **kwargs)
+

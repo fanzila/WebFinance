@@ -84,7 +84,7 @@ LOGGING = {
     }
 }
 
-TASTYPIE_FULL_DEBUG=True
+TASTYPIE_FULL_DEBUG=False
 
 #HIPAY Parameters
 HIPAY_GATEWAY="https://test-payment.hipay.com/order/"

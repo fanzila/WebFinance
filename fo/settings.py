@@ -171,4 +171,4 @@ if 'test' in sys.argv or 'test_coverage' in sys.argv or 'zen' in sys.argv:
     except ImportError, e:
         #If you're testing watch this.
         pass
-TASTYPIE_FULL_DEBUG=True
+

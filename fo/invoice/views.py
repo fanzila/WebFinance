@@ -115,7 +115,7 @@ def hipay_invoice(request, invoice_id):
     invoice = get_object_or_404(qs, id_facture=invoice_id)
     tr = InvoiceTransaction(invoice=invoice)
     tr.save()
-    response = hipay.simplepayment(invoice, sender_host=request.get_host(), secure=request.is_secure(), internal_transid=tr.pk, payment_type="invoice")
+    response = hipay.simplepayment(invoice, sender_host=request.get_host(), secure=request.is_secure(), internal_transid=tr.pk)
 
     if response['status'] == 'Accepted':
         tr.redirect_url = response['message']
@@ -137,7 +137,7 @@ def hipay_subscription(request, subscription_id):
     tr = SubscriptionTransaction(subscription=subscription)
     tr.save()
 
-    response = hipay.subscriptionpayment(subscription, sender_host=request.get_host(), secure=request.is_secure(), internal_transid=tr.pk, payment_type="subscription")
+    response = hipay.subscriptionpayment(subscription, sender_host=request.get_host(), secure=request.is_secure(), internal_transid=tr.pk)
 
     if response['status'] == 'Accepted':
         tr.redirect_url = response['message']
@@ -214,7 +214,7 @@ def hipay_ipn_ack(request, internal_transid, invoice_id, payment_type):
     # figure out how they do this with MAPI
     if request.META.get('REMOTE_ADDR', None) not in settings.HIPAY_ACK_SOURCE_IPS:
         # We have to log this incident
-        logger.critical("""Connexion from %s pretending to be ack server from HiPay,
+        logger.critical(u"""Connexion from %s pretending to be ack server from HiPay,
                        the posted data is:%s;
                        TARGETED DATA:
                        internal_transid=%s;
@@ -224,9 +224,9 @@ def hipay_ipn_ack(request, internal_transid, invoice_id, payment_type):
                                            internal_transid,
                                            invoice_id,
                                            payment_type))
-        return HttpResponse("Thanks for your time")
+        return HttpResponse(u"Thanks for your time")
 
-    logger.debug("""Connexion from %s HiPay ACKing,
+    logger.debug(u"""Connexion from %s HiPay ACKing,
                     the posted data is:%s;
                     internal_transid=%s;
                     invoice_id=%s;
@@ -238,24 +238,38 @@ def hipay_ipn_ack(request, internal_transid, invoice_id, payment_type):
 
     if payment_type == 'invoice':
         c_object = get_object_or_404(Invoices, pk=invoice_id)
-        qs = c_object.invoicetransaction_set.filter(pk=internal_transid)
+        # I use filter instead of get to have a qs returned so we can apply update on the dict
+        first = c_object.invoicetransaction_set.get(pk=internal_transid)
+        theset = c_object.invoicetransaction_set
+
     else:
         c_object = get_object_or_404(Subscription, pk=invoice_id)
-        qs = c_object.subscriptiontransaction_set.filter(pk=internal_transid)
+        first = c_object.subscriptiontransaction_set.get(pk=internal_transid)
+        theset = c_object.subscriptiontransaction_set
 
-    res = ParseAck(request.POST.get('xml', None))
-    if res and res.get('status', None) == 'ok':
-        if payment_type == 'invoice':
+    result = ParseAck(request.POST.get('xml', None))
+    if result:
+        # FIXME: Make sure that this means PAID the $$$ are in my account and
+        # nothing can change that
+        if result.get('status', None) == 'ok' and payment_type == 'invoice':
             c_object.is_paye = True
             c_object.save()
+
         # Save the transaction for future reference
-        qs.update(**res)
+        tr = theset.create(**result)
+        tr.url_ack = first.url_ack
+        # Trigger the ACK propagation if any
+        tr.save()
+    else:
+        logger.debug("""Parsing failed %s""" %request.POST.get('xml', None))
+
 
     # This is a bot that doesn't care
     return HttpResponse("")
                          
     
 def hipay_shop_logo(request):
+    # FIXME: Think white label too
     pass
 
 @login_required

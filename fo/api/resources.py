@@ -8,7 +8,7 @@ __date__   = "Sat Nov 26 12:12:29 2011"
 
 from tastypie.resources import ModelResource, Resource
 
-from fo.invoice.models import Invoices, Clients, InvoiceRows, Subscription, SubscriptionRow
+from fo.invoice.models import Invoices, Clients, InvoiceRows, Subscription, SubscriptionRow, SubscriptionTransaction, InvoiceTransaction
 from fo.enterprise.models import Users, Clients2Users, CompanyTypes
 from fo.libs.hipay import simplepayment, subscriptionpayment
 from tastypie import fields
@@ -21,7 +21,7 @@ from django.conf.urls.defaults import url
 from tastypie.http import *
 import operator
 import logging
-logger = logging.getLogger('django')
+logger = logging.getLogger('wf')
 
 class ClientResource(ModelResource):
     def apply_authorization_limits(self, request, object_list):
@@ -250,115 +250,101 @@ class SubscriptionRowResource(ModelResource):
         authentication = ApiKeyAuthentication()
         authorization = Authorization()
 
-class HiPaySubscription(Resource):
-    subscription = fields.ToOneField(SubscriptionResource, 'subscription', null=True)
-    urls = fields.DictField(null=True)
-    extra = fields.DictField(null=True)
+class HiPaySubscription(ModelResource):
+    subscription = fields.ToOneField(SubscriptionResource, 'subscription')
+
+    def apply_authorization_limits(self, request, object_list):
+        if not request:
+            return SubscriptionTransaction.objects.all()
+        current_user = Users.objects.get(email=request.user.username)
+        subscriptions = reduce(operator.or_, [c.subscription_set.all() for c in current_user.clients_set.all()])
+        if not subscriptions:
+            return SubscriptionTransaction.objects.none()
+        queryset = reduce(operator.or_, [t.subscriptiontransaction_set.all() for t in subscriptions])
+        return queryset.distinct()
 
     class Meta:
-        allowed_methods = ['get', 'post', 'put', 'delete']
-        detail_allowed_methods = ['get', 'post', 'put', 'delete']
+        queryset = SubscriptionTransaction.objects.all()
+        allowed_methods = ['get', 'post', 'delete']
+        detail_allowed_methods = ['get', 'post', 'delete']
         resource_name = 'paysubscription'
         authentication = ApiKeyAuthentication()
         authorization = Authorization()
 
-    def get_resource_uri(self, bundle_or_obj):
-        kwargs = {
-            'resource_name': self._meta.resource_name,
-        }
-
-        if isinstance(bundle_or_obj, Bundle):
-            kwargs['pk'] = bundle_or_obj.subscription.pk
-        else:
-            kwargs['pk'] = bundle_or_obj.subscription
-
-        if self._meta.api_name is not None:
-            kwargs['api_name'] = self._meta.api_name
-
-        return self._build_reverse_url("api_dispatch_detail", kwargs=kwargs)
-
-
-    def get_object_list(self, request):
-        pass
-
-    def obj_get_list(self, request=None, **kwargs):
-        pass
-
-    def obj_get(self, request=None, **kwargs):
-        pass
 
     def obj_create(self, bundle, request=None, **kwargs):
-        pass
+        bundle = super(HiPaySubscription, self).obj_create(bundle, request, **kwargs)
 
-    def obj_update(self, bundle, request=None, **kwargs):
-        pass
+        # Go on pay it for real
+        response = subscriptionpayment(bundle.obj.subscription, sender_host=request.get_host(),
+                                       secure=request.is_secure(), internal_transid=bundle.obj.pk)
 
-    def obj_delete_list(self, request=None, **kwargs):
-        pass
+        if response['status'] == 'Accepted':
+            bundle.obj.redirect_url = response['message']
+            bundle.obj.save()
 
-    def obj_delete(self, request=None, **kwargs):
-        pass
+        return bundle
 
-    def rollback(self, bundles):
-        pass
+    def get_object_list(self, request):
+        current_user = Users.objects.get(email=request.user.username)
+        current_user = Users.objects.get(email=request.user.username)
+        subscriptions = reduce(operator.or_, [c.subscription_set.all() for c in current_user.clients_set.all()])
+        if not subscriptions:
+            return SubscriptionTransaction.objects.none()
+        queryset = reduce(operator.or_, [t.subscriptiontransaction_set.all() for t in subscriptions])
 
-class HiPayInvoiceClass(object):
-    def __init__(self, initial=None):
-        self.__dict__['_data'] = {}
+        return operator.and_(super(HiPaySubscription, self).get_object_list(request).all(), queryset).distinct()
 
-        if hasattr(initial, 'items'):
-            self.__dict__['_data'] = initial
+    def obj_get(self, request=None, **kwargs):
+        if not request:
+            return SubscriptionTransaction.objects.get(**kwargs)
+        return self.get_object_list(request).get(**kwargs)
 
-    def __getattr__(self, name):
-        return self._data.get(name, None)
 
-    def __setattr__(self, name, value):
-        self.__dict__['_data'][name] = value
-
-    def to_dict(self):
-        return self._data
-
-class HiPayInvoice(Resource):
-    invoice = fields.ToOneField(InvoiceResource, 'invoice', null=True)
-    urls = fields.DictField(null=True)
-    extra = fields.DictField(null=True)
+class HiPayInvoice(ModelResource):
+    invoice = fields.ToOneField(InvoiceResource, 'invoice')
+    def apply_authorization_limits(self, request, object_list):
+        if not request:
+            return InvoiceTransaction.objects.all()
+        current_user = Users.objects.get(email=request.user.username)
+        invoices = reduce(operator.or_, [c.invoices_set.all() for c in current_user.clients_set.all()])
+        if not invoices:
+            return InvoiceTransaction.objects.none()
+        queryset = reduce(operator.or_, [t.invoicetransaction_set.all() for t in invoices])
+        return queryset.distinct()
 
     class Meta:
+        queryset = InvoiceTransaction.objects.all()
         allowed_methods = ['post', 'get']
         detail_allowed_methods = ['post', 'get']
         resource_name = 'payinvoice'
         authentication = ApiKeyAuthentication()
         authorization = Authorization()
-        object_class = HiPayInvoiceClass
-
-    def get_object_list(self, request):
-        results = []
-        if not request:
-            return Invoices.objects.all()
-        current_user = Users.objects.get(email=request.user.username)
-        invoices = [c.invoices_set.all() for c in current_user.clients_set.all()]
-
-        for result in invoices:
-            new_obj = HiPayInvoiceClass(initial={'invoice':invoice.pk, 'extra':None, urls:None})
-            results.append(new_obj)
-
-        return results
-
-    def get_resource_uri(self, bundle_or_obj):
-        kwargs = {
-            'resource_name': self._meta.resource_name,
-        }
-
-        # if isinstance(bundle_or_obj, Bundle):
-        #     kwargs['pk'] = bundle_or_obj.invoice.pk
-        # else:
-        #     kwargs['pk'] = bundle_or_obj.invoice
-
-        if self._meta.api_name is not None:
-            kwargs['api_name'] = self._meta.api_name
-
-        return self._build_reverse_url("api_dispatch_detail", kwargs=kwargs)
 
     def obj_create(self, bundle, request=None, **kwargs):
-        bundle.obj = HiPayInvoiceClass(initial=kwargs)
-        bundle = self.full_hydrate(bundle)
+        bundle = super(HiPayInvoice, self).obj_create(bundle, request, **kwargs)
+
+        # Go on pay it for real
+        response = simplepayment(bundle.obj.invoice, sender_host=request.get_host(),
+                                 secure=request.is_secure(), internal_transid=bundle.obj.pk)
+
+        if response['status'] == 'Accepted':
+            bundle.obj.redirect_url = response['message']
+            bundle.obj.save()
+
+        return bundle
+
+    def get_object_list(self, request):
+        current_user = Users.objects.get(email=request.user.username)
+        invoices = reduce(operator.or_, [c.invoices_set.all() for c in current_user.clients_set.all()])
+        if not invoices:
+            return InvoiceTransaction.objects.none()
+        queryset = reduce(operator.or_, [t.invoicetransaction_set.all() for t in invoices])
+
+        return operator.and_(super(HiPayInvoice, self).get_object_list(request).all(), queryset).distinct()
+
+    def obj_get(self, request=None, **kwargs):
+        if not request:
+            return InvoiceTransaction.objects.get(**kwargs)
+        return self.get_object_list(request).get(**kwargs)
+
