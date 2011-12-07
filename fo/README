@@ -1,0 +1,31 @@
+Before we get to using distutils/deb and co to automate the installation, here
+is a quick and dirty way to get going with Webfinance front end.
+
+Create a local_settings.py in this directory, your local_settings should contain
+at least the databases configuration using the new multidb dict syntax (the old
+syntax is ok but you'll get the deprecation warning and will need to fix it
+sooner or later). It should look something like:
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'webfinance',
+        'USER': 'USER',
+        #'PASSWORD': 'YOURSECRET',
+        'HOST': 'IP OR HOSTNAME', 
+        'PORT': '',
+    }
+}
+
+
+If you're using mysql, then you'll need mysql python driver:
+
+On Debian family:
+   apt-get install python-mysqldb
+
+On Mac OS X with py27 as the default port: 
+   sudo port install py27-mysql
+
+You'll then need to create the database:
+  Get into this source directory and run:
+  # python manage.py syncdb

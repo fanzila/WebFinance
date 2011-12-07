@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load url from future %}
+
+{% block content %}
+    <h2>{% trans 'Invoice Payment' %}
+      {% ifequal payment_type "invoice" %}
+          {{ c_object..num_facture }}
+      {% else %}
+          {{c_object.ref_contrat}}
+      {% endifequal %}</h2>
+
+    <p>{% blocktrans %}The payment have been canceled{% endblocktrans %}</p>
+{% endblock %}

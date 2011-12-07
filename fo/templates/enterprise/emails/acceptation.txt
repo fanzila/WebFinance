@@ -1,0 +1,26 @@
+{% extends "enterprise/emails/base.txt" %}
+{% load i18n %}
+{% block header %}
+{% blocktrans %}
+Dear {{ guest }},
+{% endblocktrans %}
+{% endblock %}
+{% block body %}
+{% blocktrans %}
+
+Your invitation to {{ invited }} for {{ company }} invoices management
+have been accepted.
+
+{{ invited }} is now allowed to manage the invoices, subscriptions and quotes of
+the company on the company's behalf.
+
+If you think this an error, you can revoke this granted access at the following
+url and notify us as soon as you can for the incident.
+
+{{ revocation_url }}
+
+If you want to revoke this access in the future for any reason, you just click
+on the link above or use your regular user interface.
+
+{% endblocktrans %}
+{% endblock %}

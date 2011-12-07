@@ -1,0 +1,40 @@
+{% load i18n %}
+{% load url from future %}
+
+<html>
+  <head>
+    {% block head %}
+    <title>{% block title %}{% endblock %}</title>
+    {% endblock %}
+  </head>
+
+  <body>
+    {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% block content %}
+    {% endblock %}
+
+    {% block footer %}
+    <hr />
+    <a href="{% url 'list_companies' %}">{% blocktrans %}My companies {% endblocktrans %}</a> | 
+    <a href="{% url 'add_company' %}">{% blocktrans %}Add a company {% endblocktrans %}</a> | 
+    <a href="{% url 'invite_user' %}">{% blocktrans %}Invite a user {% endblocktrans %}</a> | 
+    <a href="{% url 'revoke_invitations' %}">{% blocktrans %}Revoke invitation {% endblocktrans %}</a> |
+    <a href="#">{% blocktrans %}Due invoices {% endblocktrans %}</a> | <a href="{% url 'logout_cybsso' %}">{% trans 'Logout' %}</a>
+
+    {% if user.is_authenticated %}
+    <p>
+      Email: {{ user.email }} <br />
+      Api Key: {{ user.api_key }}
+    </p>
+
+    {% endif %}
+    {% endblock %}
+  </body>
+</html>

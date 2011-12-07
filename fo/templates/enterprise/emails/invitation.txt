@@ -1,0 +1,27 @@
+{% extends "enterprise/emails/base.txt" %}
+{% load i18n %}
+{% block header %}
+{% blocktrans %}
+Dear {{ recipient_name }},
+{% endblocktrans %}
+{% endblock %}
+{% block body %}
+{% blocktrans %}
+You've been invited by {{ sender_name }} from {{ company }} to manage the
+company's invoices and quotes from our website. Once this invitation is
+accepted, you'll be allowed to view, download and pay the invoices of the
+company straight from one central location. You'll also be allowed to accept our
+quotes on the behalf of the company.
+
+To accept the invitation please click on the link below (or copy and paste
+it in your browser):
+
+{{ accept_url }}
+
+You'll be redirected to login if you already have an account in our system, if
+not, you'll be able to create one in the page where you're redirected.
+
+If you don't want to accept the invitation, or think this is an error, please
+ignore this email and nothing will be done.
+{% endblocktrans %}
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load url from future %}
+
+{% block content %}
+    <h2>{% trans 'Invoice' %} {{ invoice.num_facture }}</h2>
+    <ul>
+        {% for row in invoice_details %}
+            <li>{{ row.description }} | {{ row.qtt }} | {{ row.prix_ht }}</li>
+        {% empty %}
+            {% blocktrans %} This invoice have no details{% endblocktrans %}
+        {% endfor %}
+    </ul>
+    <a href="{% url 'hipay_invoice' invoice_id=invoice.pk %}">
+            {% trans 'Pay invoice with HiPay' %}
+    </a>
+{% endblock %}

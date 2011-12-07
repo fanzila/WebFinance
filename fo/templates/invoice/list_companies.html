@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load url from future %}
+
+{% block content %}
+    <h2>{% trans Companies %}</h2>
+    <ul>
+        {% for customer in customer_list %}
+            <li>
+              <a href="{% url 'list_invoices' customer_id=customer.id_client %}">{{ customer.nom }}</a> |
+              <a href="{% url 'change_company' customer_id=customer.id_client %}">{% trans 'Change' %}</a>
+            </li>
+        {% empty %}
+            {% blocktrans %} You've no company defined, you'll have to {% endblocktrans %}<a href="{% url 'add_company' %}">{% trans 'add one' %}</a>
+        {% endfor %}
+    </ul>
+{% endblock %}

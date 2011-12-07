@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load url from future %}
+
+{% block content %}
+    <h1>{% blocktrans %}Revocations {% endblocktrans %}{{ company }}</h1>
+
+    <ul>
+        {% for invitation in invitations %}
+            <li><a href="{% url 'revoke_invitation' token=invitation.revocation_token %}">
+                                    {% trans 'Revoke access' %}
+                </a> {{ invitation.get_full_name }} | {{ invitation.email }} | {{ invitation.acceptation_date }}
+           </li>
+        {% empty %}
+            {% blocktrans %} You have not granted any user access to revoke {% endblocktrans %}
+        {% endfor %}
+    </ul>
+{% endblock %}
