@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-25 18:23+0100\n"
+"POT-Creation-Date: 2011-12-07 09:16+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,161 +21,184 @@ msgstr ""
 msgid "Choose a company"
 msgstr ""
 
-#: enterprise/models.py:30 enterprise/models.py:67
+#: enterprise/models.py:41 enterprise/models.py:78
 msgid "User"
 msgstr ""
 
-#: enterprise/models.py:31
+#: enterprise/models.py:42
 msgid "Users"
 msgstr ""
 
-#: enterprise/models.py:47
+#: enterprise/models.py:58
 msgid "Company name"
 msgstr ""
 
-#: enterprise/models.py:48
+#: enterprise/models.py:59
 msgid "Postal code"
 msgstr ""
 
-#: enterprise/models.py:49
+#: enterprise/models.py:60
 msgid "City"
 msgstr ""
 
-#: enterprise/models.py:50
+#: enterprise/models.py:61
 msgid "Address 1"
 msgstr ""
 
-#: enterprise/models.py:51
+#: enterprise/models.py:62
 msgid "Address 2"
 msgstr ""
 
-#: enterprise/models.py:52
+#: enterprise/models.py:63
 msgid "Address 3"
 msgstr ""
 
-#: enterprise/models.py:53
+#: enterprise/models.py:64
 msgid "Country"
 msgstr ""
 
-#: enterprise/models.py:54
+#: enterprise/models.py:65
 msgid "Phone"
 msgstr ""
 
-#: enterprise/models.py:55
+#: enterprise/models.py:66
 msgid "Fax"
 msgstr ""
 
-#: enterprise/models.py:56
+#: enterprise/models.py:67
 msgid "Website"
 msgstr ""
 
-#: enterprise/models.py:57
+#: enterprise/models.py:68
 msgid "VAT number"
 msgstr ""
 
-#: enterprise/models.py:58
+#: enterprise/models.py:69
 msgid "Has unpaid"
 msgstr ""
 
-#: enterprise/models.py:59
+#: enterprise/models.py:70
 msgid "Total turnover"
 msgstr ""
 
-#: enterprise/models.py:60
+#: enterprise/models.py:71
 msgid "Total pre-taxed turnover"
 msgstr ""
 
-#: enterprise/models.py:61
+#: enterprise/models.py:72
 msgid "Has quote?"
 msgstr ""
 
-#: enterprise/models.py:62
+#: enterprise/models.py:73
 msgid "Email"
 msgstr ""
 
-#: enterprise/models.py:63
+#: enterprise/models.py:74
 msgid "Siren"
 msgstr ""
 
-#: enterprise/models.py:64
+#: enterprise/models.py:75
 msgid "Amount of duty"
 msgstr ""
 
-#: enterprise/models.py:65 enterprise/models.py:102
+#: enterprise/models.py:76 enterprise/models.py:112
 msgid "Company type"
 msgstr ""
 
-#: enterprise/models.py:68
+#: enterprise/models.py:79
 msgid "Password"
 msgstr ""
 
-#: enterprise/models.py:71
+#: enterprise/models.py:82
 msgid "Customer"
 msgstr ""
 
-#: enterprise/models.py:72
+#: enterprise/models.py:83
 msgid "Customers"
 msgstr ""
 
-#: enterprise/models.py:87 enterprise/models.py:88
+#: enterprise/models.py:97 enterprise/models.py:98
 msgid "Client/User"
 msgstr ""
 
-#: enterprise/models.py:103
+#: enterprise/models.py:113
 msgid "Company types"
 msgstr ""
 
-#: enterprise/models.py:120
+#: enterprise/models.py:130
 msgid "User log"
 msgstr ""
 
-#: enterprise/models.py:121
+#: enterprise/models.py:131
 msgid "User logs"
 msgstr ""
 
-#: enterprise/models.py:154
+#: enterprise/models.py:164
 msgid "Person"
 msgstr ""
 
-#: enterprise/models.py:155
+#: enterprise/models.py:165
 msgid "Persons"
 msgstr ""
 
-#: enterprise/models.py:172
+#: enterprise/models.py:182
 msgid "Role"
 msgstr ""
 
-#: enterprise/models.py:173
+#: enterprise/models.py:183
 msgid "Roles"
 msgstr ""
 
-#: enterprise/models.py:184
+#: enterprise/models.py:195
 msgid "Email address"
 msgstr ""
 
-#: enterprise/models.py:185
+#: enterprise/models.py:196
 msgid "First name"
 msgstr ""
 
-#: enterprise/models.py:186
+#: enterprise/models.py:197
 msgid "Last name"
 msgstr ""
 
-#: enterprise/views.py:42
-msgid "Add company"
-msgstr ""
-
-#: enterprise/views.py:57
-msgid "Change company"
-msgstr ""
-
-#: enterprise/views.py:71
+#: enterprise/models.py:222
 #, python-format
 msgid "Invitation to join %(name)s from %(full_name)s"
 msgstr ""
 
-#: enterprise/views.py:82
+#: enterprise/models.py:235
+#, python-format
+msgid "Invitation to join %(name)s accpeted by  %(full_name)s"
+msgstr ""
+
+#: enterprise/views.py:52
+msgid "Add company"
+msgstr ""
+
+#: enterprise/views.py:68
+msgid "Company info saved"
+msgstr ""
+
+#: enterprise/views.py:73
+msgid "Change company"
+msgstr ""
+
+#: enterprise/views.py:91
+msgid ""
+"An email have been sent to the user, you'll be notified once the invitation "
+"is accepted"
+msgstr ""
+
+#: enterprise/views.py:93
 msgid "Invite a user"
+msgstr ""
+
+#: enterprise/views.py:117
+msgid "Invitation Accepted"
+msgstr ""
+
+#: enterprise/views.py:140
+msgid "Granted access revoked"
 msgstr ""
 
 #: enterprise/tests/add_enterprise.py:39
@@ -186,107 +209,111 @@ msgstr ""
 msgid "This field is required."
 msgstr ""
 
-#: enterprise/tests/add_enterprise.py:54 enterprise/tests/add_enterprise.py:95
-#: invoice/tests/test_invoices.py:27
+#: enterprise/tests/add_enterprise.py:54
+#: enterprise/tests/add_enterprise.py:107 invoice/tests/test_invoices.py:40
 msgid "My companies"
 msgstr ""
 
-#: hipay/hipay.py:156
+#: enterprise/tests/add_enterprise.py:109
+msgid "Invitation to join ISVTEC from foo bar toto"
+msgstr ""
+
+#: hipay/hipay.py:158
 msgid ""
 "The value should be less than HIPAY_MAPI_CAPTURE_MAX_DAYS. You may also use "
 "'HIPAY_MAPI_CAPTURE_IMMEDIATE', 'HIPAY_MAPI_CAPTURE_MANUAL' constants"
 msgstr ""
 
-#: hipay/hipay.py:167
+#: hipay/hipay.py:169
 #, python-format
 msgid "Unknown currency %(currency)s"
 msgstr ""
 
-#: hipay/hipay.py:179
+#: hipay/hipay.py:181
 #, python-format
 msgid "Unknown locale %(defaultlang)s"
 msgstr ""
 
-#: hipay/hipay.py:190
+#: hipay/hipay.py:192
 #, python-format
 msgid "Invalid email address %(email_ack)s"
 msgstr ""
 
-#: hipay/hipay.py:224
+#: hipay/hipay.py:226
 #, python-format
 msgid "Invalid url %(log_url)s"
 msgstr ""
 
-#: hipay/hipay.py:234
+#: hipay/hipay.py:236
 #, python-format
 msgid "Invalid media %(media)s"
 msgstr ""
 
-#: hipay/hipay.py:266
+#: hipay/hipay.py:268
 #, python-format
 msgid "Invalid payment method  %(paymentmethod)s"
 msgstr ""
 
-#: hipay/hipay.py:280
+#: hipay/hipay.py:282
 #, python-format
 msgid "Invalid rating  %(rating)s"
 msgstr ""
 
-#: hipay/hipay.py:290
+#: hipay/hipay.py:292
 #, python-format
 msgid "Invalid url %(url_ack)s"
 msgstr ""
 
-#: hipay/hipay.py:300
+#: hipay/hipay.py:302
 #, python-format
 msgid "Invalid url %(url_cancel)s"
 msgstr ""
 
-#: hipay/hipay.py:310
+#: hipay/hipay.py:312
 #, python-format
 msgid "Invalid url %(url_nok)s"
 msgstr ""
 
-#: hipay/hipay.py:320
+#: hipay/hipay.py:322
 #, python-format
 msgid "Invalid url %(url_ok)s"
 msgstr ""
 
-#: hipay/hipay.py:337
+#: hipay/hipay.py:339
 #, python-format
 msgid "Invalid email address %(hipay_account_login)s"
 msgstr ""
 
-#: hipay/hipay.py:347
+#: hipay/hipay.py:349
 #, python-format
 msgid "Invalid email address %(id_shop)s"
 msgstr ""
 
-#: hipay/hipay.py:374
+#: hipay/hipay.py:376
 #, python-format
 msgid "taxVal and percentage should be numbers %(taxes)s"
 msgstr ""
 
-#: hipay/hipay.py:405
+#: hipay/hipay.py:407
 #, python-format
 msgid "Invalid percentageTarget %(affiliates)s"
 msgstr ""
 
-#: hipay/hipay.py:426
+#: hipay/hipay.py:428
 #, python-format
 msgid ""
 "Invalid products specifications, the quantity and the price should be "
 "numbers %(products)s"
 msgstr ""
 
-#: hipay/hipay.py:443
+#: hipay/hipay.py:445
 #, python-format
 msgid ""
 "Invalid installement specifications, the price should be numbers and first "
 "should be true or false %(installments)s"
 msgstr ""
 
-#: hipay/hipay.py:463
+#: hipay/hipay.py:465
 #, python-format
 msgid ""
 "Invalid order specifications, shippingAmount, insuranceAmount, "
@@ -295,7 +322,7 @@ msgid ""
 "instance %(orders)s"
 msgstr ""
 
-#: hipay/hipay.py:506
+#: hipay/hipay.py:508
 msgid "Empty answer"
 msgstr ""
 
@@ -307,99 +334,80 @@ msgstr ""
 msgid "Invoice items"
 msgstr ""
 
-#: invoice/models.py:67 templates/invoice/detail_invoices.html:6
+#: invoice/models.py:43
+msgid "Subscription row"
+msgstr ""
+
+#: invoice/models.py:44
+msgid "Subscription rows"
+msgstr ""
+
+#: invoice/models.py:65
+msgid "Subscription"
+msgstr ""
+
+#: invoice/models.py:66
+msgid "Subscriptions"
+msgstr ""
+
+#: invoice/models.py:112
 msgid "Invoice"
 msgstr ""
 
-#: invoice/models.py:68 templates/invoice/list_invoices.html:13
+#: invoice/models.py:113
 msgid "Invoices"
 msgstr ""
 
-#: invoice/models.py:98 invoice/models.py:99
-msgid "PayBox"
-msgstr ""
-
-#: invoice/models.py:117
-msgid "Transaction's invoice"
-msgstr ""
-
-#: invoice/models.py:118
-msgid "Transaction's invoices"
-msgstr ""
-
-#: invoice/models.py:146
-msgid "Transaction"
-msgstr ""
-
-#: invoice/models.py:147
-msgid "Transactions"
-msgstr ""
-
-#: invoice/models.py:161
+#: invoice/models.py:204
 msgid "Service type"
 msgstr ""
 
-#: invoice/models.py:162
+#: invoice/models.py:205
 msgid "Service types"
 msgstr ""
 
-#: invoice/models.py:187
+#: invoice/models.py:230
 msgid "Followup"
 msgstr ""
 
-#: invoice/models.py:188
+#: invoice/models.py:231
 msgid "Followups"
 msgstr ""
 
-#: invoice/models.py:204
+#: invoice/models.py:246
 msgid "Followup type"
 msgstr ""
 
-#: invoice/models.py:205
+#: invoice/models.py:247
 msgid "Followup types"
 msgstr ""
 
-#: invoice/models.py:220
+#: invoice/models.py:262
 msgid "VAT type"
 msgstr ""
 
-#: invoice/models.py:221
+#: invoice/models.py:263
 msgid "VAT types"
 msgstr ""
 
-#: invoice/tests/test_invoices.py:39 invoice/tests/test_invoices.py:78
+#: invoice/tests/test_invoices.py:52 invoice/tests/test_invoices.py:110
+#: invoice/tests/test_invoices.py:120
 msgid "Invoices/Quotes for company"
+msgstr ""
+
+#: invoice/tests/test_invoices.py:72 invoice/tests/test_invoices.py:84
+msgid "Pay invoice"
 msgstr ""
 
 #: middleware/sso.py:17
 msgid "Malformed request"
 msgstr ""
 
-#: templates/base.html:17
-msgid "My companies "
-msgstr ""
-
-#: templates/base.html:18
-msgid "Add a company "
-msgstr ""
-
-#: templates/base.html:19
-msgid "Invite a user "
-msgstr ""
-
-#: templates/base.html:20
-msgid "Due invoices "
-msgstr ""
-
-#: templates/base.html:20
-msgid "Logout"
-msgstr ""
-
 #: templates/enterprise/emails/acceptation.txt:4
 #, python-format
 msgid ""
 "\n"
-"Dear %(sender_name)s,\n"
+"Dear %(guest)s,\n"
 msgstr ""
 
 #: templates/enterprise/emails/acceptation.txt:9
@@ -407,11 +415,12 @@ msgstr ""
 msgid ""
 "\n"
 "\n"
-"Your invitation to %(recipient_name)s for %(company)s invoices management\n"
+"Your invitation to %(invited)s for %(company)s invoices management\n"
 "have been accepted.\n"
 "\n"
-"%(recipient_name)s is now allowed to manage the invoices and quotes of the\n"
-"company on the company's behalf.\n"
+"%(invited)s is now allowed to manage the invoices, subscriptions and quotes "
+"of\n"
+"the company on the company's behalf.\n"
 "\n"
 "If you think this an error, you can revoke this granted access at the "
 "following\n"
@@ -421,7 +430,7 @@ msgid ""
 "\n"
 "If you want to revoke this access in the future for any reason, you just "
 "click\n"
-"on the link above.\n"
+"on the link above or use your regular user interface.\n"
 "\n"
 msgstr ""
 
@@ -461,86 +470,4 @@ msgid ""
 "If you don't want to accept the invitation, or think this is an error, "
 "please\n"
 "ignore this email and nothing will be done.\n"
-msgstr ""
-
-#: templates/invoice/detail_invoices.html:11
-msgid " This invoice have no details"
-msgstr ""
-
-#: templates/invoice/list_companies.html:11
-msgid "Change"
-msgstr ""
-
-#: templates/invoice/list_companies.html:14
-msgid " You've no company defined, you'll have to "
-msgstr ""
-
-#: templates/invoice/list_companies.html:14
-msgid "add one"
-msgstr ""
-
-#: templates/invoice/list_invoices.html:6
-msgid "Invoices/Quotes for company "
-msgstr ""
-
-#: templates/invoice/list_invoices.html:21
-msgid "Pay invoice with HiPay"
-msgstr ""
-
-#: templates/invoice/list_invoices.html:24
-msgid "Download invoice"
-msgstr ""
-
-#: templates/invoice/list_invoices.html:28
-#, python-format
-msgid " You have no pending invoice for %(company)s "
-msgstr ""
-
-#: templates/invoice/list_invoices.html:32
-msgid "Quotes"
-msgstr ""
-
-#: templates/invoice/list_invoices.html:40
-msgid "Accpet quote"
-msgstr ""
-
-#: templates/invoice/list_invoices.html:44
-#, python-format
-msgid " You have no pending quote for %(company)s "
-msgstr ""
-
-#: templates/invoice/hipay/cancel_payment.html:6
-#: templates/invoice/hipay/nook_payment.html:6
-#: templates/invoice/hipay/ok_payment.html:6
-msgid "Invoice Payment"
-msgstr ""
-
-#: templates/invoice/hipay/cancel_payment.html:8
-msgid "The payment have been canceled"
-msgstr ""
-
-#: templates/invoice/hipay/nook_payment.html:8
-msgid "The payment have failed"
-msgstr ""
-
-#: templates/invoice/hipay/ok_payment.html:8
-msgid "The payment is successful"
-msgstr ""
-
-#: templates/registration/login.html:17
-msgid "Please correct the error below."
-msgid_plural "Please correct the errors below."
-msgstr[0] ""
-msgstr[1] ""
-
-#: templates/registration/login.html:33
-msgid "Username:"
-msgstr ""
-
-#: templates/registration/login.html:37
-msgid "Password:"
-msgstr ""
-
-#: templates/registration/login.html:42
-msgid "Log in"
 msgstr ""
