@@ -16,7 +16,7 @@ class AddCompanyTest(TestCase):
     def setUp(self):
         # We need a ticket and an account
         self.username = 'ousmane@wilane.org'
-        self.ticket = '87bcda48f701c504862191261cf1a39977d01bfb9d03d321f0d8ec63295570fd291979b0b98628f3'
+        self.ticket = '198bf124a7efa52e9b4562c863675dddfc94e6848d9bc2af18053d9966e8df01c91bf6486459176e'
          
 
     def test_add_company(self):

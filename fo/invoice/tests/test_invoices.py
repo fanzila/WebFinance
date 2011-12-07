@@ -27,7 +27,7 @@ class InvoiceTest(TestCase):
         # We need a ticket and an account for test to pass before we use
         # selenium and friends
         self.username = 'ousmane@wilane.org'
-        self.ticket = '87bcda48f701c504862191261cf1a39977d01bfb9d03d321f0d8ec63295570fd291979b0b98628f3'
+        self.ticket = '198bf124a7efa52e9b4562c863675dddfc94e6848d9bc2af18053d9966e8df01c91bf6486459176e'
 
     def test_list_companies(self):
         url = reverse("list_companies")
@@ -204,7 +204,16 @@ class InvoiceTest(TestCase):
         invoice = Invoices.objects.get(pk=1)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(invoice.invoicetransaction_set.count(), 1)
-        self.assertEqual(invoice.is_paye, True)
+        self.assertEqual(invoice.is_paye, False) # The 127.0.0.1 is not in the default allowed host
+
+        # Change the settings to allow 127.0.0.1 to post ACK
+        settings.HIPAY_ACK_SOURCE_IPS.append('127.0.0.1')
+        response = self.client.post(url, {'xml': ack.decode('utf-8')})
+        invoice = Invoices.objects.get(pk=1)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(invoice.invoicetransaction_set.count(), 1)
+        self.assertEqual(invoice.is_paye, True) # The 127.0.0.1 should now be allowed
+
 
         tr = SubscriptionTransaction(subscription_id=1)
         tr.save()

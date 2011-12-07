@@ -6,6 +6,8 @@
 __author__ = "Ousmane Wilane ♟ <ousmane@wilane.org>"
 __date__   = "Thu Nov 10 13:25:50 2011"
 
+from logging.handlers import SysLogHandler
+
 DEBUG = True
 ADMINS = (
     ('Cyril Bouthors', 'cyril.bouthors@isvtec.com'),
@@ -50,27 +52,34 @@ LOGGING = {
         'console':{
             'level':'DEBUG',
             'class':'logging.StreamHandler',
-            'formatter': 'simple'
+            'formatter': 'verbose'
         },
         'mail_admins': {
             'level': 'DEBUG',
             'class': 'django.utils.log.AdminEmailHandler',
-        }
+        },
+        'syslog': {
+            'level':'DEBUG',
+            'class':'logging.handlers.SysLogHandler',
+            'formatter': 'verbose',
+            'facility': SysLogHandler.LOG_LOCAL2,
+        },
     },
     'loggers': {
         'django': {
-            'handlers':['null', 'console'],
+            #FIXME: Have to change this to syslog too, not sure
+            'handlers':['null'],
             'propagate': True,
             'level':'DEBUG',
         },
         'django.request': {
-            'handlers': ['mail_admins'],
+            'handlers': ['console', 'syslog'],
             'level': 'ERROR',
             'propagate': False,
         },
-        'fo.custom': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
+        'wf': {
+            'handlers': ['console', 'syslog'],
+            'level': 'DEBUG',
         }
     }
 }
@@ -102,3 +111,5 @@ HIPAY_DEFAULT_CATEGORY="91"
 HIPAY_DEFAULT_SUBSCRIPTION_FIRST_PAYMENT_DELAY='1D'
 HIPAY_DEFAULT_SUBSCRIPTION_SUBS_PAYMENT_DELAY='1M'
 HIPAY_DEFAULT_SUBSCRIPTION_CATEGORY="91"
+
+HIPAY_ACK_SOURCE_IPS = ['195.158.241.241']

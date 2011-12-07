@@ -19,6 +19,9 @@ from fo.invoice.models import Invoices, InvoiceTransaction, SubscriptionTransact
 from fo.libs import hipay
 from fo.hipay.hipay import ParseAck
 from django.views.decorators.csrf import csrf_exempt
+import logging
+logger = logging.getLogger('wf')
+
 
 @login_required
 def list_companies(request):
@@ -209,6 +212,29 @@ def hipay_ipn_ack(request, internal_transid, invoice_id, payment_type):
     # FIXME: We should check where this is coming from, if not, anybody could
     # pretend notifying for a payment that actually never happened ? I can't
     # figure out how they do this with MAPI
+    if request.META.get('REMOTE_ADDR', None) not in settings.HIPAY_ACK_SOURCE_IPS:
+        # We have to log this incident
+        logger.critical("""Connexion from %s pretending to be ack server from HiPay,
+                       the posted data is:%s;
+                       TARGETED DATA:
+                       internal_transid=%s;
+                       invoice_id=%s;
+                       payment_type=%s"""%(request.META.get('REMOTE_ADDR', None),
+                                           request.POST.get('xml', None),
+                                           internal_transid,
+                                           invoice_id,
+                                           payment_type))
+        return HttpResponse("Thanks for your time")
+
+    logger.debug("""Connexion from %s HiPay ACKing,
+                    the posted data is:%s;
+                    internal_transid=%s;
+                    invoice_id=%s;
+                    payment_type=%s"""%(request.META.get('REMOTE_ADDR', None),
+                                        request.POST.get('xml', None),
+                                        internal_transid,
+                                        invoice_id,
+                                        payment_type))
 
     if payment_type == 'invoice':
         c_object = get_object_or_404(Invoices, pk=invoice_id)
