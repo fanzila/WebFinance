@@ -32,7 +32,7 @@ if (!is_numeric($_GET['id_facture'])) {
 			  "VALUES (now(), now(), ".$_GET['id_client'].",'$tva', '$num_facture')")
 	  or wf_mysqldie();
   $id_facture=mysql_insert_id();
-  $_SESSION['message'] = _('Invoice created');
+  #$_SESSION['message'] = _('Invoice created');
   logmessage(_('Create invoice')." for client:".$_GET['id_client'], $_GET['id_client']);
   header("Location: edit_facture.php?id_facture=".$id_facture);
   die();

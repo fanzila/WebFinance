@@ -210,12 +210,12 @@ if ($action == "save_facture") {
   if($dup_num_inv){
     $_SESSION['message'] = _('Duplicate invoice number')."<br/>"._('Invoice updated') ;
     $_SESSION['error'] = 1;
-  } else
-    $_SESSION['message'] = _('Invoice updated');
+  } /* else */
+    /* $_SESSION['message'] = _('Invoice updated'); */
 
   if($type_doc=="facture" || ($type_doc=="devis" &&  $is_paye=="on" )){
     $Facture->updateTransaction($_POST['id_facture'],$type_prev);
-    $_SESSION['message'] .=  "<br>"._('Transaction updated');
+    /* $_SESSION['message'] .=  "<br>"._('Transaction updated'); */
   }
 
   header("Location: edit_facture.php?id_facture=".$_POST['id_facture']);
@@ -254,7 +254,7 @@ if ($action == "duplicate") {
   if($id_new_facture){
       logmessage("New invoice fa:$id_new_facture duplicated of fa:$id ", 'NULL', $id);
     $Invoice->updateTransaction($id_new_facture);
-    $_SESSION['message'] = _("Invoice duplicated");
+    /* $_SESSION['message'] = _("Invoice duplicated"); */
     header("Location: edit_facture.php?id_facture=$id_new_facture");
     die();
   } else {
@@ -321,11 +321,11 @@ if($action == "send"){
 	echo "Mailer Error: " . $mail->ErrorInfo;
 
       } else{
-	$_SESSION['message'] = _('Invoice sent');
+	/* $_SESSION['message'] = _('Invoice sent'); */
 	//mettre à jour l'état de la facture, update sql
 	mysql_query("UPDATE webfinance_invoices SET is_envoye=1 WHERE id_facture=$id ")
 	  or wf_mysqldie();
-	$_SESSION['message'] .= "<br/>"._('Invoice updated');
+	/* $_SESSION['message'] .= "<br/>"._('Invoice updated'); */
 
 	logmessage(_("Send invoice")." #$invoice->num_facture fa:$id client:$invoice->id_client", $invoice->id_client,$id);
       }
