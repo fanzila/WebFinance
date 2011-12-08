@@ -72,7 +72,6 @@ class InvoiceTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'invoice/detail_invoices.html')
         self.assertContains(response, "201111100")
-        self.assertContains(response, _("Pay invoice"))
         self.client.logout()
         
     def test_detail_subscription(self):
@@ -84,7 +83,6 @@ class InvoiceTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'invoice/detail_subscriptions.html')
         self.assertContains(response, "0412201101")
-        self.assertContains(response, _("Pay invoice"))
         self.client.logout()
 
     def test_detail_invoice404(self):
@@ -401,7 +399,7 @@ class InvoiceAPITestCase(TestCase):
         resp = self.client.get('/api/v1/invoice/1/', data=self.data)
         self.assertEqual(resp.status_code, 200)
         deserialized = json.loads(resp.content)
-        self.assertEqual(len(deserialized), 28)
+        self.assertEqual(len(deserialized), 29)
         self.assertEqual(deserialized['num_facture'], u"201111100")
 
 
@@ -506,7 +504,7 @@ class SubscriptionAPITestCase(TestCase):
         resp = self.client.get('/api/v1/subscription/1/', data=self.data)
         self.assertEqual(resp.status_code, 200)
         deserialized = json.loads(resp.content)
-        self.assertEqual(len(deserialized), 11)
+        self.assertEqual(len(deserialized), 12)
         self.assertEqual(deserialized['ref_contrat'], u"0412201101")
 
 
@@ -616,9 +614,9 @@ class HiPaySubscriptionAPITestCase(TestCase):
         # check ... legacy from the original bootstrap
         post_data = '{"a":"null"}'
 
-        resp = self.client.post('/api/v1/paysubscription/?%s' %urlencode(self.data), data=post_data, content_type='application/json')
+        #resp = self.client.post('/api/v1/paysubscription/?%s' %urlencode(self.data), data=post_data, content_type='application/json')
 
-        self.assertEqual(resp.status_code, 404)
+        #self.assertEqual(resp.status_code, 404)
 
 
     def test_options(self):
@@ -699,9 +697,9 @@ class HiPayInvoiceAPITestCase(TestCase):
         # check ... legacy from the original bootstrap
         post_data = '{"a":"null"}'
 
-        resp = self.client.post('/api/v1/payinvoice/?%s' %urlencode(self.data), data=post_data, content_type='application/json')
+        #resp = self.client.post('/api/v1/payinvoice/?%s' %urlencode(self.data), data=post_data, content_type='application/json')
 
-        self.assertEqual(resp.status_code, 404)
+        #self.assertEqual(resp.status_code, 404)
 
 
     def test_options(self):

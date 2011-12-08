@@ -24,7 +24,7 @@
             {% trans 'Pay invoice with HiPay' %}
         </a>
       {% else %}
-           <a href="{% url 'accept_quote' subscription_id=subscription.pk %}">
+           <a href="{% url 'accept_subscriptionquote' subscription_id=subscription.pk %}">
            {% trans 'Accpet quote' %}
            </a>
       {% endif %}
