@@ -292,16 +292,19 @@ class InvoiceTransaction(models.Model):
     # HiPay redirect URL for debugging
     redirect_url = models.URLField(null=True, blank=True)
     first_status = models.CharField(max_length=16, choices=[(k, k) for k in ('cancel', 'ok', 'nook', 'pending')], default='pending')
-    
+
     def __unicode__(self):
-        return u"%s | %s | %s" % (
+        return u"%s | %s | %s | %s | %s" % (
             unicode(self.status),
+            unicode(self.operation),
+            unicode(self.url_ack),
             unicode(self.transid),
             unicode(self.refProduct))
 
-    def __save__(self, *args, **kwargs):
+    def save(self, *args, **kwargs):
         if self.status and self.url_ack: #This is only updated when the ACK comes in
             # Pinging back
+            logger.info("Pinging %s for IPN from upstream" %self.url_ack)
             data = serializers.serialize("json", InvoiceTransaction.objects.filter(pk=self.id))
             opener = urllib2.build_opener()
             opener.addheaders = [("Content-Type", "text/json"),
@@ -312,7 +315,7 @@ class InvoiceTransaction(models.Model):
             request = urllib2.Request(self.url_ack,urlencode({'payment':data}))
             try:
                 response = opener.open(request)
-                logger.info(u"Pinged back %s ... propagation, got '%s'" %(self.url_ack, response))
+                logger.info(u"Pinged back %s ... propagation, got '%s'" %(self.url_ack, response.read()))
             except Exception, e:
                 logger.warn(u"Unable to ping back %s, we have an ack to propage: %s" %(self.url_ack, e))
 
@@ -339,12 +342,14 @@ class SubscriptionTransaction(models.Model):
     first_status = models.CharField(max_length=16, choices=[(k, k) for k in ('cancel', 'ok', 'nook', 'pending')], default='pending')
 
     def __unicode__(self):
-        return u"%s | %s | %s" % (
+        return u"%s | %s | %s | %s | %s" % (
             unicode(self.status),
+            unicode(self.operation),
+            unicode(self.url_ack),
             unicode(self.transid),
             unicode(self.refProduct))
 
-    def __save__(self, *args, **kwargs):
+    def save(self, *args, **kwargs):
         if self.status and self.url_ack:
             data = serializers.serialize("json", SubscriptionTransaction.objects.filter(pk=self.id))
             opener = urllib2.build_opener()
@@ -356,7 +361,7 @@ class SubscriptionTransaction(models.Model):
             request = urllib2.Request(self.url_ack,urlencode({'payment':data}))
             try:
                 response = opener.open(request)
-                logger.info(u"Pinged back %s ... propagation, got '%s'" %(self.url_ack, response))
+                logger.info(u"Pinged back %s ... propagation, got '%s'" %(self.url_ack, response.read()))
             except Exception, e:
                 logger.warn(u"Unable to ping back %s, we have an ack to propage: %s" %(self.url_ack, e))
 

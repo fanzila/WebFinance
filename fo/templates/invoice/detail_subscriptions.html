@@ -11,8 +11,24 @@
             {% blocktrans %} This subscription have no details{% endblocktrans %}
         {% endfor %}
     </ul>
-    <a href="{% url 'hipay_paysubs' subscription_id=subscription.pk %}">
+
+    {% if subscription.subscriptiontransaction_set.all %}
+    <ul>
+         {% for row in subscription.subscriptiontransaction_set.all %}
+            <li>{{ row }}</li>
+         {% endfor %}
+    </ul>
+    {% else %}
+      {% if subscrption.type_doc == "invoice" %}
+        <a href="{% url 'hipay_paysubs' subscription_id=subscription.pk %}">
             {% trans 'Pay invoice with HiPay' %}
-    </a>
+        </a>
+      {% else %}
+           <a href="{% url 'accept_quote' subscription_id=subscription.pk %}">
+           {% trans 'Accpet quote' %}
+           </a>
+      {% endif %}
+
+    {% endif %}
 
 {% endblock %}

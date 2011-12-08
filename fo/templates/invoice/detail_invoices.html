@@ -3,15 +3,33 @@
 {% load url from future %}
 
 {% block content %}
-    <h2>{% trans 'Invoice' %} {{ invoice.num_facture }}</h2>
+  <h2>{% trans 'Invoice' %} {{ invoice.num_facture }}</h2>
     <ul>
-        {% for row in invoice_details %}
-            <li>{{ row.description }} | {{ row.qtt }} | {{ row.prix_ht }}</li>
-        {% empty %}
-            {% blocktrans %} This invoice have no details{% endblocktrans %}
-        {% endfor %}
+      {% for row in invoice_details %}
+        <li>{{ row.description }} | {{ row.qtt }} | {{ row.prix_ht }}</li>
+      {% empty %}
+        {% blocktrans %} This invoice have no details{% endblocktrans %}
+      {% endfor %}
     </ul>
-    <a href="{% url 'hipay_invoice' invoice_id=invoice.pk %}">
-            {% trans 'Pay invoice with HiPay' %}
-    </a>
+
+    {% if invoice.invoicetransaction_set.count %}
+      <ul>
+         {% for row in invoice.invoicetransaction_set.all %}
+           <li>{{ row }}</li>
+         {% endfor %}
+      </ul>
+    {% else %}
+
+      {% if subscrption.type_doc == "invoice" %}
+        <a href="{% url 'hipay_invoice' invoice_id=invoice.pk %}">
+          {% trans 'Pay invoice with HiPay' %}
+        </a>
+      {% else %}
+        <a href="{% url 'accept_quote' invoice_id=invoice.pk %}">
+          {% trans 'Accpet quote' %}
+        </a>
+      {% endif %}
+
+    {% endif %}
+
 {% endblock %}

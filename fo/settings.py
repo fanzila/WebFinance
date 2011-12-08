@@ -165,7 +165,7 @@ except:
     # doing
     pass
 
-if 'test' in sys.argv or 'test_coverage' in sys.argv or 'zen' in sys.argv:
+if 'test' in sys.argv or 'test_coverage' in sys.argv or 'zen' in sys.argv or 'testserver' in sys.argv:
     try:
         from tests.settings import *
     except ImportError, e:

@@ -17,8 +17,8 @@ from urllib import urlencode
 from django.conf import settings
 import logging
 logger = logging.getLogger('wf')
-#settings.TASTYPIE_FULL_DEBUG=True
-#settings.DEBUG=True
+settings.TASTYPIE_FULL_DEBUG=True
+settings.DEBUG=True
 
 try:
     import json
@@ -223,13 +223,48 @@ class InvoiceTest(TestCase):
         tr = SubscriptionTransaction(subscription_id=1)
         tr.save()
         url = reverse('hipay_ipn_ack', kwargs={'internal_transid':tr.pk,'payment_type':'subscription','invoice_id':1})
-        self.client.login(username=self.username, ticket=self.ticket)
         response = self.client.post(url, {'xml': ack.decode('utf-8')})
         subscription = Subscription.objects.get(pk=1)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(SubscriptionTransaction.objects.count(), 2)
         self.assertEqual(subscription.subscriptiontransaction_set.count(), 2)
 
+
+    def test_propagate_url_ack(self):
+        ack = u"""<?xml version="1.0" encoding="UTF-8"?> <mapi>
+<mapiversion>1.0</mapiversion> <md5content>c0783cc613bf025087b8bf5edecac824</md5content> <result>
+<operation>capture</operation> <status>ok</status>
+<date>2010-02-23</date>
+<time>10:32:12 UTC+0000</time> <transid>4B83AEA905C49</transid> <origAmount>10.20</origAmount> <origCurrency>EUR</origCurrency> <idForMerchant>REF6522</idForMerchant> <emailClient>email_client@hipay.com</emailClient> <merchantDatas>
+<_aKey_id_client>2000</_aKey_id_client>
+<_aKey_credit>10</_aKey_credit> </merchantDatas>
+<subscriptionId>753EA685B55651DC40F0C2784D5E1170</subscriptionId>
+<refProduct0>REF6522</refProduct0>
+</result> </mapi>"""
+        url_ack = reverse('test_url_ack')
+        # To expect this to work run the local django wsgi server (due to how
+        # urllib2 resolve dns and the testserver), will mock this up
+        tr = InvoiceTransaction(invoice_id=1, url_ack="http://127.0.0.1:8000%s"%url_ack)
+        tr.save()
+        url = reverse('hipay_ipn_ack', kwargs={'internal_transid':tr.pk,'payment_type':'invoice','invoice_id':1})
+        self.client.login(username=self.username, ticket=self.ticket)
+        # Change the settings to allow 127.0.0.1 to post ACK
+        settings.HIPAY_ACK_SOURCE_IPS.append('127.0.0.1')
+        response = self.client.post(url, {'xml': ack.decode('utf-8')})
+        invoice = Invoices.objects.get(pk=1)
+        self.assertEqual(response.status_code, 200)
+        logger.info(invoice.invoicetransaction_set.count())
+        self.assertEqual(invoice.invoicetransaction_set.count(), 2)
+        self.assertEqual(invoice.is_paye, True) # The 127.0.0.1 should now be allowed
+
+        tr = SubscriptionTransaction(subscription_id=1, url_ack="http://127.0.0.1:8000%s"%url_ack)
+        tr.save()
+        url = reverse('hipay_ipn_ack', kwargs={'internal_transid':tr.pk,'payment_type':'subscription','invoice_id':1})
+        response = self.client.post(url, {'xml': ack.decode('utf-8')})
+        subscription = Subscription.objects.get(pk=1)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(SubscriptionTransaction.objects.count(), 2)
+        self.assertEqual(subscription.subscriptiontransaction_set.count(), 2)
 
 class ClientAPITestCase(TestCase):
     def setUp(self):

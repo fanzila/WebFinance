@@ -10,7 +10,7 @@ from logging.handlers import SysLogHandler
 
 DEBUG = True
 ADMINS = (
-    ('Cyril Bouthors', 'cyril.bouthors@isvtec.com'),
+#    ('Cyril Bouthors', 'cyril.bouthors@isvtec.com'),
     ('Ousmane Wilane', 'ousmane@wilane.org'),
 )
 

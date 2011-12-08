@@ -5,21 +5,30 @@
 __author__ = "Ousmane Wilane ♟ <ousmane@wilane.org>"
 __date__   = "Fri Nov 11 09:43:42 2011"
 
+import logging
+import operator
+from os.path import join
+from subprocess import call
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404, Http404
 from django.conf import settings
 from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.core.urlresolvers import reverse
-from os.path import join
-from subprocess import call
-import operator
+from django.views.decorators.csrf import csrf_exempt
 from fo.enterprise.models import Users
 from fo.invoice.models import Invoices, InvoiceTransaction, SubscriptionTransaction, Subscription
 from fo.libs import hipay
 from fo.hipay.hipay import ParseAck
-from django.views.decorators.csrf import csrf_exempt
-import logging
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
+#from gevent import monkey
+#monkey.patch_all()
+
+
 logger = logging.getLogger('wf')
 
 
@@ -204,6 +213,51 @@ def hipay_payment_url(request, invoice_id, internal_transid, action, payment_typ
     tr.save()
     return render(request, 'invoice/hipay/%s_payment.html'%(action,), {'payment_type':payment_type,'invoice':c_object})
     
+
+@require_http_methods(["POST"])
+@csrf_exempt
+def ack_postback(request):
+    logger.info("Checking if the data came from us")
+    data = request.POST.get('payment', None)
+    payment = json.loads(data)
+    transaction = None
+    if len(payment) == 1:
+        payment = payment[0]
+        if payment['model'] == "invoice.invoicetransaction":
+            try:
+                transaction = InvoiceTransaction.objects.get(**payment['fields'])
+            except InvoiceTransaction.DoesNotExist:
+                logger.exception("Attempting to verify a non existent payment supposedly to be sent by us: %s"%(data,))
+        elif payment['model'] == "invoice.subscriptiontransaction":
+            try:
+                transaction = SubscriptionTransaction.objects.get(**payment['fields'])
+            except SubscriptionTransaction.DoesNotExist:
+                logger.exception("Attempting to verify a non existent payment supposedly to be sent by us: %s"%(data,))
+        if transaction: #and transaction.pinged_back:
+            return HttpResponse("VERIFIED")
+
+    logger.info("Checked the data and failed to validate that we've sent it")
+    return HttpResponse("FAILED")
+
+
+#@require_http_methods(["POST"])
+@csrf_exempt
+def test_url_ack(request):
+    """ This is just a test to show how an ACK would look like from your application"""
+    logger.info("Checking the data against the documented postback url")
+
+    url_postback = "http://127.0.0.1:8000%s"%reverse('ack_postback')
+
+    try:
+        response = ack_postback(request)
+        logger.info(u"Posting back to make sure we get it from the right bot")
+    except Exception, e:
+        logger.exception(u"Unable to postback %s, we've got an ack message to check %s" %(url_postback, e))
+    logger.info(response.read())
+    if response == "VERIFIED":
+        return HttpResponse("Thanks, getting back to you to check this is you")
+
+    return HttpResponse("May the force be with you")
 
 @require_http_methods(["POST"])
 @csrf_exempt

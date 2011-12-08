@@ -95,6 +95,7 @@ class InvoiceResource(ModelResource):
     # FIXME: Invoice Rows have to be shipped too when the details are loaded
     client = fields.ForeignKey(ClientResource, 'client')
     invoicerows = fields.ToManyField('fo.api.resources.InvoiceRowsResource', 'invoicerows_set', full=True, related_name='id_facture', null=True)
+    transactions = fields.ToManyField('fo.api.resources.HiPayInvoice', 'invoicetransaction_set', full=True, related_name='invoice', null=True)    
     def apply_authorization_limits(self, request, object_list):
         current_user = Users.objects.get(email=request.user.username)
         invoices = [c.invoices_set.all() for c in current_user.clients_set.all()]
@@ -196,6 +197,7 @@ class InvoiceRowsResource(ModelResource):
 class SubscriptionResource(ModelResource):
     client = fields.ForeignKey(ClientResource, 'client')
     subscriptionrows = fields.ToManyField('fo.api.resources.SubscriptionRowResource', 'subscriptionrow_set', full=True, related_name='subscription', null=True)
+    transactions = fields.ToManyField('fo.api.resources.HiPaySubscription', 'subscriptiontransaction_set', full=True, related_name='subscription', null=True)    
     def apply_authorization_limits(self, request, object_list):
         current_user = Users.objects.get(email=request.user.username)
         subscriptions = [c.subscription_set.all() for c in current_user.clients_set.all()]
