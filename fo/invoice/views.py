@@ -2,6 +2,7 @@
 #-*- coding: utf-8 -*-
 #Copyright (C) 2011 ISVTEC SARL
 #$Id$
+from __future__ import with_statement
 __author__ = "Ousmane Wilane ♟ <ousmane@wilane.org>"
 __date__   = "Fri Nov 11 09:43:42 2011"
 
