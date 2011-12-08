@@ -40,7 +40,7 @@
                                     {% trans 'Download quote' %}
                 </a> |
                 <a href="{% url 'accept_quote' invoice_id=invoice.id_facture %}">
-                                    {% trans 'Accpet quote' %}
+                                    {% trans 'Accept quote' %}
                 </a>
             </li>
         {% empty %}
@@ -80,7 +80,7 @@
                                     {{ invoice.period }}
                 </a> |
                 <a href="{% url 'accept_qubscriptionquote' subscription_id=invoice.pk %}">
-                                    {% trans 'Accpet subscription quote' %}
+                                    {% trans 'Accept subscription quote' %}
                 </a>
             </li>
         {% empty %}

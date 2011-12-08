@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-12-07 09:16+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2011-12-08 13:04+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -168,7 +168,7 @@ msgstr ""
 
 #: enterprise/models.py:235
 #, python-format
-msgid "Invitation to join %(name)s accpeted by  %(full_name)s"
+msgid "Invitation to join %(name)s accepted by  %(full_name)s"
 msgstr ""
 
 #: enterprise/views.py:52

@@ -232,7 +232,7 @@ class Invitation(models.Model):
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.email])
 
     def send_acceptation(self, host):
-        subject = _("Invitation to join %(name)s accpeted by  %(full_name)s" %{'name':self.company.nom, 'full_name':self.guest.get_full_name()})
+        subject = _("Invitation to join %(name)s accepted by  %(full_name)s" %{'name':self.company.nom, 'full_name':self.guest.get_full_name()})
         message_template = loader.get_template('enterprise/emails/acceptation.txt')
         message_context = Context({'invited': self.get_full_name(),
                                    'guest': self.guest.get_full_name(),
