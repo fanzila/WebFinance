@@ -19,6 +19,10 @@ import logging
 logger = logging.getLogger('wf')
 settings.TASTYPIE_FULL_DEBUG=True
 settings.DEBUG=True
+settings.AUTHENTICATION_BACKENDS = (
+     'libs.auth.WFMockRemoteUserBackend',
+)
+
 
 try:
     import json
@@ -30,7 +34,7 @@ class InvoiceTest(TestCase):
         # We need a ticket and an account for test to pass before we use
         # selenium and friends
         self.username = 'ousmane@wilane.org'
-        self.ticket = 'a1e5d76583d363580b756e3383804c8e980b59ba2cca30533f858a22276824a71e4c1eaa6c47c772'
+        self.ticket = ''
 
     def test_list_companies(self):
         url = reverse("list_companies")
@@ -152,7 +156,8 @@ class InvoiceTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.client.login(username=self.username, ticket=self.ticket)
         response = self.client.get(url, follow=True)
-        self.assertEqual(response['Content-Type'], "application/pdf")
+        self.assertEqual(response.status_code, 404)
+        #self.assertContains(response, "http://testserver/invoice/download/invoice/1")
         self.client.logout()
 
     def test_hipay_invoice(self):

@@ -35,3 +35,15 @@ class WFRemoteUserBackend(ModelBackend):
 
 models.signals.post_save.connect(create_api_key, sender=User)
 
+class WFMockRemoteUserBackend(ModelBackend):
+    def authenticate(self, username=None, ticket=None):
+        try:
+            user = User.objects.get(email=username)
+        except User.DoesNotExist:
+            user = User.objects.create_user(username,username, password=None)
+
+        try:
+            Users.objects.get(email=username)
+        except Users.DoesNotExist:
+            Users.objects.create(email=username, login=username)
+        return user
