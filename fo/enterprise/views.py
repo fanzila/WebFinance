@@ -19,7 +19,8 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.core.urlresolvers import reverse
 import reversion
-
+import logging
+logger = logging.getLogger('wf')
 
 @login_required
 def add_company(request):
@@ -83,21 +84,27 @@ def invite_user(request):
     
     form = InvitationForm(request.POST or None, qs=qs, initial={'company': qs.order_by('pk')[0] })
     if form.is_valid():
-        # FIXME: Check if the user is not already in
-        invitation = form.save(commit=False)
-        invitation.guest=current_user
-        invitation.save()
-        base_host = "http%s://%s" %('s' if request.is_secure() else '',
-                                    request.get_host())
-        invitation.send_invitation(base_host)
-        messages.add_message(request, messages.INFO, _("An email have been sent to the user, you'll be notified once the invitation is accepted"))
-        return redirect('home')
+        # Check if the user is not already in
+        company = form.cleaned_data['company']
+        invited = Users.objects.get(email=form.cleaned_data['email'])
+        try:
+            Clients2Users.objects.get(user=invited, client=company)
+        except Clients2Users.DoesNotExist:
+            invitation = form.save(commit=False)
+            invitation.guest=current_user
+            invitation.save()
+            base_host = "http%s://%s" %('s' if request.is_secure() else '',
+                                        request.get_host())
+            invitation.send_invitation(base_host)
+            messages.add_message(request, messages.INFO, _("An email have been sent to the user, you'll be notified once the invitation is accepted"))
+            return redirect('home')
+        else:
+            logger.warn(u"The user %s is already allowed to manage the company %s"%(invited.email, company))
+            messages.add_message(request, messages.ERROR, _("The user %s is already allowed to manage the company %s" %(invited,company)))
     return render(request, 'enterprise/invite_user.html', {'form':form, 'title':_("Invite a user")})
 
 @login_required
 def accept_invitation(request, token):
-    # FIXME: Send an email to let the owner know that the invitation have been
-    # accepted
     try:
         current_user = Users.objects.get(email=request.user.email)
     except Users.DoesNotExist:
@@ -107,8 +114,8 @@ def accept_invitation(request, token):
     try:
         Clients2Users.objects.create(user=current_user, client=invitation.company)
     except:
-        # FIXME: Except the user is already in
-        # Fail silently for now
+        logger.warn(u"The user %s is already allowed to manage the company %s -- Invitation from %s is irrelevant"%(invitation.email, invitation.company, invitation.guest))
+        messages.add_message(request, messages.INFO, _("You're already allowed to manage the company you're invited to"))
         return redirect('home')
     base_host = "http%s://%s" %('s' if request.is_secure() else '',
                                 request.get_host())
