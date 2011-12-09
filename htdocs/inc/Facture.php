@@ -75,6 +75,11 @@ class Facture extends WFO {
                            AND f.id_facture=$id_facture")
 		or die(mysql_error());
 
+    if(mysql_num_rows($result)!=1) {
+      error_log('Unknown invoice');
+      exit(1);
+    }
+
     $facture = mysql_fetch_object($result)
 		or die(mysql_error());
 
@@ -617,9 +622,10 @@ Veuillez agréer cher Client, l'expression de nos salutations les meilleures."))
 
 	  $cpt = unserialize(base64_decode($cpt));
 	  if (!is_object($cpt)) {
-		  die("compte Impossible de generer la facture. <a ".
+		  echo "compte Impossible de generer la facture. <a ".
 			  "href='../admin/societe'>Vous devez saisir au moins un compte ".
-			  "bancaire dans les options pour emettre des factures</a>");
+			  "bancaire dans les options pour emettre des factures</a>";
+                  exit(1);
 	  }
 	  foreach ($cpt as $n=>$v) {
 		  $cpt->$n = utf8_decode($cpt->$n);
