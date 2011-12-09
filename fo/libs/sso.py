@@ -157,7 +157,7 @@ class CYBSSOService(SoapService):
 
 
 if __name__ == '__main__':
-    cybsso_ticket='0bb22a765b16355b504f88508d0140e5994f806760eb2ae5e4a8283764508577d427b328fe273a47'
+    cybsso_ticket='44d9f59cfe02e44241dad664f59105ad2dce312a83e572541385182291ef2ea3d526521138003e24'
     cybsso_email='ousmane@wilane.org'
     cybsso = CYBSSOService(CYBSSO_URL)
     print cybsso.UserGetInfo('ousmane@wilane.org')

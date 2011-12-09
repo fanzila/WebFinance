@@ -177,6 +177,8 @@ def download_invoice(request, invoice_id):
             response['Content-Disposition'] = 'attachment; filename=%s' %(filename,)
             response.write(open(filepath).read())
             return response
+        else:
+            logger.warn(u"The script %s seems to return 0 without writing the file; invoice id is %s" %(settings.INVOICE_PDF_GENERATOR,invoice.pk))
 
     raise Http404
 
