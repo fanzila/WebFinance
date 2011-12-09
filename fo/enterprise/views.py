@@ -86,7 +86,11 @@ def invite_user(request):
     if form.is_valid():
         # Check if the user is not already in
         company = form.cleaned_data['company']
-        invited = Users.objects.get(email=form.cleaned_data['email'])
+        try:
+            invited = Users.objects.get(email=form.cleaned_data['email'])
+        except Users.DoesNotExist:
+            invited=None
+
         try:
             Clients2Users.objects.get(user=invited, client=company)
         except Clients2Users.DoesNotExist:
