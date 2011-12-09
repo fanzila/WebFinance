@@ -172,7 +172,7 @@ def download_invoice(request, invoice_id):
         filename = 'Facture_%s_%s.pdf' %(invoice.num_facture, invoice.client.nom)
         filename = filename.replace(' ', '_')
         filepath = join(settings.INVOICE_PDF_DIR, filename)
-        if isfile(filename):
+        if isfile(filepath):
             response = HttpResponse(mimetype='application/pdf')
             response['Content-Disposition'] = 'attachment; filename=%s' %(filename,)
             response.write(open(filepath).read())
@@ -198,10 +198,13 @@ def download_subscription(request, subscription_id):
         filename = 'Facture_%s_%s.pdf' %(subscription.ref_contrat, subscription.client.nom)
         filename = filename.replace(' ', '_')
         filepath = join(settings.INVOICE_PDF_DIR, filename)
-        response = HttpResponse(mimetype='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename=%s' %(filename,)
-        response.write(open(filepath).read())
-        return response
+        if isfile(filepath):
+            response = HttpResponse(mimetype='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename=%s' %(filename,)
+            response.write(open(filepath).read())
+            return response
+        else:
+            logger.warn(u"The script %s seems to return 0 without writing the file; subscription id is %s" %(settings.INVOICE_PDF_GENERATOR,subscription.pk))
 
     raise Http404
 
