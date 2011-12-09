@@ -8,7 +8,7 @@ __date__   = "Fri Nov 11 09:43:42 2011"
 
 import logging
 import operator
-from os.path import join
+from os.path import join, isfile
 from subprocess import call
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404, Http404
@@ -172,10 +172,11 @@ def download_invoice(request, invoice_id):
         filename = 'Facture_%s_%s.pdf' %(invoice.num_facture, invoice.client.nom)
         filename = filename.replace(' ', '_')
         filepath = join(settings.INVOICE_PDF_DIR, filename)
-        response = HttpResponse(mimetype='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename=%s' %(filename,)
-        response.write(open(filepath).read())
-        return response
+        if isfile(filename):
+            response = HttpResponse(mimetype='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename=%s' %(filename,)
+            response.write(open(filepath).read())
+            return response
 
     raise Http404
 
