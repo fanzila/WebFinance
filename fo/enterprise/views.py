@@ -90,7 +90,6 @@ def invite_user(request):
             invited = Users.objects.get(email=form.cleaned_data['email'])
         except Users.DoesNotExist:
             invited=None
-
         try:
             Clients2Users.objects.get(user=invited, client=company)
         except Clients2Users.DoesNotExist:
