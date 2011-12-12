@@ -186,10 +186,7 @@ def revoke_invitation(request, token):
         qs = reduce(operator.or_, invitations)
     else:
         qs = Invitation.objects.none()
-    for i in qs:
-        print i.token
     invitation = get_object_or_404(qs, revocation_token=token)
-    print "Got here"
     try:
         c2u = Clients2Users.objects.get(user=Users.objects.get(email=invitation.email), client=invitation.company)
         c2u.delete()
