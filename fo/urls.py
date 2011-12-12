@@ -6,10 +6,10 @@ __author__ = "Ousmane Wilane ♟ <ousmane@wilane.org>"
 __date__   = "Fri Nov 11 07:01:12 2011"
 
 from django.conf.urls.defaults import patterns, include, url
-from django.views.generic.simple import redirect_to
 from tastypie.api import Api
 from fo.api.resources import InvoiceResource, ClientResource, InvoiceRowsResource, SubscriptionResource, SubscriptionRowResource, HiPayInvoice, HiPaySubscription
 from django.contrib import admin
+from django.conf import settings
 admin.autodiscover()
 
 v1_api = Api(api_name='v1')
@@ -33,3 +33,10 @@ urlpatterns = patterns('',
     url(r'^ssoaccounts/logout', 'fo.views.ssologout', name='logout_cybsso'),
     url(r'^api/', include(v1_api.urls)),                       
 )
+
+
+
+if settings.DEBUG:
+    urlpatterns += patterns('django.contrib.staticfiles.views',
+        url(r'^static/(?P<path>.*)$', 'serve'),
+    )

@@ -1,6 +1,6 @@
 {% load i18n %}
 {% load url from future %}
-
+{# The variable {{ white_label }} will contain the while label prefix for static file, it includes the STATIC_URL prefix already #}
 <html>
   <head>
     {% block head %}
@@ -36,5 +36,6 @@
 
     {% endif %}
     {% endblock %}
+    DEBUG : {{ base }}
   </body>
 </html>

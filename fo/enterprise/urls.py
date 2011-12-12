@@ -14,4 +14,5 @@ urlpatterns = patterns('',
                        url(r'^revocations$', 'enterprise.views.revoke_invitations', name='revoke_invitations'),
                        url(r'^accept/(?P<token>\w+)$', 'enterprise.views.accept_invitation', name='accept_invitation'),
                        url(r'^revoke/(?P<token>\w+)$', 'enterprise.views.revoke_invitation', name='revoke_invitation'),
+                       url(r'^resend/invitation/(?P<token>\w+)$', 'enterprise.views.resend_invitation', name='resend_invitation'),
 )

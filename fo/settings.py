@@ -38,7 +38,7 @@ USE_L10N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = MEDIA_ROOT = os.path.join(DIRNAME, 'static')
+MEDIA_ROOT = os.path.join(DIRNAME, 'uploaded_media')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -65,6 +65,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    os.path.join(DIRNAME, 'static'),
 )
 
 # List of finder classes that know how to find static files in
@@ -152,7 +153,14 @@ AUTHENTICATION_BACKENDS = (
 )
 
 AUTH_PROFILE_MODULE = 'fo.enterprise.Users'
-
+TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
+                               "django.core.context_processors.debug",
+                               "django.core.context_processors.i18n",
+                               "django.core.context_processors.media",
+                               "django.core.context_processors.static",
+                               #"django.core.context_processors.tz",
+                               "django.contrib.messages.context_processors.messages",
+                               "fo.fo_context_processors.white_label",)
 # Load fixtures data from data provided by Cyril (bootstrap.sql)
 FIXTURE_DIRS = [os.path.join(DIRNAME, 'fixtures')]
 INVOICE_PDF_GENERATOR = os.path.join(DIRNAME, '../bin/build_invoice_by_id')

@@ -9,6 +9,7 @@ __date__   = "Fri Nov 11 09:43:42 2011"
 import logging
 import operator
 from os.path import join, isfile
+from os import unlink
 from subprocess import call
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404, Http404
@@ -20,6 +21,7 @@ from django.views.decorators.csrf import csrf_exempt
 from fo.enterprise.models import Users
 from fo.invoice.models import Invoices, InvoiceTransaction, SubscriptionTransaction, Subscription
 from fo.libs import hipay
+from fo.libs.utils import fo_get_template
 from fo.hipay.hipay import ParseAck
 try:
     import json
@@ -43,14 +45,14 @@ def list_companies(request):
     except Users.DoesNotExist:
         customer_list = None
 
-    return render(request,'invoice/list_companies.html',
+    return render(request, fo_get_template(request.get_host(),'invoice/list_companies.html'),
                               {'customer_list': customer_list})
     
 @login_required
 def list_invoices(request, customer_id, message=None):
     current_user = Users.objects.get(email=request.user.email)
     customer = get_object_or_404(current_user.clients_set, id_client=customer_id)    
-    return render(request, 'invoice/list_invoices.html',
+    return render(request, fo_get_template(request.get_host(),'invoice/list_invoices.html'),
                               {'invoice_list': customer.invoices_set.filter(type_doc='facture', is_paye=False),
                                'quote_list': customer.invoices_set.filter(type_doc='devis'),
                                'subscription_list': customer.subscription_set.filter(type_doc='invoice'),
@@ -67,7 +69,7 @@ def detail_invoice(request, invoice_id):
     qs  = reduce(operator.or_, invoices)
     invoice = get_object_or_404(qs, id_facture=invoice_id)    
     
-    return render(request, 'invoice/detail_invoices.html',
+    return render(request, fo_get_template(request.get_host(),'invoice/detail_invoices.html'),
                               {'invoice':invoice,
                                'invoice_details': invoice.invoicerows_set.order_by('ordre')})
 
@@ -81,7 +83,7 @@ def detail_subscription(request, subscription_id):
     qs  = reduce(operator.or_, subscriptions)
     subscription = get_object_or_404(qs, pk=subscription_id)
 
-    return render(request, 'invoice/detail_subscriptions.html',
+    return render(request, fo_get_template(request.get_host(),'invoice/detail_subscriptions.html'),
                               {'subscription':subscription,
                                'subscription_details': subscription.subscriptionrow_set.order_by('id')})
 
@@ -175,7 +177,10 @@ def download_invoice(request, invoice_id):
         if isfile(filepath):
             response = HttpResponse(mimetype='application/pdf')
             response['Content-Disposition'] = 'attachment; filename=%s' %(filename,)
-            response.write(open(filepath).read())
+            fd = open(filepath)
+            response.write(fd.read())
+            fd.close()
+            unlink(filepath)
             return response
         else:
             logger.warn(u"The script %s seems to return 0 without writing the file; invoice id is %s" %(settings.INVOICE_PDF_GENERATOR,invoice.pk))
@@ -201,7 +206,10 @@ def download_subscription(request, subscription_id):
         if isfile(filepath):
             response = HttpResponse(mimetype='application/pdf')
             response['Content-Disposition'] = 'attachment; filename=%s' %(filename,)
-            response.write(open(filepath).read())
+            fd = open(filepath)
+            response.write(fd.read())
+            fd.close()
+            unlink(filepath)
             return response
         else:
             logger.warn(u"The script %s seems to return 0 without writing the file; subscription id is %s" %(settings.INVOICE_PDF_GENERATOR,subscription.pk))
@@ -218,7 +226,7 @@ def hipay_payment_url(request, invoice_id, internal_transid, action, payment_typ
         tr = c_object.subscriptiontransaction_set.get(pk=internal_transid)
     tr.first_status = action
     tr.save()
-    return render(request, 'invoice/hipay/%s_payment.html'%(action,), {'payment_type':payment_type,'invoice':c_object})
+    return render(request, fo_get_template(request.get_host(),'invoice/hipay/%s_payment.html'%(action,)), {'payment_type':payment_type,'invoice':c_object})
     
 
 @require_http_methods(["POST"])

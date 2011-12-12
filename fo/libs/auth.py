@@ -31,7 +31,7 @@ class WFRemoteUserBackend(ModelBackend):
             except Users.DoesNotExist:
                 current_user = Users.objects.create(email=username, login=username)
 
-            if userinfo and not current_user.first_name:
+            if userinfo:
                 current_user.first_name = userinfo.get('firstname', None)
                 current_user.last_name = userinfo.get('lastname', None)
                 current_user.save()

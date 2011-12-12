@@ -15,6 +15,9 @@ from django.conf import settings
 from django.core.mail import send_mail
 import reversion
 from uuid import uuid4
+from fo.libs.sso import CYBSSOService, CYBSSO_URL
+from fo.libs.utils import fo_get_template, select_template
+from urlparse import urlparse
 import hmac
 try:
     from hashlib import sha1
@@ -43,13 +46,14 @@ class Users(models.Model):
         db_table = u'webfinance_users'
         
     def __unicode__(self):
-        return u"%s | %s | %s" % (
-            unicode(self.last_name),
-            unicode(self.first_name),
+        return u"%s | %s" % (
+            unicode(self.get_full_name()),
             unicode(self.login))
     
     def get_full_name(self):
-        return u"%s %s" %(self.first_name, self.last_name)
+        cybsso = CYBSSOService(CYBSSO_URL)
+        userinfo = cybsso.UserGetInfo(self.email)
+        return u"%s %s" %(userinfo.get('firstname', None), userinfo.get('lastname', None))
 
 
 class Clients(models.Model):
@@ -92,6 +96,7 @@ class Clients2Users(models.Model):
     id = models.IntegerField(primary_key=True)
     client = models.ForeignKey(Clients,  db_column='id_client')
     user = models.ForeignKey(Users, db_column='id_user')
+    role = models.ForeignKey('Roles', blank=True, null=True)
 
     class Meta:
         verbose_name = _('Client/User')
@@ -202,6 +207,9 @@ class Invitation(models.Model):
     acceptation_date = models.DateTimeField(blank=True, null=True, editable=False)
     revocation_date = models.DateTimeField(blank=True, null=True, editable=False)
 
+    class Meta:
+        unique_together = ('email', 'company', 'guest')
+
     def __unicode__(self):
         return u"%s | %s %s" % (
             unicode(self.token),
@@ -221,24 +229,29 @@ class Invitation(models.Model):
     def send_invitation(self, host):
         subject = _("Invitation to join %(name)s from %(full_name)s" %{'name':self.company.nom,
                                                                        'full_name':self.guest.get_full_name()})
-        message_template = loader.get_template('enterprise/emails/invitation.txt')
+        message_template = fo_get_template(host,'enterprise/emails/invitation.txt', True)
         message_context = Context({'recipient_name': self.get_full_name(),
                                    'sender_name': self.guest.get_full_name(),
                                    'company': self.company.nom,
                                    'accept_url':"%s%s" %(host, reverse('accept_invitation',
-                                                                            kwargs={'token':self.token}))
+                                                                            kwargs={'token':self.token})),
+                                   'EMAIL_BASE_TEMPLATE':select_template(fo_get_template(host,settings.EMAIL_BASE_TEMPLATE)),
+                                   'ADDRESS_TEMPLATE':select_template(fo_get_template(host,settings.COMPANY_ADDRESS)),
                                    })
         message = message_template.render(message_context)
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.email])
 
     def send_acceptation(self, host):
-        subject = _("Invitation to join %(name)s accepted by  %(full_name)s" %{'name':self.company.nom, 'full_name':self.guest.get_full_name()})
-        message_template = loader.get_template('enterprise/emails/acceptation.txt')
+        subject = _("Invitation to join %(name)s accepted by  %(full_name)s" %{'name':self.company.nom,
+                                                                               'full_name':self.guest.get_full_name()})
+        message_template = fo_get_template(host,'enterprise/emails/acceptation.txt', True)
         message_context = Context({'invited': self.get_full_name(),
                                    'guest': self.guest.get_full_name(),
                                    'company': self.company.nom,
                                    'revocation_url':"%s%s" %(host, reverse('revoke_invitation',
-                                                                         kwargs={'token':self.revocation_token}))
+                                                                         kwargs={'token':self.revocation_token})),
+                                   'EMAIL_BASE_TEMPLATE':select_template(fo_get_template(host, settings.EMAIL_BASE_TEMPLATE)),
+                                   'ADDRESS_TEMPLATE':select_template(fo_get_template(host, settings.COMPANY_ADDRESS)),
                                   })
         message = message_template.render(message_context)
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.guest.email])
