@@ -33,7 +33,11 @@ setlocale(LC_TIME, "fr_FR.UTF8");
 
 for ($i=1; $i < $argc; $i++) {
 	$id_invoice = $argv[$i];
-	echo $Invoice->generatePDF($id_invoice) . "\n";
+	$filename = $Invoice->generatePDF($id_invoice) . "\n";
+        if(!$filename) {
+          echo 'Unable to build invoice';
+          exit(1);
+        }
 }
 
 ?>
