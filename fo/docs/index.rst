@@ -11,6 +11,40 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+Requirements
+------------
+
+Installation
+------------
+
+Invoice
+-------
+
+Enterprise
+----------
+
+HiPay integration
+-----------------
+
+API Doc
+-------
+
+* ** RESTful web service; curl to the rescue:**
+  :doc:`Overview <api/overview>` |
+  :doc:`Customer management <api/customer>` |
+  :doc:`Invoice management <api/invoice>` |
+  :doc:`Subscription management <api/subscription>`
+
+* ** Python:**
+  :doc:`Slumber <api/slumber>` |
+  :doc:`json.tool <api/jsontool>`
+
+* ** Javascript:**
+  :doc:`backbone-tastypie <api/backbone-tastypie>` |
+  :doc:`backbone-relational <api/backbone-relational>`
+
+* ** Browser:**
+  :doc:`JSONView <api/jsonview>`
 
 
 Indices and tables
@@ -19,13 +53,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
-
-API Doc
--------
-
-* ** RESTful web service:**
-  :doc:`Overview <api/overview>` |
-  :doc:`Customer management <api/customer>` |
-  :doc:`Invoice management <api/invoice>` |
-  :doc:`Subscription management <api/subscription>`
