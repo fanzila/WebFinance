@@ -230,7 +230,7 @@ To get the customer who's resource_uri is /api/v1/client/14541::
 
 Create Customer
 ---------------
-The created objected is returned in the location header::
+The created object is returned in the location header::
 
   curl --dump-header - -H "Content-Type: application/json"
        -X POST --data '{"name":"Foo Baz", "addr1":"Nowhere", "city":"ben ville"}'
