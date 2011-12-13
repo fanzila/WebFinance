@@ -10,6 +10,11 @@ from django.core.urlresolvers import reverse
 from enterprise.models import Clients, Invitation
 from django.utils.translation import ugettext_lazy as _
 from django.core import mail
+from django.conf import settings
+settings.DEBUG=True
+settings.AUTHENTICATION_BACKENDS = (
+     'libs.auth.WFMockRemoteUserBackend',
+)
 
 
 class AddCompanyTest(TestCase):
@@ -106,7 +111,7 @@ class AddCompanyTest(TestCase):
         self.assertEqual(Invitation.objects.count(), count + 1)
         self.assertContains(response, _("My companies"))
         self.assertEqual(len(mail.outbox), 1)
-        subject = _("Invitation to join ISVTEC from foo bar toto")
+        subject = _("Invitation to join ISVTEC from Ousmane Wilane")
         self.assertEqual(mail.outbox[0].subject, subject)
         self.client.logout()
 
