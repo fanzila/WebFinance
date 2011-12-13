@@ -10,7 +10,7 @@ import logging
 import operator
 from os.path import join, isfile
 from os import unlink
-from subprocess import call
+from subprocess import Popen, PIPE
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404, Http404
 from django.conf import settings
@@ -170,20 +170,16 @@ def download_invoice(request, invoice_id):
 
     qs  = reduce(operator.or_,invoices)
     invoice = get_object_or_404(qs, pk=invoice_id)
-    if not call([settings.INVOICE_PDF_GENERATOR, str(invoice.pk)]):
-        filename = 'Facture_%s_%s.pdf' %(invoice.invoice_num, invoice.customer.name)
+    output, error = Popen([settings.INVOICE_PDF_GENERATOR, 'stdout', str(invoice.pk)], stdout=PIPE, stderr=PIPE).communicate()
+    if not error:
+        filename = 'Facture_%s_%s.pdf' %(invoice.invoice_num, invoice.client.name)
         filename = filename.replace(' ', '_')
-        filepath = join(settings.INVOICE_PDF_DIR, filename)
-        if isfile(filepath):
-            response = HttpResponse(mimetype='application/pdf')
-            response['Content-Disposition'] = 'attachment; filename=%s' %(filename,)
-            fd = open(filepath)
-            response.write(fd.read())
-            fd.close()
-            unlink(filepath)
-            return response
-        else:
-            logger.warn(u"The script %s seems to return 0 without writing the file; invoice id is %s" %(settings.INVOICE_PDF_GENERATOR,invoice.pk))
+        response = HttpResponse(mimetype='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename=%s' %(filename,)
+        response.write(output)
+        return response
+    else:
+        logger.warn(u"The script %s have failed (%s); invoice id is %s" %(settings.INVOICE_PDF_GENERATOR,error,invoice.pk))
 
     raise Http404
 
@@ -199,20 +195,16 @@ def download_subscription(request, subscription_id):
 
     qs  = reduce(operator.or_,subscriptions)
     subscription = get_object_or_404(qs, pk=subscription_id)
-    if not call([settings.INVOICE_PDF_GENERATOR, str(subscription.pk)]):
+    output, error = Popen([settings.INVOICE_PDF_GENERATOR, 'stdout', str(subscription.pk)], stdout=PIPE, stderr=PIPE).communicate()
+    if not error:
         filename = 'Facture_%s_%s.pdf' %(subscription.ref_contrat, subscription.client.name)
         filename = filename.replace(' ', '_')
-        filepath = join(settings.INVOICE_PDF_DIR, filename)
-        if isfile(filepath):
-            response = HttpResponse(mimetype='application/pdf')
-            response['Content-Disposition'] = 'attachment; filename=%s' %(filename,)
-            fd = open(filepath)
-            response.write(fd.read())
-            fd.close()
-            unlink(filepath)
-            return response
-        else:
-            logger.warn(u"The script %s seems to return 0 without writing the file; subscription id is %s" %(settings.INVOICE_PDF_GENERATOR,subscription.pk))
+        response = HttpResponse(mimetype='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename=%s' %(filename,)
+        response.write(output)
+        return response
+    else:
+        logger.warn(u"The script %s have failed (%s); subscription id is %s" %(settings.INVOICE_PDF_GENERATOR,error, subscription.pk))
 
     raise Http404
 

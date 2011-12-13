@@ -156,7 +156,7 @@ class InvoiceTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.client.login(username=self.username, ticket=self.ticket)
         response = self.client.get(url, follow=True)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 200)
         #self.assertContains(response, "http://testserver/invoice/download/invoice/1")
         self.client.logout()
 
