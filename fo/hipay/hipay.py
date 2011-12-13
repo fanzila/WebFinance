@@ -522,7 +522,7 @@ def ParseAck(ack=None):
     body = tree.find('result')
     m = hashlib.md5()
     m.update(ET.tostring(ET.ElementTree(body).getroot()))
-        
+
     # If this is a subscription
     try:
         subscriptionId = tree.find('result/subscriptionId').text

@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends BASE_TEMPLATE %}
 {% load i18n %}
 {% load url from future %}
 
@@ -9,7 +9,12 @@
         {% for invitation in invitations %}
             <li><a href="{% url 'revoke_invitation' token=invitation.revocation_token %}">
                                     {% trans 'Revoke access' %}
-                </a> {{ invitation.get_full_name }} | {{ invitation.email }} | {{ invitation.acceptation_date }}
+                </a> {{ invitation.get_full_name }} for {{ invitation.company.nom }} | {{ invitation.email }} | {{ invitation.acceptation_date|default_if_none:"Not yet accepted" }} 
+              {% if not invitation.accepted %}
+              | <a href="{% url 'resend_invitation' token=invitation.token %}">
+                                    {% trans 'Resend invitation' %}
+                </a>
+              {% endif %}
            </li>
         {% empty %}
             {% blocktrans %} You have not granted any user access to revoke {% endblocktrans %}

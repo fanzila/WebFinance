@@ -95,7 +95,7 @@ class Invoices(models.Model):
     type_doc = models.CharField(max_length=27, blank=True, default='facture')
     commentaire = models.TextField(blank=True)
     id_type_presta = models.IntegerField(null=True, blank=True)
-    id_compte = models.IntegerField(default=34)
+    id_compte = models.IntegerField(default=30)
     is_envoye = models.IntegerField(null=True, blank=True)
     period = models.CharField(max_length=27, blank=True, default='monthly') #FIXME: remove me
     periodic_next_deadline = models.DateField(null=True, blank=True) #FIXME: remove me

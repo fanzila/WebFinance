@@ -1,8 +1,8 @@
 # /doc/
-/docs/html
-/docs/latex
-/docs/_*
-/docs/*~
+docs/html
+docs/latex
+fo/docs/_*
+docs/.*~
 .gitignore
 *.bat
 *.pyc

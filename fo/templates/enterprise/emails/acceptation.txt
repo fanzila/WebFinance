@@ -1,4 +1,4 @@
-{% extends "enterprise/emails/base.txt" %}
+{% extends EMAIL_BASE_TEMPLATE %}
 {% load i18n %}
 {% block header %}
 {% blocktrans %}
