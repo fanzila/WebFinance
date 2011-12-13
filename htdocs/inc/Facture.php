@@ -326,10 +326,13 @@ class Facture extends WFO {
   }
 	// If the $introduction_letter argument is true, then the PDF will contain
 	// an additional page with an introduction letter. Default to false.
-	function generatePDF($id_invoice, $introduction_letter = false) {
+	function generatePDF($id_invoice, $introduction_letter = false,
+          $target = 'file') {
 
-	  if (!is_numeric($id_invoice))
-		  die('$id_invoice not defined');
+	  if (!is_numeric($id_invoice)) {
+            error_log('$id_invoice not defined');
+            exit(1);
+          }
 
 	  // Get my company info (address...)
 	  $result = mysql_query('SELECT value ' .
@@ -661,7 +664,10 @@ Veuillez agréer cher Client, l'expression de nos salutations les meilleures."))
 	  $pdf->SetSubject(ucfirst($facture->type_doc).utf8_decode(_(' #'))." ".$facture->num_facture." ".utf8_decode(_("for"))." ".$facture->nom_client);
 	  $pdf->SetTitle(ucfirst($facture->type_doc).utf8_decode(_(' #'))." ".$facture->num_facture);
 
-	  $pdf->Output($filename, "F");
+          if($target == 'file')
+            $pdf->Output($filename, 'F');
+          else
+            $pdf->Output($filename, 'I');
 	  $pdf->Close();
 
 	  // Delete temporary logo file

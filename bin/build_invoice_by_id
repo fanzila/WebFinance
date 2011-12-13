@@ -31,14 +31,19 @@ $Invoice = new Facture();
 # Define French locale in order to generate French dates
 setlocale(LC_TIME, "fr_FR.UTF8");
 
-for ($i=1; $i < $argc; $i++) {
+if($argc < 3) {
+  error_log("Invalid argument");
+  error_log("Usage: $argv[0] TARGET INVOICE_ID [INVOICE_ID [INVOICE_ID]]");
+  error_log("Example: $argv[0] stdout 60");
+  error_log("Example: $argv[0] file 32");
+  exit(1);
+}  
+
+$target = array_shift($argv);
+
+for ($i=1; $i < $argc-1; $i++) {
 	$id_invoice = $argv[$i];
-	$filename = $Invoice->generatePDF($id_invoice);
-        if(!$filename) {
-          echo 'Unable to build invoice';
-          exit(1);
-        }
-        echo "$filename\n";
+	echo $Invoice->generatePDF($id_invoice, false, $target);
 }
 
 ?>
