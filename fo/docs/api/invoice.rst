@@ -639,7 +639,7 @@ reference the invoice to pay::
 
   curl --dump-header - -H "Content-Type: application/json" -X POST --data 
     '{"invoice":"/api/v1/invoice/75/", "url_ack":"http://127.0.0.1:8000/invoice/hipay/test_url_ack"}' 
-      "http://127.0.0.1:8000/api/v1/payinvoice/?username=YOU_EMAIL_ADDRESS&api_key=YOUR_API_KEY"
+      "http://127.0.0.1:8000/api/v1/payinvoice/?username=YOUR_EMAIL_ADDRESS&api_key=YOUR_API_KEY"
   HTTP/1.0 201 CREATED
   Date: Tue, 13 Dec 2011 11:53:13 GMT
   Server: WSGIServer/0.1 Python/2.7.1

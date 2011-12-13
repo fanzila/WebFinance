@@ -3,7 +3,7 @@ WebFinance API overview
 
 The API is at v1 and have different schemas that can be viewed at::
 
-    curl -H "Accept: application/json" "http://127.0.0.1:8000/api/v1/?username=YOU_EMAIL_ADDRESS&api_key=YOUR_API_KEY"
+    curl -H "Accept: application/json" "http://127.0.0.1:8000/api/v1/?username=YOUR_EMAIL_ADDRESS&api_key=YOUR_API_KEY"
     {
       "client": {
           "list_endpoint": "/api/v1/client/", 
