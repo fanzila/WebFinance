@@ -51,9 +51,9 @@ def list_companies(request):
 @login_required
 def list_invoices(request, customer_id, message=None):
     current_user = Users.objects.get(email=request.user.email)
-    customer = get_object_or_404(current_user.clients_set, id_client=customer_id)    
+    customer = get_object_or_404(current_user.clients_set, pk=customer_id)
     return render(request, fo_get_template(request.get_host(),'invoice/list_invoices.html'),
-                              {'invoice_list': customer.invoices_set.filter(type_doc='facture', is_paye=False),
+                              {'invoice_list': customer.invoices_set.filter(type_doc='facture', paid=False),
                                'quote_list': customer.invoices_set.filter(type_doc='devis'),
                                'subscription_list': customer.subscription_set.filter(type_doc='invoice'),
                                'subscrptionquote_list': customer.subscription_set.filter(type_doc='quote'),
@@ -67,11 +67,11 @@ def detail_invoice(request, invoice_id):
     if not invoices:
         raise Http404
     qs  = reduce(operator.or_, invoices)
-    invoice = get_object_or_404(qs, id_facture=invoice_id)    
+    invoice = get_object_or_404(qs, pk=invoice_id)
     
     return render(request, fo_get_template(request.get_host(),'invoice/detail_invoices.html'),
                               {'invoice':invoice,
-                               'invoice_details': invoice.invoicerows_set.order_by('ordre')})
+                               'invoice_details': invoice.invoicerows_set.order_by('order')})
 
 
 @login_required
@@ -96,10 +96,10 @@ def accept_quote(request, invoice_id):
         raise Http404
     
     qs  = reduce(operator.or_,invoices)
-    quote = get_object_or_404(qs, id_facture=invoice_id)    
+    quote = get_object_or_404(qs, pk=invoice_id)
     quote.type_doc = 'facture'
     quote.save()
-    return redirect('list_invoices', customer_id=quote.client.id_client)
+    return redirect('list_invoices', customer_id=quote.client.pk)
 
 
 @login_required
@@ -114,7 +114,7 @@ def accept_subscriptionquote(request, subscription_id):
     quote = get_object_or_404(qs, pk=subscription_id)
     quote.type_doc = 'invoice'
     quote.save()
-    return redirect('list_invoices', customer_id=quote.client.id_client)
+    return redirect('list_invoices', customer_id=quote.client.pk)
 
 @login_required
 def hipay_invoice(request, invoice_id):
@@ -124,7 +124,7 @@ def hipay_invoice(request, invoice_id):
         raise Http404
 
     qs  = reduce(operator.or_,invoices)
-    invoice = get_object_or_404(qs, id_facture=invoice_id)
+    invoice = get_object_or_404(qs, pk=invoice_id)
     tr = InvoiceTransaction(invoice=invoice)
     tr.save()
     response = hipay.simplepayment(invoice, sender_host=request.get_host(), secure=request.is_secure(), internal_transid=tr.pk)
@@ -169,9 +169,9 @@ def download_invoice(request, invoice_id):
         raise Http404
 
     qs  = reduce(operator.or_,invoices)
-    invoice = get_object_or_404(qs, id_facture=invoice_id)
-    if not call([settings.INVOICE_PDF_GENERATOR, str(invoice.id_facture)]):
-        filename = 'Facture_%s_%s.pdf' %(invoice.num_facture, invoice.client.nom)
+    invoice = get_object_or_404(qs, pk=invoice_id)
+    if not call([settings.INVOICE_PDF_GENERATOR, str(invoice.pk)]):
+        filename = 'Facture_%s_%s.pdf' %(invoice.invoice_nul, invoice.customer.name)
         filename = filename.replace(' ', '_')
         filepath = join(settings.INVOICE_PDF_DIR, filename)
         if isfile(filepath):
@@ -200,7 +200,7 @@ def download_subscription(request, subscription_id):
     qs  = reduce(operator.or_,subscriptions)
     subscription = get_object_or_404(qs, pk=subscription_id)
     if not call([settings.INVOICE_PDF_GENERATOR, str(subscription.pk)]):
-        filename = 'Facture_%s_%s.pdf' %(subscription.ref_contrat, subscription.client.nom)
+        filename = 'Facture_%s_%s.pdf' %(subscription.ref_contrat, subscription.client.name)
         filename = filename.replace(' ', '_')
         filepath = join(settings.INVOICE_PDF_DIR, filename)
         if isfile(filepath):
@@ -219,7 +219,7 @@ def download_subscription(request, subscription_id):
 def hipay_payment_url(request, invoice_id, internal_transid, action, payment_type):
     """URL to redirect the client on canceled payment by the customer"""
     if payment_type == 'invoice':
-        c_object = get_object_or_404(Invoices, id_facture=invoice_id)
+        c_object = get_object_or_404(Invoices, pk=invoice_id)
         tr = c_object.invoicetransaction_set.get(pk=internal_transid)
     else:
         c_object = get_object_or_404(Subscription, pk=invoice_id)
@@ -321,7 +321,7 @@ def hipay_ipn_ack(request, internal_transid, invoice_id, payment_type):
         # FIXME: Make sure that this means PAID the $$$ are in my account and
         # nothing can change that
         if result.get('status', None) == 'ok' and payment_type == 'invoice':
-            c_object.is_paye = True
+            c_object.paid = True
             c_object.save()
 
         # Save the transaction for future reference
@@ -349,7 +349,6 @@ def home(request):
         customer_list = current_user.clients_set.all()
     except Users.DoesNotExist:
         customer_list = None
-
     if  customer_list and customer_list.count() == 1:
         return redirect(reverse('list_invoices', kwargs={'customer_id':customer_list[0].pk}))
     return redirect(reverse('list_companies'))

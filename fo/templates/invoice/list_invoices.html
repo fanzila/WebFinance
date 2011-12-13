@@ -13,14 +13,14 @@
     {% if invoice_list %}<h2>{% trans 'Invoices' %}</h2>{% endif %}
     <ul>
         {% for invoice in invoice_list %}
-            <li><a href="{% url 'detail_invoice' invoice_id=invoice.id_facture %}">
-                                    {{ invoice.num_facture }} | 
-                                    {{ invoice.date_facture }}
+            <li><a href="{% url 'detail_invoice' invoice_id=invoice.pk %}">
+                                    {{ invoice.invoice_num }} |
+                                    {{ invoice.invoice_date }}
                 </a> |
-                <a href="{% url 'hipay_invoice' invoice_id=invoice.id_facture %}">
+                <a href="{% url 'hipay_invoice' invoice_id=invoice.pk %}">
                                     {% trans 'Pay invoice with HiPay' %}
                 </a> |
-                <a href="{% url 'download_invoice' invoice_id=invoice.id_facture %}">
+                <a href="{% url 'download_invoice' invoice_id=invoice.pk %}">
                                     {% trans 'Download invoice' %}
                 </a>
             </li>
@@ -32,14 +32,14 @@
     {% if quote_list %}<h2>{% trans 'Quotes' %}</h2>{% endif %}
     <ul>
         {% for invoice in quote_list %}
-            <li><a href="{% url 'detail_invoice' invoice_id=invoice.id_facture %}">
-                                    {{ invoice.num_facture }} | 
-                                    {{ invoice.date_facture }}
+            <li><a href="{% url 'detail_invoice' invoice_id=invoice.pk %}">
+                                    {{ invoice.invoice_num }} |
+                                    {{ invoice.invoice_date }}
                 </a> |
-                <a href="{% url 'download_invoice' invoice_id=invoice.id_facture %}">
+                <a href="{% url 'download_invoice' invoice_id=invoice.pk %}">
                                     {% trans 'Download quote' %}
                 </a> |
-                <a href="{% url 'accept_quote' invoice_id=invoice.id_facture %}">
+                <a href="{% url 'accept_quote' invoice_id=invoice.pk %}">
                                     {% trans 'Accept quote' %}
                 </a>
             </li>

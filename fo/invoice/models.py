@@ -17,12 +17,12 @@ import logging
 logger = logging.getLogger('wf')
 
 class InvoiceRows(models.Model):
-    id_facture_ligne = models.AutoField(primary_key=True, db_column='id_facture_ligne')
-    id_facture = models.ForeignKey('Invoices', db_column='id_facture')
+    id = models.AutoField(primary_key=True, db_column='id_facture_ligne')
+    invoice = models.ForeignKey('Invoices', db_column='id_facture')
     description = models.TextField(blank=True)
-    qtt = models.DecimalField(null=True, max_digits=7, decimal_places=2, blank=True)
-    ordre = models.IntegerField(null=True, blank=True)
-    prix_ht = models.DecimalField(null=True, max_digits=22, decimal_places=5, blank=True)
+    qty = models.DecimalField(null=True, max_digits=7, decimal_places=2, blank=True, db_column="qtt")
+    order = models.IntegerField(null=True, blank=True, db_column="ordre")
+    df_price = models.DecimalField(null=True, max_digits=22, decimal_places=5, blank=True, db_column="prix_ht")
     class Meta:
         verbose_name = _('Invoice item')
         verbose_name_plural = _('Invoice items')
@@ -31,10 +31,10 @@ class InvoiceRows(models.Model):
 
     def __unicode__(self):
         return u"%s | %s | %s | %s" % (
-            unicode(self.id_facture_ligne),
+            unicode(self.id),
             unicode(self.description),
-            unicode(self.qtt),
-            unicode(self.prix_ht))
+            unicode(self.qty),
+            unicode(self.dt_price))
 
 class SubscriptionRow(models.Model):
     subscription = models.ForeignKey('Subscription')
@@ -77,26 +77,26 @@ class Subscription(models.Model):
 
   
 class Invoices(models.Model):
-    id_facture = models.AutoField(primary_key=True, db_column='id_facture')
+    id = models.AutoField(primary_key=True, db_column='id_facture')
     client = models.ForeignKey(Clients, db_column='id_client')
     date_created = models.DateTimeField(null=True, blank=True, auto_now_add=True)
     date_generated = models.DateTimeField(null=True, blank=True)
     date_sent = models.DateTimeField(null=True, blank=True)
-    date_paiement = models.DateTimeField(null=True, blank=True)
-    is_paye = models.NullBooleanField(default=False)
-    num_facture = models.CharField(unique=True, max_length=30, blank=True)
-    type_paiement = models.CharField(max_length=765, blank=True)
-    ref_contrat = models.CharField(max_length=765, blank=True)
+    payment_date = models.DateTimeField(null=True, blank=True, db_column="date_paiement")
+    paid = models.NullBooleanField(default=False, db_column="is_paye")
+    invoice_num = models.CharField(unique=True, max_length=30, blank=True, db_column="num_facture")
+    payment_type = models.CharField(max_length=765, blank=True, db_column="type_paiement")
+    ref_contract = models.CharField(max_length=765, blank=True, db_column="ref_contrat")
     extra_top = models.TextField(blank=True)
-    facture_file = models.CharField(max_length=765, blank=True)
-    accompte = models.DecimalField(null=True, max_digits=12, decimal_places=4, blank=True, default='0')
+    sub_invoice = models.CharField(max_length=765, blank=True, db_column="facture_file")
+    down_payment = models.DecimalField(null=True, max_digits=12, decimal_places=4, blank=True, default='0', db_column="accompte")
     extra_bottom = models.TextField(blank=True)
-    date_facture = models.DateTimeField(null=True, blank=True)
+    invoice_date = models.DateTimeField(null=True, blank=True, db_column="date_facture")
     type_doc = models.CharField(max_length=27, blank=True, default='facture')
-    commentaire = models.TextField(blank=True)
-    id_type_presta = models.IntegerField(null=True, blank=True)
-    id_compte = models.IntegerField(default=30)
-    is_envoye = models.IntegerField(null=True, blank=True)
+    comment = models.TextField(blank=True, db_column="commentaire")
+    service_type = models.IntegerField(null=True, blank=True, db_column="id_type_presta")
+    account = models.IntegerField(default=30, db_column="id_compte")
+    sent = models.IntegerField(null=True, blank=True, db_column="is_envoye")
     period = models.CharField(max_length=27, blank=True, default='monthly') #FIXME: remove me
     periodic_next_deadline = models.DateField(null=True, blank=True) #FIXME: remove me
     delivery = models.CharField(max_length=18, blank=True, default='email') #FIXME: remove me
@@ -109,7 +109,7 @@ class Invoices(models.Model):
     def id_facture_id(self):
         """Heu yeah awry ... tastypie search this thing somehow with a rather
         fancy exception, thanks Python"""
-        return self.facture
+        return self.invoice_num
     
     class Meta:
         verbose_name = _('Invoice')
@@ -118,8 +118,8 @@ class Invoices(models.Model):
         
     def __unicode__(self):
         return u"%s | %s | %s " % (
-            unicode(self.num_facture),
-            unicode(self.id_type_presta),
+            unicode(self.invoice_num),
+            unicode(self.service_type),
             unicode(self.period))
 
 
@@ -201,7 +201,7 @@ class Invoices(models.Model):
 
 class TypePresta(models.Model):
     id_type_presta = models.IntegerField(primary_key=True)
-    nom = models.CharField(unique=True, max_length=255, blank=True)
+    name = models.CharField(unique=True, max_length=255, blank=True, db_column="nom")
 
     class Meta:
         verbose_name = _('Service type')
@@ -258,8 +258,8 @@ class TypeSuivi(models.Model):
 
 class TypeTva(models.Model):
     id_type_tva = models.IntegerField(primary_key=True)
-    nom = models.CharField(max_length=765, blank=True)
-    taux = models.DecimalField(null=True, max_digits=7, decimal_places=3, blank=True)
+    name = models.CharField(max_length=765, blank=True, db_column="nom")
+    rate = models.DecimalField(null=True, max_digits=7, decimal_places=3, blank=True, db_column="taux")
 
     class Meta:
         verbose_name = _('VAT type')

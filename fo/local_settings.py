@@ -21,7 +21,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'webfinance',
         'USER': 'root',
-        'HOST': 'localhost', 
+        'HOST': '10.42.0.1',
         'PORT': '',
     }
 }
@@ -29,7 +29,7 @@ DATABASES = {
 CYBSSO_LOGIN = 'http://cybsso-dev.isvtec.com/'
 LOGIN_URL = '/ssoaccounts/login'
 
-EMAIL_HOST = '127.0.0.1'
+EMAIL_HOST = '10.42.0.1'
 DEFAULT_FROM_EMAIL = 'no_reply@isvtec.com'
 
 

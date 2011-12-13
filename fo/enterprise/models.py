@@ -59,26 +59,26 @@ class Users(models.Model):
 
 
 class Clients(models.Model):
-    id_client = models.AutoField(primary_key=True)
+    id = models.AutoField(primary_key=True, db_column="id_client")
     users = models.ManyToManyField('Users', through='Clients2Users')
-    nom = models.CharField(_('Company name'), unique=True, max_length=255)
-    cp = models.CharField(_('Postal code'), max_length=10)
-    ville = models.CharField(_('City'), max_length=100)
+    name = models.CharField(_('Company name'), unique=True, max_length=255, db_column="nom")
+    zip = models.CharField(_('Postal code'), max_length=10, db_column="cp")
+    city = models.CharField(_('City'), max_length=100, db_column="ville")
     addr1 = models.CharField(_('Address 1'), max_length=265)    
     addr2 = models.CharField(_('Address 2'), max_length=265, blank=True)
     addr3 = models.CharField(_('Address 3'), max_length=265, blank=True)
-    pays = CountryField(_('Country'), max_length=50)
+    country = CountryField(_('Country'), max_length=50, db_column="pays")
     tel = models.CharField(_('Phone'), max_length=15, blank=True)
     fax = models.CharField(_('Fax'), max_length=200, blank=True)
     web = models.CharField(_('Website'), max_length=100, blank=True)
     vat_number = models.CharField(_('VAT number'), max_length=40, blank=True, null=True)
-    has_unpaid = models.NullBooleanField(_('Has unpaid'), default=False)
-    ca_total_ht = models.DecimalField(_('Total turnover'), null=True, max_digits=22, decimal_places=4, blank=True)
-    ca_total_ht_year = models.DecimalField(_('Total pre-taxed turnover'), null=True, max_digits=22, decimal_places=4, blank=True)
-    has_devis = models.NullBooleanField(_('Has quote?'), default=False)
+    #has_unpaid = models.NullBooleanField(_('Has unpaid'), default=False)
+    #ca_total_ht = models.DecimalField(_('Total turnover'), null=True, max_digits=22, decimal_places=4, blank=True)
+    #ca_total_ht_year = models.DecimalField(_('Total pre-taxed turnover'), null=True, max_digits=22, decimal_places=4, blank=True)
+    #has_devis = models.NullBooleanField(_('Has quote?'), default=False)
     email = models.EmailField(_('Email'),max_length=255, blank=True)
     siren = models.CharField(_('Siren'), max_length=50, blank=True)
-    total_du_ht = models.DecimalField(_('Amount of duty'), null=True, max_digits=22, decimal_places=4, blank=True)
+    #total_du_ht = models.DecimalField(_('Amount of duty'), null=True, max_digits=22, decimal_places=4, blank=True)
     id_company_type = models.ForeignKey('CompanyTypes', verbose_name=_('Company type'), db_column='id_company_type')
     # This is the user who created this I guess
     id_user = models.ForeignKey(Users, verbose_name=_('User'), related_name='creator', db_column='id_user') #models.IntegerField()
@@ -91,7 +91,7 @@ class Clients(models.Model):
         
     def __unicode__(self):
         return u"%s" % (
-            unicode(self.nom))
+            unicode(self.name))
 
 # M2M Jonction table ... This doesn't showup nowhere
 class Clients2Users(models.Model):
@@ -113,7 +113,7 @@ class Clients2Users(models.Model):
 
 class CompanyTypes(models.Model):
     id_company_type = models.IntegerField(primary_key=True)
-    nom = models.CharField(max_length=765, blank=True)
+    name = models.CharField(max_length=765, blank=True, db_column="nom")
 
     class Meta:
         verbose_name = _('Company type')
@@ -123,7 +123,7 @@ class CompanyTypes(models.Model):
     def __unicode__(self):
         return u"%s | %s" % (
             unicode(self.id_company_type),
-            unicode(self.nom))
+            unicode(self.name))
 
 class Userlog(models.Model):
     id_userlog = models.IntegerField(primary_key=True)
@@ -229,12 +229,12 @@ class Invitation(models.Model):
         return u"%s %s" %(self.first_name, self.last_name)
 
     def send_invitation(self, host):
-        subject = _("Invitation to join %(name)s from %(full_name)s" %{'name':self.company.nom,
+        subject = _("Invitation to join %(name)s from %(full_name)s" %{'name':self.company.name,
                                                                        'full_name':self.guest.get_full_name()})
         message_template = fo_get_template(host,'enterprise/emails/invitation.txt', True)
         message_context = Context({'recipient_name': self.get_full_name(),
                                    'sender_name': self.guest.get_full_name(),
-                                   'company': self.company.nom,
+                                   'company': self.company.name,
                                    'accept_url':"%s%s" %(host, reverse('accept_invitation',
                                                                             kwargs={'token':self.token})),
                                    'EMAIL_BASE_TEMPLATE':select_template(fo_get_template(host,settings.EMAIL_BASE_TEMPLATE)),
@@ -244,12 +244,12 @@ class Invitation(models.Model):
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.email])
 
     def send_acceptation(self, host):
-        subject = _("Invitation to join %(name)s accepted by  %(full_name)s" %{'name':self.company.nom,
+        subject = _("Invitation to join %(name)s accepted by  %(full_name)s" %{'name':self.company.name,
                                                                                'full_name':self.guest.get_full_name()})
         message_template = fo_get_template(host,'enterprise/emails/acceptation.txt', True)
         message_context = Context({'invited': self.get_full_name(),
                                    'guest': self.guest.get_full_name(),
-                                   'company': self.company.nom,
+                                   'company': self.company.name,
                                    'revocation_url':"%s%s" %(host, reverse('revoke_invitation',
                                                                          kwargs={'token':self.revocation_token})),
                                    'EMAIL_BASE_TEMPLATE':select_template(fo_get_template(host, settings.EMAIL_BASE_TEMPLATE)),

@@ -5,7 +5,7 @@
 {% block content %}
     <h2>{% trans 'Invoice Payment' %}
       {% ifequal payment_type "invoice" %}
-          {{ c_object..num_facture }}
+          {{ c_object.invoice_num }}
       {% else %}
           {{c_object.ref_contrat}}
       {% endifequal %}</h2>

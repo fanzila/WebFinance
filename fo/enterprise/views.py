@@ -61,7 +61,7 @@ def add_company(request):
 def change_company(request, customer_id):
     # FIXME: Make this view honor the returned_url if any for other apps that
     # will call it
-    customer = get_object_or_404(Clients,id_client=customer_id)
+    customer = get_object_or_404(Clients, pk=customer_id)
     return_url = request.GET.get('return_url', None)
     form = EnterpriseForm(request.POST or None, instance=customer)
     if form.is_valid():

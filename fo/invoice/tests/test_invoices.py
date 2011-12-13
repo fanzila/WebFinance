@@ -212,7 +212,7 @@ class InvoiceTest(TestCase):
         invoice = Invoices.objects.get(pk=1)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(invoice.invoicetransaction_set.count(), 1)
-        self.assertEqual(invoice.is_paye, False) # The 127.0.0.1 is not in the default allowed host
+        self.assertEqual(invoice.paid, False) # The 127.0.0.1 is not in the default allowed host
 
         # Change the settings to allow 127.0.0.1 to post ACK
         settings.HIPAY_ACK_SOURCE_IPS.append('127.0.0.1')
@@ -221,7 +221,7 @@ class InvoiceTest(TestCase):
         self.assertEqual(response.status_code, 200)
         logger.info(invoice.invoicetransaction_set.count())
         self.assertEqual(invoice.invoicetransaction_set.count(), 2)
-        self.assertEqual(invoice.is_paye, True) # The 127.0.0.1 should now be allowed
+        self.assertEqual(invoice.paid, True) # The 127.0.0.1 should now be allowed
 
         tr = SubscriptionTransaction(subscription_id=1)
         tr.save()
@@ -258,7 +258,7 @@ class InvoiceTest(TestCase):
         self.assertEqual(response.status_code, 200)
         logger.info(invoice.invoicetransaction_set.count())
         self.assertEqual(invoice.invoicetransaction_set.count(), 2)
-        self.assertEqual(invoice.is_paye, True) # The 127.0.0.1 should now be allowed
+        self.assertEqual(invoice.paid, True) # The 127.0.0.1 should now be allowed
 
         tr = SubscriptionTransaction(subscription_id=1, url_ack="http://127.0.0.1:8000%s"%url_ack)
         tr.save()
@@ -294,12 +294,12 @@ class ClientAPITestCase(TestCase):
         self.assertEqual(len(deserialized), 2)
         self.assertEqual(deserialized['meta']['limit'], 20)
         self.assertEqual(len(deserialized['objects']), 2)
-        self.assertEqual([obj['nom'] for obj in deserialized['objects']], [u'ISVTEC', u'ISVTEC2'])
+        self.assertEqual([obj['name'] for obj in deserialized['objects']], [u'ISVTEC', u'ISVTEC2'])
 
         resp = self.client.get('/api/v1/client/1/', data=self.data)
         self.assertEqual(resp.status_code, 200)
         deserialized = json.loads(resp.content)
-        self.assertEqual(len(deserialized), 20)
+        self.assertEqual(len(deserialized), 14)
         self.assertEqual(deserialized['addr1'], u"1 rue Emile Zola")
 
         resp = self.client.get('/api/v1/client/set/2;1/', data=self.data)
@@ -307,10 +307,10 @@ class ClientAPITestCase(TestCase):
         deserialized = json.loads(resp.content)
         self.assertEqual(len(deserialized), 1)
         self.assertEqual(len(deserialized['objects']), 2)
-        self.assertEqual([obj['nom'] for obj in deserialized['objects']], [u'ISVTEC2', u'ISVTEC'])
+        self.assertEqual([obj['name'] for obj in deserialized['objects']], [u'ISVTEC2', u'ISVTEC'])
 
     def test_posts(self):
-        post_data = '{"nom":"From api 1", "ville":"Dakar", "addr1":"Dakar", "pays":"France", "cp":"100"}'
+        post_data = '{"name":"From api 1", "city":"Dakar", "addr1":"Dakar", "country":"France", "zip":"100"}'
         resp = self.client.post('/api/v1/client/?%s' %urlencode(self.data), data=post_data, content_type='application/json')
         self.assertEqual(resp.status_code, 201)
         self.assertEqual(resp['location'], 'http://testserver/api/v1/client/4/')
@@ -319,12 +319,12 @@ class ClientAPITestCase(TestCase):
         resp = self.client.get('/api/v1/client/4/', data=self.data)
         self.assertEqual(resp.status_code, 200)
         obj = json.loads(resp.content)
-        self.assertEqual(obj['nom'], u'From api 1')
-        self.assertEqual(obj['ville'], u'Dakar')
-        self.assertEqual(obj['pays'], u'France')
+        self.assertEqual(obj['name'], u'From api 1')
+        self.assertEqual(obj['city'], u'Dakar')
+        self.assertEqual(obj['country'], u'France')
 
     def test_puts(self):
-        post_data = '{"addr1": "1 rue Emile Zola",  "cp": "69002", "nom": "ISVTEC", "pays": "France","ville": "Dakar"}'
+        post_data = '{"addr1": "1 rue Emile Zola",  "zip": "69002", "name": "ISVTEC", "country": "France","city": "Dakar"}'
 
         resp = self.client.put('/api/v1/client/1/?%s' %urlencode(self.data), data=post_data, content_type='application/json')
         self.assertEqual(resp.status_code, 204)
@@ -333,7 +333,7 @@ class ClientAPITestCase(TestCase):
         resp = self.client.get('/api/v1/client/1/', data=self.data)
         self.assertEqual(resp.status_code, 200)
         obj = json.loads(resp.content)
-        self.assertEqual(obj['ville'], u'Dakar')
+        self.assertEqual(obj['city'], u'Dakar')
 
 
     def test_api_field_error(self):
@@ -399,17 +399,17 @@ class InvoiceAPITestCase(TestCase):
         self.assertEqual(len(deserialized), 2)
         self.assertEqual(deserialized['meta']['limit'], 20)
         self.assertEqual(len(deserialized['objects']), 1)
-        self.assertEqual([obj['num_facture'] for obj in deserialized['objects']], [u'201111100'])
+        self.assertEqual([obj['invoice_num'] for obj in deserialized['objects']], [u'201111100'])
 
         resp = self.client.get('/api/v1/invoice/1/', data=self.data)
         self.assertEqual(resp.status_code, 200)
         deserialized = json.loads(resp.content)
-        self.assertEqual(len(deserialized), 29)
-        self.assertEqual(deserialized['num_facture'], u"201111100")
+        self.assertEqual(len(deserialized), 28)
+        self.assertEqual(deserialized['invoice_num'], u"201111100")
 
 
     def test_posts(self):
-        post_data = '{"client":"/api/v1/client/1/", "date_facture":"2011-11-10T00:00:00", "num_facture":"141218", "invoicerows":[{"ordre": null,"description":"Premier article","prix_ht":17,"qtt":3},{"ordre": null,"description":"Deuxième item","prix_ht":5,"qtt":10}]}'
+        post_data = '{"client":"/api/v1/client/1/", "invoice_date":"2011-11-10T00:00:00", "invoice_num":"141218", "invoicerows":[{"order": null,"description":"Premier article","df_price":17,"qty":3},{"order": null,"description":"Deuxième item","df_price":5,"qty":10}]}'
         resp = self.client.post('/api/v1/invoice/?%s' %urlencode(self.data), data=post_data, content_type='application/json')
         self.assertEqual(resp.status_code, 201)
         self.assertEqual(resp['location'], 'http://testserver/api/v1/invoice/2/')
@@ -418,10 +418,10 @@ class InvoiceAPITestCase(TestCase):
         resp = self.client.get('/api/v1/invoice/2/', data=self.data)
         self.assertEqual(resp.status_code, 200)
         obj = json.loads(resp.content)
-        self.assertEqual(obj['num_facture'], u'141218')
+        self.assertEqual(obj['invoice_num'], u'141218')
 
     def test_puts(self):
-        post_data = '{"client":"/api/v1/invoice/1/", "date_facture":"2011-11-10T00:00:00", "num_facture":"141218"}'
+        post_data = '{"client":"/api/v1/invoice/1/", "invoice_date":"2011-11-10T00:00:00", "invoice_num":"141218"}'
 
         resp = self.client.put('/api/v1/invoice/1/?%s' %urlencode(self.data), data=post_data, content_type='application/json')
         self.assertEqual(resp.status_code, 204)
@@ -430,7 +430,7 @@ class InvoiceAPITestCase(TestCase):
         resp = self.client.get('/api/v1/invoice/1/', data=self.data)
         self.assertEqual(resp.status_code, 200)
         obj = json.loads(resp.content)
-        self.assertEqual(obj['num_facture'], u'141218')
+        self.assertEqual(obj['invoice_num'], u'141218')
 
 
     def test_api_field_error(self):
@@ -509,7 +509,7 @@ class SubscriptionAPITestCase(TestCase):
         resp = self.client.get('/api/v1/subscription/1/', data=self.data)
         self.assertEqual(resp.status_code, 200)
         deserialized = json.loads(resp.content)
-        self.assertEqual(len(deserialized), 12)
+        self.assertEqual(len(deserialized), 11)
         self.assertEqual(deserialized['ref_contrat'], u"0412201101")
 
 
@@ -605,7 +605,7 @@ class HiPaySubscriptionAPITestCase(TestCase):
         resp = self.client.get('/api/v1/paysubscription/1/', data=self.data)
         self.assertEqual(resp.status_code, 200)
         deserialized = json.loads(resp.content)
-        self.assertEqual(len(deserialized), 19)
+        self.assertEqual(len(deserialized), 18)
         self.assertEqual(deserialized['origCurrency'], u"EUR")
         self.assertEqual(deserialized['redirect_url'][:45], u'https://test-payment.hipay.com/index/mapi/id/')
 
@@ -688,7 +688,7 @@ class HiPayInvoiceAPITestCase(TestCase):
         resp = self.client.get('/api/v1/payinvoice/1/', data=self.data)
         self.assertEqual(resp.status_code, 200)
         deserialized = json.loads(resp.content)
-        self.assertEqual(len(deserialized), 19)
+        self.assertEqual(len(deserialized), 18)
         self.assertEqual(deserialized['origCurrency'], u"EUR")
         self.assertEqual(deserialized['redirect_url'][:45], u'https://test-payment.hipay.com/index/mapi/id/')
 

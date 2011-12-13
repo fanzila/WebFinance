@@ -62,10 +62,10 @@ def simplepayment(invoice, sender_host, internal_transid,  secure=False, urls=No
     for ligne in invoice.invoicerows_set.all():
         list_products.append({'name':ligne.description,
                          'info':ligne.description,
-                         'quantity':int(ligne.qtt),
-                         'ref':invoice.num_facture,
+                         'quantity':int(ligne.qty),
+                         'ref':invoice.invoice_num,
                          'category':extra.get('category', None) or settings.HIPAY_DEFAULT_CATEGORY, # https://test-payment.hipay.com/order/list-categories/id/3194
-                         'price':ligne.prix_ht,
+                         'price':ligne.df_price,
                          'tax':taxes})
     products.setProducts(list_products)
         
@@ -73,9 +73,9 @@ def simplepayment(invoice, sender_host, internal_transid,  secure=False, urls=No
         
     data = [{'shippingAmount':0,
              'insuranceAmount':0,
-             'fixedCostAmount':0, #sum([l.qtt*l.prix_ht for l in invoice.invoicerows_set.all()]),
-             'orderTitle':'Facture ISVTEC #%(num_facture)s' %dict(num_facture=invoice.num_facture),
-             'orderInfo':'Facture ISVTEC #%(num_facture)s' %dict(num_facture=invoice.num_facture),
+             'fixedCostAmount':0, #sum([l.qty*l.df_price for l in invoice.invoicerows_set.all()]),
+             'orderTitle':'Facture ISVTEC #%(invoice_num)s' %dict(invoice_num=invoice.invoice_num),
+             'orderInfo':'Facture ISVTEC #%(invoice_num)s' %dict(invoice_num=invoice.invoice_num),
              'orderCategory':extra.get('category', None) or settings.HIPAY_DEFAULT_CATEGORY}]
     order.setOrders(data)
     pay = HP.HiPay(params)

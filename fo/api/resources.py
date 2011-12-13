@@ -86,7 +86,7 @@ class ClientResource(ModelResource):
         allowed_methods = ['get', 'post', 'put', 'delete', 'patch']
         detail_allowed_methods = ['get', 'post', 'put', 'delete', 'patch']        
         resource_name = 'client'
-        excludes = ['password', 'users']
+        excludes = ['password', 'users', 'id']
         authentication = ApiKeyAuthentication()
         authorization = Authorization()
 
@@ -94,7 +94,7 @@ class ClientResource(ModelResource):
 class InvoiceResource(ModelResource):
     # FIXME: Invoice Rows have to be shipped too when the details are loaded
     client = fields.ForeignKey(ClientResource, 'client')
-    invoicerows = fields.ToManyField('fo.api.resources.InvoiceRowsResource', 'invoicerows_set', full=True, related_name='id_facture', null=True)
+    invoicerows = fields.ToManyField('fo.api.resources.InvoiceRowsResource', 'invoicerows_set', full=True, related_name='invoice', null=True)
     transactions = fields.ToManyField('fo.api.resources.HiPayInvoice', 'invoicetransaction_set', full=True, related_name='invoice', null=True)    
     def apply_authorization_limits(self, request, object_list):
         current_user = Users.objects.get(email=request.user.username)
@@ -165,14 +165,15 @@ class InvoiceResource(ModelResource):
     class Meta:
         queryset = Invoices.objects.all()
         allowed_methods = ['get', 'post', 'put', 'delete', 'patch']
-        detail_allowed_methods = ['get', 'post', 'put', 'delete', 'patch']        
+        detail_allowed_methods = ['get', 'post', 'put', 'delete', 'patch']
+        excludes = ['id']
         resource_name = 'invoice'
         authentication = ApiKeyAuthentication()
         authorization = Authorization()
 
 
 class InvoiceRowsResource(ModelResource):
-    id_facture = fields.ToOneField(InvoiceResource, 'id_facture', null=True)
+    invoice = fields.ToOneField(InvoiceResource, 'invoice', null=True)
     
     def apply_authorization_limits(self, request, object_list):
         if not request:
@@ -188,7 +189,8 @@ class InvoiceRowsResource(ModelResource):
     class Meta:
         queryset = InvoiceRows.objects.all()
         allowed_methods = ['get', 'post', 'put', 'delete', 'patch']
-        detail_allowed_methods = ['get', 'post', 'put', 'delete', 'patch']        
+        detail_allowed_methods = ['get', 'post', 'put', 'delete', 'patch']
+        excludes = ['id']
         resource_name = 'invoicerows'
         authentication = ApiKeyAuthentication()
         authorization = Authorization()
@@ -225,6 +227,7 @@ class SubscriptionResource(ModelResource):
         queryset = Subscription.objects.all()
         allowed_methods = ['get', 'post', 'put', 'delete', 'patch']
         detail_allowed_methods = ['get', 'post', 'put', 'delete', 'patch']
+        excludes = ['id']
         resource_name = 'subscription'
         authentication = ApiKeyAuthentication()
         authorization = Authorization()
@@ -247,7 +250,8 @@ class SubscriptionRowResource(ModelResource):
     class Meta:
         queryset = SubscriptionRow.objects.all()
         allowed_methods = ['get', 'post', 'put', 'delete', 'patch']
-        detail_allowed_methods = ['get', 'post', 'put', 'delete', 'patch']        
+        detail_allowed_methods = ['get', 'post', 'put', 'delete', 'patch']
+        excludes = ['id']
         resource_name = 'subscriptionrow'
         authentication = ApiKeyAuthentication()
         authorization = Authorization()
@@ -269,6 +273,7 @@ class HiPaySubscription(ModelResource):
         queryset = SubscriptionTransaction.objects.all()
         allowed_methods = ['get', 'post', 'delete']
         detail_allowed_methods = ['get', 'post', 'delete']
+        excludes = ['id']
         resource_name = 'paysubscription'
         authentication = ApiKeyAuthentication()
         authorization = Authorization()
@@ -319,6 +324,7 @@ class HiPayInvoice(ModelResource):
         queryset = InvoiceTransaction.objects.all()
         allowed_methods = ['post', 'get']
         detail_allowed_methods = ['post', 'get']
+        excludes = ['id']
         resource_name = 'payinvoice'
         authentication = ApiKeyAuthentication()
         authorization = Authorization()

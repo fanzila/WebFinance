@@ -11,6 +11,8 @@ from enterprise.models import Clients, Invitation
 from django.utils.translation import ugettext_lazy as _
 from django.core import mail
 from django.conf import settings
+import logging
+logger = logging.getLogger('wf')
 settings.DEBUG=True
 settings.AUTHENTICATION_BACKENDS = (
      'libs.auth.WFMockRemoteUserBackend',
@@ -38,34 +40,33 @@ class AddCompanyTest(TestCase):
 
         count = Clients.objects.count()
         response = self.client.post(url,
-                                    {'nom': 'foo baz',
+                                    {'name': 'foo baz',
                                      'email':'test@example'},
                                     follow = True)
         self.assertFormError(response, 'form', 'email', [_("Enter a valid e-mail address.")])
         response = self.client.post(url,
                                     {'email':'test@example.org'},
                                     follow = True)
-        self.assertFormError(response, 'form', 'nom', [_("This field is required.")])
+        self.assertFormError(response, 'form', 'name', [_("This field is required.")])
         
         response = self.client.post(url,
-                                    {'nom': 'foo baz',
+                                    {'name': 'foo baz',
                                      'addr1': 'no where',
-                                     'cp': 142,
-                                     'ville': 'Dakar',
-                                     'pays':u'SN'},
+                                     'zip': 142,
+                                     'city': 'Dakar',
+                                     'country':u'SN'},
                                     follow = True)
-
         self.assertEqual(Clients.objects.count(), count + 1)
         self.assertContains(response, _("My companies"))
 
 
         # Test return_url
         response = self.client.post("%s?return_url=http://example.org" %url,
-                                    {'nom': 'foo baz',
+                                    {'name': 'foo baz',
                                      'addr1': 'no where',
-                                     'cp': 142,
-                                     'ville': 'Dakar',
-                                     'pays':u'SN'},
+                                     'zip': 142,
+                                     'city': 'Dakar',
+                                     'country':u'SN'},
                                     follow = True)
 
         self.assertEqual(response.status_code, 200)
