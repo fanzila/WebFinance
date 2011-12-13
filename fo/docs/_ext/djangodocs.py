@@ -155,11 +155,11 @@ class DjangoHTMLTranslator(sphinx_htmlwriter.SmartyPantsHTMLTranslator):
         self.no_smarty -= 1
         
     #
-    # Turn the "new in version" stuff (versoinadded/versionchanged) into a
+    # Turn the "new in version" stuff (versionadded/versionchanged) into a
     # better callout -- the Sphinx default is just a little span,
     # which is a bit less obvious that I'd like.
     #
-    # FIXME: these messages are all hardcoded in English. We need to chanage 
+    # FIXME: these messages are all hardcoded in English. We need to change 
     # that to accomodate other language docs, but I can't work out how to make
     # that work and I think it'll require Sphinx 0.5 anyway.
     #

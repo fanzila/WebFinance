@@ -161,8 +161,8 @@ def hipay_subscription(request, subscription_id):
 
 @login_required
 def download_invoice(request, invoice_id):
-    #FIXME: Make the the called script accept a configurable directory, Cyril
-    #can you fix that please.
+    #FIXME: Make the called script accept a configurable directory, Cyril can
+    #you fix that please.
     current_user = Users.objects.get(email=request.user.email)
     invoices = [c.invoices_set.all() for c in current_user.clients_set.all()]
     if not invoices:
@@ -171,7 +171,7 @@ def download_invoice(request, invoice_id):
     qs  = reduce(operator.or_,invoices)
     invoice = get_object_or_404(qs, pk=invoice_id)
     if not call([settings.INVOICE_PDF_GENERATOR, str(invoice.pk)]):
-        filename = 'Facture_%s_%s.pdf' %(invoice.invoice_nul, invoice.customer.name)
+        filename = 'Facture_%s_%s.pdf' %(invoice.invoice_num, invoice.customer.name)
         filename = filename.replace(' ', '_')
         filepath = join(settings.INVOICE_PDF_DIR, filename)
         if isfile(filepath):
