@@ -9,3 +9,4 @@ docs/.*~
 .ropeproject
 .DS_Store
 *~
+etc/wf.conf
