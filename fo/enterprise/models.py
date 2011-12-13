@@ -9,7 +9,7 @@ __date__   = "Thu Nov 10 14:20:07 2011"
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django_countries import CountryField
-from django.template import loader, Context
+from django.template import Context
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.core.mail import send_mail
@@ -17,7 +17,9 @@ import reversion
 from uuid import uuid4
 from fo.libs.sso import CYBSSOService, CYBSSO_URL
 from fo.libs.utils import fo_get_template, select_template
-from urlparse import urlparse
+import logging
+logger = logging.getLogger('wf')
+
 import hmac
 try:
     from hashlib import sha1

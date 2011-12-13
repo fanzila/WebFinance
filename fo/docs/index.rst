@@ -24,15 +24,8 @@ Indices and tables
 API Doc
 -------
 
-.. automodule:: fo.invoice.models
-   :members:
-.. automodule:: fo.invoice.views
-   :members:
-.. automodule:: fo.enterprise.form
-   :members:
-.. automodule:: fo.enterprise.models
-   :members:
-.. automodule:: fo.enterprise.views
-   :members:
-.. automodule:: fo.api.resources
-   :members:
+* ** RESTful web service:**
+  :doc:`Overview <api/overview>` |
+  :doc:`Customer management <api/customer>` |
+  :doc:`Invoice management <api/invoice>` |
+  :doc:`Subscription management <api/subscription>`
