@@ -146,7 +146,7 @@ def accept_invitation(request, token):
         invitation = Invitation.objects.get(token=token, email=request.user.email, accepted=False)
     except Invitation.DoesNotExist:
         logger.warn(u"The user %s have no pending invitation (%s)"%(current_user, token))
-        messages.add_message(request, messages.INFO, _("You don't have a pending inviation at this email address (%(email)s), check the email and make sure you log in with the email address  who've got the invitation email" %{'email':request.user.email}))
+        messages.add_message(request, messages.INFO, _("You don't have a pending invitation at this email address (%(email)s), check the email and make sure you log in with the email address  who've got the invitation email" %{'email':request.user.email}))
         return redirect('home')
 
     if invitation.revoked:
