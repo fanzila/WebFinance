@@ -13,15 +13,37 @@ from fo.enterprise.models import Users, Clients2Users, CompanyTypes
 from fo.libs.hipay import simplepayment, subscriptionpayment
 from tastypie import fields
 from tastypie.authentication import ApiKeyAuthentication
-from tastypie.utils.urls import trailing_slash
-from tastypie.authorization import DjangoAuthorization, Authorization
-from tastypie.bundle import Bundle
+from tastypie.authorization import Authorization
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.conf.urls.defaults import url
 from tastypie.http import *
 import operator
 import logging
 logger = logging.getLogger('wf')
+
+class HeaderApiKeyAutentication(ApiKeyAuthentication):
+    def is_authenticated(self, request, **kwargs):
+        """
+        Finds the user and checks their API key.
+
+        Should return either ``True`` if allowed, ``False`` if not or an
+        ``HttpResponse`` if you need something custom.
+        """
+        from django.contrib.auth.models import User
+
+        username = request.GET.get('username') or request.POST.get('username') or request.META.get('HTTP_USERNAME')
+        api_key = request.GET.get('api_key') or request.POST.get('api_key') or request.META.get('HTTP_API_KEY')
+
+        if not username or not api_key:
+            return self._unauthorized()
+
+        try:
+            user = User.objects.get(username=username)
+        except (User.DoesNotExist, User.MultipleObjectsReturned):
+            return self._unauthorized()
+
+        request.user = user
+        return self.get_key(user, api_key)
 
 class ClientResource(ModelResource):
     def apply_authorization_limits(self, request, object_list):
@@ -87,7 +109,7 @@ class ClientResource(ModelResource):
         detail_allowed_methods = ['get', 'post', 'put', 'delete', 'patch']        
         resource_name = 'client'
         excludes = ['password', 'users', 'id']
-        authentication = ApiKeyAuthentication()
+        authentication = HeaderApiKeyAutentication() #ApiKeyAuthentication()
         authorization = Authorization()
 
 
@@ -168,7 +190,7 @@ class InvoiceResource(ModelResource):
         detail_allowed_methods = ['get', 'post', 'put', 'delete', 'patch']
         excludes = ['id']
         resource_name = 'invoice'
-        authentication = ApiKeyAuthentication()
+        authentication = HeaderApiKeyAutentication() #ApiKeyAuthentication()
         authorization = Authorization()
 
 
@@ -192,7 +214,7 @@ class InvoiceRowsResource(ModelResource):
         detail_allowed_methods = ['get', 'post', 'put', 'delete', 'patch']
         excludes = ['id']
         resource_name = 'invoicerows'
-        authentication = ApiKeyAuthentication()
+        authentication = HeaderApiKeyAutentication() #ApiKeyAuthentication()
         authorization = Authorization()
 
 
@@ -229,7 +251,7 @@ class SubscriptionResource(ModelResource):
         detail_allowed_methods = ['get', 'post', 'put', 'delete', 'patch']
         excludes = ['id']
         resource_name = 'subscription'
-        authentication = ApiKeyAuthentication()
+        authentication = HeaderApiKeyAutentication() #ApiKeyAuthentication()
         authorization = Authorization()
 
 
@@ -253,7 +275,7 @@ class SubscriptionRowResource(ModelResource):
         detail_allowed_methods = ['get', 'post', 'put', 'delete', 'patch']
         excludes = ['id']
         resource_name = 'subscriptionrow'
-        authentication = ApiKeyAuthentication()
+        authentication = HeaderApiKeyAutentication() #ApiKeyAuthentication()
         authorization = Authorization()
 
 class HiPaySubscription(ModelResource):
@@ -275,7 +297,7 @@ class HiPaySubscription(ModelResource):
         detail_allowed_methods = ['get', 'post', 'delete']
         excludes = ['id']
         resource_name = 'paysubscription'
-        authentication = ApiKeyAuthentication()
+        authentication = HeaderApiKeyAutentication() #ApiKeyAuthentication()
         authorization = Authorization()
 
 
@@ -326,7 +348,7 @@ class HiPayInvoice(ModelResource):
         detail_allowed_methods = ['post', 'get']
         excludes = ['id']
         resource_name = 'payinvoice'
-        authentication = ApiKeyAuthentication()
+        authentication = HeaderApiKeyAutentication() #ApiKeyAuthentication()
         authorization = Authorization()
 
     def obj_create(self, bundle, request=None, **kwargs):

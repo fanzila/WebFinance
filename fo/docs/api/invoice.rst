@@ -722,7 +722,7 @@ documentation). Here is what we do when we get an ACK from HiPay::
 
 As you can see, your url_ack will receive the variable `payment` POSTed for your
 consumption. Once you verify that we made the request, you will be able to
-safely cosume the data.
+safely consume the data.
 
 
 List HiPay invoices payments

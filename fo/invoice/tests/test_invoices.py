@@ -219,7 +219,7 @@ class InvoiceTest(TestCase):
         response = self.client.post(url, {'xml': ack.decode('utf-8')})
         invoice = Invoices.objects.get(pk=1)
         self.assertEqual(response.status_code, 200)
-        logger.info(invoice.invoicetransaction_set.count())
+        #logger.info(invoice.invoicetransaction_set.count())
         self.assertEqual(invoice.invoicetransaction_set.count(), 2)
         self.assertEqual(invoice.paid, True) # The 127.0.0.1 should now be allowed
 
@@ -256,7 +256,7 @@ class InvoiceTest(TestCase):
         response = self.client.post(url, {'xml': ack.decode('utf-8')})
         invoice = Invoices.objects.get(pk=1)
         self.assertEqual(response.status_code, 200)
-        logger.info(invoice.invoicetransaction_set.count())
+        #logger.info(invoice.invoicetransaction_set.count())
         self.assertEqual(invoice.invoicetransaction_set.count(), 2)
         self.assertEqual(invoice.paid, True) # The 127.0.0.1 should now be allowed
 
@@ -279,10 +279,19 @@ class ClientAPITestCase(TestCase):
         except:
             pass
         self.data = {'username':user.email, 'api_key':user.api_key.key}
+        self.extra = dict(HTTP_USERNAME=self.data['username'], HTTP_API_KEY=self.data['api_key'])
 
     def test_gets(self):
         self.data.update({'format': 'json'})
+        # Get authentication
         resp = self.client.get('/api/v1/', data=self.data)
+        self.assertEqual(resp.status_code, 200)
+        deserialized = json.loads(resp.content)
+        self.assertEqual(len(deserialized), 7)
+        self.assertEqual(deserialized['client'], {'list_endpoint': '/api/v1/client/', 'schema': '/api/v1/client/schema/'})
+
+        # Header authentication
+        resp = self.client.get('/api/v1/', {'format': 'json'}, **self.extra)
         self.assertEqual(resp.status_code, 200)
         deserialized = json.loads(resp.content)
         self.assertEqual(len(deserialized), 7)
@@ -311,12 +320,22 @@ class ClientAPITestCase(TestCase):
 
     def test_posts(self):
         post_data = '{"name":"From api 1", "city":"Dakar", "addr1":"Dakar", "country":"France", "zip":"100"}'
-        resp = self.client.post('/api/v1/client/?%s' %urlencode(self.data), data=post_data, content_type='application/json')
+        # Use Header api_key
+        resp = self.client.post('/api/v1/client/', data=post_data, content_type='application/json', **self.extra)
         self.assertEqual(resp.status_code, 201)
         self.assertEqual(resp['location'], 'http://testserver/api/v1/client/4/')
 
         # make sure posted object exists
         resp = self.client.get('/api/v1/client/4/', data=self.data)
+        self.assertEqual(resp.status_code, 200)
+        obj = json.loads(resp.content)
+        self.assertEqual(obj['name'], u'From api 1')
+        self.assertEqual(obj['city'], u'Dakar')
+        self.assertEqual(obj['country'], u'France')
+
+        # Header authentication
+        resp = self.client.get('/api/v1/client/4/', {'format': 'json'}, **self.extra)
+        #logger.warn(self.data)
         self.assertEqual(resp.status_code, 200)
         obj = json.loads(resp.content)
         self.assertEqual(obj['name'], u'From api 1')
