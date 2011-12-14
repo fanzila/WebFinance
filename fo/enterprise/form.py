@@ -14,7 +14,7 @@ class EnterpriseForm(forms.ModelForm):
     required_css_class = 'required'    
     class Meta:
         model = Clients
-        exclude = ['users', 'id_user', 'password', 'id_company_type']
+        exclude = ['users', 'id_user', 'password', 'company_type']
 
 class InvitationForm(forms.ModelForm):
     required_css_class = 'required'

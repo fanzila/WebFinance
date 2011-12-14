@@ -68,7 +68,7 @@ class Clients(models.Model):
     addr2 = models.CharField(_('Address 2'), max_length=265, blank=True)
     addr3 = models.CharField(_('Address 3'), max_length=265, blank=True)
     country = CountryField(_('Country'), max_length=50, db_column="pays")
-    tel = models.CharField(_('Phone'), max_length=15, blank=True)
+    phone = models.CharField(_('Phone'), max_length=15, blank=True, db_column="tel")
     fax = models.CharField(_('Fax'), max_length=200, blank=True)
     web = models.CharField(_('Website'), max_length=100, blank=True)
     vat_number = models.CharField(_('VAT number'), max_length=40, blank=True, null=True)
@@ -79,7 +79,7 @@ class Clients(models.Model):
     email = models.EmailField(_('Email'),max_length=255, blank=True)
     siren = models.CharField(_('Siren'), max_length=50, blank=True)
     #total_du_ht = models.DecimalField(_('Amount of duty'), null=True, max_digits=22, decimal_places=4, blank=True)
-    id_company_type = models.ForeignKey('CompanyTypes', verbose_name=_('Company type'), db_column='id_company_type')
+    company_type = models.ForeignKey('CompanyTypes', verbose_name=_('Company type'), db_column='id_company_type', default=1)
     # This is the user who created this I guess
     id_user = models.ForeignKey(Users, verbose_name=_('User'), related_name='creator', db_column='id_user') #models.IntegerField()
     password = models.CharField(_('Password'), max_length=300, blank=True)
@@ -112,7 +112,7 @@ class Clients2Users(models.Model):
 
 
 class CompanyTypes(models.Model):
-    id_company_type = models.IntegerField(primary_key=True)
+    id = models.IntegerField(primary_key=True, db_column="id_company_type")
     name = models.CharField(max_length=765, blank=True, db_column="nom")
 
     class Meta:
@@ -122,7 +122,7 @@ class CompanyTypes(models.Model):
 
     def __unicode__(self):
         return u"%s | %s" % (
-            unicode(self.id_company_type),
+            unicode(self.id),
             unicode(self.name))
 
 class Userlog(models.Model):

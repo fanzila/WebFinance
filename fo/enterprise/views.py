@@ -44,7 +44,7 @@ def add_company(request):
                 # The login is not the email ('admin'), if this fail then crash.
                 customer.id_user = Users.objects.get(email=request.user.email)            
         #Cyril wants this to be always 1
-        customer.id_company_type = CompanyTypes.objects.get(pk=1)
+        customer.company_type = CompanyTypes.objects.get(pk=1)
         with reversion.create_revision():
             customer.save()
             reversion.set_user(request.user)
