@@ -602,6 +602,7 @@ existing invoice row you'll use the invoicerows schema/resource.
 
 Delete invoice
 --------------
+It's easy to delete an invoice::
 
   curl --dump-header - -H "Content-Type: application/json" -X DELETE
     "http://127.0.0.1:8000/api/v1/invoice/76/?username=YOUR_EMAIL_ADDRESS&api_key=YOUR_API_KEY"
@@ -620,6 +621,9 @@ Delete invoice
   Server: WSGIServer/0.1 Python/2.7.1
   Vary: Cookie
   Content-Type: text/html; charset=utf-8
+
+
+.. _pay-invoice-reference:
 
 Pay invoice with HiPay
 ----------------------
@@ -653,7 +657,7 @@ reference the invoice to pay::
   Location: http://127.0.0.1:8000/api/v1/payinvoice/12/
 
   curl  -H "Accept: application/json"
-    "http://127.0.0.1:8000/api/v1/payinvoice/11/?username=ousmane%40wilane.org&api_key=fa9149bebb4433f8bbd37cc3b47b971a4fc4f439"
+    "http://127.0.0.1:8000/api/v1/payinvoice/11/?username=YOUR_EMAIL_ADDRESS&api_key=YOUR_API_KEY"
   {
     "date": null,
     "emailClient": null,
