@@ -1,0 +1,22 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block content_title %}OAuth settings{% endblock %}
+
+{% block content %}
+
+<form accept-charset="UTF-8" method="post" id="twitter-apps-form-owner-token">
+{% csrf_token %}
+<input type="submit" name="authorize_access" value="Grant access"   />
+<input type="hidden" name="oauth_body_hash"  value="{{ params.oauth_body_hash }}"  />
+<input type="hidden" name="oauth_nonce" value="{{ params.oauth_nonce }}"  />
+<input type="hidden" name="oauth_timestamp" value="{{ params.oauth_timestamp }}"  />
+<input type="hidden" name="oauth_consumer_key" value="{{ params.oauth_consumer_key }}"  />
+<input type="hidden" name="oauth_signature_method" value="{{ params.oauth_signature_method }}"  />
+<input type="hidden" name="oauth_token" value="{{ params.oauth_token }}"  />
+<input type="hidden" name="oauth_signature" value="{{ params.oauth_signature }}"  />
+<input type="hidden" name="oauth_callback" value="{{ params.oauth_callback }}"  />
+</form>
+
+
+{% endblock %}

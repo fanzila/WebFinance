@@ -1,17 +1,28 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#Copyright (C) 2011 ISVTEC SARL
-#$Id$
+# Django settings for isvtec_test_oauth project.
 
-__author__ = "Ousmane Wilane ♟ <ousmane@wilane.org>"
-__date__   = "Thu Nov 10 13:21:00 2011"
-
-import os, sys
+import os
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+
+ADMINS = (
+    # ('Your Name', 'your_email@example.com'),
+)
+
+MANAGERS = ADMINS
+
 DIRNAME = os.path.dirname(__file__)
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': os.path.join(DIRNAME, 'isvtec_test_oauth.sqlite3'),                      # Or path to database file if using sqlite3.
+        'USER': '',                      # Not used with sqlite3.
+        'PASSWORD': '',                  # Not used with sqlite3.
+        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+    }
+}
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -20,7 +31,7 @@ DIRNAME = os.path.dirname(__file__)
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'Europe/Paris'
+TIME_ZONE = 'America/Chicago'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -38,7 +49,7 @@ USE_L10N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = os.path.join(DIRNAME, 'uploaded_media')
+MEDIA_ROOT = ''
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -65,7 +76,6 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(DIRNAME, 'static'),
 )
 
 # List of finder classes that know how to find static files in
@@ -77,7 +87,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'xo@x+yaba^g!!%9i_f#te11rnei(*jk^9l)z4%&w(c66%y!$1)'
+SECRET_KEY = '-)rf)e20i81ol3zxmx@5j+=l_k6$t(zt%_o62eus$g^r^ow-lg'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -92,19 +102,19 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'fo.middleware.sso.CYBSSOMiddleware',
 )
 
-ROOT_URLCONF = 'fo.urls'
+ROOT_URLCONF = 'isvtec_test_oauth.urls'
 
 TEMPLATE_DIRS = (
-    os.path.join(DIRNAME, 'templates'),
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    os.path.join(DIRNAME, 'templates'),
 )
 
 INSTALLED_APPS = (
+    'social_auth',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -113,17 +123,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
-    'fo.enterprise',
-    'fo.invoice',
     # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
-    'django_coverage',
-    'hipay',
-    'django_countries',
-    'tastypie',
-    'reversion',
-#    'pyzen',
-    'social_auth',
+    'django.contrib.admindocs',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -134,15 +135,33 @@ INSTALLED_APPS = (
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+         },
+     },
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'console':{
+            'level':'DEBUG',
+            'class':'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
     },
     'loggers': {
         'django.request': {
             'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'social_auth.views': {
+            'handlers': ['console'],
             'level': 'ERROR',
             'propagate': True,
         },
@@ -151,7 +170,6 @@ LOGGING = {
 
 AUTHENTICATION_BACKENDS = (
     'oauthclient.isvtec.ISVTECBackend',
-    'libs.auth.WFRemoteUserBackend',
     'social_auth.backends.twitter.TwitterBackend',
     'social_auth.backends.facebook.FacebookBackend',
     'social_auth.backends.google.GoogleOAuthBackend',
@@ -166,33 +184,44 @@ AUTHENTICATION_BACKENDS = (
     'social_auth.backends.contrib.dropbox.DropboxBackend',
     'social_auth.backends.contrib.flickr.FlickrBackend',
     'social_auth.backends.OpenIDBackend',
-
+#    'django.contrib.auth.backends.ModelBackend',
 )
+
 
 SOCIAL_AUTH_IMPORT_BACKENDS = (
      'oauthclient',
 )
 
-SOCIAL_AUTH_ENABLED_BACKENDS = ('isvtec', 'twitter', 'google-oauth', 'github')
+SOCIAL_AUTH_ENABLED_BACKENDS = ('isvtec', 'twitter', 'google', 'google-oauth', 'github')
 
-AUTH_PROFILE_MODULE = 'fo.enterprise.Users'
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.contrib.messages.context_processors.messages',
+    'social_auth.context_processors.social_auth_by_type_backends',
+)
 
-# Load fixtures data from data provided by Cyril (bootstrap.sql)
-FIXTURE_DIRS = [os.path.join(DIRNAME, 'fixtures')]
-INVOICE_PDF_GENERATOR = os.path.join(DIRNAME, '../bin/build_invoice_by_id')
-INVOICE_PDF_DIR = '/tmp'
+ISVTEC_CONSUMER_KEY = 'dpf43f3p2l4k3l03'
+ISVTEC_CONSUMER_SECRET = 'kd94hf93k423kf44'
+ISVTEC_SERVER = '127.0.0.1:8000'
 
-try:
-    from fo.local_settings import *
-except:
-    # No problem if you don't have local settings, guess you know what you're
-    # doing
-    pass
+TWITTER_CONSUMER_KEY              = 'KVNfuJv3hFdNDAFVyZ9Q'
+TWITTER_CONSUMER_SECRET           = 'GAH3idtFFKilEmcnQZsEeEwm5xyRrohZ9KitW9qk54'
 
-if 'test' in sys.argv or 'test_coverage' in sys.argv or 'zen' in sys.argv or 'testserver' in sys.argv:
-    try:
-        from tests.settings import *
-    except ImportError, e:
-        #If you're testing watch this.
-        pass
+#LOGIN_URL          = '/login-form'
+LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = '/login/isvtec/'
+LOGIN_REDIRECT_URL = '/logged-in'
+LOGIN_ERROR_URL    = '/login-error'
 
+SOCIAL_AUTH_ERROR_KEY = 'social_errors'
+SOCIAL_AUTH_EXPIRATION = 'expires'
+SOCIAL_AUTH_SESSION_EXPIRATION = False
+#SOCIAL_AUTH_USER_MODEL = 'fo.enterprise.Users'
+
+
+
+SESSION_SAVE_EVERY_REQUEST=True
+SESSION_COOKIE_NAME='isvtecsession'

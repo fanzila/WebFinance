@@ -31,7 +31,11 @@ urlpatterns = patterns('',
     url(r'^enterprise/', include('fo.enterprise.urls')),
     url(r'^ssoaccounts/login', 'fo.views.ssologin', name='login_cybsso'),
     url(r'^ssoaccounts/logout', 'fo.views.ssologout', name='logout_cybsso'),
-    url(r'^api/', include(v1_api.urls)),                       
+    url(r'^isvtecoauth/logout', 'fo.views.oauthlogout', name='logout_oauth'),
+    url(r'^api/', include(v1_api.urls)),
+
+    url(r'^login-error$', 'fo.views.login_error', name='login_error'),
+    url(r'', include('social_auth.urls')),
 )
 
 

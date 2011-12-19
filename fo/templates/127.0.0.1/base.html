@@ -22,11 +22,11 @@
 
     {% block footer %}
     <hr />
-    <a href="{% url 'list_companies' %}">{% blocktrans %}My companies {% endblocktrans %}</a> |
-    <a href="{% url 'add_company' %}">{% blocktrans %}Add a company {% endblocktrans %}</a> |
-    <a href="{% url 'invite_user' %}">{% blocktrans %}Invite a user {% endblocktrans %}</a> |
+    <a href="{% url 'list_companies' %}">{% blocktrans %}My companies {% endblocktrans %}</a> | 
+    <a href="{% url 'add_company' %}">{% blocktrans %}Add a company {% endblocktrans %}</a> | 
+    <a href="{% url 'invite_user' %}">{% blocktrans %}Invite a user {% endblocktrans %}</a> | 
     <a href="{% url 'revoke_invitations' %}">{% blocktrans %}Revoke invitation {% endblocktrans %}</a> |
-    <a href="#">{% blocktrans %}Due invoices {% endblocktrans %}</a> | <a href="{% url 'logout_oauth' %}">{% trans 'Logout' %}</a>
+    <a href="#">{% blocktrans %}Due invoices {% endblocktrans %}</a> | <a href="{% url 'logout_cybsso' %}">{% trans 'Logout' %}</a>
 
     {% if user.is_authenticated %}
     <p>

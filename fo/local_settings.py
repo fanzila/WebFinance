@@ -27,7 +27,7 @@ DATABASES = {
 }
 
 CYBSSO_LOGIN = 'http://cybsso-dev.isvtec.com/'
-LOGIN_URL = '/ssoaccounts/login'
+CYBSSO_LOGIN_URL = '/ssoaccounts/login'
 
 EMAIL_HOST = '10.42.0.1'
 DEFAULT_FROM_EMAIL = 'no_reply@isvtec.com'
@@ -118,3 +118,45 @@ DEFAULT_TEMPLATE_DIR_PREFIX="default"
 BASE_TEMPLATE = "base.html"
 EMAIL_BASE_TEMPLATE='enterprise/emails/base.txt'
 COMPANY_ADDRESS='enterprise/emails/address.txt'
+
+
+
+SOCIAL_AUTH_IMPORT_BACKENDS = (
+     'oauthclient',
+)
+
+SOCIAL_AUTH_ENABLED_BACKENDS = ('isvtec', 'twitter', 'google', 'google-oauth', 'github')
+
+
+TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
+                               "django.core.context_processors.debug",
+                               "django.core.context_processors.i18n",
+                               "django.core.context_processors.media",
+                               "django.core.context_processors.static",
+                               #"django.core.context_processors.tz",
+                               "django.contrib.messages.context_processors.messages",
+                               "fo.fo_context_processors.white_label",
+                               "social_auth.context_processors.social_auth_by_name_backends",
+                               )
+ISVTEC_CONSUMER_KEY = 'dpf43f3p2l4k3l03'
+ISVTEC_CONSUMER_SECRET = 'kd94hf93k423kf44'
+ISVTEC_SERVER = '127.0.0.1:8000'
+
+TWITTER_CONSUMER_KEY              = 'KVNfuJv3hFdNDAFVyZ9Q'
+TWITTER_CONSUMER_SECRET           = 'GAH3idtFFKilEmcnQZsEeEwm5xyRrohZ9KitW9qk54'
+
+#LOGIN_URL          = '/login-form'
+LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = '/login/isvtec/'
+LOGIN_REDIRECT_URL = '/logged-in'
+LOGIN_ERROR_URL    = '/login-error'
+
+SOCIAL_AUTH_ERROR_KEY = 'social_errors'
+SOCIAL_AUTH_EXPIRATION = 'expires'
+SOCIAL_AUTH_SESSION_EXPIRATION = False
+#SOCIAL_AUTH_USER_MODEL = 'fo.enterprise.Users'
+
+
+
+SESSION_SAVE_EVERY_REQUEST=True
+SESSION_COOKIE_NAME='isvtecsession'

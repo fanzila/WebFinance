@@ -6,7 +6,7 @@ __author__ = "Ousmane Wilane ♟ <ousmane@wilane.org>"
 __date__   = "Mon Nov 14 12:01:54 2011"
 
 
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.core.urlresolvers import reverse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import never_cache
@@ -29,7 +29,7 @@ def ssologin(request):
             request.session['cybsso_email'] = request.GET.get('cybsso_email')
             login(request, user)
             return redirect(request.session.get('next'))
-        
+
     if request.session.get('cybsso_ticket', False) and request.session.get('cybsso_email', False):
         user = authenticate(username=request.session.get('cybsso_email'),
                             ticket=request.session.get('cybsso_ticket'))
@@ -49,3 +49,13 @@ def ssologout(request):
     # FIXME: Create a HP that doesn't require auth or just leave the user at the
     # sso once logged out ?
     return redirect('%s?action=logout' %settings.CYBSSO_LOGIN)
+
+@never_cache
+def login_error(request):
+    return render(request, 'error.html')
+
+
+def oauthlogout(request):
+    """Logs out user"""
+    logout(request)
+    return redirect('/')
