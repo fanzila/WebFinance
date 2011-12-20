@@ -77,7 +77,7 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-        'social_auth.views': {
+        'social_auth': {
             'handlers': ['console', 'syslog'],
             'level': 'ERROR',
             'propagate': True,

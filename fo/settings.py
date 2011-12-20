@@ -124,6 +124,7 @@ INSTALLED_APPS = (
     'reversion',
 #    'pyzen',
     'social_auth',
+    'south',
 )
 
 AUTHENTICATION_BACKENDS = (
