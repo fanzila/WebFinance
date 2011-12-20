@@ -22,7 +22,11 @@ from django.core.urlresolvers import get_callable
 from django.conf import settings
 import logging
 logger = logging.getLogger('wf')
-import json
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
 
 OAUTH_AUTHORIZE_VIEW = 'OAUTH_AUTHORIZE_VIEW'
 OAUTH_CALLBACK_VIEW = 'OAUTH_CALLBACK_VIEW'

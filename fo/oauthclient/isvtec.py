@@ -20,8 +20,7 @@ from tastypie.models import create_api_key
 ISVTEC_REQUEST_TOKEN_URL = 'http://%s/oauth/request_token/' % settings.ISVTEC_SERVER
 ISVTEC_ACCESS_TOKEN_URL = 'http://%s/oauth/access_token/' % settings.ISVTEC_SERVER
 ISVTEC_AUTHORIZATION_URL = 'http://%s/oauth/authorize/' % settings.ISVTEC_SERVER
-ISVTEC_CHECK_AUTH = 'http://127.0.0.1:8000/accounts/verify_credentials.json'
-
+ISVTEC_CHECK_AUTH = 'http://%s/accounts/verify_credentials.json' % settings.ISVTEC_SERVER
 
 class ISVTECBackend(OAuthBackend):
     """ISVTEC OAuth authentication backend"""
