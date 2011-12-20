@@ -3,9 +3,12 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
+                       url(r'^$', 'views.profile', name='profile'),
                        url(r'^oauth/', include('oauth_provider.urls')),
                        url(r'^admin/', include(admin.site.urls)),
                        url(r'^accounts/login/$', 'django.contrib.auth.views.login'),
-                       (r'^accounts/', include('registration.backends.simple.urls')),
-                       url(r'^account/verify_credentials.json$', 'views.verify_credentials', name='user_getinfo'),                       
+                       url(r'^accounts/profile/$', 'views.profile', name='profile'),
+                       url(r'^accounts/', include('registration_backends.isvtec.urls')),
+                       url(r'^accounts/verify_credentials.json$', 'views.verify_credentials', name='user_getinfo'),
+                       url(r'^users/(?P<email>\w+)$', 'views.registration_info', name='registered'),
 )

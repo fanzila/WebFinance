@@ -82,3 +82,6 @@ LOGGING = {
         }
     }
 }
+
+TEST_ISVTEC_USER='test_user'
+TEST_ISVTEC_PASSWORD='test_password'

@@ -1,14 +1,31 @@
-{% extends "admin/base_site.html" %}
+{% extends "base_site.html" %}
 {% load i18n %}
 
 {% block content_title %}OAuth settings{% endblock %}
 
 {% block content %}
+<p> {% blocktrans %}Would you like to grant access to the following site{% endblocktrans %} </p>
 
-<form accept-charset="UTF-8" method="post" id="twitter-apps-form-owner-token">
+{% trans 'Application' %} : {{ token.consumer.name }} </br>
+{% trans 'Resource' %} : {{ token.resource.name }} / URL : {{ token.resource.url }}</br>
+{% trans 'Your login name' %} : {{ user.email }} </br>
+{% trans 'Access type' %} : {{ token.token_type }} </br>
+
+{% blocktrans %} You'll be directed to {% endblocktrans %} {{ token.callback }},
+{% blocktrans %}note that the site will receive your email address, your first
+name and your last name {% endblocktrans %}
+
+<form accept-charset="UTF-8" method="post">
 {% csrf_token %}
+<table>
+{{ form.as_table }}
+</table>
 <input type="submit" name="authorize_access" value="Grant access"   />
+</form>
+
+{% comment %}
 <input type="hidden" name="oauth_body_hash"  value="{{ params.oauth_body_hash }}"  />
+<input type="hidden" name="authorize_access"  value="1" />
 <input type="hidden" name="oauth_nonce" value="{{ params.oauth_nonce }}"  />
 <input type="hidden" name="oauth_timestamp" value="{{ params.oauth_timestamp }}"  />
 <input type="hidden" name="oauth_consumer_key" value="{{ params.oauth_consumer_key }}"  />
@@ -16,7 +33,9 @@
 <input type="hidden" name="oauth_token" value="{{ params.oauth_token }}"  />
 <input type="hidden" name="oauth_signature" value="{{ params.oauth_signature }}"  />
 <input type="hidden" name="oauth_callback" value="{{ params.oauth_callback }}"  />
-</form>
+{% endcomment %}
+
+
 
 
 {% endblock %}

@@ -13,6 +13,7 @@ from django.views.decorators.cache import never_cache
 from django.conf import settings
 from django.contrib.auth import login, authenticate
 from django.contrib.auth import logout
+from social_auth.views import auth, complete, associate, associate_complete, disconnect
 
 @never_cache
 @require_http_methods(["GET"])
@@ -58,4 +59,4 @@ def login_error(request):
 def oauthlogout(request):
     """Logs out user"""
     logout(request)
-    return redirect('/')
+    return redirect(settings.ISVTEC_LOGOUT_URL)

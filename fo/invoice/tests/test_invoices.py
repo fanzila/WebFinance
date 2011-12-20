@@ -9,6 +9,7 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from invoice.models import Invoices, Subscription, InvoiceTransaction, SubscriptionTransaction
+from tests_base import SocialAuthTestsCase, FormParserByID, RefreshParser
 from enterprise.models import Clients, Clients2Users, Users
 from django.http import HttpRequest
 from django.contrib.auth.models import User
@@ -22,12 +23,73 @@ settings.DEBUG=True
 settings.AUTHENTICATION_BACKENDS = (
      'libs.auth.WFMockRemoteUserBackend',
 )
-
-
 try:
     import json
 except ImportError:
     import simplejson as json
+
+
+class ISVTECTestCase(SocialAuthTestsCase):
+    def setUp(self, *args, **kwargs):
+        settings.AUTHENTICATION_BACKENDS = (
+            'libs.auth.WFMockRemoteUserBackend',)
+        settings.SOCIAL_AUTH_IMPORT_BACKENDS = (
+            'oauthclient',)
+        settings.SOCIAL_AUTH_ENABLED_BACKENDS = ('isvtec',)
+        settings.AUTHENTICATION_BACKENDS = ('oauthclient.isvtec.ISVTECBackend',)
+        super(ISVTECTestCase, self).setUp(*args, **kwargs)
+        self.user = getattr(settings, 'TEST_ISVTEC_USER', None)
+        self.passwd = getattr(settings, 'TEST_ISVTEC_PASSWORD', None)
+        # check that user and password are setup properly
+        self.assertTrue(self.user)
+        self.assertTrue(self.passwd)
+
+
+class ISVTECTestLogin(ISVTECTestCase):
+    def test_login_succeful(self):
+        response = self.client.get(self.reverse('socialauth_begin', 'isvtec'))
+        # social_auth must redirect to service page
+        self.assertEqual(response.status_code, 302)
+
+        # Open first redirect page, it contains user login form because
+        # we don't have cookie to send to isvtec
+        login_content = self.get_content(response['Location'])
+        parser = FormParserByID('login_form')
+        parser.feed(login_content)
+        auth = {'session[username]': self.user,
+                'session[password]': self.passwd}
+
+        # Check that action and values were loaded properly
+        self.assertTrue(parser.action)
+        self.assertTrue(parser.values)
+
+        # Post login form, will return authorization or redirect page
+        parser.values.update(auth)
+        #content = self.get_content("http://%s%s"%(settings.ISVTEC_SERVER, parser.action), data=parser.values)
+
+        # If page contains a form#login_form, then we are in the app
+        # authorization page because the app is not authorized yet,
+        # otherwise the app already gained permission and isvtec sends
+        # a page that redirects to redirect_url
+        # if 'login_form' in content:
+        #     # authorization form post, returns redirect_page
+        #     parser = FormParserByID('login_form').feed(content)
+        #     self.assertTrue(parser.action)
+        #     self.assertTrue(parser.values)
+        #     parser.values.update(auth)
+        #     redirect_page = self.get_content(parser.action, data=parser.values)
+        # else:
+        #     redirect_page = content
+
+        # parser = RefreshParser()
+        # parser.feed(redirect_page)
+        # self.assertTrue(parser.value)
+
+        # response = self.client.get(self.make_relative(parser.value))
+        # self.assertEqual(response.status_code, 302)
+        # location = self.make_relative(response['Location'])
+        # login_redirect = getattr(settings, 'LOGIN_REDIRECT_URL', '')
+        # self.assertTrue(location == login_redirect)
     
 class InvoiceTest(TestCase):
     def setUp(self):

@@ -75,11 +75,27 @@ LOGGING = {
         'django.request': {
             'handlers': ['console', 'syslog'],
             'level': 'ERROR',
-            'propagate': False,
+            'propagate': True,
+        },
+        'social_auth.views': {
+            'handlers': ['console', 'syslog'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'oauth_provider': {
+            'handlers': ['console', 'syslog'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'views': {
+            'handlers': ['console', 'syslog'],
+            'level': 'ERROR',
+            'propagate': True,
         },
         'wf': {
             'handlers': ['console', 'syslog'],
             'level': 'DEBUG',
+            'propagate': True,
         }
     }
 }
@@ -141,22 +157,20 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
 ISVTEC_CONSUMER_KEY = 'dpf43f3p2l4k3l03'
 ISVTEC_CONSUMER_SECRET = 'kd94hf93k423kf44'
 ISVTEC_SERVER = '127.0.0.1:8000'
-
+ISVTEC_LOGOUT_URL = "http://%s%s" %(ISVTEC_SERVER, '/accounts/logout')
 TWITTER_CONSUMER_KEY              = 'KVNfuJv3hFdNDAFVyZ9Q'
 TWITTER_CONSUMER_SECRET           = 'GAH3idtFFKilEmcnQZsEeEwm5xyRrohZ9KitW9qk54'
 
-#LOGIN_URL          = '/login-form'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/isvtec/'
-LOGIN_REDIRECT_URL = '/logged-in'
 LOGIN_ERROR_URL    = '/login-error'
 
 SOCIAL_AUTH_ERROR_KEY = 'social_errors'
 SOCIAL_AUTH_EXPIRATION = 'expires'
-SOCIAL_AUTH_SESSION_EXPIRATION = False
+SOCIAL_AUTH_SESSION_EXPIRATION = True
 #SOCIAL_AUTH_USER_MODEL = 'fo.enterprise.Users'
-
-
+SOCIAL_AUTH_COMPLETE_URL_NAME  = 'socialauth_complete'
+SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
 
 SESSION_SAVE_EVERY_REQUEST=True
 SESSION_COOKIE_NAME='isvtecsession'

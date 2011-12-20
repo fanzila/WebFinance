@@ -12,32 +12,29 @@ logger = logging.getLogger('wf')
 from django.utils import simplejson
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
 from django.conf import settings
+from django.contrib.auth.models import User
+from django.db import models
+from tastypie.models import create_api_key
 
 # ISVTEC configuration
 ISVTEC_REQUEST_TOKEN_URL = 'http://%s/oauth/request_token/' % settings.ISVTEC_SERVER
 ISVTEC_ACCESS_TOKEN_URL = 'http://%s/oauth/access_token/' % settings.ISVTEC_SERVER
 ISVTEC_AUTHORIZATION_URL = 'http://%s/oauth/authorize/' % settings.ISVTEC_SERVER
-ISVTEC_CHECK_AUTH = 'http://127.0.0.1:8000/account/verify_credentials.json'
+ISVTEC_CHECK_AUTH = 'http://127.0.0.1:8000/accounts/verify_credentials.json'
 
 
 class ISVTECBackend(OAuthBackend):
     """ISVTEC OAuth authentication backend"""
     name = 'isvtec'
-    EXTRA_DATA = [('id', 'id')]
+    EXTRA_DATA = [('id', 'id'), ('first_name', 'first_name'), ('last_name', 'last_name')]
 
     def get_user_details(self, response):
         """Return user details from ISVTEC account"""
-        print "Response is", response
-        try:
-            first_name, last_name = response['name'].split(' ', 1)
-        except:
-            first_name = response['name']
-            last_name = ''
-        return {USERNAME: response['screen_name'],
-                'email': response['email'],  # not supplied
+        return {USERNAME: response['email'],
+                'email': response['email'],
                 'fullname': response['name'],
-                'first_name': first_name,
-                'last_name': last_name}
+                'first_name': response['first_name'],
+                'last_name': response['last_name']}
 
 
 class ISVTECAuth(ConsumerBasedOAuth):
@@ -65,3 +62,5 @@ class ISVTECAuth(ConsumerBasedOAuth):
 BACKENDS = {
     'isvtec': ISVTECAuth,
 }
+
+models.signals.post_save.connect(create_api_key, sender=User)

@@ -8,8 +8,6 @@ __date__   = "Fri Nov 11 08:10:55 2011"
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
 from datetime import datetime
-from django.db import models
-from tastypie.models import create_api_key
 from libs.sso import CYBSSOService, CYBSSO_URL
 from fo.enterprise.models import Users
 
@@ -38,8 +36,6 @@ class WFRemoteUserBackend(ModelBackend):
             return user
 
         return None
-
-models.signals.post_save.connect(create_api_key, sender=User)
 
 class WFMockRemoteUserBackend(ModelBackend):
     def authenticate(self, username=None, ticket=None):

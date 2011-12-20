@@ -1,0 +1,16 @@
+{% extends "base_site.html" %}
+{% load i18n %}
+
+{% block content_title %}{% trans "User's profile" %}{% endblock %}
+
+{% block content %}
+
+<p>
+  {% trans "Email" %}: {{ user.email }} <br />
+  {% trans "First name" %}: {{ user.first_name }} <br />
+  {% trans "Last name" %}: {{ user.last_name }} <br />
+</p>
+
+{% endblock %}
+
+

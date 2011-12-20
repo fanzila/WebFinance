@@ -11,7 +11,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 DIRNAME = os.path.dirname(__file__)
 ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
+    ('Ousmane Wilane', 'ousmane@wilane.org'),
 )
 
 MANAGERS = ADMINS
@@ -67,14 +67,14 @@ TEMPLATE_DIRS = (
 
 INSTALLED_APPS = (
     'oauth_provider',
+    'registration',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.sites',
+#    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
-    'registration',
 )
 
 EMAIL_HOST = '10.42.0.1'
@@ -123,7 +123,17 @@ LOGGING = {
         'django.request': {
             'handlers': ['console', 'syslog'],
             'level': 'ERROR',
-            'propagate': False,
+            'propagate': True,
+        },
+        'isvtec_oauth_provider': {
+            'handlers': ['console', 'syslog', 'mail_admins'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'views': {
+            'handlers': ['console', 'syslog', 'mail_admins'],
+            'level': 'DEBUG',
+            'propagate': True,
         },
         'wf': {
             'handlers': ['console', 'syslog'],
@@ -132,5 +142,8 @@ LOGGING = {
     }
 }
 
-OAUTH_AUTHORIZE_VIEW = 'views.oauth_authorize'
+OAUTH_AUTHORIZE_VIEW = 'views.exempt_user_authorization'
 #OAUTH_REALM_KEY_NAME = 'http://sso.isvtec.com'
+#SOCIAL_AUTH_DEFAULT_USERNAME = 'username'
+ACCOUNT_ACTIVATION_DAYS = 7
+REGISTRATION_OPEN = True

@@ -92,7 +92,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'fo.middleware.sso.CYBSSOMiddleware',
+    #'fo.middleware.sso.CYBSSOMiddleware',
 )
 
 ROOT_URLCONF = 'fo.urls'
@@ -126,32 +126,9 @@ INSTALLED_APPS = (
     'social_auth',
 )
 
-# A sample logging configuration. The only tangible logging
-# performed by this configuration is to send an email to
-# the site admins on every HTTP 500 error.
-# See http://docs.djangoproject.com/en/dev/topics/logging for
-# more details on how to customize your logging configuration.
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'mail_admins': {
-            'level': 'ERROR',
-            'class': 'django.utils.log.AdminEmailHandler'
-        }
-    },
-    'loggers': {
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
-            'propagate': True,
-        },
-    }
-}
-
 AUTHENTICATION_BACKENDS = (
     'oauthclient.isvtec.ISVTECBackend',
-    'libs.auth.WFRemoteUserBackend',
+#    'libs.auth.WFRemoteUserBackend',
     'social_auth.backends.twitter.TwitterBackend',
     'social_auth.backends.facebook.FacebookBackend',
     'social_auth.backends.google.GoogleOAuthBackend',
@@ -165,8 +142,6 @@ AUTHENTICATION_BACKENDS = (
     'social_auth.backends.contrib.github.GithubBackend',
     'social_auth.backends.contrib.dropbox.DropboxBackend',
     'social_auth.backends.contrib.flickr.FlickrBackend',
-    'social_auth.backends.OpenIDBackend',
-
 )
 
 SOCIAL_AUTH_IMPORT_BACKENDS = (
