@@ -1,13 +1,16 @@
 from django.conf import settings
 from django.contrib.sites.models import RequestSite
 from django.contrib.sites.models import Site
-
+from urllib import unquote
+from isvtec_profile.models import profile
 from registration import signals
 from registration.models import RegistrationProfile
 from django.contrib.auth.models import User
 from registration.backends.default import DefaultBackend
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+import logging
+logger = logging.getLogger('wf')
 attrs_dict = {'class': 'required'}
 
 class ISVTECRegistrationForm(forms.Form):
@@ -56,6 +59,10 @@ class ISVTECBackend(DefaultBackend):
         site = RequestSite(request)
         new_user = RegistrationProfile.objects.create_inactive_user(email, email,
                                                                     password, site)
+        #save the oauth dance here
+        p = profile(user=new_user, return_url=request.REQUEST.get('next', None))
+        p.save()
+
         new_user.first_name = first_name
         new_user.last_name = last_name
         new_user.save()
@@ -82,4 +89,11 @@ class ISVTECBackend(DefaultBackend):
         return ('registration_complete', (), {})
 
     def post_activation_redirect(self, request, user):
+        try:
+            p = profile.objects.get(user=user)
+        except profile.DoesNotExist:
+            p = None
+
+        if p and p.return_url:
+            return (unquote(p.return_url), (), {})
         return ('registration_activation_complete', (), {})

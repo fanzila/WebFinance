@@ -42,7 +42,7 @@ def add_company(request):
                 customer.id_user = user
             except:
                 # The login is not the email ('admin'), if this fail then crash.
-                customer.id_user = Users.objects.get(email=request.user.email)            
+                customer.id_user = Users.objects.get(email=request.user.email)
         #Cyril wants this to be always 1
         customer.company_type = CompanyTypes.objects.get(pk=1)
         with reversion.create_revision():
@@ -89,10 +89,13 @@ def resend_invitation(request, token):
     else:
         qs = Invitation.objects.none()
     invitation = get_object_or_404(qs,token=token)
-    base_host = "http%s://%s" %('s' if request.is_secure() else '',
-                                request.get_host())
-    invitation.send_invitation(base_host)
-    messages.add_message(request, messages.INFO, _("An invitation to %(email)s have been resent for %(company)s" %{'company':invitation.company, 'email':invitation.email}))
+    if invitation.accepted:
+        messages.add_message(request, messages.INFO, _('The invitation have already been accpeted.'))
+    else:
+        base_host = "http%s://%s" %('s' if request.is_secure() else '',
+                                    request.get_host())
+        invitation.send_invitation(base_host)
+        messages.add_message(request, messages.INFO, _("An invitation to %(email)s have been resent for %(company)s" %{'company':invitation.company, 'email':invitation.email}))
     return redirect('revoke_invitations')
 
 @login_required
@@ -101,7 +104,7 @@ def invite_user(request):
     qs = current_user.clients_set.all()
     if not qs:
         raise Http404
-    
+
     form = InvitationForm(request.POST or None, qs=qs, initial={'company': qs.order_by('pk')[0] })
     if form.is_valid():
         # Check if the user is not already in

@@ -75,6 +75,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
+    'isvtec_profile',
 )
 
 EMAIL_HOST = '10.42.0.1'
