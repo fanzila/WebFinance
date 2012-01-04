@@ -26,14 +26,16 @@ include("nav.php");
 
 $Invoice = new Facture();
 
-echo '<h1>Pending direct debits</h1>';
-
 $res = mysql_query(
   'SELECT invoice_id '.
   'FROM direct_debit_row '.
   "WHERE state='todo'")
   or die(mysql_error());
 ?>
+
+<h1>Pending direct debits</h1>
+
+<h2>Details</h2>
 
 <table border="1">
  <tr>
@@ -49,11 +51,13 @@ $total_ht  = 0;
 $total_ttc = 0;
 while ($invoice = mysql_fetch_assoc($res)) {
   $info = $Invoice->getInfos($invoice['invoice_id']);
+  $total[$info->nom_client]['HT'] += $info->total_ht;
+  $total[$info->nom_client]['TTC'] += $info->total_ttc;
   echo "<tr> <td> $info->nom_client </td>";
   echo "<td> <a href=\"../prospection/edit_facture.php?id_facture=$invoice[invoice_id]\">$info->num_facture</a> </td>";
   echo "<td> $info->nice_date_facture </td>";
-  echo "<td> $info->nice_total_ht &euro; </td>";
-  echo "<td> $info->nice_total_ttc &euro; </td>";
+  echo "<td align=right> $info->nice_total_ht &euro; </td>";
+  echo "<td align=right> $info->nice_total_ttc &euro; </td>";
   echo "</tr>";
 
   $total_ht  += $info->nice_total_ht;
@@ -65,15 +69,36 @@ while ($invoice = mysql_fetch_assoc($res)) {
   <td></td>
   <td></td>
   <td align="right"> <b>TOTAL</b> </td>
-  <td> <?=$total_ht?> &euro; </td>
-  <td> <?=$total_ttc?> &euro; </td>
+  <td align="right"> <?=sprintf("%.2f", $total_ht);?> &euro; </td>
+  <td align="right"> <?=sprintf("%.2f", $total_ttc);?> &euro; </td>
 </tr>
+</table>
+
+<br/>
+<h2>Summary</h2>
+
+<table border="1">
+ <tr>
+  <th>Company</th>
+  <th>Amount excl. VAT</th>
+  <th>Amount incl. VAT</th>
+ </tr>
+
+<? foreach($total as $company => $amount) { ?>
+<tr>
+  <td> <?=$company?> </td>
+  <td align="right"> <?=sprintf("%.2f", $amount['HT']);?> &euro; </td>
+  <td align="right"> <?=sprintf("%.2f", $amount['TTC']);?> &euro; </td>
+</tr>
+<?  } ?>
 </table>
 
 <form action="process.php" onsubmit="return confirm('Are you sure you want to process the direct debit?')">
   <input type="submit" name="debit" value="Mark invoices as debited">
 </form>
 
+<br/>
+<br/>
 <h1>Previous debits</h1>
 
 <?
