@@ -60,8 +60,8 @@ while ($invoice = mysql_fetch_assoc($res)) {
   echo "<tr> <td> $info->nom_client </td>";
   echo "<td> <a href=\"../prospection/edit_facture.php?id_facture=$invoice[invoice_id]\">$info->num_facture</a> </td>";
   echo "<td> $info->nice_date_facture </td>";
-  echo "<td> $info->nice_total_ht &euro; </td>";
-  echo "<td> $info->nice_total_ttc &euro; </td>";
+  echo "<td align=\"right\"> $info->nice_total_ht &euro; </td>";
+  echo "<td align=\"right\"> $info->nice_total_ttc &euro; </td>";
   echo "</tr>";
 
   $total_ht  += $info->nice_total_ht;
@@ -73,8 +73,8 @@ while ($invoice = mysql_fetch_assoc($res)) {
   <td></td>
   <td></td>
   <td align="right"> <b>TOTAL</b> </td>
-  <td> <?=$total_ht?> &euro; </td>
-  <td> <?=$total_ttc?> &euro; </td>
+  <td align="right"> <?=$total_ht?> &euro; </td>
+  <td align="right"> <?=$total_ttc?> &euro; </td>
 </tr>
 </table>
 
