@@ -493,5 +493,20 @@ ALTER TABLE `webfinance_invoice_rows`
 ALTER TABLE `webfinance_invoices`
   ADD CONSTRAINT `webfinance_invoices_ibfk_1` FOREIGN KEY (`id_client`) REFERENCES `webfinance_clients` (`id_client`) ON DELETE CASCADE;
 
+CREATE TABLE direct_debit (
+  id int(11) UNSIGNED NOT NULL auto_increment,
+  date datetime,
+  PRIMARY KEY (id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE direct_debit_row (
+  id int(11) UNSIGNED NOT NULL auto_increment,
+  invoice_id int(11) UNSIGNED NOT NULL,
+  debit_id int(11) UNSIGNED,
+  state ENUM('todo','done') NOT NULL default 'todo',
+  PRIMARY KEY (id),
+  UNIQUE KEY (invoice_id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 -- vim: fileencoding=utf8
 -- EOF

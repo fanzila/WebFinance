@@ -407,6 +407,7 @@ $options .= "<option ".($response->id_client==$facture->id_client ? 'selected="s
         if (! $facture->immuable)
           printf('<a href="save_facture.php?id_facture=%d&action=delete_facture" onclick="return ask_confirmation(\'%s\');">%s</a><br/>', $facture->id_facture,_('Do you really want to delete it ?'), _('Delete'));
       ?>
+      <a href="../direct_debit/push.php?id=<?= $facture->id_facture ?>" onclick="return ask_confirmation('Are you sure you want to mark this invoice as paid and plan a direct debit?');"><?=_('Plan for direct debit')?></a><br/>
       </td>
     </tr>
     <tr>

@@ -92,6 +92,7 @@ while(list($id_invoice) = mysql_fetch_row($result)) {
         " du $invoice->periodic_next_deadline au $next_deadline",
         $invoice_row['description']));
 
+    // Update invoice date
     $query='UPDATE webfinance_invoice_rows '.
       "SET description='$invoice_row[description]'".
       "WHERE id_facture_ligne=$invoice_row[id_facture_ligne]";
@@ -132,8 +133,17 @@ while(list($id_invoice) = mysql_fetch_row($result)) {
 
     $prelevement_auto_total += $new_invoice->nice_total_ttc;
 
+    # Set invoice as paid
     echo "Debug: Set invoice as paid by direct debit\n";
     $Invoice->setPaid($id_new_invoice);
+
+    # Plan the invoice to be debited
+    mysql_query(
+      'INSERT INTO direct_debit_row ' .
+      "SET invoice_id = $id_new_invoice, ".
+      "    state='todo'")
+      or die(mysql_error());
+
   }
 
   // Update deadline
@@ -149,18 +159,7 @@ while(list($id_invoice) = mysql_fetch_row($result)) {
 }
 
 $mail = new PHPMailer();
-$mail->AddAddress('administratif@isvtec.com');
 $mail->CharSet = 'UTF-8';
-$mail->From = 'webfinance@isvtec.com';
-$mail->FromName = 'Webfinance';
-
-if($send_mail_direct_debit) {
-  echo "Debug: Mail direct debit to process\n";
-  $mail->Subject = 'Direct debit to process';
-  $mail->Body = $prelevement_auto_recap;
-  $mail->Body .= "\n\nTotal: $prelevement_auto_total EUR";
-  $mail->Send();
-}
 
 if($send_mail_print_invoice) {
   echo "Debug: Mail invoices to print and mail\n";
