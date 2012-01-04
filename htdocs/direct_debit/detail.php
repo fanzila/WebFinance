@@ -64,8 +64,8 @@ while ($invoice = mysql_fetch_assoc($res)) {
   echo "<td align=\"right\"> $info->nice_total_ttc &euro; </td>";
   echo "</tr>";
 
-  $total_ht  += $info->nice_total_ht;
-  $total_ttc += $info->nice_total_ttc;
+  $total_ht  += $info->total_ht;
+  $total_ttc += $info->total_ttc;
 }
 ?>
 
