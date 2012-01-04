@@ -24,11 +24,8 @@ $roles = 'manager,employee';
 include("../top.php");
 include("nav.php");
 
-$Invoice = new Facture();
-
-if(!isset($_GET['id']) or !is_numeric($_GET['id']) or
-  !$Invoice->exists($_GET['id'])) {
-  echo "Invalid invoice id";
+if(!isset($_GET['id']) or !is_numeric($_GET['id'])) {
+  echo "Invalid direct debit id";
   exit(1);
 }
 
@@ -53,6 +50,7 @@ $res = mysql_query(
 <?
 $total_ht  = 0;
 $total_ttc = 0;
+$Invoice = new Facture();
 while ($invoice = mysql_fetch_assoc($res)) {
   $info = $Invoice->getInfos($invoice['invoice_id']);
   echo "<tr> <td> $info->nom_client </td>";
