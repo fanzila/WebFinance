@@ -84,7 +84,9 @@ while ($invoice = mysql_fetch_assoc($res)) {
   <th>Amount incl. VAT</th>
  </tr>
 
-<? foreach($total as $company => $amount) { ?>
+<?
+  asort($total);
+  foreach($total as $company => $amount) { ?>
 <tr>
   <td> <?=$company?> </td>
   <td align="right"> <?=sprintf("%.2f", $amount['HT']);?> &euro; </td>
