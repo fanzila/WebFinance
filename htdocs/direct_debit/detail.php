@@ -29,14 +29,16 @@ if(!isset($_GET['id']) or !is_numeric($_GET['id'])) {
   exit(1);
 }
 
-echo '<h1>Invoices debited</h1>';
-
 $res = mysql_query(
   'SELECT invoice_id '.
   'FROM direct_debit_row '.
   "WHERE debit_id = $_GET[id]")
   or die(mysql_error());
 ?>
+
+<h1>Invoices debited</h1>
+
+<h2>Details</h2>
 
 <table border="1">
  <tr>
@@ -53,6 +55,8 @@ $total_ttc = 0;
 $Invoice = new Facture();
 while ($invoice = mysql_fetch_assoc($res)) {
   $info = $Invoice->getInfos($invoice['invoice_id']);
+  $total[$info->nom_client]['HT'] += $info->total_ht;
+  $total[$info->nom_client]['TTC'] += $info->total_ttc;
   echo "<tr> <td> $info->nom_client </td>";
   echo "<td> <a href=\"../prospection/edit_facture.php?id_facture=$invoice[invoice_id]\">$info->num_facture</a> </td>";
   echo "<td> $info->nice_date_facture </td>";
@@ -72,6 +76,34 @@ while ($invoice = mysql_fetch_assoc($res)) {
   <td> <?=$total_ht?> &euro; </td>
   <td> <?=$total_ttc?> &euro; </td>
 </tr>
+</table>
+
+<br/>
+<h2>Summary</h2>
+
+<table border="1">
+ <tr>
+  <th>Company</th>
+  <th>Amount excl. VAT</th>
+  <th>Amount incl. VAT</th>
+ </tr>
+
+<?
+  ksort($total);
+  foreach($total as $company => $amount) { ?>
+<tr>
+  <td> <?=$company?> </td>
+  <td align="right"> <?=sprintf("%.2f", $amount['HT']);?> &euro; </td>
+  <td align="right"> <?=sprintf("%.2f", $amount['TTC']);?> &euro; </td>
+</tr>
+<?  } ?>
+
+<tr>
+  <td align="right"> <b>TOTAL</b> </td>
+  <td align="right"> <?=sprintf("%.2f", $total_ht);?> &euro; </td>
+  <td align="right"> <?=sprintf("%.2f", $total_ttc);?> &euro; </td>
+</tr>
+
 </table>
 
 <a href="./">Back</a>
