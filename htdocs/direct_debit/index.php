@@ -85,7 +85,7 @@ while ($invoice = mysql_fetch_assoc($res)) {
  </tr>
 
 <?
-  asort($total);
+  ksort($total);
   foreach($total as $company => $amount) { ?>
 <tr>
   <td> <?=$company?> </td>
