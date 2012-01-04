@@ -1,6 +1,6 @@
 Options +MultiViews
 ErrorDocument 404 /404.php
-#php_value error_reporting 2037
+php_value error_reporting 2037
 php_flag register_globals off
 
 <IfModule mod_negotiation.c>

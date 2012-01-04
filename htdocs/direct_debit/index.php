@@ -93,6 +93,13 @@ while ($invoice = mysql_fetch_assoc($res)) {
   <td align="right"> <?=sprintf("%.2f", $amount['TTC']);?> &euro; </td>
 </tr>
 <?  } ?>
+
+<tr>
+  <td align="right"> <b>TOTAL</b> </td>
+  <td align="right"> <?=sprintf("%.2f", $total_ht);?> &euro; </td>
+  <td align="right"> <?=sprintf("%.2f", $total_ttc);?> &euro; </td>
+</tr>
+
 </table>
 
 <form action="process.php" onsubmit="return confirm('Are you sure you want to process the direct debit?')">
