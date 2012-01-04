@@ -21,7 +21,6 @@
 include("../inc/main.php");
 
 $roles = 'manager,employee';
-include("../top.php");
 
 // Check if invoices are planned to be debited
 $req = mysql_query(
