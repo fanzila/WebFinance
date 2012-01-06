@@ -1,10 +1,10 @@
-all: test
-	@echo Available targets: webfinance-VERSION.tar.gz
+all: test;
 
 .PHONY: test;
 
 test:
 	$(MAKE) -C $@
+	$(MAKE) -C fo $@
 
 %.tar.gz:
 	rm -rf /tmp/$(@:%.tar.gz=%)
