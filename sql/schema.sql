@@ -504,8 +504,7 @@ CREATE TABLE direct_debit_row (
   invoice_id int(11) UNSIGNED NOT NULL,
   debit_id int(11) UNSIGNED,
   state ENUM('todo','done') NOT NULL default 'todo',
-  PRIMARY KEY (id),
-  UNIQUE KEY (invoice_id)
+  PRIMARY KEY (id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- vim: fileencoding=utf8
