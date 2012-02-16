@@ -45,17 +45,12 @@ $result = mysql_query('SELECT id_facture '.
   or die(mysql_error());
 
 if(mysql_num_rows($result)==0) {
-  echo "Debug: no invoice to process\n";
   exit;
 }
 
 while(list($id_invoice) = mysql_fetch_row($result)) {
-  echo "Debug: Processing invoice id $id_invoice\n";
-
   // Fetch info from invoice
   $invoice = $Invoice->getInfos($id_invoice);
-
-  echo "Debug: Client: $invoice->nom_client\n";
 
   // Calculate next deadline
   $next_deadline = $Invoice->nextDeadline($invoice->periodic_next_deadline,
@@ -63,7 +58,6 @@ while(list($id_invoice) = mysql_fetch_row($result)) {
 
   // Duplicate the invoice
   $id_new_invoice = $Invoice->duplicate($id_invoice);
-  echo "Debug: Invoice duplicated as ID $id_new_invoice\n";
 
   // Delete setup fees that only have to be paid once
   $query='DELETE FROM webfinance_invoice_rows '.
@@ -106,13 +100,11 @@ while(list($id_invoice) = mysql_fetch_row($result)) {
 
     // Send invoice by email to the client
     case 'email':
-      echo "Debug: Sending invoice by email\n";
       $Invoice->sendByEmail($id_new_invoice);
       break;
 
       // Send the invoice to me in order to print and send it to the client
     case 'postal':
-      echo "Debug: Generating PDF\n";
       $send_mail_print_invoice=true;
       $attachments[] = $Invoice->generatePDF($id_new_invoice, true);
       $Invoice->setSent($id_new_invoice);
@@ -134,7 +126,6 @@ while(list($id_invoice) = mysql_fetch_row($result)) {
     $prelevement_auto_total += $new_invoice->nice_total_ttc;
 
     # Set invoice as paid
-    echo "Debug: Set invoice as paid by direct debit\n";
     $Invoice->setPaid($id_new_invoice);
 
     # Plan the invoice to be debited
@@ -147,22 +138,17 @@ while(list($id_invoice) = mysql_fetch_row($result)) {
   }
 
   // Update deadline
-  echo "Debug: Update $invoice->period deadline from " .
-    "$invoice->periodic_next_deadline to $next_deadline\n";
-	
   mysql_query('UPDATE webfinance_invoices '.
     "SET periodic_next_deadline='$next_deadline' " .
     "WHERE id_facture = $id_invoice")
     or die(mysql_error());
 
-  echo "===\n";
 }
 
 $mail = new PHPMailer();
 $mail->CharSet = 'UTF-8';
 
 if($send_mail_print_invoice) {
-  echo "Debug: Mail invoices to print and mail\n";
   $mail->From = 'administratif@isvtec.com';
   $mail->FromName = 'ISVTEC invoices';
   $mail->ClearAddresses();
