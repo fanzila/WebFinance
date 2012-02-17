@@ -90,14 +90,15 @@ def subscriptionpayment(subscription, sender_host, internal_transid, secure=Fals
 
     params = getParams(subscription.pk, subscription.client.pk, sender_host, internal_transid, payment_type, urls, extra, secure)
 
-    price_excl_vat = sum(ligne.price_excl_vat for ligne in  subscription.subscriptionrow_set.all())
+    price_excl_vat_first = sum(ligne.price_excl_vat for ligne in  subscription.subscriptionrow_set.all() if ligne.first)
+    price_excl_vat_subs = sum(ligne.price_excl_vat for ligne in  subscription.subscriptionrow_set.all() if not ligne.first)
 
     order = HP.Order()
 
     # FIXME: Introduce Affiliates
 
     # FIXME: Have to find a better way to format this
-    order_info = " | ".join(ligne.description for ligne in  subscription.subscriptionrow_set.all())
+    order_info = subscription.info or " | ".join(ligne.description for ligne in  subscription.subscriptionrow_set.all())
 
     order_data = [{'shippingAmount':0, 'insuranceAmount':0, 'fixedCostAmount':0, 'orderTitle':'Subscription # %s'%subscription.ref_contrat,
                    'orderInfo':order_info,
@@ -116,10 +117,10 @@ def subscriptionpayment(subscription, sender_host, internal_transid, secure=Fals
     DELAYS = {'monthly':'1M',
               'quarterly':'3M',
               'yearly':'12M'}
-    inst_data = [{'price':price_excl_vat, 'first':'true',
+    inst_data = [{'price':price_excl_vat_first, 'first':'true',
                   'paymentDelay': settings.HIPAY_DEFAULT_SUBSCRIPTION_FIRST_PAYMENT_DELAY, #use the field periodic_next_deadline
                   'tax':mta},
-                 {'price':price_excl_vat, 'first':'false',
+                 {'price':price_excl_vat_subs, 'first':'false',
                   'paymentDelay':extra.get('paymentdelay',None) or DELAYS.get(subscription.period, None) or settings.HIPAY_DEFAULT_SUBSCRIPTION_SUBS_PAYMENT_DELAY,
                   'tax':mta}]
     inst.setInstallements(inst_data)

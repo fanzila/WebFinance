@@ -55,7 +55,11 @@ def verify_credentials(request):
                              last_name=saved.user.last_name,
                              first_name=saved.user.first_name,
                              name=saved.user.username,
+                             apikey=saved.user.api_key.key,
                              id=saved.user.id)
+    else:
+        print saved.token_type
+        logger.warn("The token provided is not an access token brother")
 
     return HttpResponse(json.dumps(response_data), mimetype="application/json")
 

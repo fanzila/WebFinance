@@ -1,8 +1,9 @@
 from django.conf import settings
+from django.db import models
 from django.contrib.sites.models import RequestSite
 from django.contrib.sites.models import Site
 from urllib import unquote
-from isvtec_profile.models import profile
+from isvtec_profile.models import profile, ApiKey
 from registration import signals
 from registration.models import RegistrationProfile
 from django.contrib.auth.models import User
@@ -77,6 +78,7 @@ class ISVTECBackend(DefaultBackend):
             signals.user_activated.send(sender=self.__class__,
                                         user=activated,
                                         request=request)
+        ApiKey.objects.create(user=activated)
         return activated
 
     def registration_allowed(self, request):

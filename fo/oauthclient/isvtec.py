@@ -25,7 +25,7 @@ ISVTEC_CHECK_AUTH = 'http://%s/accounts/verify_credentials.json' % settings.ISVT
 class ISVTECBackend(OAuthBackend):
     """ISVTEC OAuth authentication backend"""
     name = 'isvtec'
-    EXTRA_DATA = [('id', 'id'), ('first_name', 'first_name'), ('last_name', 'last_name')]
+    EXTRA_DATA = [('id', 'id'), ('first_name', 'first_name'), ('last_name', 'last_name'), ('apikey', 'apikey')]
 
     def get_user_details(self, response):
         """Return user details from ISVTEC account"""
@@ -33,7 +33,8 @@ class ISVTECBackend(OAuthBackend):
                 'email': response['email'],
                 'fullname': response['name'],
                 'first_name': response['first_name'],
-                'last_name': response['last_name']}
+                'last_name': response['last_name'],
+                'apikey': response['apikey']}
 
 
 class ISVTECAuth(ConsumerBasedOAuth):

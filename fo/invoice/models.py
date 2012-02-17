@@ -41,6 +41,7 @@ class SubscriptionRow(models.Model):
     description = models.CharField(max_length=1024)
     qty = models.DecimalField(null=True, max_digits=5, decimal_places=2, blank=True)
     price_excl_vat = models.DecimalField(null=True, max_digits=20, decimal_places=5, blank=True)
+    first = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = _('Subscription row')
@@ -62,7 +63,8 @@ class Subscription(models.Model):
     delivery = models.CharField(max_length=16, choices=[(k, _(k)) for k in ('email', 'postal')], default='email')
     payment_method = models.CharField(max_length=16, choices=[(k, _(k)) for k in ('unknown', 'direct_debit', 'check', 'wire_transfer')], default='unknown')
     tax = models.DecimalField(max_digits=5, decimal_places=2,default='19.60')
-    type_doc = models.CharField(max_length=16, choices=[(k, _(k)) for k in ('quote','invoice')], default='invoice') 
+    type_doc = models.CharField(max_length=16, choices=[(k, _(k)) for k in ('quote','invoice')], default='invoice')
+    info = models.TextField(null=True, blank=True)
     
     class Meta:
         verbose_name = _('Subscription')

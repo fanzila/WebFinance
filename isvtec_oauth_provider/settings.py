@@ -117,7 +117,8 @@ LOGGING = {
     'loggers': {
         'django': {
             #FIXME: Have to change this to syslog too, not sure
-            'handlers':['null'],
+            'handlers': ['console', 'syslog'],
+            #'handlers':['null'],
             'propagate': True,
             'level':'DEBUG',
         },
@@ -127,12 +128,12 @@ LOGGING = {
             'propagate': True,
         },
         'isvtec_oauth_provider': {
-            'handlers': ['console', 'syslog', 'mail_admins'],
+            'handlers': ['console', 'syslog'],
             'level': 'DEBUG',
             'propagate': True,
         },
         'views': {
-            'handlers': ['console', 'syslog', 'mail_admins'],
+            'handlers': ['console', 'syslog'],
             'level': 'DEBUG',
             'propagate': True,
         },

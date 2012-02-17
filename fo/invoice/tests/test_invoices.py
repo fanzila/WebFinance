@@ -9,9 +9,8 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from invoice.models import Invoices, Subscription, InvoiceTransaction, SubscriptionTransaction
-from tests_base import SocialAuthTestsCase, FormParserByID, RefreshParser
+from tests_base import SocialAuthTestsCase, FormParserByID
 from enterprise.models import Clients, Clients2Users, Users
-from django.http import HttpRequest
 from django.contrib.auth.models import User
 from tastypie.models import create_api_key
 from urllib import urlencode
@@ -590,7 +589,7 @@ class SubscriptionAPITestCase(TestCase):
         resp = self.client.get('/api/v1/subscription/1/', data=self.data)
         self.assertEqual(resp.status_code, 200)
         deserialized = json.loads(resp.content)
-        self.assertEqual(len(deserialized), 11)
+        self.assertEqual(len(deserialized), 12)
         self.assertEqual(deserialized['ref_contrat'], u"0412201101")
 
 
