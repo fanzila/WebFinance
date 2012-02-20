@@ -73,7 +73,7 @@ LOGGING = {
             'level':'DEBUG',
         },
         'django.request': {
-            'handlers': ['console', 'syslog'],
+            'handlers': ['console'],
             'level': 'ERROR',
             'propagate': True,
         },
@@ -87,7 +87,7 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-        'views': {
+        'isvtec': {
             'handlers': ['console', 'syslog'],
             'level': 'ERROR',
             'propagate': True,
@@ -156,7 +156,7 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
                                )
 ISVTEC_CONSUMER_KEY = 'dpf43f3p2l4k3l03'
 ISVTEC_CONSUMER_SECRET = 'kd94hf93k423kf44'
-ISVTEC_SERVER = '127.0.0.1:8000'
+ISVTEC_SERVER = 'oauth.wilane.org'
 ISVTEC_LOGOUT_URL = "http://%s%s" %(ISVTEC_SERVER, '/accounts/logout')
 TWITTER_CONSUMER_KEY              = 'KVNfuJv3hFdNDAFVyZ9Q'
 TWITTER_CONSUMER_SECRET           = 'GAH3idtFFKilEmcnQZsEeEwm5xyRrohZ9KitW9qk54'

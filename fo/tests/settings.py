@@ -83,5 +83,24 @@ LOGGING = {
     }
 }
 
-TEST_ISVTEC_USER='test_user'
-TEST_ISVTEC_PASSWORD='test_password'
+TEST_ISVTEC_USER='ousmane@wilane.org'
+TEST_ISVTEC_PASSWORD='Test'
+ISVTEC_SERVER = 'oauth.wilane.org'
+
+INSTALLED_APPS = (
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.admin',
+    'fo.enterprise',
+    'fo.invoice',
+    'django_coverage',
+    'hipay',
+    'django_countries',
+    'tastypie',
+    'reversion',
+    'social_auth',
+)

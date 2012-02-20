@@ -5,115 +5,112 @@
 __author__ = "Ousmane Wilane ♟ <ousmane@wilane.org>"
 __date__   = "Fri Nov 11 16:54:17 2011"
 
+from django.test.client import RequestFactory
+from social_auth.models import UserSocialAuth
+from django.utils.translation import ugettext_lazy as _
+from tests_base import SocialAuthTestsCase, FormParserByID, RefreshParser
 from django.test import TestCase
 from django.core.urlresolvers import reverse
-from django.utils.translation import ugettext_lazy as _
 from invoice.models import Invoices, Subscription, InvoiceTransaction, SubscriptionTransaction
-from tests_base import SocialAuthTestsCase, FormParserByID
 from enterprise.models import Clients, Clients2Users, Users
-from django.contrib.auth.models import User
-from tastypie.models import create_api_key
 from urllib import urlencode
 from django.conf import settings
 import logging
-logger = logging.getLogger('wf')
+logger = logging.getLogger('isvtec')
 settings.TASTYPIE_FULL_DEBUG=True
 settings.DEBUG=True
-settings.AUTHENTICATION_BACKENDS = (
-     'libs.auth.WFMockRemoteUserBackend',
-)
+
 try:
     import json
 except ImportError:
     import simplejson as json
 
-
 class ISVTECTestCase(SocialAuthTestsCase):
     def setUp(self, *args, **kwargs):
         settings.AUTHENTICATION_BACKENDS = (
-            'libs.auth.WFMockRemoteUserBackend',)
+            'oauthclient.isvtec.ISVTECBackend',)
         settings.SOCIAL_AUTH_IMPORT_BACKENDS = (
             'oauthclient',)
         settings.SOCIAL_AUTH_ENABLED_BACKENDS = ('isvtec',)
         settings.AUTHENTICATION_BACKENDS = ('oauthclient.isvtec.ISVTECBackend',)
         super(ISVTECTestCase, self).setUp(*args, **kwargs)
-        self.user = getattr(settings, 'TEST_ISVTEC_USER', None)
-        self.passwd = getattr(settings, 'TEST_ISVTEC_PASSWORD', None)
+        self.username = getattr(settings, 'TEST_ISVTEC_USER', None)
+        self.password = getattr(settings, 'TEST_ISVTEC_PASSWORD', None)
         # check that user and password are setup properly
-        self.assertTrue(self.user)
-        self.assertTrue(self.passwd)
-
+        self.assertTrue(self.username)
+        self.assertTrue(self.password)
+        self.factory = RequestFactory()
+        self.ticket = ''
 
 class ISVTECTestLogin(ISVTECTestCase):
-    def test_login_succeful(self):
+    def login(self, username, ticket):
+        #Mock these call the test should be done just once
+        self.test_login()
+
+    def test_login(self):
         response = self.client.get(self.reverse('socialauth_begin', 'isvtec'))
         # social_auth must redirect to service page
         self.assertEqual(response.status_code, 302)
 
-        # Open first redirect page, it contains user login form because
-        # we don't have cookie to send to isvtec
-        login_content = self.get_content(response['Location'])
+        rep = self.get_content(response['Location'], get_agent=True, use_cookies=True)
+        url = rep.url
+        login_content = ''.join(rep.readlines())
+
         parser = FormParserByID('login_form')
         parser.feed(login_content)
-        auth = {'session[username]': self.user,
-                'session[password]': self.passwd}
+        auth = {'username': self.username,
+                'password': self.password}
 
         # Check that action and values were loaded properly
         self.assertTrue(parser.action)
         self.assertTrue(parser.values)
 
-        # Post login form, will return authorization or redirect page
+        # Post login form, will return a redirect page
         parser.values.update(auth)
-        #content = self.get_content("http://%s%s"%(settings.ISVTEC_SERVER, parser.action), data=parser.values)
+        content = self.get_redirect(url, data=parser.values, use_cookies=True)
+        response = ''.join(content.readlines())
+        parser = RefreshParser()
+        parser.feed(response)
 
-        # If page contains a form#login_form, then we are in the app
-        # authorization page because the app is not authorized yet,
-        # otherwise the app already gained permission and isvtec sends
-        # a page that redirects to redirect_url
-        # if 'login_form' in content:
-        #     # authorization form post, returns redirect_page
-        #     parser = FormParserByID('login_form').feed(content)
-        #     self.assertTrue(parser.action)
-        #     self.assertTrue(parser.values)
-        #     parser.values.update(auth)
-        #     redirect_page = self.get_content(parser.action, data=parser.values)
-        # else:
-        #     redirect_page = content
 
-        # parser = RefreshParser()
-        # parser.feed(redirect_page)
-        # self.assertTrue(parser.value)
+        # Follow the redirected page
+        content = self.get_redirect(content.headers['Location'], use_cookies=True)
+        response = ''.join(content.readlines())
+        parser = RefreshParser()
+        parser.feed(response)
 
-        # response = self.client.get(self.make_relative(parser.value))
-        # self.assertEqual(response.status_code, 302)
-        # location = self.make_relative(response['Location'])
-        # login_redirect = getattr(settings, 'LOGIN_REDIRECT_URL', '')
-        # self.assertTrue(location == login_redirect)
-    
-class InvoiceTest(TestCase):
+        # Complete the login process to allow token to be save
+        completion = self.client.get(content.headers['Location'])
+
+        # Pickup the token for further testing
+        u = UserSocialAuth.objects.all()[0]
+
+        response = self.get_content("http://%s/accounts/verify_credentials.json?%s"%(settings.ISVTEC_SERVER,u.extra_data.get('access_token')), use_cookies=True)
+        result = json.loads(response)
+        self.assertDictEqual(result, {u'first_name': u'Ousmane', u'apikey': u'91dae780ce33ca2a78191008434f9dfc7f8d1740', u'screen_name': u'ousmane@wilane.org', u'email': u'ousmane@wilane.org', u'last_name': u'Wilane', u'fullname': u'ousmane@wilane.org', u'id': 3, u'name': u'ousmane@wilane.org'})
+        self.api_key = result.get('apikey', None)
+
+class InvoiceTest(ISVTECTestLogin, TestCase):
     def setUp(self):
-        # We need a ticket and an account for test to pass before we use
-        # selenium and friends
-        self.username = 'ousmane@wilane.org'
-        self.ticket = ''
+        super(InvoiceTest, self).setUp()
 
     def test_list_companies(self):
         url = reverse("list_companies")
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
-        self.client.login(username=self.username, ticket=self.ticket)
+        self.login(username=self.username, ticket=self.ticket)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'invoice/list_companies.html')
         self.assertContains(response, _("My companies"))
         self.client.logout()
-        
+
 
     def test_list_invoice(self):
-        url = reverse("list_invoices", kwargs={'customer_id':1})        
+        url = reverse("list_invoices", kwargs={'customer_id':1})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
-        self.client.login(username=self.username, ticket=self.ticket)
+        self.login(username=self.username, ticket=self.ticket)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'invoice/list_invoices.html')
@@ -122,28 +119,28 @@ class InvoiceTest(TestCase):
 
 
     def test_list_invoice404(self):
-        url = reverse("list_invoices", kwargs={'customer_id':123})        
-        self.client.login(username=self.username, ticket=self.ticket)
+        url = reverse("list_invoices", kwargs={'customer_id':123})
+        self.login(username=self.username, ticket=self.ticket)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
         self.client.logout()
-        
+
     def test_detail_invoice(self):
         url = reverse("detail_invoice", kwargs={'invoice_id':1})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
-        self.client.login(username=self.username, ticket=self.ticket)
+        self.login(username=self.username, ticket=self.ticket)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'invoice/detail_invoices.html')
         self.assertContains(response, "201111100")
         self.client.logout()
-        
+
     def test_detail_subscription(self):
         url = reverse("detail_subscription", kwargs={'subscription_id':1})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
-        self.client.login(username=self.username, ticket=self.ticket)
+        self.login(username=self.username, ticket=self.ticket)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'invoice/detail_subscriptions.html')
@@ -153,15 +150,15 @@ class InvoiceTest(TestCase):
     def test_detail_invoice404(self):
         url = reverse("detail_invoice", kwargs={'invoice_id':123})
         response = self.client.get(url)
-        self.client.login(username=self.username, ticket=self.ticket)
+        self.login(username=self.username, ticket=self.ticket)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
         self.client.logout()
-        
+
     def test_detail_subscription404(self):
         url = reverse("detail_subscription", kwargs={'subscription_id':123})
         response = self.client.get(url)
-        self.client.login(username=self.username, ticket=self.ticket)
+        self.login(username=self.username, ticket=self.ticket)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
         self.client.logout()
@@ -170,7 +167,7 @@ class InvoiceTest(TestCase):
         url = reverse("accept_quote", kwargs={'invoice_id':1})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
-        self.client.login(username=self.username, ticket=self.ticket)
+        self.login(username=self.username, ticket=self.ticket)
         response = self.client.get(url, follow=True)
         self.assertRedirects(response, reverse('list_invoices', kwargs={'customer_id':1}))
         self.assertContains(response, _("Invoices/Quotes for company"))
@@ -180,7 +177,7 @@ class InvoiceTest(TestCase):
         url = reverse("accept_subscriptionquote", kwargs={'subscription_id':1})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
-        self.client.login(username=self.username, ticket=self.ticket)
+        self.login(username=self.username, ticket=self.ticket)
         response = self.client.get(url, follow=True)
         self.assertRedirects(response, reverse('list_invoices', kwargs={'customer_id':1}))
         self.assertContains(response, _("Invoices/Quotes for company"))
@@ -189,7 +186,7 @@ class InvoiceTest(TestCase):
     def test_accept_quote404(self):
         url = reverse("accept_quote", kwargs={'invoice_id':123})
         response = self.client.get(url)
-        self.client.login(username=self.username, ticket=self.ticket)
+        self.login(username=self.username, ticket=self.ticket)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
         self.client.logout()
@@ -197,7 +194,7 @@ class InvoiceTest(TestCase):
     def test_accept_subscriptionquote404(self):
         url = reverse("accept_subscriptionquote", kwargs={'subscription_id':123})
         response = self.client.get(url)
-        self.client.login(username=self.username, ticket=self.ticket)
+        self.login(username=self.username, ticket=self.ticket)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
         self.client.logout()
@@ -205,7 +202,7 @@ class InvoiceTest(TestCase):
     def test_download_invoice404(self):
         url = reverse("download_invoice", kwargs={'invoice_id':123})
         response = self.client.get(url)
-        self.client.login(username=self.username, ticket=self.ticket)
+        self.login(username=self.username, ticket=self.ticket)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
         self.client.logout()
@@ -215,7 +212,7 @@ class InvoiceTest(TestCase):
         url = reverse("download_invoice", kwargs={'invoice_id':1})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
-        self.client.login(username=self.username, ticket=self.ticket)
+        self.login(username=self.username, ticket=self.ticket)
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         #self.assertContains(response, "http://testserver/invoice/download/invoice/1")
@@ -225,7 +222,7 @@ class InvoiceTest(TestCase):
         url = reverse('hipay_invoice', kwargs={'invoice_id':1})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
-        self.client.login(username=self.username, ticket=self.ticket)
+        self.login(username=self.username, ticket=self.ticket)
         response = self.client.get(url)
         self.assertEqual(response['location'][:45], u'https://test-payment.hipay.com/index/mapi/id/')
         self.client.logout()
@@ -234,7 +231,7 @@ class InvoiceTest(TestCase):
         url = reverse('hipay_paysubs', kwargs={'subscription_id':1})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
-        self.client.login(username=self.username, ticket=self.ticket)
+        self.login(username=self.username, ticket=self.ticket)
         #FIXME:   File "/Users/wilane/src/isvtec/WebFinance/fo/../fo/hipay/hipay.py", line 322, in setURLOk
         # raise ValueError(_("""Invalid url %(url_ok)s""" %{'url_ok':URL_ok}))
         # ValueError: Invalid url http://testserver/invoice/hipay/payment/subscription/ok/1/1
@@ -253,7 +250,7 @@ class InvoiceTest(TestCase):
             self.assertTemplateUsed(response, 'invoice/hipay/%s_payment.html' %(key,))
             self.assertContains(response, _(val))
             self.client.logout()
-            
+
     def test_parse_ack(self):
         ack = u"""<?xml version="1.0" encoding="UTF-8"?> <mapi>
 <mapiversion>1.0</mapiversion> <md5content>c0783cc613bf025087b8bf5edecac824</md5content> <result>
@@ -268,7 +265,7 @@ class InvoiceTest(TestCase):
         tr = InvoiceTransaction(invoice_id=1)
         tr.save()
         url = reverse('hipay_ipn_ack', kwargs={'internal_transid':tr.pk,'payment_type':'invoice','invoice_id':1})
-        self.client.login(username=self.username, ticket=self.ticket)
+        self.login(username=self.username, ticket=self.ticket)
         response = self.client.post(url, {'xml': ack.decode('utf-8')})
         invoice = Invoices.objects.get(pk=1)
         self.assertEqual(response.status_code, 200)
@@ -311,7 +308,7 @@ class InvoiceTest(TestCase):
         tr = InvoiceTransaction(invoice_id=1, url_ack="http://127.0.0.1:8000%s"%url_ack)
         tr.save()
         url = reverse('hipay_ipn_ack', kwargs={'internal_transid':tr.pk,'payment_type':'invoice','invoice_id':1})
-        self.client.login(username=self.username, ticket=self.ticket)
+        self.login(username=self.username, ticket=self.ticket)
         # Change the settings to allow 127.0.0.1 to post ACK
         settings.HIPAY_ACK_SOURCE_IPS.append('127.0.0.1')
         response = self.client.post(url, {'xml': ack.decode('utf-8')})
@@ -330,16 +327,12 @@ class InvoiceTest(TestCase):
         self.assertEqual(SubscriptionTransaction.objects.count(), 2)
         self.assertEqual(subscription.subscriptiontransaction_set.count(), 2)
 
-class ClientAPITestCase(TestCase):
+class ClientAPITestCase(ISVTECTestLogin, TestCase):
     def setUp(self):
-        user = User.objects.create_user(username='ousmane@wilane.org', email='ousmane@wilane.org', password=None)
+        super(ClientAPITestCase, self).setUp()
         client = Clients.objects.get(pk=1)
         Clients2Users.objects.create(user=Users.objects.get(email='ousmane@wilane.org'), client=client)
-        try:
-            create_api_key(sender=User, instance=user, created=True)
-        except:
-            pass
-        self.data = {'username':user.email, 'api_key':user.api_key.key}
+        self.data = {'username':self.username, 'api_key':self.api_key}
         self.extra = dict(HTTP_USERNAME=self.data['username'], HTTP_API_KEY=self.data['api_key'])
 
     def test_gets(self):
@@ -454,16 +447,12 @@ class ClientAPITestCase(TestCase):
 
 
 
-class InvoiceAPITestCase(TestCase):
+class InvoiceAPITestCase(ISVTECTestLogin, TestCase):
     def setUp(self):
-        user = User.objects.create_user(username='ousmane@wilane.org', email='ousmane@wilane.org', password=None)
+        super(InvoiceAPITestCase, self).setUp()
         client = Clients.objects.get(pk=1)
         Clients2Users.objects.create(user=Users.objects.get(email='ousmane@wilane.org'), client=client)
-        try:
-            create_api_key(sender=User, instance=user, created=True)
-        except:
-            pass
-        self.data = {'username':user.email, 'api_key':user.api_key.key}
+        self.data = {'username':self.username, 'api_key':self.api_key}
 
     def test_gets(self):
         self.data.update({'format': 'json'})
@@ -544,16 +533,12 @@ class InvoiceAPITestCase(TestCase):
 
 
 
-class SubscriptionAPITestCase(TestCase):
+class SubscriptionAPITestCase(ISVTECTestLogin, TestCase):
     def setUp(self):
-        user = User.objects.create_user(username='ousmane@wilane.org', email='ousmane@wilane.org', password=None)
+        super(SubscriptionAPITestCase, self).setUp()
         client = Clients.objects.get(pk=1)
         Clients2Users.objects.create(user=Users.objects.get(email='ousmane@wilane.org'), client=client)
-        try:
-            create_api_key(sender=User, instance=user, created=True)
-        except:
-            pass
-        self.data = {'username':user.email, 'api_key':user.api_key.key}
+        self.data = {'username':self.username, 'api_key':self.api_key}
 
     def test_posts(self):
         post_data = '{"client":"/api/v1/client/1/", "periodic_next_deadline":"2011-11-10T00:00:00", "ref_contrat":"141218", "subscriptionrowr":[{"description":"Premier article","prix_excl_vat":17,"qty":3},{"description":"Deuxième item","prix_excl_vat":5,"qty":10}]}'
@@ -567,7 +552,7 @@ class SubscriptionAPITestCase(TestCase):
         obj = json.loads(resp.content)
         self.assertEqual(obj['ref_contrat'], u'0412201101')
 
-        
+
     def test_gets(self):
         #FIXME: Put subscription data in the fixtures
         self.test_posts()
@@ -640,16 +625,12 @@ class SubscriptionAPITestCase(TestCase):
         self.assertEqual(resp.content, allows)
 
 
-class HiPaySubscriptionAPITestCase(TestCase):
+class HiPaySubscriptionAPITestCase(ISVTECTestLogin, TestCase):
     def setUp(self):
-        user = User.objects.create_user(username='ousmane@wilane.org', email='ousmane@wilane.org', password=None)
+        super(HiPaySubscriptionAPITestCase, self).setUp()
         client = Clients.objects.get(pk=1)
         Clients2Users.objects.create(user=Users.objects.get(email='ousmane@wilane.org'), client=client)
-        try:
-            create_api_key(sender=User, instance=user, created=True)
-        except:
-            pass
-        self.data = {'username':user.email, 'api_key':user.api_key.key}
+        self.data = {'username':self.username, 'api_key':self.api_key}
 
     def test_posts(self):
         post_data = '{"subscription":"/api/v1/subscription/1/"}'
@@ -723,16 +704,12 @@ class HiPaySubscriptionAPITestCase(TestCase):
         self.assertEqual(resp['Allow'], allows)
         self.assertEqual(resp.content, allows)
 
-class HiPayInvoiceAPITestCase(TestCase):
+class HiPayInvoiceAPITestCase(ISVTECTestLogin, TestCase):
     def setUp(self):
-        user = User.objects.create_user(username='ousmane@wilane.org', email='ousmane@wilane.org', password=None)
+        super(HiPayInvoiceAPITestCase, self).setUp()
         client = Clients.objects.get(pk=1)
         Clients2Users.objects.create(user=Users.objects.get(email='ousmane@wilane.org'), client=client)
-        try:
-            create_api_key(sender=User, instance=user, created=True)
-        except:
-            pass
-        self.data = {'username':user.email, 'api_key':user.api_key.key}
+        self.data = {'username':self.username, 'api_key':self.api_key}
 
     def test_posts(self):
         post_data = '{"invoice":"/api/v1/invoice/1/"}'

@@ -32,9 +32,10 @@ class HeaderApiKeyAutentication(ApiKeyAuthentication):
         ``HttpResponse`` if you need something custom.
         """
         from django.contrib.auth.models import User
+        #logger.warn("REQUEST META=%s GET=%s POST%s" %(request.META, request.GET, request.POST))
 
         username = request.GET.get('username') or request.POST.get('username') or request.META.get('HTTP_USERNAME')
-        api_key = request.GET.get('api_key') or request.POST.get('api_key') or request.META.get('HTTP_API_KEY')
+        api_key = request.GET.get('api_key') or request.POST.get('api_key') or request.META.get('HTTP_API_KEY') or request.META.get('HTTP_APIKEY') 
 
         if not username or not api_key:
             return self._unauthorized()

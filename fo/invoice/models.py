@@ -14,7 +14,7 @@ from django.db import models
 from fo.enterprise.models import Clients
 from django.core import serializers
 import logging
-logger = logging.getLogger('wf')
+logger = logging.getLogger('isvtec')
 
 class InvoiceRows(models.Model):
     id = models.AutoField(primary_key=True, db_column='id_facture_ligne')

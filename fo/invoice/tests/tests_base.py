@@ -13,7 +13,6 @@ from django.core.urlresolvers import reverse
 USER_AGENT = 'Mozilla/5.0'
 REFRESH_RE = re.compile(r'\d;\s*url=')
 
-
 class SocialAuthTestsCase(unittest.TestCase):
     """Base class for social auth tests"""
     SERVER_NAME = None
@@ -29,7 +28,7 @@ class SocialAuthTestsCase(unittest.TestCase):
         self.client = Client(**client_kwargs)
         super(SocialAuthTestsCase, self).__init__(*args, **kwargs)
 
-    def get_content(self, url, data=None, use_cookies=False):
+    def get_content(self, url, data=None, use_cookies=False, get_agent=False):
         """Return content for given url, if data is not None, then a POST
         request will be issued, otherwise GET will be used"""
         data = data and urllib.urlencode(data, doseq=True) or data
@@ -39,6 +38,8 @@ class SocialAuthTestsCase(unittest.TestCase):
         if use_cookies:
             agent.add_handler(urllib2.HTTPCookieProcessor(self.get_jar()))
         request.add_header('User-Agent', USER_AGENT)
+        if get_agent:
+            return agent.open(request, data=data)
         return ''.join(agent.open(request, data=data).readlines())
 
     def get_redirect(self, url, data=None, use_cookies=False):

@@ -10,6 +10,7 @@ import logging
 import operator
 from os.path import join, isfile
 from os import unlink
+from datetime import datetime
 from subprocess import Popen, PIPE
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404, Http404
@@ -149,7 +150,23 @@ def hipay_subscription(request, subscription_id):
     tr = SubscriptionTransaction(subscription=subscription)
     tr.save()
 
-    response = hipay.subscriptionpayment(subscription, sender_host=request.get_host(), secure=request.is_secure(), internal_transid=tr.pk)
+    # We create an invoice for the first payment and the subsequent payments are
+    # created by a cronlike process
+    first_invoice = Invoices.objects.create(client=subscription.client,
+                                           invoice_num=subscription.ref_contrat,
+                                           period=subscription.period)
+    try:
+        sr = subscription.subscriptionrow_set.get(first=True)
+    except Subscription.DoesNotExist:
+        raise ValueError("Malformed subscription %s, if this is a legacy subscription it should have been fixed by now"%subscription.pk)
+    first_invoice.invoicerows_set.create(description=sr.description,
+                                      qty=sr.qty,
+                                      df_price=sr.price_excl_vat)
+    response = hipay.simplepayment(first_invoice, sender_host=request.get_host(), secure=request.is_secure(), internal_transid=tr.pk)    
+
+    # This is the way we daeal with HiPay subscriptions, for now we don't want
+    # it but we can get back to using it when it gets 'better'
+    #response = hipay.subscriptionpayment(subscription, sender_host=request.get_host(), secure=request.is_secure(), internal_transid=tr.pk)
 
     if response['status'] == 'Accepted':
         tr.redirect_url = response['message']
@@ -162,7 +179,8 @@ def hipay_subscription(request, subscription_id):
 @login_required
 def download_invoice(request, invoice_id):
     #FIXME: Make the called script accept a configurable directory, Cyril can
-    #you fix that please.
+    #you fix that please ... that one is fixed, can you please allow the script
+    #to deal with subscriptions too
     current_user = Users.objects.get(email=request.user.email)
     invoices = [c.invoices_set.all() for c in current_user.clients_set.all()]
     if not invoices:
@@ -312,8 +330,9 @@ def hipay_ipn_ack(request, internal_transid, invoice_id, payment_type):
     if result:
         # FIXME: Make sure that this means PAID the $$$ are in my account and
         # nothing can change that
-        if result.get('status', None) == 'ok' and payment_type == 'invoice':
+        if result.get('status', None) == 'ok' and result.get('operation') == 'capture' and payment_type == 'invoice':
             c_object.paid = True
+            c_object.payment_date = datetime.now()
             c_object.save()
 
         # Save the transaction for future reference
@@ -322,10 +341,10 @@ def hipay_ipn_ack(request, internal_transid, invoice_id, payment_type):
         # Trigger the ACK propagation if any
         tr.save()
     else:
-        logger.debug("""Parsing failed %s""" %request.POST.get('xml', None))
+        logger.debug("""Parsing data from IPN/%s failed %s""" %(request.META.get('REMOTE_ADDR', None),request.POST.get('xml', None)))
 
 
-    # This is a bot that doesn't care
+    # This bot that doesn't care
     return HttpResponse("")
                          
     
