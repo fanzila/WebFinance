@@ -1,0 +1,38 @@
+{% extends EMAIL_BASE_TEMPLATE %}
+{% load i18n %}
+{% block header %}
+{% blocktrans %}
+{{ recipient_name }},
+{% endblocktrans %}
+{% endblock %}
+{% block body %}
+{% blocktrans %}
+
+You have an invoice ready for you. Normaly while ordering the service you should
+have been directed to our Payment Gateway at the following URL from your
+browser:
+
+   {{ payment_url }}
+ 
+If for some reason that process went wrong or if payment didn't go through for
+some reasons, you can retry a new payment process for the service at:
+
+  {{ invoice_url }}
+
+Either ways, if the invoice is already paid, the system won't allow it to be
+paid a second time and you'll receive a payment notice email (that might be
+already waiting in your inbox)
+
+Service: {{ info }} 
+
+{% endblocktrans %}
+{% block subtransaction %}
+{% if transaction.invoice.invoicetransaction_set.count > 1 %}
+Transactions history
+--------------------
+{% for t in transaction.invoice.invoicetransaction_set.all %}
+  {{ t.date }} | {{ t.status }} | {{ t.operation }} | {{ t.transid }} 
+{% endfor %}
+{% endif %}
+{% endblock %}
+{% endblock %}

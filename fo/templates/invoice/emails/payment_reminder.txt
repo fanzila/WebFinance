@@ -1,0 +1,32 @@
+{% extends EMAIL_BASE_TEMPLATE %}
+{% load i18n %}
+{% block header %}
+{% blocktrans %}
+{{ recipient_name }},
+{% endblocktrans %}
+{% endblock %}
+{% block body %}
+{% blocktrans %}
+
+Your service {{ subscription.info }} / {{ subscription.service_name }} for
+company {{ subscription.client.name }} will expire on {{ subscription.expiry_date }}.
+
+You can renew the service by clinking on the following link:
+
+{{ renew_url }}
+ 
+If you don't want to renew the service you can ignore this email and the service
+will be disabled once it expires. You can also cancel the subscription at any
+given time using your management interface, notice that any amount paid for the
+service won't be reimbursed.
+{% endblocktrans %}
+{% block subtransaction %}
+{% if transaction.invoice.invoicetransaction_set.count %}
+Transactions history
+--------------------
+{% for t in transaction.invoice.invoicetransaction_set.all %}
+  {{ t.date }} | {{ t.status }} | {{ t.operation }} | {{ t.transid }} 
+{% endfor %}
+{% endif %}
+{% endblock %}
+{% endblock %}

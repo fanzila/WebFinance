@@ -7,7 +7,7 @@ __date__   = "Fri Nov 11 07:01:12 2011"
 
 from django.conf.urls.defaults import patterns, include, url
 from tastypie.api import Api
-from fo.api.resources import InvoiceResource, ClientResource, InvoiceRowsResource, SubscriptionResource, SubscriptionRowResource, HiPayInvoice, HiPaySubscription
+from api.resources import InvoiceResource, ClientResource, InvoiceRowsResource, SubscriptionResource, SubscriptionRowResource, HiPayInvoice, HiPaySubscription
 from django.contrib import admin
 from django.conf import settings
 admin.autodiscover()
@@ -25,16 +25,16 @@ v1_api.register(HiPayInvoice())
 v1_api.register(HiPaySubscription())
 
 urlpatterns = patterns('',
-    url(r'^$', 'fo.invoice.views.home', name='home'),
+    url(r'^$', 'invoice.views.home', name='home'),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^invoice/', include('fo.invoice.urls')),
-    url(r'^enterprise/', include('fo.enterprise.urls')),
-    url(r'^ssoaccounts/login', 'fo.views.ssologin', name='login_cybsso'),
-    url(r'^ssoaccounts/logout', 'fo.views.ssologout', name='logout_cybsso'),
-    url(r'^isvtecoauth/logout', 'fo.views.oauthlogout', name='logout_oauth'),
+    url(r'^invoice/', include('invoice.urls')),
+    url(r'^enterprise/', include('enterprise.urls')),
+    url(r'^ssoaccounts/login', 'views.ssologin', name='login_cybsso'),
+    url(r'^ssoaccounts/logout', 'views.ssologout', name='logout_cybsso'),
+    url(r'^isvtecoauth/logout', 'views.oauthlogout', name='logout_oauth'),
     url(r'^api/', include(v1_api.urls)),
 
-    url(r'^login-error$', 'fo.views.login_error', name='login_error'),
+    url(r'^login-error$', 'views.login_error', name='login_error'),
     url(r'', include('social_auth.urls')),
 )
 

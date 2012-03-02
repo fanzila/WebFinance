@@ -1,6 +1,6 @@
 import os
 import sys
-path = '/var/www/webfinance'
+path = '/home/wilane/backups/WebFinance'
 if path not in sys.path:
    sys.path.append(path)
    sys.path.append(os.path.join(path, 'fo'))

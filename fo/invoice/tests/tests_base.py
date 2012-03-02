@@ -8,7 +8,7 @@ from sgmllib import SGMLParser
 
 from django.test.client import Client
 from django.core.urlresolvers import reverse
-
+from requests import session
 
 USER_AGENT = 'Mozilla/5.0'
 REFRESH_RE = re.compile(r'\d;\s*url=')
@@ -25,34 +25,26 @@ class SocialAuthTestsCase(unittest.TestCase):
         if self.SERVER_PORT:
             client_kwargs['SERVER_PORT'] = self.SERVER_PORT
         self.jar = None
-        self.client = Client(**client_kwargs)
+        #self.client = Client(**client_kwargs)
         super(SocialAuthTestsCase, self).__init__(*args, **kwargs)
 
-    def get_content(self, url, data=None, use_cookies=False, get_agent=False):
+    def get_content(self, url, data=None, cookies=None):
         """Return content for given url, if data is not None, then a POST
         request will be issued, otherwise GET will be used"""
-        data = data and urllib.urlencode(data, doseq=True) or data
-        request = urllib2.Request(url)
-        agent = urllib2.build_opener()
+        config = {'pool_connections':200}
+        req = session(cookies=cookies, config=config)
+        if not data:
+            return req.get(url, cookies=cookies)
+        return req.post(url, data=data, cookies=cookies)
 
-        if use_cookies:
-            agent.add_handler(urllib2.HTTPCookieProcessor(self.get_jar()))
-        request.add_header('User-Agent', USER_AGENT)
-        if get_agent:
-            return agent.open(request, data=data)
-        return ''.join(agent.open(request, data=data).readlines())
-
-    def get_redirect(self, url, data=None, use_cookies=False):
+    def get_redirect(self, url, data=None, cookies=None):
         """Return content for given url, if data is not None, then a POST
         request will be issued, otherwise GET will be used"""
-        data = data and urllib.urlencode(data, doseq=True) or data
-        request = urllib2.Request(url)
-        agent = urllib2.build_opener(RedirectHandler())
-
-        if use_cookies:
-            agent.add_handler(urllib2.HTTPCookieProcessor(self.get_jar()))
-        request.add_header('User-Agent', USER_AGENT)
-        return agent.open(request, data=data)
+        config = {'pool_connections':200}
+        req = session(config=config, cookies=cookies)
+        if not data:
+            return req.get(url, allow_redirects=False, cookies=cookies)
+        return req.post(url, data=data, allow_redirects=False, cookies=cookies)
 
     def get_jar(self):
         if not self.jar:

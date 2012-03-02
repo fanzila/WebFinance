@@ -6,15 +6,32 @@
 __author__ = "Ousmane Wilane ♟ <ousmane@wilane.org>"
 __date__   = "Thu Nov 10 16:59:10 2011"
 
-
 import urllib2
 from urllib import urlencode
+from datetime import datetime
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
-from fo.enterprise.models import Clients
+from enterprise.models import Clients
 from django.core import serializers
+from libs.utils import fo_get_template, select_template
+from django.template import Context
+from django.core.urlresolvers import reverse
+from django.conf import settings
+from django.core.mail import send_mail
+from dateutil.relativedelta import relativedelta
 import logging
 logger = logging.getLogger('isvtec')
+
+TRANSACTION_STATUS = ('cancel', 'ok', 'nook', 'pending')
+PERIODS = ('monthly', 'quarterly', 'yearly')
+DELIVERY_TYPES = ('email', 'postal')
+PAYMENT_METHODS = ('unknown', 'direct_debit', 'check', 'wire_transfer')
+DOC_TYPES = ('quote','invoice')
+SUBSCRIPTION_STATUS = ('running', 'canceled', 'suspended', 'expired')
+DEFAULT_VAT = '19.60'
+FACTORS = {'monthly':1,
+           'quarterly': 3,
+           'yearly': 12}
 
 class InvoiceRows(models.Model):
     id = models.AutoField(primary_key=True, db_column='id_facture_ligne')
@@ -27,7 +44,7 @@ class InvoiceRows(models.Model):
         verbose_name = _('Invoice item')
         verbose_name_plural = _('Invoice items')
         db_table = u'webfinance_invoice_rows'
-        
+
 
     def __unicode__(self):
         return u"%s | %s | %s | %s" % (
@@ -47,7 +64,7 @@ class SubscriptionRow(models.Model):
         verbose_name = _('Subscription row')
         verbose_name_plural = _('Subscription rows')
         db_table = u'webfinance_subscription_rows'
-        
+
     def __unicode__(self):
         return u"%s | %s | %s | %s" % (
             unicode(self.subscription),
@@ -58,26 +75,71 @@ class SubscriptionRow(models.Model):
 class Subscription(models.Model):
     client = models.ForeignKey(Clients)
     ref_contrat = models.CharField(max_length=255)
-    period = models.CharField(max_length=16, choices=[(k, _(k)) for k in ('monthly', 'quarterly', 'yearly')], default='monthly')
+    period = models.CharField(max_length=16, choices=zip(PERIODS, filter(_, PERIODS)), default='monthly')
     periodic_next_deadline = models.DateField()
-    delivery = models.CharField(max_length=16, choices=[(k, _(k)) for k in ('email', 'postal')], default='email')
-    payment_method = models.CharField(max_length=16, choices=[(k, _(k)) for k in ('unknown', 'direct_debit', 'check', 'wire_transfer')], default='unknown')
-    tax = models.DecimalField(max_digits=5, decimal_places=2,default='19.60')
-    type_doc = models.CharField(max_length=16, choices=[(k, _(k)) for k in ('quote','invoice')], default='invoice')
+    delivery = models.CharField(max_length=16, choices=zip(DELIVERY_TYPES, filter(_, DELIVERY_TYPES)), default='email')
+    payment_method = models.CharField(max_length=16, choices=zip(PAYMENT_METHODS, filter(_, PAYMENT_METHODS)), default='unknown')
+    tax = models.DecimalField(max_digits=5, decimal_places=2,default=DEFAULT_VAT)
+    type_doc = models.CharField(max_length=16, choices=zip(DOC_TYPES, filter(_, DOC_TYPES)), default='invoice')
     info = models.TextField(null=True, blank=True)
-    
+    service_name = models.TextField(null=True, blank=True) # This is updated by
+                                                           # the app once the
+                                                           # service is
+                                                           # completely known (servername or ipaddres for example)
+    status = models.CharField(max_length=16, choices=zip(SUBSCRIPTION_STATUS, SUBSCRIPTION_STATUS), default='running')
+    paid = models.BooleanField(default=False) # The last payment date is know to
+                                              # the invoices_set of the instance
+                                              # but will reproduce it here to
+                                              # avoid expensive computation
+    payment_date = models.DateTimeField(blank=True, null=True)
+    reminder_sent_date = models.DateTimeField(blank=True, null=True)
+    expiration_date = models.DateTimeField(blank=True, null=True)
+    status_url = models.URLField(blank=True, null=True)
+
     class Meta:
         verbose_name = _('Subscription')
         verbose_name_plural = _('Subscriptions')
         db_table = u'webfinance_subscription'
-        
+
+    def set_expiration_date(self):
+        """This is just to be safe, but will let the apps update the fields
+        ... for e.g if they need time to activate the service"""
+        # This is not the first payment
+        if self.expiration_date:
+            self.expiration_date += relativedelta(months=FACTORS.get(self.period))
+        else:
+            # First payment
+            if self.payment_date:
+                # The app might need to reset this and it's likely to do so
+                self.expiration_date = self.payment_date + relativedelta(months=FACTORS.get(self.period))
+            else:
+                # This is a problem and need to be reset by the app
+                self.expiration_date = datetime.now() + relativedelta(months=FACTORS.get(self.period))
+
     def __unicode__(self):
         return u"%s | %s | %s " % (
             unicode(self.ref_contrat),
             unicode(self.delivery),
             unicode(self.tax))
 
-  
+    def send_reminder(self, host=None):
+        """ This is responsible for sending reminders for expiring services """
+        host = host or settings.DEFAULT_HOST
+        subject = _("Service subscriptions status on ISVTEC : %(name)s" %{'name':self.client.name})
+        message_template = fo_get_template(host,'invoice/emails/payment_reminder.txt', True)
+        message_context = Context({'recipient_name': self.client.name,
+                                   'subscription': self,
+                                   'sender_name': 'Service Client ISVTEC', # FIXME: change this for white label
+                                   'company': self.client.name,
+                                   'renew_url':"%s%s" %(settings.WEB_HOST, reverse('renew_subscription',
+                                                                            kwargs={'subscription_id':self.pk})),
+                                   'EMAIL_BASE_TEMPLATE':select_template(fo_get_template(host,settings.EMAIL_BASE_TEMPLATE)),
+                                   'ADDRESS_TEMPLATE':select_template(fo_get_template(host,settings.COMPANY_ADDRESS)),
+                                   })
+        message = message_template.render(message_context)
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [dest.email for dest in self.client.users.all()] + [self.client.email])
+
+
 class Invoices(models.Model):
     id = models.AutoField(primary_key=True, db_column='id_facture')
     client = models.ForeignKey(Clients, db_column='id_client')
@@ -103,103 +165,32 @@ class Invoices(models.Model):
     periodic_next_deadline = models.DateField(null=True, blank=True) #FIXME: remove me
     delivery = models.CharField(max_length=18, blank=True, default='email') #FIXME: remove me
     payment_method = models.CharField(max_length=39, blank=True, default='unknown') #FIXME: remove me
-    tax = models.DecimalField(default='19.60', max_digits=7, decimal_places=2)
+    tax = models.DecimalField(default=DEFAULT_VAT, max_digits=7, decimal_places=2)
     exchange_rate = models.DecimalField(default='1.00', max_digits=10, decimal_places=2)
-
+    subscription = models.ForeignKey('Subscription', blank=True, null=True, related_name="sub_invoices")
 
     @property
     def id_facture_id(self):
         """Heu yeah awry ... tastypie search this thing somehow with a rather
         fancy exception, thanks Python"""
         return self.invoice_num
-    
+    @property
+    def info(self):
+        logger.warn("I'm called and my value is %s" % (self.subscription.service_name or self.subscription.info,))
+        if self.subscription:
+            return self.subscription.service_name or self.subscription.info
+        return "| ".join([r.description for r in self.invoicerow_set.all()])
+
     class Meta:
         verbose_name = _('Invoice')
         verbose_name_plural = _('Invoices')
         db_table = u'webfinance_invoices'
-        
+
     def __unicode__(self):
         return u"%s | %s | %s " % (
             unicode(self.invoice_num),
             unicode(self.service_type),
             unicode(self.period))
-
-
-# class Paybox(models.Model):
-#     id_paybox = models.IntegerField(primary_key=True)
-#     id_invoice = models.IntegerField()
-#     email = models.CharField(max_length=765, blank=True)
-#     reference = models.CharField(unique=True, max_length=255)
-#     state = models.CharField(max_length=21)
-#     amount = models.DecimalField(max_digits=16, decimal_places=2)
-#     currency = models.IntegerField()
-#     autorisation = models.CharField(max_length=192)
-#     transaction_id = models.CharField(max_length=192)
-#     payment_type = models.CharField(max_length=192)
-#     card_type = models.CharField(max_length=192)
-#     transaction_sole_id = models.CharField(max_length=192)
-#     error_code = models.CharField(max_length=192)
-#     date = models.DateTimeField(null=True, blank=True)
-
-
-#     class Meta:
-#         verbose_name = _('PayBox')
-#         verbose_name_plural = _('PayBox')
-#         db_table = u'webfinance_paybox'
-        
-#     def __unicode__(self):
-#         return u"%s | %s | %s | %s" % (
-#             unicode(self.email),
-#             unicode(self.reference),
-#             unicode(self.amount),
-#             unicode(self.state))
-
-
-        
-# class TransactionInvoice(models.Model):
-#     id_transaction = models.ForeignKey('Transactions', db_column='id_transaction')
-#     id_invoice = models.ForeignKey('Invoices', db_column='id_invoice')
-#     date_update = models.DateTimeField()
-
-#     class Meta:
-#         verbose_name = _("Transaction's invoice")
-#         verbose_name_plural = _("Transaction's invoices")
-#         db_table = u'webfinance_transaction_invoice'
-        
-#     def __unicode__(self):
-#         return u"%s | %s " % (
-#             unicode(self.id_invoice),
-#             unicode(self.date_update))
-
-
-# class Transactions(models.Model):
-#     id = models.IntegerField(primary_key=True)
-#     id_account = models.IntegerField()
-#     id_category = models.IntegerField()
-#     text = models.CharField(max_length=765)
-#     amount = models.DecimalField(max_digits=16, decimal_places=2)
-#     exchange_rate = models.DecimalField(max_digits=10, decimal_places=2)
-#     type = models.CharField(max_length=27, blank=True)
-#     document = models.CharField(max_length=384, blank=True)
-#     date = models.DateField()
-#     date_update = models.DateTimeField()
-#     comment = models.TextField(blank=True)
-#     file = models.TextField(blank=True)
-#     file_type = models.CharField(max_length=75, blank=True)
-#     file_name = models.CharField(max_length=150, blank=True)
-#     lettrage = models.IntegerField(null=True, blank=True)
-#     id_invoice = models.ManyToManyField('Invoices', through='TransactionInvoice')
-
-#     class Meta:
-#         verbose_name = _('Transaction')
-#         verbose_name_plural = _('Transactions')
-#         db_table = u'webfinance_transactions'
-        
-#     def __unicode__(self):
-#         return u"%s | %s " % (
-#             unicode(self.id_account),
-#             unicode(self.date_amount))
-
 
 class TypePresta(models.Model):
     id_type_presta = models.IntegerField(primary_key=True)
@@ -210,15 +201,11 @@ class TypePresta(models.Model):
         verbose_name_plural = _('Service types')
         db_table = u'webfinance_type_presta'
 
-        
     def __unicode__(self):
         return u"%s | %s " % (
             unicode(self.id_type_presta),
             unicode(self.nom))
 
-
-
-        
 class Suivi(models.Model):
     id_suivi = models.IntegerField(primary_key=True)
     type_suivi = models.IntegerField(null=True, blank=True)
@@ -273,7 +260,7 @@ class TypeTva(models.Model):
             unicode(self.nom),
             unicode(self.taux))
 
-    
+
 class InvoiceTransaction(models.Model):
     invoice = models.ForeignKey(Invoices)
     status = models.CharField(max_length=255,null=True, blank=True)
@@ -293,7 +280,7 @@ class InvoiceTransaction(models.Model):
 
     # HiPay redirect URL for debugging
     redirect_url = models.URLField(null=True, blank=True)
-    first_status = models.CharField(max_length=16, choices=[(k, k) for k in ('cancel', 'ok', 'nook', 'pending')], default='pending')
+    first_status = models.CharField(max_length=16, choices=zip(TRANSACTION_STATUS, TRANSACTION_STATUS), default='pending')
 
     def __unicode__(self):
         return u"%s | %s | %s | %s | %s" % (
@@ -303,25 +290,75 @@ class InvoiceTransaction(models.Model):
             unicode(self.transid),
             unicode(self.refProduct))
 
+    #FIXME: Refactor these send emails
+    def send_invoice_notice(self, host=None):
+        """This is sent to signal that an invoice have been made available for
+        immediate payment. This is triggered by other apps sending subscriptions
+        or payments for there services. The payment starts from WebFinance-FO
+        and the payment gateway is not hit untill the user log into
+        WebFinance-FO"""
+        host = host or settings.DEFAULT_HOST
+        subject = _("Invoice ISVTEC : %(name)s" %{'name':self.invoice.client.name})
+        message_template = fo_get_template(host,'invoice/emails/invoice_notice.txt', True)
+        message_context = Context({'recipient_name': self.invoice.client.name,
+                                   'transaction': self,
+                                   'info': self.invoice.info,
+                                   'sender_name': _("ISVTEC Customer service"), # FIXME: change this for white label
+                                   'company': self.invoice.client.name,
+                                   'payment_url': self.redirect_url,
+                                   'invoice_url': "%s%s" %(settings.WEB_HOST, reverse('hipay_invoice',
+                                                                            kwargs={'invoice_id':self.invoice.pk})),
+                                   'EMAIL_BASE_TEMPLATE':select_template(fo_get_template(host,settings.EMAIL_BASE_TEMPLATE)),
+                                   'ADDRESS_TEMPLATE':select_template(fo_get_template(host,settings.COMPANY_ADDRESS)),
+                                   })
+        message = message_template.render(message_context)
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [dest.email for dest in self.invoice.client.users.all()] + [self.invoice.client.email])
+
+    def payment_received_notice(self, host=None):
+        """This is sent to signal that an invoice have been paid
+           This is responsible for sending reminders for expiring services """
+        host = host or settings.DEFAULT_HOST
+        subject = _("Invoice ISVTEC (Payment Received) : %(name)s" %{'name':self.invoice.client.name})
+        message_template = fo_get_template(host,'invoice/emails/invoice_received_notice.txt', True)
+        message_context = Context({'recipient_name': self.invoice.client.name,
+                                   'transaction': self,
+                                   'info': self.invoice.info,
+                                   'sender_name': _("ISVTEC Customer service"), # FIXME: change this for white label
+                                   'company': self.invoice.client.name,
+                                   'invoice_url': "%s%s" %(settings.WEB_HOST, reverse('download_invoice',
+                                                                            kwargs={'invoice_id':self.invoice.pk})),
+                                   'EMAIL_BASE_TEMPLATE':select_template(fo_get_template(host,settings.EMAIL_BASE_TEMPLATE)),
+                                   'ADDRESS_TEMPLATE':select_template(fo_get_template(host,settings.COMPANY_ADDRESS)),
+                                   })
+        message = message_template.render(message_context)
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [dest.email for dest in self.invoice.client.users.all()] + [self.invoice.client.email])
+
+    def payment_failure_notice(self, host=None):
+        """If a payment is canceled or if we get a failed capture funds, this
+        will let you know
+        This is responsible for sending reminders for expiring services """
+        host = host or settings.DEFAULT_HOST
+        subject = _("Invoice ISVTEC (Failure notice) : %(name)s" %{'name':self.invoice.client.name})
+        message_template = fo_get_template(host,'invoice/emails/invoice_failure_notice.txt', True)
+        message_context = Context({'recipient_name': self.invoice.client.name,
+                                   'transaction': self,
+                                   'info': self.invoice.info,
+                                   'sender_name': _("ISVTEC Customer service"), # FIXME: change this for white label
+                                   'company': self.invoice.client.name,
+                                   'invoice_url': "%s%s" %(settings.WEB_HOST, reverse('hipay_invoice',
+                                                                            kwargs={'invoice_id':self.invoice.pk})),
+                                   'EMAIL_BASE_TEMPLATE':select_template(fo_get_template(host,settings.EMAIL_BASE_TEMPLATE)),
+                                   'ADDRESS_TEMPLATE':select_template(fo_get_template(host,settings.COMPANY_ADDRESS)),
+                                   })
+        message = message_template.render(message_context)
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [dest.email for dest in self.invoice.client.users.all()] + [self.invoice.client.email])
+
     def save(self, *args, **kwargs):
-        if self.status and self.url_ack: #This is only updated when the ACK comes in
-            # Pinging back
-            logger.info("Pinging %s for IPN from upstream" %self.url_ack)
-            data = serializers.serialize("json", InvoiceTransaction.objects.filter(pk=self.id))
-            opener = urllib2.build_opener()
-            opener.addheaders = [("Content-Type", "text/json"),
-                                 ("Content-Length", str(len(data))),
-                                 ("User-Agent", u"ISVTEC -- PAYMENT GATEWAY")]
-            urllib2.install_opener(opener)
-
-            request = urllib2.Request(self.url_ack,urlencode({'payment':data}))
-            try:
-                response = opener.open(request)
-                logger.info(u"Pinged back %s ... propagation, got '%s'" %(self.url_ack, response.read()))
-            except Exception, e:
-                logger.warn(u"Unable to ping back %s, we have an ack to propage: %s" %(self.url_ack, e))
-
         super(InvoiceTransaction, self).save(*args, **kwargs)
+        if self.status == 'pending':
+            self.send_invoice_notice()
+
+
 
 class SubscriptionTransaction(models.Model):
     subscription = models.ForeignKey(Subscription)
@@ -341,8 +378,7 @@ class SubscriptionTransaction(models.Model):
     url_ack = models.URLField(null=True, blank=True)
 
     redirect_url = models.URLField(null=True, blank=True)
-    first_status = models.CharField(max_length=16, choices=[(k, k) for k in ('cancel', 'ok', 'nook', 'pending')], default='pending')
-
+    first_status = models.CharField(max_length=16, choices=zip(TRANSACTION_STATUS, TRANSACTION_STATUS), default='pending')
     def __unicode__(self):
         return u"%s | %s | %s | %s | %s" % (
             unicode(self.status),

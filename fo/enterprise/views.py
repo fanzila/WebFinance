@@ -21,7 +21,7 @@ from django.core.urlresolvers import reverse
 import reversion
 import logging
 import operator
-from fo.libs.utils import fo_get_template
+from libs.utils import fo_get_template
 logger = logging.getLogger('wf')
 
 @login_required

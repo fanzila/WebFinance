@@ -13,7 +13,10 @@ from django.views.decorators.cache import never_cache
 from django.conf import settings
 from django.contrib.auth import login, authenticate
 from django.contrib.auth import logout
-from social_auth.views import auth, complete, associate, associate_complete, disconnect
+from social_auth.views import auth, complete, associate, associate_complete, disconnect, auth_complete, SESSION_EXPIRATION, SOCIAL_AUTH_LAST_LOGIN, NEW_USER_REDIRECT, LOGIN_ERROR_URL, REDIRECT_FIELD_NAME, DEFAULT_REDIRECT
+import logging
+
+logger = logging.getLogger('isvtec')
 
 @never_cache
 @require_http_methods(["GET"])

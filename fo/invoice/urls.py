@@ -29,4 +29,5 @@ urlpatterns = patterns('',
 
 
                        url(r'^hipay/test_url_ack$', 'invoice.views.test_url_ack', name='test_url_ack'),
+                       url(r'^renew/subscription/(?P<subscription_id>\d+)$', 'invoice.views.renew_subscription', name='renew_subscription'),                       
 )

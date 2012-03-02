@@ -7,4 +7,4 @@ __date__   = "Fri Nov 11 18:23:22 2011"
 
 
 
-from fo.enterprise.tests.add_enterprise import *
+from enterprise.tests.add_enterprise import *

@@ -7,6 +7,8 @@ __author__ = "Ousmane Wilane ♟ <ousmane@wilane.org>"
 __date__   = "Thu Nov 10 13:25:50 2011"
 
 from logging.handlers import SysLogHandler
+import djcelery
+from celery.schedules import crontab
 
 DEBUG = True
 ADMINS = (
@@ -19,9 +21,11 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
+        'STORAGE_ENGINE': 'InnoDB',
         'NAME': 'webfinance',
         'USER': 'root',
-        'HOST': '10.42.0.1',
+        'PASSWORD': 'lptevtg',
+        'HOST': '127.0.0.1',
         'PORT': '',
     }
 }
@@ -29,7 +33,9 @@ DATABASES = {
 CYBSSO_LOGIN = 'http://cybsso-dev.isvtec.com/'
 CYBSSO_LOGIN_URL = '/ssoaccounts/login'
 
-EMAIL_HOST = '10.42.0.1'
+EMAIL_HOST = '127.0.0.1'
+DEFAULT_HOST = 'webfinance.wilane.org'
+WEB_HOST = 'http://%s' % (DEFAULT_HOST,)
 DEFAULT_FROM_EMAIL = 'no_reply@isvtec.com'
 
 
@@ -78,18 +84,18 @@ LOGGING = {
             'propagate': True,
         },
         'social_auth': {
-            'handlers': ['console', 'syslog'],
+            'handlers': ['console'],
             'level': 'ERROR',
             'propagate': True,
         },
         'oauth_provider': {
-            'handlers': ['console', 'syslog'],
+            'handlers': ['console'],
             'level': 'ERROR',
             'propagate': True,
         },
         'isvtec': {
             'handlers': ['console', 'syslog'],
-            'level': 'ERROR',
+            'level': 'DEBUG',
             'propagate': True,
         },
         'wf': {
@@ -161,9 +167,9 @@ ISVTEC_LOGOUT_URL = "http://%s%s" %(ISVTEC_SERVER, '/accounts/logout')
 TWITTER_CONSUMER_KEY              = 'KVNfuJv3hFdNDAFVyZ9Q'
 TWITTER_CONSUMER_SECRET           = 'GAH3idtFFKilEmcnQZsEeEwm5xyRrohZ9KitW9qk54'
 
-LOGIN_REDIRECT_URL = '/'
-LOGIN_URL = '/login/isvtec/'
-LOGIN_ERROR_URL    = '/login-error'
+LOGIN_REDIRECT_URL = '/fo'
+LOGIN_URL = '/fo/login/isvtec/'
+LOGIN_ERROR_URL    = '/fo/login-error'
 
 SOCIAL_AUTH_ERROR_KEY = 'social_errors'
 SOCIAL_AUTH_EXPIRATION = 'expires'
@@ -171,6 +177,40 @@ SOCIAL_AUTH_SESSION_EXPIRATION = True
 #SOCIAL_AUTH_USER_MODEL = 'fo.enterprise.Users'
 SOCIAL_AUTH_COMPLETE_URL_NAME  = 'socialauth_complete'
 SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
-
+SOCIAL_AUTH_ASSOCIATE_BY_MAIL = True
 SESSION_SAVE_EVERY_REQUEST=True
 SESSION_COOKIE_NAME='isvtecsession'
+
+djcelery.setup_loader()
+
+from datetime import timedelta
+
+# FIXME: Break this into components to make it more readable
+BROKER_URL = "amqp://isvtec:n0p4ss3@localhost:5672/isvtec"
+CELERY_RESULT_BACKEND = "amqp"
+
+CELERY_IMPORTS = ("invoice.tasks", )
+CELERY_RESULT_PERSISTENT = True
+CELERYD_CONCURRENCY = 2
+
+# From celery doc Disabling rate limits altogether is recommended if you don’t
+# have any tasks using them. This is because the rate limit subsystem introduces
+# quite a lot of complexity.
+CELERY_DISABLE_RATE_LIMITS = True
+
+CELERY_ENABLE_UTC = True
+CELERY_SEND_TASK_ERROR_EMAILS = True
+CELERYBEAT_SCHEDULE = {
+    "runs-every-day": {
+        "task": "invoice.tasks.subscription_reminder",
+        #"schedule": crontab(minute=0, hour=0),
+        "schedule":timedelta(seconds=30),
+        "args": (None,),
+    },
+}
+
+# Enable this on production
+EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
+CELERY_SEND_EVENTS = True
+CELERYD_HIJACK_ROOT_LOGGER = False
+#CELERYBEAT_SCHEDULE_FILENAME = ?

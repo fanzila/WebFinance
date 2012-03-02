@@ -92,10 +92,10 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    #'fo.middleware.sso.CYBSSOMiddleware',
+    #'middleware.sso.CYBSSOMiddleware',
 )
 
-ROOT_URLCONF = 'fo.urls'
+ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
     os.path.join(DIRNAME, 'templates'),
@@ -113,8 +113,9 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
-    'fo.enterprise',
-    'fo.invoice',
+    'enterprise',
+    'invoice',
+    'hipay',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'django_coverage',
@@ -125,6 +126,8 @@ INSTALLED_APPS = (
 #    'pyzen',
     'social_auth',
     'south',
+    'djcelery',
+    'djcelery_email',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -151,7 +154,7 @@ SOCIAL_AUTH_IMPORT_BACKENDS = (
 
 SOCIAL_AUTH_ENABLED_BACKENDS = ('isvtec', 'twitter', 'google-oauth', 'github')
 
-AUTH_PROFILE_MODULE = 'fo.enterprise.Users'
+AUTH_PROFILE_MODULE = 'enterprise.Users'
 
 # Load fixtures data from data provided by Cyril (bootstrap.sql)
 FIXTURE_DIRS = [os.path.join(DIRNAME, 'fixtures')]
@@ -159,7 +162,7 @@ INVOICE_PDF_GENERATOR = os.path.join(DIRNAME, '../bin/build_invoice_by_id')
 INVOICE_PDF_DIR = '/tmp'
 
 try:
-    from fo.local_settings import *
+    from local_settings import *
 except:
     # No problem if you don't have local settings, guess you know what you're
     # doing

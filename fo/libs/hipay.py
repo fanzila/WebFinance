@@ -5,6 +5,7 @@
 __author__ = "Ousmane Wilane ♟ <ousmane@wilane.org>"
 __date__   = "Fri Dec  2 20:43:27 2011"
 
+#FIXME: Fix this to drop the project name
 from fo.hipay import hipay as HP
 from django.core.urlresolvers import reverse
 from django.conf import settings

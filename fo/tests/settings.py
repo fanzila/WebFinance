@@ -103,4 +103,10 @@ INSTALLED_APPS = (
     'tastypie',
     'reversion',
     'social_auth',
+    'djcelery',
+#    'django_nose',
 )
+
+#TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+TEST_RUNNER = 'djcelery.contrib.test_runner.CeleryTestSuiteRunner'
+#CELERY_ALWAYS_EAGER = True

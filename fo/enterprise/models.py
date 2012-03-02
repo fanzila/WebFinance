@@ -15,8 +15,8 @@ from django.conf import settings
 from django.core.mail import send_mail
 import reversion
 from uuid import uuid4
-from fo.libs.sso import CYBSSOService, CYBSSO_URL
-from fo.libs.utils import fo_get_template, select_template
+from libs.sso import CYBSSOService, CYBSSO_URL
+from libs.utils import fo_get_template, select_template
 import logging
 logger = logging.getLogger('wf')
 

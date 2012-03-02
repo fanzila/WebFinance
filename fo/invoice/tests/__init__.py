@@ -6,5 +6,5 @@ __author__ = "Ousmane Wilane ♟ <ousmane@wilane.org>"
 __date__   = "Fri Nov 11 18:23:31 2011"
 
 
-from fo.invoice.tests.test_invoices import *
+from invoice.tests.test_invoices import *
 

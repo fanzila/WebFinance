@@ -9,7 +9,7 @@ from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
 from datetime import datetime
 from libs.sso import CYBSSOService, CYBSSO_URL
-from fo.enterprise.models import Users
+from enterprise.models import Users
 
 class WFRemoteUserBackend(ModelBackend):
     def authenticate(self, username=None, ticket=None):

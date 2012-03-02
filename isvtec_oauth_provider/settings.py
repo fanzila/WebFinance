@@ -117,13 +117,13 @@ LOGGING = {
     'loggers': {
         'django': {
             #FIXME: Have to change this to syslog too, not sure
-            'handlers': ['console', 'syslog'],
+            'handlers': ['console'],
             #'handlers':['null'],
             'propagate': True,
             'level':'DEBUG',
         },
         'django.request': {
-            'handlers': ['console', 'syslog'],
+            'handlers': ['console'],
             'level': 'ERROR',
             'propagate': True,
         },

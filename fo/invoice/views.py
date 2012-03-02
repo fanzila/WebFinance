@@ -19,11 +19,13 @@ from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.core.urlresolvers import reverse
 from django.views.decorators.csrf import csrf_exempt
-from fo.enterprise.models import Users
-from fo.invoice.models import Invoices, InvoiceTransaction, SubscriptionTransaction, Subscription
-from fo.libs import hipay
-from fo.libs.utils import fo_get_template
-from fo.hipay.hipay import ParseAck
+from enterprise.models import Users
+from invoice.models import Invoices, InvoiceTransaction, SubscriptionTransaction, Subscription
+from invoice.tasks import ipn_ping
+from libs import hipay
+from libs.utils import fo_get_template
+from hipay.hipay import ParseAck
+
 try:
     import json
 except ImportError:
@@ -42,13 +44,13 @@ def list_companies(request):
         current_user = Users.objects.get(email=request.user.email)
         # We keep a loose coupling with native Users database from the backend
         customer_list = current_user.clients_set.all()
-        
+
     except Users.DoesNotExist:
         customer_list = None
 
     return render(request, fo_get_template(request.get_host(),'invoice/list_companies.html'),
                               {'customer_list': customer_list})
-    
+
 @login_required
 def list_invoices(request, customer_id, message=None):
     current_user = Users.objects.get(email=request.user.email)
@@ -69,7 +71,7 @@ def detail_invoice(request, invoice_id):
         raise Http404
     qs  = reduce(operator.or_, invoices)
     invoice = get_object_or_404(qs, pk=invoice_id)
-    
+
     return render(request, fo_get_template(request.get_host(),'invoice/detail_invoices.html'),
                               {'invoice':invoice,
                                'invoice_details': invoice.invoicerows_set.order_by('order')})
@@ -95,7 +97,7 @@ def accept_quote(request, invoice_id):
     if not invoices:
         # It's likely that you've keyed in an invoice id
         raise Http404
-    
+
     qs  = reduce(operator.or_,invoices)
     quote = get_object_or_404(qs, pk=invoice_id)
     quote.type_doc = 'facture'
@@ -140,6 +142,7 @@ def hipay_invoice(request, invoice_id):
 
 @login_required
 def hipay_subscription(request, subscription_id):
+    host = "http%s://%s" %('s' if request.is_secure() else '', request.get_host())
     current_user = Users.objects.get(email=request.user.email)
     subscriptions = [c.subscription_set.all() for c in current_user.clients_set.all()]
     if not subscriptions:
@@ -147,22 +150,24 @@ def hipay_subscription(request, subscription_id):
 
     qs  = reduce(operator.or_, subscriptions)
     subscription = get_object_or_404(qs, pk=subscription_id)
-    tr = SubscriptionTransaction(subscription=subscription)
-    tr.save()
 
     # We create an invoice for the first payment and the subsequent payments are
-    # created by a cronlike process
+    # created by a celery task using the first=False to get the payment details
     first_invoice = Invoices.objects.create(client=subscription.client,
-                                           invoice_num=subscription.ref_contrat,
-                                           period=subscription.period)
+                                            invoice_num=subscription.ref_contrat,
+                                            period=subscription.period,
+                                            subscription=subscription
+                                            )
+    tr = InvoiceTransaction.objects.create(invoice=first_invoice)
+
     try:
         sr = subscription.subscriptionrow_set.get(first=True)
     except Subscription.DoesNotExist:
         raise ValueError("Malformed subscription %s, if this is a legacy subscription it should have been fixed by now"%subscription.pk)
     first_invoice.invoicerows_set.create(description=sr.description,
-                                      qty=sr.qty,
-                                      df_price=sr.price_excl_vat)
-    response = hipay.simplepayment(first_invoice, sender_host=request.get_host(), secure=request.is_secure(), internal_transid=tr.pk)    
+                                         qty=sr.qty,
+                                         df_price=sr.price_excl_vat)
+    response = hipay.simplepayment(first_invoice, sender_host=request.get_host(), secure=request.is_secure(), internal_transid=tr.pk)
 
     # This is the way we daeal with HiPay subscriptions, for now we don't want
     # it but we can get back to using it when it gets 'better'
@@ -171,7 +176,7 @@ def hipay_subscription(request, subscription_id):
     if response['status'] == 'Accepted':
         tr.redirect_url = response['message']
         tr.save()
-
+        tr.send_invoice_notice(host)
         return redirect(response['message'])
     else:
         raise ValueError(response)
@@ -237,7 +242,7 @@ def hipay_payment_url(request, invoice_id, internal_transid, action, payment_typ
     tr.first_status = action
     tr.save()
     return render(request, fo_get_template(request.get_host(),'invoice/hipay/%s_payment.html'%(action,)), {'payment_type':payment_type,'invoice':c_object})
-    
+
 
 @require_http_methods(["POST"])
 @csrf_exempt
@@ -291,6 +296,7 @@ def hipay_ipn_ack(request, internal_transid, invoice_id, payment_type):
     # FIXME: We should check where this is coming from, if not, anybody could
     # pretend notifying for a payment that actually never happened ? I can't
     # figure out how they do this with MAPI
+    host = "http%s://%s" %('s' if request.is_secure() else '', request.get_host())    
     if request.META.get('REMOTE_ADDR', None) not in settings.HIPAY_ACK_SOURCE_IPS:
         # We have to log this incident
         logger.critical(u"""Connexion from %s pretending to be ack server from HiPay,
@@ -329,31 +335,63 @@ def hipay_ipn_ack(request, internal_transid, invoice_id, payment_type):
     result = ParseAck(request.POST.get('xml', None))
     if result:
         # FIXME: Make sure that this means PAID the $$$ are in my account and
-        # nothing can change that
+        # nothing can change that ... money things are tricky
+
+        # Save the transaction for future reference
+        tr = theset.create(**result)
+        tr.url_ack = first.url_ack
+        tr.save()
+
         if result.get('status', None) == 'ok' and result.get('operation') == 'capture' and payment_type == 'invoice':
             c_object.paid = True
             c_object.payment_date = datetime.now()
             c_object.save()
 
-        # Save the transaction for future reference
-        tr = theset.create(**result)
-        tr.url_ack = first.url_ack
-        # Trigger the ACK propagation if any
-        tr.save()
+            if first.url_ack: #This is only updated when the ACK
+                # comes in Pinging back ... We send everything and let the receiver
+                # decide, it's likely that it's just interested in'capture' 'ok' so
+                # we have a ping back that will just say paid or not paid
+
+                # add the task to the queue, the task will be retried 5 times every
+                # 5mn if ot fail
+                result = ipn_ping.delay(c_object.id) # Maybe save this for future ref ?!
+
+            # Send the notice
+            tr.payment_received_notice(host)
+
+            # Test if this payment is linked to a subscription
+            if c_object.subscription:
+                c_object.subscription.paid = True
+                c_object.payment_date = datetime.now()
+                c_object.subscription.status = 'running'
+                c_object.subscription.save()
+                c_object.subscription.set_expiration_date()
+
+
+        if payment_type == 'invoice':
+            if (result.get('status', None) == 'nok' and result.get('operation') == 'capture') or (result.get('status', None) == 'ok' and result.get('operation', None) in ('cancellation', 'refund', 'reject')):
+                tr.payment_failure_notice(host)
+                # FIXME: Ping Back the app for the subscription OK simple ping
     else:
         logger.debug("""Parsing data from IPN/%s failed %s""" %(request.META.get('REMOTE_ADDR', None),request.POST.get('xml', None)))
 
 
     # This bot that doesn't care
     return HttpResponse("")
-                         
-    
+
+
 def hipay_shop_logo(request):
     # FIXME: Think white label too
     pass
 
 @login_required
 def home(request):
+    # Used for the apps to transparently force oauth login of there
+    # users to webfinance-fo, without it the new users unknown to
+    # webfinance will fail api call.
+    if request.GET.get('nextapp', False):
+        return redirect(request.GET.get('nextapp'))
+
     try:
         current_user = Users.objects.get(email=request.user.email)
         # We keep a loose coupling with native Users database from the backend
@@ -363,3 +401,39 @@ def home(request):
     if  customer_list and customer_list.count() == 1:
         return redirect(reverse('list_invoices', kwargs={'customer_id':customer_list[0].pk}))
     return redirect(reverse('list_companies'))
+
+
+@login_required
+def renew_subscription(request, subscription_id):
+    current_user = Users.objects.get(email=request.user.email)
+    subscriptions = [c.subscription_set.all() for c in current_user.clients_set.all()]
+    if not subscriptions:
+        raise Http404
+
+    qs  = reduce(operator.or_, subscriptions)
+    subscription = get_object_or_404(qs, pk=subscription_id)
+    tr = SubscriptionTransaction(subscription=subscription)
+    tr.save()
+
+    # We create an invoice for the first payment and the subsequent payments are
+    # created by a celery task using the first=False to get the payment details
+    next_invoice = subscription.invoices_set.create(client=subscription.client,
+                                            invoice_num=subscription.ref_contrat,
+                                            period=subscription.period,
+                                            )
+    try:
+        sr = subscription.subscriptionrow_set.get(first=False)
+    except Subscription.DoesNotExist:
+        raise ValueError("Malformed subscription %s, if this is a legacy subscription it should have been fixed by now"%subscription.pk)
+    next_invoice.invoicerows_set.create(description=sr.description,
+                                         qty=sr.qty,
+                                         df_price=sr.price_excl_vat)
+    response = hipay.simplepayment(next_invoice, sender_host=request.get_host(), secure=request.is_secure(), internal_transid=tr.pk)
+
+    if response['status'] == 'Accepted':
+        tr.redirect_url = response['message']
+        tr.save()
+
+        return redirect(response['message'])
+    else:
+        raise ValueError(response)

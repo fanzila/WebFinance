@@ -1,0 +1,30 @@
+{% extends EMAIL_BASE_TEMPLATE %}
+{% load i18n %}
+{% block header %}
+{% blocktrans %}
+{{ recipient_name }},
+{% endblocktrans %}
+{% endblock %}
+{% block body %}
+{% blocktrans %}
+
+The invoice payment for the following service have failed
+Service: {{ info }}
+
+
+You can retry the payment if the problem have been fixed at the following url:
+
+    {{ invoice_url }}
+
+{% endblocktrans %}
+
+{% block subtransaction %}
+{% if transaction.invoice.invoicetransaction_set.count %}
+Transactions history
+--------------------
+{% for t in transaction.invoice.invoicetransaction_set.all %}
+  {{ t.date }} | {{ t.status }} | {{ t.operation }} | {{ t.transid }} 
+{% endfor %}
+{% endif %}
+{% endblock %}
+{% endblock %}
