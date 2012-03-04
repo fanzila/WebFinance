@@ -18,16 +18,17 @@ urlpatterns = patterns('',
                        url(r'^show/subscription/(?P<subscription_id>\d+)$', 'invoice.views.detail_subscription', name='detail_subscription'),
                        url(r'^accept/subscription/(?P<subscription_id>\d+)$', 'invoice.views.accept_subscriptionquote', name='accept_subscriptionquote'),
                        url(r'^download/subscription/(?P<subscription_id>\d+)$', 'invoice.views.download_subscription', name='download_subscription'),
-                       
+
                        url(r'^hipay/invoice/(?P<invoice_id>\d+)$', 'invoice.views.hipay_invoice', name='hipay_invoice'),
                        url(r'^hipay/subscription/(?P<subscription_id>\d+)$', 'invoice.views.hipay_subscription', name='hipay_paysubs'),
-                       
+
                        url(r'^hipay/payment/(?P<payment_type>invoice|subscription)/(?P<action>cancel|ok|nook)/(?P<invoice_id>\d+)/(?P<internal_transid>\d+)$', 'invoice.views.hipay_payment_url', name='hipay_payment_url'),
                        url(r'^hipay/result/ack/(?P<payment_type>invoice|subscription)/(?P<invoice_id>\d+)/(?P<internal_transid>\d+)$', 'invoice.views.hipay_ipn_ack', name='hipay_ipn_ack'),
                        url(r'^hipay/shop/logo$', 'invoice.views.hipay_shop_logo', name='hipay_shop_logo'),
                        url(r'^hipay/reack$', 'invoice.views.ack_postback', name='ack_postback'),
+                       url(r'^subscription/postback$', 'invoice.views.sub_status_postback', name='sub_status_postback'),
 
 
                        url(r'^hipay/test_url_ack$', 'invoice.views.test_url_ack', name='test_url_ack'),
-                       url(r'^renew/subscription/(?P<subscription_id>\d+)$', 'invoice.views.renew_subscription', name='renew_subscription'),                       
+                       url(r'^renew/subscription/(?P<subscription_id>\d+)$', 'invoice.views.renew_subscription', name='renew_subscription'),
 )

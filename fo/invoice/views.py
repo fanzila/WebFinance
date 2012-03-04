@@ -21,7 +21,7 @@ from django.core.urlresolvers import reverse
 from django.views.decorators.csrf import csrf_exempt
 from enterprise.models import Users
 from invoice.models import Invoices, InvoiceTransaction, SubscriptionTransaction, Subscription
-from invoice.tasks import ipn_ping
+from invoice.tasks import ipn_ping, ipn_subscription
 from libs import hipay
 from libs.utils import fo_get_template
 from hipay.hipay import ParseAck
@@ -243,6 +243,24 @@ def hipay_payment_url(request, invoice_id, internal_transid, action, payment_typ
     tr.save()
     return render(request, fo_get_template(request.get_host(),'invoice/hipay/%s_payment.html'%(action,)), {'payment_type':payment_type,'invoice':c_object})
 
+
+@require_http_methods(["POST"])
+@csrf_exempt
+def sub_status_postback(request):
+    logger.info("Checking if the data came from us for subscription state change")
+    data = request.POST.get('subscription', None)
+    subscriptions = json.loads(data)
+    if len(subscriptions) == 1:
+        sub = subscriptions[0]
+        if sub['model'] == "invoice.subscription":
+            try:
+                Subscription.objects.get(**sub['fields'])
+                return HttpResponse("VERIFIED")
+            except Subscription.DoesNotExist: #FIXME: Check for multiple object exception too
+                logger.exception("Attempting to verify a non existent subscription supposedly sent by us: %s"%(data,))
+
+    logger.info("Checked the data and failed to validate that we've sent it: %s" %request.POST)
+    return HttpResponse("FAILED")
 
 @require_http_methods(["POST"])
 @csrf_exempt
