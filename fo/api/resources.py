@@ -346,10 +346,8 @@ class HiPaySubscription(ModelResource):
 
 
     def obj_create(self, bundle, request=None, **kwargs):
-        logger.warn("0 --------- Trying the payment now hold your breath ... ")        
         host = "http%s://%s" %('s' if request.is_secure() else '', request.get_host())
         bundle = super(HiPaySubscription, self).obj_create(bundle, request, **kwargs)
-        logger.warn("1 ---------- Trying the payment now hold your breath ... ")
         # Go on pay it for real
         subscription = bundle.obj.subscription
 

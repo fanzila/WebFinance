@@ -27,7 +27,7 @@ PERIODS = ('monthly', 'quarterly', 'yearly')
 DELIVERY_TYPES = ('email', 'postal')
 PAYMENT_METHODS = ('unknown', 'direct_debit', 'check', 'wire_transfer')
 DOC_TYPES = ('quote','invoice')
-SUBSCRIPTION_STATUS = ('running', 'canceled', 'suspended', 'expired')
+SUBSCRIPTION_STATUS = ('running', 'canceled', 'suspended', 'expired', 'setup')
 DEFAULT_VAT = '19.60'
 FACTORS = {'monthly':1,
            'quarterly': 3,
@@ -86,7 +86,7 @@ class Subscription(models.Model):
                                                            # the app once the
                                                            # service is
                                                            # completely known (servername or ipaddres for example)
-    status = models.CharField(max_length=16, choices=zip(SUBSCRIPTION_STATUS, SUBSCRIPTION_STATUS), default='running')
+    status = models.CharField(max_length=16, choices=zip(SUBSCRIPTION_STATUS, SUBSCRIPTION_STATUS), default='setup')
     paid = models.BooleanField(default=False) # The last payment date is know to
                                               # the invoices_set of the instance
                                               # but will reproduce it here to
@@ -176,10 +176,9 @@ class Invoices(models.Model):
         return self.invoice_num
     @property
     def info(self):
-        logger.warn("I'm called and my value is %s" % (self.subscription.service_name or self.subscription.info,))
         if self.subscription:
             return self.subscription.service_name or self.subscription.info
-        return "| ".join([r.description for r in self.invoicerow_set.all()])
+        return "| ".join([r.description for r in self.invoicerows_set.all()])
 
     class Meta:
         verbose_name = _('Invoice')

@@ -296,7 +296,7 @@ def hipay_ipn_ack(request, internal_transid, invoice_id, payment_type):
     # FIXME: We should check where this is coming from, if not, anybody could
     # pretend notifying for a payment that actually never happened ? I can't
     # figure out how they do this with MAPI
-    host = "http%s://%s" %('s' if request.is_secure() else '', request.get_host())    
+    host = "http%s://%s" %('s' if request.is_secure() else '', request.get_host())
     if request.META.get('REMOTE_ADDR', None) not in settings.HIPAY_ACK_SOURCE_IPS:
         # We have to log this incident
         logger.critical(u"""Connexion from %s pretending to be ack server from HiPay,
@@ -347,14 +347,8 @@ def hipay_ipn_ack(request, internal_transid, invoice_id, payment_type):
             c_object.payment_date = datetime.now()
             c_object.save()
 
-            if first.url_ack: #This is only updated when the ACK
-                # comes in Pinging back ... We send everything and let the receiver
-                # decide, it's likely that it's just interested in'capture' 'ok' so
-                # we have a ping back that will just say paid or not paid
-
-                # add the task to the queue, the task will be retried 5 times every
-                # 5mn if ot fail
-                result = ipn_ping.delay(c_object.id) # Maybe save this for future ref ?!
+            if first.url_ack:
+                task_ipn_result = ipn_ping.delay(c_object.id) # Maybe save this for future ref ?!
 
             # Send the notice
             tr.payment_received_notice(host)
@@ -363,9 +357,12 @@ def hipay_ipn_ack(request, internal_transid, invoice_id, payment_type):
             if c_object.subscription:
                 c_object.subscription.paid = True
                 c_object.payment_date = datetime.now()
-                c_object.subscription.status = 'running'
+                c_object.subscription.status = 'running' #Maybe check the previous status ?
                 c_object.subscription.save()
                 c_object.subscription.set_expiration_date()
+                if c_object.subscription.status_url:
+                    task_status_result = ipn_subscription.delay(c_object.subscription.id) # Maybe save this for future ref ?!
+
 
 
         if payment_type == 'invoice':

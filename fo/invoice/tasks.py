@@ -23,10 +23,12 @@ def deactivate_subscription(subscription_id=None):
     sub.save()
     ipn_subscription.delay(subscription_id)
 
-@task(track_started=True)
+@task(max_retries=288, default_retry_delay=5*60,
+      store_errors_even_if_ignored=True,
+      send_error_emails=True)
 def ipn_subscription(subscription_id=None):
     # FIXME: use requests api
-    sub = Subscription.objects.get(pk=subscription_id)    
+    sub = Subscription.objects.get(pk=subscription_id)
 
     logger.info("Pinging %s for IPN subscription state change" % sub.status_url)
     data = serializers.serialize("json", Subscription.objects.filter(pk=subscription_id))
@@ -43,8 +45,8 @@ def ipn_subscription(subscription_id=None):
     except Exception, e:
         message = u"Unable to notify %s, we have a status change to annouce: %s" %(sub.status_url, e)
         logger.warn(message)
-        ipn_ping.retry(exc=e)
-    
+        ipn_subscription.retry(exc=e)
+
 @task(track_started=True)
 def subscription_reminder(subscription_id=None):
     """Run as a cron to remind people for subscriptions that will expire soon
@@ -52,35 +54,26 @@ def subscription_reminder(subscription_id=None):
     # Mark subscription that are canceled and avoid them here
     subs = Subscription.objects.count()
     for sub in Subscription.objects.all():
-        if sub.expiration_date:
+        if sub.expiration_date and sub.status == 'running':
             days_left = (sub.expiration_date - datetime.now()).days
             if days_left in (60, 30, 15, 7, 3, 1):
                 sub.send_reminder()
                 sub.reminder_sent_date = datetime.now()
             # The subscription will expire before our next run
             if days_left < 1:
-                # schedule the task tha will mark the subscription as expired
+                # schedule the task that will mark the subscription as expired
                 # and ping the app that manage the service
                 if sub.expiration_date <= datetime.bow():
                     deactivate_subscription.delay(args=[sub.pk])
                 else:
                     deactivate_subscription.apply_async(args=[sub.pk], eta=sub.expiration_date)
 
-        # 0 - check if a reminder have to be sent, if so send it and update the
-        # reminder fields
-        
-        # 1- Check if the subscription will expire before the next run and
-        # schedule a task for state change at the exact time of expiration, will
-        # let the apps decide what to do with the info --ETA/countdown. Each app
-        # will define a URL to announce subscription status change. The task
-        # have to be stored because it might need to be revoked/canceled if a
-        # payment happen before actual expiration
         subscription_reminder.update_state(state="PROGRESS",
                                            meta={"current": sub.pk, "total": subs})
-        continue        
+
     return True
 
-@task(max_retries=5, default_retry_delay=5*60,
+@task(max_retries=288, default_retry_delay=5*60,
       store_errors_even_if_ignored=True,
       send_error_emails=True)
 def ipn_ping(tr_id):
@@ -99,7 +92,7 @@ def ipn_ping(tr_id):
         response = opener.open(request)
         message = u"Pinged back %s ... propagation, got '%s'" %(trans.url_ack, response.read())
         logger.info(message)
-        worker_logger.info(message)        
+        worker_logger.info(message)
     except Exception, e:
         message = u"Unable to ping back %s, we have an ack to propage: %s" %(trans.url_ack, e)
         logger.warn(message)
