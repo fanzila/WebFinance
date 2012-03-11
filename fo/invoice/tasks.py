@@ -26,7 +26,7 @@ def deactivate_subscription(subscription_id=None):
 @task(max_retries=288, default_retry_delay=5*60,
       store_errors_even_if_ignored=True,
       send_error_emails=True)
-def ipn_subscription(subscription_id=None):
+def ipn_subscription(subscription_id=None, update_type=None):
     # FIXME: use requests api
     sub = Subscription.objects.get(pk=subscription_id)
 
@@ -37,7 +37,7 @@ def ipn_subscription(subscription_id=None):
                          ("Content-Length", str(len(data))),
                          ("User-Agent", u"ISVTEC -- PAYMENT GATEWAY")]
     urllib2.install_opener(opener)
-    request = urllib2.Request(sub.status_url,urlencode({'subscription':data}))
+    request = urllib2.Request(sub.status_url,urlencode({'subscription':data, 'update_type':update_type}))
     try:
         response = opener.open(request)
         message = u"Notified %s ... propagation, got '%s'" %(sub.status_url, response.read())
@@ -63,7 +63,7 @@ def subscription_reminder(subscription_id=None):
             if days_left < 1:
                 # schedule the task that will mark the subscription as expired
                 # and ping the app that manage the service
-                if sub.expiration_date <= datetime.bow():
+                if sub.expiration_date <= datetime.now():
                     deactivate_subscription.delay(args=[sub.pk])
                 else:
                     deactivate_subscription.apply_async(args=[sub.pk], eta=sub.expiration_date)

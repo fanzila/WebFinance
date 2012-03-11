@@ -156,7 +156,8 @@ def hipay_subscription(request, subscription_id):
     first_invoice = Invoices.objects.create(client=subscription.client,
                                             invoice_num=subscription.ref_contrat,
                                             period=subscription.period,
-                                            subscription=subscription
+                                            subscription=subscription,
+                                            update_type='setup',
                                             )
     tr = InvoiceTransaction.objects.create(invoice=first_invoice)
 
@@ -379,7 +380,7 @@ def hipay_ipn_ack(request, internal_transid, invoice_id, payment_type):
                 c_object.subscription.save()
                 c_object.subscription.set_expiration_date()
                 if c_object.subscription.status_url:
-                    task_status_result = ipn_subscription.delay(c_object.subscription.id) # Maybe save this for future ref ?!
+                    task_status_result = ipn_subscription.delay(c_object.subscription.id, c_object.update_type) # Maybe save this for future ref ?!
 
 
 
@@ -433,8 +434,9 @@ def renew_subscription(request, subscription_id):
     # We create an invoice for the first payment and the subsequent payments are
     # created by a celery task using the first=False to get the payment details
     next_invoice = subscription.invoices_set.create(client=subscription.client,
-                                            invoice_num=subscription.ref_contrat,
-                                            period=subscription.period,
+                                                    invoice_num=subscription.ref_contrat,
+                                                    period=subscription.period,
+                                                    update_type='renewal',
                                             )
     try:
         sr = subscription.subscriptionrow_set.get(first=False)
@@ -452,3 +454,19 @@ def renew_subscription(request, subscription_id):
         return redirect(response['message'])
     else:
         raise ValueError(response)
+
+@login_required
+def subscription_invoices(request, subscription_id):
+    #FIXME: Make the the called script accept a configurable directory, Cyril
+    #can you fix that please.
+    current_user = Users.objects.get(email=request.user.email)
+    subscriptions = [c.subscription_set.all() for c in current_user.clients_set.all()]
+    if not subscriptions:
+        raise Http404
+
+    qs  = reduce(operator.or_,subscriptions)
+    subscription = get_object_or_404(qs, pk=subscription_id)
+    invoices = subscription.sub_invoices.all()
+
+    return render(request, fo_get_template(request.get_host(),'invoice/list_subscription_invoices.html'),
+                  {'invoices': invoices, 'subscription':subscription})

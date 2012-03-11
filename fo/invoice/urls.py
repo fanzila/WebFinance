@@ -21,6 +21,7 @@ urlpatterns = patterns('',
 
                        url(r'^hipay/invoice/(?P<invoice_id>\d+)$', 'invoice.views.hipay_invoice', name='hipay_invoice'),
                        url(r'^hipay/subscription/(?P<subscription_id>\d+)$', 'invoice.views.hipay_subscription', name='hipay_paysubs'),
+                       url(r'^subscription/invoices/(?P<subscription_id>\d+)$', 'invoice.views.subscription_invoices', name='subscription_invoices'),
 
                        url(r'^hipay/payment/(?P<payment_type>invoice|subscription)/(?P<action>cancel|ok|nook)/(?P<invoice_id>\d+)/(?P<internal_transid>\d+)$', 'invoice.views.hipay_payment_url', name='hipay_payment_url'),
                        url(r'^hipay/result/ack/(?P<payment_type>invoice|subscription)/(?P<invoice_id>\d+)/(?P<internal_transid>\d+)$', 'invoice.views.hipay_ipn_ack', name='hipay_ipn_ack'),

@@ -1,0 +1,40 @@
+{% extends BASE_TEMPLATE %}
+{% load i18n %}
+{% load url from future %}
+
+{% block content %}
+    <h1>{% blocktrans %}Invoices/ for subscription {% endblocktrans %}{{ subscription.info }}</h1>
+
+    {% if message %}
+    <p>{{ message}} </p>
+    {% endif %}
+
+
+    {% if invoices %}<h2>{% trans 'Invoices' %}</h2>{% endif %}
+    <ul>
+        {% for invoice in invoices %}
+            <li><a href="{% url 'detail_invoice' invoice_id=invoice.pk %}">
+                                    {{ invoice.invoice_num }} 
+                </a> {% if not invoice.paid %}|
+                <a href="{% url 'hipay_invoice' invoice_id=invoice.pk %}">
+                                    {% trans 'Pay invoice' %}
+                </a> {% else %} {% trans 'invoice paid on ' %}{{ invoice.payment_date }}{% endif %}|
+                <a href="{% url 'download_invoice' invoice_id=invoice.pk %}">
+                                    {% trans 'Download invoice' %}
+                </a>
+	       {% if invoice.invoicetransaction_set.count %}
+	       <ul>
+                 {% for it in invoice.invoicetransaction_set.all %}
+	           {% if it.status %}
+                     <li>{{ it }}</li>
+	           {% endif %}
+                 {% endfor %}
+               </ul>
+	       {% endif %}
+            </li>	    
+        {% empty %}
+            {% blocktrans %} You have no pending invoice for {{ company }} {% endblocktrans %}
+        {% endfor %}
+    </ul>
+
+{% endblock %}

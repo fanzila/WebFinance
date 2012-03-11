@@ -14,13 +14,23 @@
     <ul>
         {% for invoice in invoice_list %}
             <li><a href="{% url 'detail_invoice' invoice_id=invoice.pk %}">
-                                    {{ invoice.invoice_num }} |
-                                    {{ invoice.invoice_date }}
-                </a> |
-                <a href="{% url 'hipay_invoice' invoice_id=invoice.pk %}">
-                                    {% trans 'Pay invoice with HiPay' %}
-                </a> |
-                <a href="{% url 'download_invoice' invoice_id=invoice.pk %}">
+                                    {{ invoice.invoice_num }}
+                </a>
+	        {% if not invoice.paid %}
+                  | <a href="{% url 'hipay_invoice' invoice_id=invoice.pk %}">
+                                    {% trans 'Pay invoice' %}
+                  </a>
+	        {% else %}
+	          {% trans 'invoice paid on ' %}{{ invoice.payment_date }}
+	        {% endif %}
+	        {% if invoice.subscription %}
+                  |
+                  <a href="{% url 'subscription_invoices' subscription_id=invoice.subscription.pk %}">
+                                    {% trans 'Subscription ' %} #{{ invoice.subscription.ref_contrat }}
+                  </a>
+	        {% endif %}
+
+                | <a href="{% url 'download_invoice' invoice_id=invoice.pk %}">
                                     {% trans 'Download invoice' %}
                 </a>
             </li>
@@ -33,8 +43,7 @@
     <ul>
         {% for invoice in quote_list %}
             <li><a href="{% url 'detail_invoice' invoice_id=invoice.pk %}">
-                                    {{ invoice.invoice_num }} |
-                                    {{ invoice.invoice_date }}
+                                    {{ invoice.invoice_num }}
                 </a> |
                 <a href="{% url 'download_invoice' invoice_id=invoice.pk %}">
                                     {% trans 'Download quote' %}
@@ -57,13 +66,17 @@
             <li><a href="{% url 'detail_subscription' subscription_id=invoice.pk %}">
                                     {{ invoice.ref_contrat }} |
                                     {{ invoice.periodic_next_deadline }} |
-                                    {{ invoice.period }}
+                                    {{ invoice.period }} |
+                                    {{ invoice.info }} |
+				    {% if invoice.expiration_date %}
+                                      {% trans 'expires on' %} {{ invoice.expiration_date }} |
+				    {% endif %}
+                </a>
+                <a href="{% url 'renew_subscription' subscription_id=invoice.pk %}">
+                                    {% trans 'renew subscription' %}
                 </a> |
-                <a href="{% url 'hipay_paysubs' subscription_id=invoice.pk %}">
-                                    {% trans 'Pay subscription with HiPay' %}
-                </a> |
-                <a href="{% url 'download_subscription' subscription_id=invoice.pk %}">
-                                    {% trans 'Download subscription invoice' %}
+                <a href="{% url 'subscription_invoices' subscription_id=invoice.pk %}">
+                                    {% trans 'Subscription invoices' %}
                 </a>
             </li>
         {% empty %}

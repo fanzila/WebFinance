@@ -467,7 +467,7 @@ class InvoiceAPITestCase(TestCase):
         resp = self.client.get('/api/v1/invoice/1/', data=self.data)
         self.assertEqual(resp.status_code, 200)
         deserialized = json.loads(resp.content)
-        self.assertEqual(len(deserialized), 28)
+        self.assertEqual(len(deserialized), 29)
         self.assertEqual(deserialized['invoice_num'], u"201111100")
 
 

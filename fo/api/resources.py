@@ -355,7 +355,8 @@ class HiPaySubscription(ModelResource):
             first_invoice = Invoices.objects.create(client=subscription.client,
                                                     invoice_num=subscription.ref_contrat,
                                                     period=subscription.period,
-                                                    subscription=subscription)
+                                                    subscription=subscription,
+                                                    update_type='setup')
         except Exception, e:
             logger.debug("The payment failed with exception %s " % e)
             raise ValueError("The payment failed with exception %s " % e)

@@ -32,6 +32,7 @@ DEFAULT_VAT = '19.60'
 FACTORS = {'monthly':1,
            'quarterly': 3,
            'yearly': 12}
+UPDATE_TYPES = ['setup', 'upgrade', 'renewal']
 
 class InvoiceRows(models.Model):
     id = models.AutoField(primary_key=True, db_column='id_facture_ligne')
@@ -115,6 +116,7 @@ class Subscription(models.Model):
             else:
                 # This is a problem and need to be reset by the app
                 self.expiration_date = datetime.now() + relativedelta(months=FACTORS.get(self.period))
+        self.save()
 
     def __unicode__(self):
         return u"%s | %s | %s " % (
@@ -138,6 +140,22 @@ class Subscription(models.Model):
                                    })
         message = message_template.render(message_context)
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [dest.email for dest in self.client.users.all()] + [self.client.email])
+
+    def send_subscription_notice(self, host=None):
+        host = host or settings.DEFAULT_HOST
+        subject = _("Subscription ISVTEC : %(name)s" %{'name':self.client.name})
+        message_template = fo_get_template(host,'invoice/emails/subscription_notice.txt', True)
+        message_context = Context({'recipient_name': self.client.name,
+                                   #'subscription': self,
+                                   'info': self.info,
+                                   'sender_name': _("ISVTEC Customer service"), # FIXME: change this for white label
+                                   'company': self.client.name,
+                                   'EMAIL_BASE_TEMPLATE':select_template(fo_get_template(host,settings.EMAIL_BASE_TEMPLATE)),
+                                   'ADDRESS_TEMPLATE':select_template(fo_get_template(host,settings.COMPANY_ADDRESS)),
+                                   })
+        message = message_template.render(message_context)
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [dest.email for dest in self.client.users.all()] + [self.client.email])
+
 
 
 class Invoices(models.Model):
@@ -168,6 +186,7 @@ class Invoices(models.Model):
     tax = models.DecimalField(default=DEFAULT_VAT, max_digits=7, decimal_places=2)
     exchange_rate = models.DecimalField(default='1.00', max_digits=10, decimal_places=2)
     subscription = models.ForeignKey('Subscription', blank=True, null=True, related_name="sub_invoices")
+    update_type = models.CharField(max_length=18, blank=True, choices=zip(UPDATE_TYPES, UPDATE_TYPES), default='setup')
 
     @property
     def id_facture_id(self):
@@ -282,10 +301,9 @@ class InvoiceTransaction(models.Model):
     first_status = models.CharField(max_length=16, choices=zip(TRANSACTION_STATUS, TRANSACTION_STATUS), default='pending')
 
     def __unicode__(self):
-        return u"%s | %s | %s | %s | %s" % (
+        return u"%s | %s  | %s | %s" % (
             unicode(self.status),
             unicode(self.operation),
-            unicode(self.url_ack),
             unicode(self.transid),
             unicode(self.refProduct))
 

@@ -26,6 +26,7 @@ DATABASES = {
         'USER': 'root',
         'PASSWORD': 'lptevtg',
         'HOST': '127.0.0.1',
+#        'HOST': '10.42.0.1',
         'PORT': '',
     }
 }
@@ -37,7 +38,6 @@ EMAIL_HOST = '127.0.0.1'
 DEFAULT_HOST = 'webfinance.wilane.org'
 WEB_HOST = 'http://%s' % (DEFAULT_HOST,)
 DEFAULT_FROM_EMAIL = 'no_reply@isvtec.com'
-
 
 LOGGING = {
     'version': 1,
@@ -203,8 +203,8 @@ CELERY_SEND_TASK_ERROR_EMAILS = True
 CELERYBEAT_SCHEDULE = {
     "runs-every-day": {
         "task": "invoice.tasks.subscription_reminder",
-        #"schedule": crontab(minute=0, hour=0),
-        "schedule":timedelta(seconds=30),
+        "schedule": crontab(minute=0, hour=0),
+        #"schedule":timedelta(seconds=30),
         "args": (None,),
     },
 }

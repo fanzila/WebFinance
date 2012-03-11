@@ -1,0 +1,23 @@
+{% extends EMAIL_BASE_TEMPLATE %}
+{% load i18n %}
+{% block header %}
+{% blocktrans %}
+{{ recipient_name }},
+{% endblocktrans %}
+{% endblock %}
+{% block body %}
+{% blocktrans %}
+
+Thaks for subscribing to the following service for your company {{ company }}:
+
+Service: {{ info }} 
+
+You'll receive shortly an email that will allow you to pay the invoice
+if not already done when you ordered the subscription. Once the
+payment received, the service will be setup and an email will let you
+know once done.
+
+Thanks
+
+{% endblocktrans %}
+{% endblock %}

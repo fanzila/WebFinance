@@ -6,7 +6,7 @@
   <h2>{% trans 'Invoice' %} {{ invoice.invoice_num }}</h2>
     <ul>
       {% for row in invoice_details %}
-        <li>{{ row.description }} | {{ row.qty }} | {{ row.df_price }}</li>
+        <li>{{ row.description }} | {{ row.df_price }}</li>
       {% empty %}
         {% blocktrans %} This invoice have no details{% endblocktrans %}
       {% endfor %}
@@ -14,8 +14,10 @@
 
     {% if invoice.invoicetransaction_set.count %}
       <ul>
-         {% for row in invoice.invoicetransaction_set.all %}
-           <li>{{ row }}</li>
+         {% for it in invoice.invoicetransaction_set.all %}
+	   {% if it.status %}
+             <li>{{ it }}</li>
+	   {% endif %}
          {% endfor %}
       </ul>
     {% else %}
