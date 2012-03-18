@@ -181,6 +181,10 @@ SOCIAL_AUTH_ASSOCIATE_BY_MAIL = True
 SESSION_SAVE_EVERY_REQUEST=True
 SESSION_COOKIE_NAME='isvtecsession'
 
+#SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+#SESSION_COOKIE_AGE = 60 * 10
+#SESSION_SAVE_EVERY_REQUEST = True
+
 djcelery.setup_loader()
 
 from datetime import timedelta

@@ -7,7 +7,7 @@ __date__   = "Mon Feb 20 18:28:44 2012"
 
 import urllib2
 from urllib import urlencode
-from invoice.models import Subscription, InvoiceTransaction
+from invoice.models import Subscription, InvoiceTransaction, Invoices
 #from celery.decorators import task
 from celery.task import task
 from django.core import serializers
@@ -26,11 +26,19 @@ def deactivate_subscription(subscription_id=None):
 @task(max_retries=288, default_retry_delay=5*60,
       store_errors_even_if_ignored=True,
       send_error_emails=True)
-def ipn_subscription(subscription_id=None, update_type=None):
-    # FIXME: use requests api
-    sub = Subscription.objects.get(pk=subscription_id)
+def ipn_subscription(subscription_id=None, update_type=None, invoice_id=None):
+    # FIXME: use requests api, it's way cooler than this voodoo sorry
 
-    logger.info("Pinging %s for IPN subscription state change" % sub.status_url)
+    sub = Subscription.objects.get(pk=subscription_id)
+    status_url = sub.status_url
+
+    if invoice_id:
+        inv = Invoices.objects.get(pk=invoice_id)
+        if inv.status_url:
+            # Override this
+            status_url = inv.status_url
+
+    logger.info("Pinging %s for IPN subscription state change" % status_url)
     data = serializers.serialize("json", Subscription.objects.filter(pk=subscription_id))
     opener = urllib2.build_opener()
     opener.addheaders = [("Content-Type", "text/json"),
@@ -40,10 +48,10 @@ def ipn_subscription(subscription_id=None, update_type=None):
     request = urllib2.Request(sub.status_url,urlencode({'subscription':data, 'update_type':update_type}))
     try:
         response = opener.open(request)
-        message = u"Notified %s ... propagation, got '%s'" %(sub.status_url, response.read())
+        message = u"Notified %s ... propagation, got '%s'" %(status_url, response.read())
         logger.info(message)
     except Exception, e:
-        message = u"Unable to notify %s, we have a status change to annouce: %s" %(sub.status_url, e)
+        message = u"Unable to notify %s, we have a status change to annouce: %s" %(status_url, e)
         logger.warn(message)
         ipn_subscription.retry(exc=e)
 

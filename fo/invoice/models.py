@@ -188,6 +188,10 @@ class Invoices(models.Model):
     subscription = models.ForeignKey('Subscription', blank=True, null=True, related_name="sub_invoices")
     update_type = models.CharField(max_length=18, blank=True, choices=zip(UPDATE_TYPES, UPDATE_TYPES), default='setup')
 
+    # Ovveride the status url of the global subscription if this is defined
+    # (simple way to propage special orders)
+    status_url = models.URLField(blank=True, null=True)
+
     @property
     def id_facture_id(self):
         """Heu yeah awry ... tastypie search this thing somehow with a rather

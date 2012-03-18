@@ -35,8 +35,7 @@ except ImportError:
 #monkey.patch_all()
 
 
-logger = logging.getLogger('wf')
-
+logger = logging.getLogger('isvtec')
 
 @login_required
 def list_companies(request):
@@ -121,6 +120,7 @@ def accept_subscriptionquote(request, subscription_id):
 
 @login_required
 def hipay_invoice(request, invoice_id):
+    host = "http%s://%s" %('s' if request.is_secure() else '', request.get_host())
     current_user = Users.objects.get(email=request.user.email)
     invoices = [c.invoices_set.all() for c in current_user.clients_set.all()]
     if not invoices:
@@ -135,6 +135,7 @@ def hipay_invoice(request, invoice_id):
     if response['status'] == 'Accepted':
         tr.redirect_url = response['message']
         tr.save()
+        tr.send_invoice_notice(host)
         return redirect(response['message'])
     else:
         tr.delete()
@@ -158,6 +159,7 @@ def hipay_subscription(request, subscription_id):
                                             period=subscription.period,
                                             subscription=subscription,
                                             update_type='setup',
+                                            status_url=subscription.status_url
                                             )
     tr = InvoiceTransaction.objects.create(invoice=first_invoice)
 
@@ -364,7 +366,6 @@ def hipay_ipn_ack(request, internal_transid, invoice_id, payment_type):
         if result.get('status', None) == 'ok' and result.get('operation') == 'capture' and payment_type == 'invoice':
             c_object.paid = True
             c_object.payment_date = datetime.now()
-            c_object.save()
 
             if first.url_ack:
                 task_ipn_result = ipn_ping.delay(c_object.id) # Maybe save this for future ref ?!
@@ -374,15 +375,28 @@ def hipay_ipn_ack(request, internal_transid, invoice_id, payment_type):
 
             # Test if this payment is linked to a subscription
             if c_object.subscription:
-                c_object.subscription.paid = True
-                c_object.payment_date = datetime.now()
-                c_object.subscription.status = 'running' #Maybe check the previous status ?
-                c_object.subscription.save()
-                c_object.subscription.set_expiration_date()
-                if c_object.subscription.status_url:
-                    task_status_result = ipn_subscription.delay(c_object.subscription.id, c_object.update_type) # Maybe save this for future ref ?!
-
-
+                if c_object.update_type in ('setup', 'renewal'):
+                    c_object.subscription.paid = True
+                    c_object.subscription.payment_date = datetime.now()
+                    c_object.subscription.status = 'running' #Maybe check the previous status ?
+                    c_object.subscription.save() #FIXME: Double check the impact of this save, seems inop
+                    c_object.subscription.set_expiration_date()
+                else: #upgrade we update the price. The first price paid won't
+                      #be accurate if the bill is not paid the same day
+                    row = c_object.subscription.subscriptionrow_set.get(first=False) # Subsequent payments
+                    # The price paid for the delta (sent by the app, we need to
+                    # move this here and handle the eventual reinbursements)
+                    delta = c_object.invoicerows_set.all()[0].df_price
+                    row.price_excl_vat += delta * (c_object.subscription.expiration_date - c_object.subscription.payment_date).days/(c_object.subscription.expiration_date - datetime.now()).days
+                    row.save()
+                if c_object.status_url or c_object.subscription.status_url:
+                    task_status_result = ipn_subscription.delay(c_object.subscription.id, c_object.update_type, c_object.pk) # Maybe save this for future ref ?!
+                else:
+                    # Well ... seems nobody is interested will send it to Emmaüs
+                    logger.debug("""No upstream url to propagate status change we've got %s from %s""" %(request.META.get('REMOTE_ADDR', None),request.POST.get('xml', None)))
+            c_object.save()
+        else:
+            logger.debug("""IPN from HIPAY status=%s, operation=%s, payment_type=%s""" %(result.get('status', None), result.get('operation'), payment_type))
 
         if payment_type == 'invoice':
             if (result.get('status', None) == 'nok' and result.get('operation') == 'capture') or (result.get('status', None) == 'ok' and result.get('operation', None) in ('cancellation', 'refund', 'reject')):

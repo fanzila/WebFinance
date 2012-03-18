@@ -52,7 +52,7 @@ class HeaderApiKeyAutentication(ApiKeyAuthentication):
         try:
             user = User.objects.get(email=username)
         except (User.DoesNotExist, User.MultipleObjectsReturned), e:
-            logger.error("[401 UNAUTHORIZED] For some reasons the user haven't been created when OAuth completed the auth process, this is likely a bug: ```%s'''" %e)
+            logger.error("[401 UNAUTHORIZED] For some reasons the user %s haven't been created when OAuth completed the auth process, this is likely a bug: ```%s'''" %(username,e))
             return self._unauthorized()
 
         request.user = user
@@ -158,10 +158,11 @@ class ClientResource(ModelResource):
 
 
 class InvoiceResource(ModelResource):
-    # FIXME: Invoice Rows have to be shipped too when the details are loaded
     client = fields.ForeignKey(ClientResource, 'client')
+    subscription = fields.ForeignKey('api.resources.SubscriptionResource', 'subscription')
     invoicerows = fields.ToManyField('api.resources.InvoiceRowsResource', 'invoicerows_set', full=True, related_name='invoice', null=True)
     transactions = fields.ToManyField('api.resources.HiPayInvoice', 'invoicetransaction_set', full=True, related_name='invoice', null=True)
+
     def apply_authorization_limits(self, request, object_list):
         current_user = Users.objects.get(email=request.user.username)
         invoices = [c.invoices_set.all() for c in current_user.clients_set.all()]
@@ -356,11 +357,12 @@ class HiPaySubscription(ModelResource):
                                                     invoice_num=subscription.ref_contrat,
                                                     period=subscription.period,
                                                     subscription=subscription,
-                                                    update_type='setup')
+                                                    update_type='setup',
+                                                    status_url=subscription.status_url)
         except Exception, e:
             logger.debug("The payment failed with exception %s " % e)
             raise ValueError("The payment failed with exception %s " % e)
-            
+
         tr = InvoiceTransaction.objects.create(invoice=first_invoice)
 
         try:
@@ -430,15 +432,18 @@ class HiPayInvoice(ModelResource):
         authorization = Authorization()
 
     def obj_create(self, bundle, request=None, **kwargs):
+        host = "http%s://%s" %('s' if request.is_secure() else '', request.get_host())
         bundle = super(HiPayInvoice, self).obj_create(bundle, request, **kwargs)
 
         # Go on pay it for real
         response = simplepayment(bundle.obj.invoice, sender_host=request.get_host(),
-                                 secure=request.is_secure(), internal_transid=bundle.obj.pk)
+                                 secure=request.is_secure(), internal_transid=bundle.obj.pk,
+                                 urls=bundle.data.get('urls', None))
 
         if response['status'] == 'Accepted':
             bundle.obj.redirect_url = response['message']
             bundle.obj.save()
+            bundle.obj.send_invoice_notice(host)
 
         return bundle
 
