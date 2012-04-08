@@ -10,6 +10,7 @@ import logging
 import operator
 from os.path import join, isfile
 from os import unlink
+from random import randint
 from datetime import datetime
 from subprocess import Popen, PIPE
 from django.contrib.auth.decorators import login_required
@@ -20,16 +21,21 @@ from django.views.decorators.http import require_http_methods
 from django.core.urlresolvers import reverse
 from django.views.decorators.csrf import csrf_exempt
 from enterprise.models import Users
-from invoice.models import Invoices, InvoiceTransaction, SubscriptionTransaction, Subscription
+from invoice.models import Invoices, InvoiceTransaction, SubscriptionTransaction, Subscription, order
 from invoice.tasks import ipn_ping, ipn_subscription
 from libs import hipay
 from libs.utils import fo_get_template
 from hipay.hipay import ParseAck
-
+from dateutil.relativedelta import relativedelta
+from dateutil.parser import parse as date_parser
 try:
     import json
 except ImportError:
     import simplejson as json
+
+FACTORS = {'monthly':1,
+           'quarterly': 3,
+           'yearly': 12}
 
 #from gevent import monkey
 #monkey.patch_all()
@@ -159,9 +165,11 @@ def hipay_subscription(request, subscription_id):
                                             period=subscription.period,
                                             subscription=subscription,
                                             update_type='setup',
-                                            status_url=subscription.status_url
+                                            status_url=subscription.status_url,
                                             )
     tr = InvoiceTransaction.objects.create(invoice=first_invoice)
+
+
 
     try:
         sr = subscription.subscriptionrow_set.get(first=True)
@@ -170,6 +178,7 @@ def hipay_subscription(request, subscription_id):
     first_invoice.invoicerows_set.create(description=sr.description,
                                          qty=sr.qty,
                                          df_price=sr.price_excl_vat)
+
     response = hipay.simplepayment(first_invoice, sender_host=request.get_host(), secure=request.is_secure(), internal_transid=tr.pk)
 
     # This is the way we daeal with HiPay subscriptions, for now we don't want
@@ -383,12 +392,14 @@ def hipay_ipn_ack(request, internal_transid, invoice_id, payment_type):
                     c_object.subscription.set_expiration_date()
                 else: #upgrade we update the price. The first price paid won't
                       #be accurate if the bill is not paid the same day
+                    od = c_object.order.order_detail_set.get(first=False)
                     row = c_object.subscription.subscriptionrow_set.get(first=False) # Subsequent payments
-                    # The price paid for the delta (sent by the app, we need to
-                    # move this here and handle the eventual reinbursements)
-                    delta = c_object.invoicerows_set.all()[0].df_price
-                    row.price_excl_vat += delta * (c_object.subscription.expiration_date - c_object.subscription.payment_date).days/(c_object.subscription.expiration_date - datetime.now()).days
+                    row.price_excl_vat = od.price
                     row.save()
+
+                    c_object.subscription.info = c_object.order.service_name
+                    c_object.subscription.save()
+
                 if c_object.status_url or c_object.subscription.status_url:
                     task_status_result = ipn_subscription.delay(c_object.subscription.id, c_object.update_type, c_object.pk) # Maybe save this for future ref ?!
                 else:
@@ -484,3 +495,100 @@ def subscription_invoices(request, subscription_id):
 
     return render(request, fo_get_template(request.get_host(),'invoice/list_subscription_invoices.html'),
                   {'invoices': invoices, 'subscription':subscription})
+
+@login_required
+def checkout(request, order_id):
+    current_user = Users.objects.get(email=request.user.email)
+    orders = [c.order_set.all() for c in current_user.clients_set.all()]
+    if not orders:
+        raise Http404
+
+    qs  = reduce(operator.or_,orders)
+    o = get_object_or_404(qs, uuid=order_id)
+    # FIXME: Allow checkout for renewal too
+    if request.method == "POST":
+        simulate = request.POST.get('simulate', None)
+        next_date = datetime.now() + relativedelta(months=+FACTORS.get(o.period))
+
+        if not o.parent: #First order aka service setup
+            subscription = o.subscription_set.create(client=o.client,
+                                                     periodic_next_deadline=next_date,
+                                                     ref_contrat="%s%s%d" %(datetime.now().strftime("%Y%m%d"), o.pk, randint(1000,9999)),
+                                                     period=o.period,
+                                                     info=o.service_name,
+                                                     status_url=o.status_url)
+            for od in o.order_detail_set.all():
+                subscription.subscriptionrow_set.create(description=od.description,
+                                                        qty=od.quantity,
+                                                        price_excl_vat=od.price,
+                                                        first=od.first)
+            first_invoice = Invoices.objects.create(client=subscription.client,
+                                                    invoice_num="%s%s%d" %(datetime.now().strftime("%Y%m%d"), o.pk, randint(1000,9999)),
+                                                    period=subscription.period,
+                                                    subscription=subscription,
+                                                    update_type='setup',
+                                                    status_url=o.status_url,
+                                                    order=o
+                                                    )
+            try:
+                sr = subscription.subscriptionrow_set.get(first=True)
+            except Subscription.DoesNotExist:
+                raise ValueError("Malformed subscription %s, if this is a legacy subscription it should have been fixed by now"%subscription.pk)
+            first_invoice.invoicerows_set.create(description=sr.description,
+                                                 qty=sr.qty,
+                                                 df_price=sr.price_excl_vat)
+        else:
+            # This is an upgrade we work with the old subscription and update it
+            # when the payment is received
+            subscription = o.parent.subscription_set.all()[0]
+            od = o.order_detail_set.get(first=False)
+            delta_price = (od.price - subscription.subscriptionrow_set.get(first=False).price_excl_vat) * (subscription.expiration_date - datetime.now()).days/(subscription.expiration_date - subscription.payment_date).days
+            first_invoice = Invoices.objects.create(client=subscription.client,
+                                                    invoice_num="%s%s%d" %(datetime.now().strftime("%Y%m%d"), o.pk, randint(1000,9999)),
+                                                    period=subscription.period,
+                                                    subscription=subscription,
+                                                    update_type='upgrade',
+                                                    status_url=o.status_url,
+                                                    order=o
+                                                    )
+            first_invoice.invoicerows_set.create(description=od.description,
+                                                 qty=od.quantity,
+                                                 df_price=delta_price)
+
+        if simulate:
+            first_invoice.paid = True
+            first_invoice.payment_date = datetime.now()
+
+            # Test if this payment is linked to a subscription
+            if first_invoice.subscription:
+                if first_invoice.update_type in ('setup', 'renewal'):
+                    first_invoice.subscription.paid = True
+                    first_invoice.subscription.payment_date = datetime.now()
+                    first_invoice.subscription.status = 'running' #Maybe check the previous status ?
+                    first_invoice.subscription.save() #FIXME: Double check the impact of this save, seems inop
+                    first_invoice.subscription.set_expiration_date()
+                else: # Upgrade
+                    row = subscription.subscriptionrow_set.get(first=False) # Subsequent payments
+                    row.price_excl_vat = od.price
+                    row.save()
+
+                    subscription.info = o.service_name
+                    subscription.save()
+
+                if first_invoice.status_url or first_invoice.subscription.status_url:
+                    task_status_result = ipn_subscription.delay(first_invoice.subscription.id, first_invoice.update_type, first_invoice.pk) # Maybe save this for future ref ?!
+                else:
+                    # Well ... seems nobody is interested will send it to Emmaüs
+                    logger.debug("""No upstream url to propagate status change we've got %s from %s""" %(request.META.get('REMOTE_ADDR', None),request.POST.get('xml', None)))
+            first_invoice.save()
+            return redirect(o.application_uri)
+
+            # Pretend that the IPN came back with good news ... FIXME: Make a
+            # real IPN simulation here
+
+        else:
+            # redirect to the payment gateway (HiPay per default but soon others why not ?)
+            return hipay_invoice(request, first_invoice.pk)
+
+    return render(request, fo_get_template(request.get_host(),'invoice/checkout.html'),
+                  {'order':o})

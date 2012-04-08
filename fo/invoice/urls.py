@@ -28,6 +28,7 @@ urlpatterns = patterns('',
                        url(r'^hipay/shop/logo$', 'invoice.views.hipay_shop_logo', name='hipay_shop_logo'),
                        url(r'^hipay/reack$', 'invoice.views.ack_postback', name='ack_postback'),
                        url(r'^subscription/postback$', 'invoice.views.sub_status_postback', name='sub_status_postback'),
+                       url(r'^order/(?P<order_id>[-aA-zZ0-9]+)$', 'invoice.views.checkout', name='checkout'),
 
 
                        url(r'^hipay/test_url_ack$', 'invoice.views.test_url_ack', name='test_url_ack'),

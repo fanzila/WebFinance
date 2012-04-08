@@ -7,12 +7,13 @@ __date__   = "Fri Nov 11 07:01:12 2011"
 
 from django.conf.urls.defaults import patterns, include, url
 from tastypie.api import Api
-from api.resources import InvoiceResource, ClientResource, InvoiceRowsResource, SubscriptionResource, SubscriptionRowResource, HiPayInvoice, HiPaySubscription
+from api.resources import InvoiceResource, ClientResource, InvoiceRowsResource, SubscriptionResource, SubscriptionRowResource, HiPayInvoice, HiPaySubscription, OrderResource
 from django.contrib import admin
 from django.conf import settings
 admin.autodiscover()
 
 v1_api = Api(api_name='v1')
+#v2_api = Api(api_name='v2')
 
 v1_api.register(ClientResource())
 v1_api.register(InvoiceResource())
@@ -23,6 +24,8 @@ v1_api.register(SubscriptionRowResource())
 
 v1_api.register(HiPayInvoice())
 v1_api.register(HiPaySubscription())
+
+v1_api.register(OrderResource())
 
 urlpatterns = patterns('',
     url(r'^$', 'invoice.views.home', name='home'),

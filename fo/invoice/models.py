@@ -13,6 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from enterprise.models import Clients
 from django.core import serializers
+from uuid import uuid4
 from libs.utils import fo_get_template, select_template
 from django.template import Context
 from django.core.urlresolvers import reverse
@@ -96,6 +97,7 @@ class Subscription(models.Model):
     reminder_sent_date = models.DateTimeField(blank=True, null=True)
     expiration_date = models.DateTimeField(blank=True, null=True)
     status_url = models.URLField(blank=True, null=True)
+    order = models.ForeignKey('order', blank=True, null=True)
 
     class Meta:
         verbose_name = _('Subscription')
@@ -130,11 +132,13 @@ class Subscription(models.Model):
         subject = _("Service subscriptions status on ISVTEC : %(name)s" %{'name':self.client.name})
         message_template = fo_get_template(host,'invoice/emails/payment_reminder.txt', True)
         message_context = Context({'recipient_name': self.client.name,
-                                   'subscription': self,
+                                   'expiration_date': self.expiration_date,
+                                   'info': self.info,
+                                   'service_name': self.service_name,
                                    'sender_name': 'Service Client ISVTEC', # FIXME: change this for white label
                                    'company': self.client.name,
                                    'renew_url':"%s%s" %(settings.WEB_HOST, reverse('renew_subscription',
-                                                                            kwargs={'subscription_id':self.pk})),
+                                                                                   kwargs={'subscription_id':self.pk})),
                                    'EMAIL_BASE_TEMPLATE':select_template(fo_get_template(host,settings.EMAIL_BASE_TEMPLATE)),
                                    'ADDRESS_TEMPLATE':select_template(fo_get_template(host,settings.COMPANY_ADDRESS)),
                                    })
@@ -187,6 +191,7 @@ class Invoices(models.Model):
     exchange_rate = models.DecimalField(default='1.00', max_digits=10, decimal_places=2)
     subscription = models.ForeignKey('Subscription', blank=True, null=True, related_name="sub_invoices")
     update_type = models.CharField(max_length=18, blank=True, choices=zip(UPDATE_TYPES, UPDATE_TYPES), default='setup')
+    order = models.ForeignKey('order', blank=True, null=True)
 
     # Ovveride the status url of the global subscription if this is defined
     # (simple way to propage special orders)
@@ -426,3 +431,53 @@ class SubscriptionTransaction(models.Model):
 
         super(SubscriptionTransaction, self).save(*args, **kwargs)
 
+
+class order(models.Model):
+    # The app that requested this order, used for app keys (TBD) so the apps
+    # could access there data even if a user isn't actualy logged in
+    application_uri = models.URLField(blank=True, null=True)
+    parent = models.ForeignKey('self', blank=True, null=True)
+    client = models.ForeignKey(Clients)
+
+    # This will allow to upgrade the order and update the subscription
+    period = models.CharField(max_length=16,
+                              choices=[(k, _(k)) for k in ('monthly', 'quarterly', 'yearly')],
+                              default='monthly')
+    order_type = models.CharField(max_length=32,
+                              choices=[(k, _(k)) for k in ('invoice', 'subscription', 'refund')],
+                              default='subscription')
+    service_name = models.CharField(max_length=256)
+    status_url = models.URLField(blank=True, null=True)
+    checkout_url = models.URLField(blank=True, null=True)
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modification_date = models.DateTimeField(auto_now=True)
+    uuid = models.CharField(max_length=256, editable=False)
+
+    def __unicode__(self):
+        return u"%s | %s | %s" % (
+            unicode(self.application_uri),
+            unicode(self.service_name),
+            unicode(self.period),
+            )
+
+    def save(self, *args, **kwargs):
+        if not self.uuid:
+            self.uuid = str(uuid4())
+        if not self.checkout_url:
+            self.checkout_url = reverse('checkout', kwargs={'order_id':self.uuid})
+        super(order, self).save(*args, **kwargs)
+
+
+class order_detail(models.Model):
+    order = models.ForeignKey('order')
+    description = models.CharField(max_length=1024)
+    quantity = models.DecimalField(null=True, max_digits=5, decimal_places=2, blank=True)
+    price = models.DecimalField(null=True, max_digits=20, decimal_places=5, blank=True)
+    first = models.BooleanField(default=False)
+
+    def __unicode__(self):
+        return u"%s | %s | %s | %s" % (
+            unicode(self.order),
+            unicode(self.description),
+            unicode(self.quantity),
+            unicode(self.price),)

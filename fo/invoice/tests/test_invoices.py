@@ -50,7 +50,6 @@ def oauth_reverse(name, backend):
 
 class AISVTECTestLogin(TestCase):
     def setUp(self, *args, **kwargs):
-        print self.client.defaults
         settings.AUTHENTICATION_BACKENDS = (
             'oauthclient.isvtec.ISVTECBackend',)
         settings.SOCIAL_AUTH_IMPORT_BACKENDS = (
@@ -332,14 +331,14 @@ class ClientAPITestCase(TestCase):
         resp = self.client.get('/api/v1/', data=self.data)
         self.assertEqual(resp.status_code, 200)
         deserialized = json.loads(resp.content)
-        self.assertEqual(len(deserialized), 7)
+        self.assertEqual(len(deserialized), 8)
         self.assertEqual(deserialized['client'], {'list_endpoint': '/api/v1/client/', 'schema': '/api/v1/client/schema/'})
 
         # Header authentication
         resp = self.client.get('/api/v1/', {'format': 'json'}, **self.extra)
         self.assertEqual(resp.status_code, 200)
         deserialized = json.loads(resp.content)
-        self.assertEqual(len(deserialized), 7)
+        self.assertEqual(len(deserialized), 8)
         self.assertEqual(deserialized['client'], {'list_endpoint': '/api/v1/client/', 'schema': '/api/v1/client/schema/'})
 
         resp = self.client.get('/api/v1/client/', data=self.data)
@@ -453,7 +452,7 @@ class InvoiceAPITestCase(TestCase):
         resp = self.client.get('/api/v1/', data=self.data)
         self.assertEqual(resp.status_code, 200)
         deserialized = json.loads(resp.content)
-        self.assertEqual(len(deserialized), 7)
+        self.assertEqual(len(deserialized), 8)
         self.assertEqual(deserialized['invoice'], {'list_endpoint': '/api/v1/invoice/', 'schema': '/api/v1/invoice/schema/'})
 
         resp = self.client.get('/api/v1/invoice/', data=self.data)
@@ -467,7 +466,7 @@ class InvoiceAPITestCase(TestCase):
         resp = self.client.get('/api/v1/invoice/1/', data=self.data)
         self.assertEqual(resp.status_code, 200)
         deserialized = json.loads(resp.content)
-        self.assertEqual(len(deserialized), 29)
+        self.assertEqual(len(deserialized), 31)
         self.assertEqual(deserialized['invoice_num'], u"201111100")
 
 
@@ -556,7 +555,7 @@ class SubscriptionAPITestCase(TestCase):
         resp = self.client.get('/api/v1/', data=self.data)
         self.assertEqual(resp.status_code, 200)
         deserialized = json.loads(resp.content)
-        self.assertEqual(len(deserialized), 7)
+        self.assertEqual(len(deserialized), 8)
         self.assertEqual(deserialized['subscription'], {'list_endpoint': '/api/v1/subscription/', 'schema': '/api/v1/subscription/schema/'})
 
         resp = self.client.get('/api/v1/subscription/', data=self.data)
@@ -650,7 +649,7 @@ class HiPaySubscriptionAPITestCase(TestCase):
         resp = self.client.get('/api/v1/', data=self.data)
         self.assertEqual(resp.status_code, 200)
         deserialized = json.loads(resp.content)
-        self.assertEqual(len(deserialized), 7)
+        self.assertEqual(len(deserialized), 8)
         self.assertEqual(deserialized['paysubscription'], {'list_endpoint': '/api/v1/paysubscription/', 'schema': '/api/v1/paysubscription/schema/'})
 
         resp = self.client.get('/api/v1/paysubscription/', data=self.data)
@@ -731,7 +730,7 @@ class HiPayInvoiceAPITestCase(TestCase):
         resp = self.client.get('/api/v1/', data=self.data)
         self.assertEqual(resp.status_code, 200)
         deserialized = json.loads(resp.content)
-        self.assertEqual(len(deserialized), 7)
+        self.assertEqual(len(deserialized), 8)
         self.assertEqual(deserialized['payinvoice'], {'list_endpoint': '/api/v1/payinvoice/', 'schema': '/api/v1/payinvoice/schema/'})
 
         resp = self.client.get('/api/v1/payinvoice/', data=self.data)
@@ -782,3 +781,95 @@ class HiPayInvoiceAPITestCase(TestCase):
         allows = 'GET'
         self.assertEqual(resp['Allow'], allows)
         self.assertEqual(resp.content, allows)
+
+
+class OrderAPITestCase(TestCase):
+    def setUp(self):
+        self.username = 'ousmane@wilane.org'
+        self.user = User.objects.create(username='ousmane@wilane.org', email='ousmane@wilane.org')
+        super(OrderAPITestCase, self).setUp()
+        client = Clients.objects.get(pk=1)
+        Clients2Users.objects.create(user=Users.objects.get(email='ousmane@wilane.org'), client=client)
+        self.data = {'username':self.username, 'api_key':API_KEY}
+
+
+    def test_gets(self):
+        self.data.update({'format': 'json'})
+        resp = self.client.get('/api/v1/', data=self.data)
+        self.assertEqual(resp.status_code, 200)
+        deserialized = json.loads(resp.content)
+        self.assertEqual(len(deserialized), 8)
+        self.assertEqual(deserialized['order'], {'list_endpoint': '/api/v1/order/', 'schema': '/api/v1/order/schema/'})
+
+        # resp = self.client.get('/api/v1/order/', data=self.data)
+        # self.assertEqual(resp.status_code, 200)
+        # deserialized = json.loads(resp.content)
+        # self.assertEqual(len(deserialized), 2)
+        # self.assertEqual(deserialized['meta']['limit'], 20)
+        # self.assertEqual(len(deserialized['objects']), 1)
+        # self.assertEqual([obj['period'] for obj in deserialized['objects']], [u'201111100'])
+
+        # resp = self.client.get('/api/v1/invoice/1/', data=self.data)
+        # self.assertEqual(resp.status_code, 200)
+        # deserialized = json.loads(resp.content)
+        # self.assertEqual(len(deserialized), 31)
+        # self.assertEqual(deserialized['invoice_num'], u"201111100")
+
+
+    def test_posts(self):
+        post_data = '{"application_uri": "http://vm.wilane.org", "service_name": "Server B (4 CPU, RAM: 8 Gb, HDD: 200 Gb)", "status_url": "http://vm.wilane.org/wf/pg/status/74/", "period": "monthly", "client": "/api/v1/client/1/", "order_details": [{"price": "162.68", "first": "True", "description": "VM Subscription first payment", "quantity": 1}, {"price": "162.68", "first": "False", "description": "VM Subscription recurring payment", "quantity": 1}]}' 
+        #post_data = '{"client":"/api/v1/client/1/", "period":"monthly", "status_url":"http://google.com", "service_name":"Super calculateur de cuisine", "order_details":[{"first":"True","description":"Premier paiment SCC","price":17,"quantity":1},{"first":"False","description":"Super calculateur pour toujours","price":5,"quantity":10}]}'
+        resp = self.client.post('/api/v1/order/?%s' %urlencode(self.data), data=post_data, content_type='application/json')
+        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(resp['location'], 'http://testserver/api/v1/order/1/')
+
+        # make sure posted object exists
+        resp = self.client.get('/api/v1/order/1/', data=self.data)
+        self.assertEqual(resp.status_code, 200)
+        obj = json.loads(resp.content)
+        self.assertEqual(obj['service_name'], u'Server B (4 CPU, RAM: 8 Gb, HDD: 200 Gb)')
+
+    def test_puts(self):
+        self.test_posts()
+        post_data = '{"client":"/api/v1/client/1/", "service_name":"Super calculateur de cuisine Test"}'
+
+        resp = self.client.put('/api/v1/order/1/?%s' %urlencode(self.data), data=post_data, content_type='application/json')
+        self.assertEqual(resp.status_code, 204)
+
+        # make sure posted object exists
+        resp = self.client.get('/api/v1/order/1/', data=self.data)
+        self.assertEqual(resp.status_code, 200)
+        obj = json.loads(resp.content)
+        self.assertEqual(obj['service_name'], u'Super calculateur de cuisine Test')
+
+
+    def test_api_field_error(self):
+        self.test_posts()
+        # FIXME: misleading test, the DB schema for the tests have no integrity
+        # check ... legacy from the original bootstrap
+        post_data = '{"client":"/api/v1/invoice/1/", "date_facture":"2011-11-10T00:00:00"}'
+        resp = self.client.post('/api/v1/order/?%s' %urlencode(self.data), data=post_data, content_type='application/json')
+
+        # This should be 400 when the DB is fixed
+        self.assertEqual(resp.status_code, 201)
+
+
+    def test_options(self):
+        resp = self.client.options('/api/v1/order/?%s' %urlencode(self.data))
+        self.assertEqual(resp.status_code, 200)
+        allows = 'GET,POST,PUT,DELETE,PATCH'
+        self.assertEqual(resp['Allow'], allows)
+        self.assertEqual(resp.content, allows)
+
+        resp = self.client.options('/api/v1/order/1/?%s' %urlencode(self.data))
+        self.assertEqual(resp.status_code, 200)
+        allows = 'GET,POST,PUT,DELETE,PATCH'
+        self.assertEqual(resp['Allow'], allows)
+        self.assertEqual(resp.content, allows)
+
+        resp = self.client.options('/api/v1/order/schema/?%s' %urlencode(self.data))
+        self.assertEqual(resp.status_code, 200)
+        allows = 'GET'
+        self.assertEqual(resp['Allow'], allows)
+        self.assertEqual(resp.content, allows)
+

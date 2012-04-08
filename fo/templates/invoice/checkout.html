@@ -1,0 +1,33 @@
+{% extends BASE_TEMPLATE %}
+{% load i18n %}
+{% load url from future %}
+
+{% block content %}
+    <h1>{% blocktrans %}Checkout order {% endblocktrans %} #{{ order.uuid }} {{ order.client }}</h1>
+
+    {% if message %}
+    <p>{{ message}} </p>
+    {% endif %}
+
+
+<h2>{% trans 'Order' %}</h2>
+{% trans 'Order' %} #: {{ order.uuid }} <br />
+{% trans 'Service' %}: {{ order.service_name }} </br />
+{% trans 'Period' %}: {{ order.period }} </br />
+{% trans 'Order type' %}: {{ order.order_type }} </br />
+
+<h3>{% trans 'Order detail' %}</h3>
+<ul>
+{% for d in order.order_detail_set.all %}
+  <li>{% trans 'Description' %}: {{ d.description }} | {% trans 'Price' %}: {{ d.price }} | {% trans 'Quantity' %}: {{ d.quantity }} | {% if d.first %}{% trans 'First payment' %}{% else %}{% trans 'Subsequent payments' %}{% endif %}</li>
+{% endfor %}
+</ul>
+
+<form id="checkout_form" method="POST">
+  {% csrf_token %}
+  <input type="hidden" name="oder_id" value="{{ order.uuid }}">
+  Simulate Payment <input type="checkbox" name="simulate" value="checked"> <br />
+  <input type="submit" value="{% trans 'Checkout with Hipay' %}">
+</form> 
+
+{% endblock %}

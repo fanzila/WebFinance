@@ -9,6 +9,7 @@ __date__   = "Thu Nov 10 13:25:50 2011"
 from logging.handlers import SysLogHandler
 import djcelery
 from celery.schedules import crontab
+from datetime import timedelta
 
 DEBUG = True
 ADMINS = (
@@ -106,7 +107,7 @@ LOGGING = {
     }
 }
 
-TASTYPIE_FULL_DEBUG=False
+TASTYPIE_FULL_DEBUG=True
 
 #HIPAY Parameters
 HIPAY_GATEWAY="https://test-payment.hipay.com/order/"
@@ -179,15 +180,25 @@ SOCIAL_AUTH_COMPLETE_URL_NAME  = 'socialauth_complete'
 SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
 SOCIAL_AUTH_ASSOCIATE_BY_MAIL = True
 SESSION_SAVE_EVERY_REQUEST=True
-SESSION_COOKIE_NAME='isvtecsession'
+SESSION_COOKIE_NAME='isvtecwfsession'
+
+#SOCIAL_AUTH_PIPELINE = (
+#        'social_auth.backends.pipeline.social.social_auth_user',
+#        'social_auth.backends.pipeline.associate.associate_by_email',
+#        'social_auth.backends.pipeline.misc.save_status_to_session',
+#        'app.pipeline.redirect_to_form',
+#        'app.pipeline.username',
+#        'social_auth.backends.pipeline.user.create_user',
+#        'social_auth.backends.pipeline.social.associate_user',
+#        'social_auth.backends.pipeline.social.load_extra_data',
+#        'social_auth.backends.pipeline.user.update_user_details',
+#    )
 
 #SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 #SESSION_COOKIE_AGE = 60 * 10
 #SESSION_SAVE_EVERY_REQUEST = True
 
 djcelery.setup_loader()
-
-from datetime import timedelta
 
 # FIXME: Break this into components to make it more readable
 BROKER_URL = "amqp://isvtec:n0p4ss3@localhost:5672/isvtec"

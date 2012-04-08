@@ -45,7 +45,7 @@ def ipn_subscription(subscription_id=None, update_type=None, invoice_id=None):
                          ("Content-Length", str(len(data))),
                          ("User-Agent", u"ISVTEC -- PAYMENT GATEWAY")]
     urllib2.install_opener(opener)
-    request = urllib2.Request(sub.status_url,urlencode({'subscription':data, 'update_type':update_type}))
+    request = urllib2.Request(status_url, urlencode({'subscription':data, 'update_type':update_type}))
     try:
         response = opener.open(request)
         message = u"Notified %s ... propagation, got '%s'" %(status_url, response.read())
@@ -61,8 +61,8 @@ def subscription_reminder(subscription_id=None):
     60, 30, 15, 7, 3, 1 days before"""
     # Mark subscription that are canceled and avoid them here
     subs = Subscription.objects.count()
-    for sub in Subscription.objects.all():
-        if sub.expiration_date and sub.status == 'running':
+    for sub in Subscription.objects.filter(status='running'):
+        if sub.expiration_date:
             days_left = (sub.expiration_date - datetime.now()).days
             if days_left in (60, 30, 15, 7, 3, 1):
                 sub.send_reminder()

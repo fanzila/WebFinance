@@ -8,7 +8,7 @@ __date__   = "Sat Nov 26 12:12:29 2011"
 
 from tastypie.resources import ModelResource, Resource
 
-from invoice.models import Invoices, Clients, InvoiceRows, Subscription, SubscriptionRow, SubscriptionTransaction, InvoiceTransaction
+from invoice.models import Invoices, Clients, InvoiceRows, Subscription, SubscriptionRow, SubscriptionTransaction, InvoiceTransaction, order,order_detail
 from enterprise.models import Users, Clients2Users, CompanyTypes
 from libs.hipay import simplepayment, subscriptionpayment
 from tastypie import fields
@@ -159,7 +159,7 @@ class ClientResource(ModelResource):
 
 class InvoiceResource(ModelResource):
     client = fields.ForeignKey(ClientResource, 'client')
-    subscription = fields.ForeignKey('api.resources.SubscriptionResource', 'subscription')
+    subscription = fields.ForeignKey('api.resources.SubscriptionResource', 'subscription', null=True)
     invoicerows = fields.ToManyField('api.resources.InvoiceRowsResource', 'invoicerows_set', full=True, related_name='invoice', null=True)
     transactions = fields.ToManyField('api.resources.HiPayInvoice', 'invoicetransaction_set', full=True, related_name='invoice', null=True)
 
@@ -264,6 +264,7 @@ class InvoiceRowsResource(ModelResource):
 
 
 class SubscriptionResource(ModelResource):
+    order = fields.ForeignKey(ClientResource, 'order', null=True)
     client = fields.ForeignKey(ClientResource, 'client')
     subscriptionrows = fields.ToManyField('api.resources.SubscriptionRowResource', 'subscriptionrow_set', full=True, related_name='subscription', null=True)
     transactions = fields.ToManyField('api.resources.HiPaySubscription', 'subscriptiontransaction_set', full=True, related_name='subscription', null=True)
@@ -360,7 +361,7 @@ class HiPaySubscription(ModelResource):
                                                     update_type='setup',
                                                     status_url=subscription.status_url)
         except Exception, e:
-            logger.debug("The payment failed with exception %s " % e)
+            logger.debug("The payment failed with exception %s ref# %s" % (e, subscription.ref_contrat))
             raise ValueError("The payment failed with exception %s " % e)
 
         tr = InvoiceTransaction.objects.create(invoice=first_invoice)
@@ -396,7 +397,7 @@ class HiPaySubscription(ModelResource):
 
     def get_object_list(self, request):
         current_user = Users.objects.get(email=request.user.username)
-        current_user = Users.objects.get(email=request.user.username)
+        #current_user = Users.objects.get(email=request.user.username)
         subscriptions = reduce(operator.or_, [c.subscription_set.all() for c in current_user.clients_set.all()])
         if not subscriptions:
             return SubscriptionTransaction.objects.none()
@@ -461,3 +462,61 @@ class HiPayInvoice(ModelResource):
             return InvoiceTransaction.objects.get(**kwargs)
         return self.get_object_list(request).get(**kwargs)
 
+class OrderResource(ModelResource):
+    client = fields.ForeignKey(ClientResource, 'client')
+    parent = fields.ForeignKey('self', 'parent', null=True)
+    order_details = fields.ToManyField('api.resources.OrderDetailResource', 'order_detail_set', full=True, related_name='order', null=True)
+
+    def apply_authorization_limits(self, request, object_list):
+        current_user = Users.objects.get(email=request.user.username)
+        orders = [c.order_set.all() for c in current_user.clients_set.all()]
+        if not orders:
+            return order.objects.none()
+        queryset = reduce(operator.or_, orders)
+        return queryset.distinct()
+
+    def get_object_list(self, request):
+        current_user = Users.objects.get(email=request.user.username)
+        orders = [c.order_set.all() for c in current_user.clients_set.all()]
+        if not orders:
+            return order.objects.none()
+        queryset = reduce(operator.or_, orders)
+        return operator.and_(super(OrderResource, self).get_object_list(request).all(), queryset).distinct()
+
+    def obj_get(self, request=None, **kwargs):
+        if not request:
+            return order.objects.get(**kwargs)
+        return self.get_object_list(request).get(**kwargs)
+
+    class Meta:
+        queryset = order.objects.all()
+        allowed_methods = ['get', 'post', 'put', 'delete', 'patch']
+        detail_allowed_methods = ['get', 'post', 'put', 'delete', 'patch']
+        excludes = ['id']
+        resource_name = 'order'
+        authentication = HeaderApiKeyAutentication() #ApiKeyAuthentication()
+        authorization = Authorization()
+
+
+class OrderDetailResource(ModelResource):
+    order = fields.ToOneField(OrderResource, 'order', null=True)
+
+    def apply_authorization_limits(self, request, object_list):
+        if not request:
+            return order_detail.objects.all()
+        current_user = Users.objects.get(email=request.user.username)
+        orders = [c.order_detail_set.all() for c in current_user.clients_set.all()]
+        if not orders:
+            return order_detail.objects.none()
+        queryset = reduce(operator.or_, [i.order_detail_set.all() for i in orders])
+        return queryset.distinct()
+
+
+    class Meta:
+        queryset = order_detail.objects.all()
+        allowed_methods = ['get', 'post', 'put', 'delete', 'patch']
+        detail_allowed_methods = ['get', 'post', 'put', 'delete', 'patch']
+        excludes = ['id']
+        resource_name = 'order_detail'
+        authentication = HeaderApiKeyAutentication() #ApiKeyAuthentication()
+        authorization = Authorization()
