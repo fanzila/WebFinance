@@ -460,3 +460,55 @@ then reference the subscription to pay::
 
 See :ref:`pay-invoice-reference` for more details on the url_ack, redirect_url
 parameters and the post back process.
+
+Transparent subscription management from your application
+---------------------------------------------------------
+
+Another way to deal with subscriptions transparently (from the application
+pespective) is to place orders that redirects to a checkout page from where the
+user can initiate the payment, your application will be notified once the IPN
+announce the funds capture, here an example using slumber and Django::
+
+        api = RESTAPI(settings.FO_BASE_API_URL, headers={'apikey':api_key,'username': username})
+        try:
+            api_order = api.order.post({"client": local_order.company_uri,
+                                       "period": local_order.period,
+                                       "service_name": info,
+                                       "status_url": "%s%s" %(yourapphost, reverse('subscription_status_change', kwargs={'order_id':local_order.pk})),
+                                       "application_uri": yourapphost,
+                                       "order_details":[{"description": "VM Subscription first payment",
+                                                         "price": str(amount+local_order.bundle.installation_fee),
+                                                         "quantity":1,
+                                                         "first":1},
+                                                        {"description": "VM Subscription recurring payment",
+                                                         "price": str(amount),
+                                                         "quantity":1,
+                                                         "first":0}]})
+        except Exception, e:
+            logger.warn("An error occured while submitting the order through the api %s" %(e.response.content))
+            raise
+        local_order.order_uri = api_order.get('resource_uri')
+        logger.warn("[VM Order] an order have been submited and the order uri is %s" %(api_order.get('resource_uri')))
+        local_order.save()
+
+These order can be modified/upgraded transparently too, letting Webfinance deal
+with the details on the delta to pay when a customer upgrade a service, the
+payment cycle, etc::
+
+        try:
+            upstream_order = api.order.post({"client": first_order.company_uri,
+                                             "parent": subscription.get('order', None), #This is the key
+                                             "period": first_order.period,
+                                             "service_name": comment,
+                                             "status_url": "%s%s" %(host, reverse('subscription_status_change', kwargs={'order_id':upgrade_order.pk})),
+                                             "application_uri": yourapphost,
+                                             "order_details":[{"description": comment,
+                                                               "price": str(price),
+                                                               "quantity":1,
+                                                               "first":0}]})
+        except Exception, e:
+            logger.warn("An error occured while submitting the order through the api %s subscription=%s" %(e.response.content, subscription))
+            raise
+        upgrade_order.order_uri = upstream_order.get('resource_uri')
+        logger.warn("[VM Order] an order have been submited and the order uri is %s" %(upstream_order.get('resource_uri')))
+        upgrade_order.save()

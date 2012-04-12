@@ -264,7 +264,7 @@ class InvoiceRowsResource(ModelResource):
 
 
 class SubscriptionResource(ModelResource):
-    order = fields.ForeignKey(ClientResource, 'order', null=True)
+    order = fields.ForeignKey('api.resources.OrderResource', 'order', null=True)
     client = fields.ForeignKey(ClientResource, 'client')
     subscriptionrows = fields.ToManyField('api.resources.SubscriptionRowResource', 'subscriptionrow_set', full=True, related_name='subscription', null=True)
     transactions = fields.ToManyField('api.resources.HiPaySubscription', 'subscriptiontransaction_set', full=True, related_name='subscription', null=True)
