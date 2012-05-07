@@ -76,7 +76,7 @@ class Facture extends WFO {
 		or die(mysql_error());
 
     if(mysql_num_rows($result)!=1) {
-      error_log('Unknown invoice');
+      error_log('Unknown invoice ' . $id_facture);
       exit(1);
     }
 
