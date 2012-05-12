@@ -137,7 +137,7 @@ class Subscription(models.Model):
                                    'service_name': self.service_name,
                                    'sender_name': 'Service Client ISVTEC', # FIXME: change this for white label
                                    'company': self.client.name,
-                                   'renew_url':"%s%s" %(settings.WEB_HOST, reverse('renew_subscription',
+                                   'renew_url':"%s%s" %(host, reverse('renew_subscription',
                                                                                    kwargs={'subscription_id':self.pk})),
                                    'EMAIL_BASE_TEMPLATE':select_template(fo_get_template(host,settings.EMAIL_BASE_TEMPLATE)),
                                    'ADDRESS_TEMPLATE':select_template(fo_get_template(host,settings.COMPANY_ADDRESS)),
@@ -332,7 +332,7 @@ class InvoiceTransaction(models.Model):
                                    'sender_name': _("ISVTEC Customer service"), # FIXME: change this for white label
                                    'company': self.invoice.client.name,
                                    'payment_url': self.redirect_url,
-                                   'invoice_url': "%s%s" %(settings.WEB_HOST, reverse('hipay_invoice',
+                                   'invoice_url': "%s%s" %(host, reverse('hipay_invoice',
                                                                             kwargs={'invoice_id':self.invoice.pk})),
                                    'EMAIL_BASE_TEMPLATE':select_template(fo_get_template(host,settings.EMAIL_BASE_TEMPLATE)),
                                    'ADDRESS_TEMPLATE':select_template(fo_get_template(host,settings.COMPANY_ADDRESS)),
@@ -351,7 +351,7 @@ class InvoiceTransaction(models.Model):
                                    'info': self.invoice.info,
                                    'sender_name': _("ISVTEC Customer service"), # FIXME: change this for white label
                                    'company': self.invoice.client.name,
-                                   'invoice_url': "%s%s" %(settings.WEB_HOST, reverse('download_invoice',
+                                   'invoice_url': "%s%s" %(host, reverse('download_invoice',
                                                                             kwargs={'invoice_id':self.invoice.pk})),
                                    'EMAIL_BASE_TEMPLATE':select_template(fo_get_template(host,settings.EMAIL_BASE_TEMPLATE)),
                                    'ADDRESS_TEMPLATE':select_template(fo_get_template(host,settings.COMPANY_ADDRESS)),
@@ -371,7 +371,7 @@ class InvoiceTransaction(models.Model):
                                    'info': self.invoice.info,
                                    'sender_name': _("ISVTEC Customer service"), # FIXME: change this for white label
                                    'company': self.invoice.client.name,
-                                   'invoice_url': "%s%s" %(settings.WEB_HOST, reverse('hipay_invoice',
+                                   'invoice_url': "%s%s" %(host, reverse('hipay_invoice',
                                                                             kwargs={'invoice_id':self.invoice.pk})),
                                    'EMAIL_BASE_TEMPLATE':select_template(fo_get_template(host,settings.EMAIL_BASE_TEMPLATE)),
                                    'ADDRESS_TEMPLATE':select_template(fo_get_template(host,settings.COMPANY_ADDRESS)),
@@ -447,6 +447,7 @@ class order(models.Model):
                               choices=[(k, _(k)) for k in ('invoice', 'subscription', 'refund')],
                               default='subscription')
     service_name = models.CharField(max_length=256)
+    update_type = models.CharField(max_length=18, blank=True, choices=zip(UPDATE_TYPES, UPDATE_TYPES), default='setup')
     status_url = models.URLField(blank=True, null=True)
     checkout_url = models.URLField(blank=True, null=True)
     creation_date = models.DateTimeField(auto_now_add=True)

@@ -569,7 +569,7 @@ class SubscriptionAPITestCase(TestCase):
         resp = self.client.get('/api/v1/subscription/1/', data=self.data)
         self.assertEqual(resp.status_code, 200)
         deserialized = json.loads(resp.content)
-        self.assertEqual(len(deserialized), 19)
+        self.assertEqual(len(deserialized), 20)
         self.assertEqual(deserialized['ref_contrat'], u"0412201101")
 
 
