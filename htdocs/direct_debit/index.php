@@ -27,7 +27,7 @@ include("nav.php");
 $Invoice = new Facture();
 
 $res = mysql_query(
-  'SELECT invoice_id '.
+  'SELECT id, invoice_id '.
   'FROM direct_debit_row '.
   "WHERE state='todo'")
   or die(mysql_error());
@@ -44,6 +44,7 @@ $res = mysql_query(
   <th>Date</th>
   <th>Amount excl. VAT</th>
   <th>Amount incl. VAT</th>
+  <th></th>
  </tr>
 
 <?
@@ -58,6 +59,7 @@ while ($invoice = mysql_fetch_assoc($res)) {
   echo "<td> $info->nice_date_facture </td>";
   echo "<td align=right> $info->nice_total_ht &euro; </td>";
   echo "<td align=right> $info->nice_total_ttc &euro; </td>";
+  echo "<td> <a href=\"del.php?id=$invoice[invoice_id]\">Del</a> </td>";
   echo "</tr>";
 
   $total_ht  += $info->total_ht;
