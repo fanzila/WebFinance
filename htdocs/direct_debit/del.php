@@ -31,7 +31,7 @@ if(!isset($_GET['id']) or !is_numeric($_GET['id'])) {
 $res = mysql_query(
   'DELETE '.
   'FROM direct_debit_row '.
-  "WHERE id = $_GET[id] AND state='todo'")
+  "WHERE invoice_id = $_GET[id] AND state='todo'")
   or die(mysql_error());
 
 header('Location: ./');
