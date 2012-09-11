@@ -191,6 +191,7 @@ function getTVA(){
   list($tva) = mysql_fetch_array($result);
   if(!is_numeric($tva))
     $tva=19.6;
+  $tva = preg_replace("/,/", ".", $tva); // 19,6 fails to insert as 19.6
   return $tva;
 }
 
