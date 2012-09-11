@@ -177,17 +177,15 @@ function fetchBillingInformationFromMantis($start_date, $end_date) {
     $description =
       "Déduction de l'infogérance ponctuelle comprise dans le contrat";
 
-    array_push($billing[$webfinance_project_id],
-      array
-      (
-        'description'           => $description,
-        'mantis_ticket_summary' => $description,
-        'quantity'              => - $time_to_deduce / 60,
-        'time'                  => - $time_to_deduce,
-        'price'                 => 55,
-        'mantis_project_name'   => '',
-        'mantis_project_id'     => $row['project_id'],
-      ));
+    $billing[$webfinance_project_id][0] = array(
+      'description'           => $description,
+      'mantis_ticket_summary' => $description,
+      'quantity'              => - $time_to_deduce / 60,
+      'time'                  => - $time_to_deduce,
+      'price'                 => 55,
+      'mantis_project_name'   => '',
+      'mantis_project_id'     => $row['project_id'],
+    );
   }
 
   return $billing;
@@ -261,8 +259,13 @@ foreach(fetchBillingInformationFromMantis($date_start, $date_end)
                            abs($ticket['time']) % 60);
 
     echo "<tr>\n  <td> <a href=\"$url_webfinance\">$ticket[mantis_project_name]</a></td>\n";
-    echo "  <td> <a href=\"$url_ticket\"".
+
+    if($ticket_number == 0)
+      echo "  <td> $ticket[mantis_ticket_summary] </td>\n";
+    else
+      echo "  <td> <a href=\"$url_ticket\"".
       ">$ticket[mantis_ticket_summary]</a> </td>\n";
+
     echo "  <td align=\"right\"> $time_human_readable</td>\n";
     echo "  <td align=\"right\"> $price&euro; </td>\n";
     echo "</tr>\n";
