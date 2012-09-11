@@ -21,19 +21,16 @@
 include("../inc/main.php");
 
 if (!is_numeric($_GET['id_facture'])) {
-  // Creates a new invoice.
-  $tva = getTVA();
-  $tva = preg_replace("/,/", ".", $tva); // 19,6 fails to insert as 19.6
 
   $Facture = new Facture();
-  $num_facture=$Facture->generateInvoiceNumber();
 
-  mysql_query("INSERT INTO webfinance_invoices (date_created,date_facture,id_client,tax,num_facture) " .
-			  "VALUES (now(), now(), ".$_GET['id_client'].",'$tva', '$num_facture')")
-	  or wf_mysqldie();
-  $id_facture=mysql_insert_id();
-  #$_SESSION['message'] = _('Invoice created');
-  logmessage(_('Create invoice')." for client:".$_GET['id_client'], $_GET['id_client']);
+  $invoice = array(
+    'client_id' => $_GET['id_client'],
+    'rows'      => array(),
+  );
+
+  $id_facture = $Facture->create($invoice);
+
   header("Location: edit_facture.php?id_facture=".$id_facture);
   die();
 }
