@@ -23,6 +23,74 @@ $title = _('Mantis');
 $roles='manager,accounting,employee';
 require_once('../top.php');
 
+// Ugly link from Webfinance-Mantis
+$mantis2webfinance = array(
+  281 => 80,
+  282 => 71,
+  283 => 68,
+  284 => 73,
+  285 => 89,
+  287 => 92,
+  288 => 111,
+  294 => 124,
+  292 => 113,
+  293 => 131,
+  295 => 96,
+  296 => 127,
+  297 => 139,
+  299 => 138,
+  300 => 147,
+  302 => 130,
+  303 => 112,
+  306 => 151,
+  311 => 166,
+  314 => 177,
+  315 => 64,
+  318 => 189,
+  319 => 188,
+  322 => 211,
+  325 => 192,
+  326 => 207,
+  329 => 233,
+  331 => 238,
+  332 => 237,
+  334 => 270,
+  335 => 274,
+  336 => 258,
+  337 => 272,
+  338 => 0, # internal project 'ISVTEC'
+  340 => 283,
+  341 => 290,
+  346 => 295,
+  347 => 163,
+  348 => 298,
+  349 => 301,
+  350 => 302,
+  351 => 304,
+  352 => 305,
+  353 => 309,
+  354 => 306,
+  355 => 281,
+  356 => 316,
+  357 => 319,
+  358 => 321,
+  361 => 330,
+  362 => 331,
+  363 => 325,
+  364 => 329,
+  366 => 96,
+  367 => 340,
+  368 => 337,
+  369 => 327,
+  370 => 352,
+  371 => 349,
+  372 => 355,
+  373 => 344,
+  374 => 356,
+  375 => 342,
+  376 => 364,
+);
+
 mysql_connect('localhost', 'root')
     or die(mysql_error());
 
@@ -33,76 +101,10 @@ mysql_select_db('mantis')
   or die(mysql_error());
 
 function fetchBillingInformationFromMantis($start_date, $end_date) {
+  global $mantis2webfinance;
 
   $start_date = mysql_real_escape_string($start_date) . ' 00:00:00';
   $end_date   = mysql_real_escape_string($end_date)   . ' 00:00:00';
-
-  $mantis2webfinance = array(
-    281 => 80,
-    282 => 71,
-    283 => 68,
-    284 => 73,
-    285 => 89,
-    287 => 92,
-    288 => 111,
-    294 => 124,
-    292 => 113,
-    293 => 131,
-    295 => 96,
-    296 => 127,
-    297 => 139,
-    299 => 138,
-    300 => 147,
-    302 => 130,
-    303 => 112,
-    306 => 151,
-    311 => 166,
-    314 => 177,
-    315 => 64,
-    318 => 189,
-    319 => 188,
-    322 => 211,
-    325 => 192,
-    326 => 207,
-    329 => 233,
-    331 => 238,
-    332 => 237,
-    334 => 270,
-    335 => 274,
-    336 => 258,
-    337 => 272,
-    338 => 0, # internal project 'ISVTEC'
-    340 => 283,
-    341 => 290,
-    346 => 295,
-    347 => 163,
-    348 => 298,
-    349 => 301,
-    350 => 302,
-    351 => 304,
-    352 => 305,
-    353 => 309,
-    354 => 306,
-    355 => 281,
-    356 => 316,
-    357 => 319,
-    358 => 321,
-    361 => 330,
-    362 => 331,
-    363 => 325,
-    364 => 329,
-    366 => 96,
-    367 => 340,
-    368 => 337,
-    369 => 327,
-    370 => 352,
-    371 => 349,
-    372 => 355,
-    373 => 344,
-    374 => 356,
-    375 => 342,
-    376 => 364,
-  );  
 
   $res = mysql_query('SELECT bug.id, bug.summary, user.realname AS client, '.
          '  project.name AS project_name, SUM(bugnote.time_tracking) AS time, '.
@@ -155,6 +157,7 @@ function fetchBillingInformationFromMantis($start_date, $end_date) {
         'mantis_project_name'   => $row['project_name'],
         'time'                  => $row['time'],
         'mantis_ticket_summary' => $row['summary'],
+        'mantis_project_id'     => $row['project_id'],
       );
 
     // Process total time
@@ -183,10 +186,9 @@ function fetchBillingInformationFromMantis($start_date, $end_date) {
         'time'                  => - $time_to_deduce,
         'price'                 => 55,
         'mantis_project_name'   => '',
+        'mantis_project_id'     => $row['project_id'],
       ));
   }
-
-  /* echo '<pre>'; print_r($billing); exit; */
 
   return $billing;
 }
@@ -246,15 +248,21 @@ foreach(fetchBillingInformationFromMantis($date_start, $date_end)
   $total = 0;
 
   foreach($billing as $ticket_number => $ticket) {
-    $url="https://www.isvtec.com/infogerance/ticket/view.php?id=$ticket_number";
+    $url_ticket =
+      "https://www.isvtec.com/infogerance/ticket/view.php?id=$ticket_number";
+
+    $url_webfinance = '/prospection/fiche_prospect.php?onglet=biling&id=' .
+      $mantis2webfinance[$ticket['mantis_project_id']];
+
     $price = round($ticket['price'] * $ticket['quantity'], 2);
 
     $time_human_readable = sprintf('%dh%02d',
                            floor(abs($ticket['time']) / 60),
                            abs($ticket['time']) % 60);
 
-    echo "<tr>\n  <td> $ticket[mantis_project_name]</td>\n";
-    echo "  <td> <a href=\"$url\">$ticket[mantis_ticket_summary]</a> </td>\n";
+    echo "<tr>\n  <td> <a href=\"$url_webfinance\">$ticket[mantis_project_name]</a></td>\n";
+    echo "  <td> <a href=\"$url_ticket\"".
+      ">$ticket[mantis_ticket_summary]</a> </td>\n";
     echo "  <td align=\"right\"> $time_human_readable</td>\n";
     echo "  <td align=\"right\"> $price&euro; </td>\n";
     echo "</tr>\n";
