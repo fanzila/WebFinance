@@ -821,6 +821,72 @@ Veuillez agréer cher Client, l'expression de nos salutations les meilleures."))
 				  "WHERE id_facture=$id_facture")
 		  or die(mysql_error());
   }
+
+  /**
+    * Create a new invoice.
+    *
+    * @param invoice array. The array defining the new invoice to create.
+    *
+    * Example:
+    *
+    * \code
+    * Array
+    * (
+    *     [client_id] => 32
+    *     [rows]      => Array
+    *     (
+    *         [0]         => Array
+    *         (
+    *             [description] => foo bar
+    *             [price]       => 32.12
+    *             [quantity]    => 3
+    *         )
+    *         [1]         => Array
+    *         (
+    *             [description] => foo bar
+    *             [price]       => 32.12
+    *             [quantity]    => 3
+    *         )
+    *     )
+    * )
+    * \endcode
+    *
+    * @return invoice_id int. The invoice ID.
+    *
+    */
+  function create(array $invoice = array()) {
+    $InvoiceNumber = self::generateInvoiceNumber();
+
+    $vat = getTVA();
+
+    mysql_query('INSERT INTO webfinance_invoices '.
+      'SET date_created = NOW(), '.
+      '    date_facture = NOW(), '.
+      "    id_client    = $invoice[client_id], ".
+      "    tax          = $vat, " .
+      "    num_facture  = $InvoiceNumber")
+      or wf_mysqldie();
+
+    $invoiceId = mysql_insert_id();
+
+    foreach($invoice['rows'] as $row) {
+      $row['description'] = mysql_real_escape_string($row['description']);
+
+      mysql_query('INSERT INTO webfinance_invoice_rows '.
+        "SET id_facture    = $invoiceId, ".
+        "    description   = \"$row[description]\", " .
+        "    prix_ht       = $row[price], " .
+        "    qtt           = $row[quantity]")
+        or wf_mysqldie();
+    }
+
+    logmessage(_('Create invoice').' for client:'. $invoice['client_id'],
+      $invoice['client_id']);
+
+    return $invoiceId;
+  }
+
+
 }
 
 ?>
