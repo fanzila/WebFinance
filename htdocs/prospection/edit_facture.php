@@ -23,7 +23,6 @@ include("../inc/main.php");
 if (!is_numeric($_GET['id_facture'])) {
   // Creates a new invoice.
   $tva = getTVA();
-  $tva = preg_replace("/,/", ".", $tva); // 19,6 fails to insert as 19.6
 
   $Facture = new Facture();
   $num_facture=$Facture->generateInvoiceNumber();
