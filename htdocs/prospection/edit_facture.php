@@ -42,6 +42,10 @@ $Facture = new Facture();
 $facture = $Facture->getInfos($_GET['id_facture']);
 list($currency,$exchange) = getCurrency($facture->id_compte);
 ?>
+
+<script type="text/javascript" language="javascript"
+  src="/js/ask_confirmation.js"></script>
+
 <script type="text/javascript">
 <?php
 $lignes = 'var id_lignes = new Array(\'new\', ';
@@ -139,15 +143,6 @@ function subQtt(id,tva) {
   qtt.value = val;
 
   updateTotal(tva);
-}
-
-function ask_confirmation(txt) {
-  resultat = confirm(txt);
-  if(resultat=="1"){
-      return true;
-  } else {
-      return false;
-  }
 }
 
 </script>

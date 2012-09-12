@@ -56,6 +56,9 @@ include("../top.php");
 include("nav.php");
 ?>
 
+<script type="text/javascript" language="javascript"
+  src="/js/ask_confirmation.js"></script>
+
 <script type="text/javascript">
 var isModified = 0;
 $(document).ready(function(){
@@ -96,15 +99,6 @@ var onglet_shown='<?= $shown_tab ?>';
 function confirmSendInfo(id_client,txt) {
   if (confirm(txt)) {
     window.location = 'save_client.php?action=send_info&id='+id_client;
-  }
-}
-
-function ask_confirmation(txt) {
-  resultat = confirm(txt);
-  if(resultat=="1"){
-      return true;
-  } else {
-      return false;
   }
 }
 

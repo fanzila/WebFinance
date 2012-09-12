@@ -61,16 +61,11 @@ if(isset($filter,$filter['page'])){
  }
 
 ?>
-<script type="text/javascript">
 
-function ask_confirmation(txt) {
-  resultat = confirm(txt);
-  if(resultat=="1"){
-      return true;
-  } else {
-      return false;
-  }
-}
+<script type="text/javascript" language="javascript"
+  src="/js/ask_confirmation.js"></script>
+
+<script type="text/javascript">
 
 function check(){
   if(!document.form.chk.checked){
