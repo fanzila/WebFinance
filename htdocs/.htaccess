@@ -1,4 +1,4 @@
-Options +MultiViews
+Options +MultiViews -Indexes
 ErrorDocument 404 /404.php
 php_value error_reporting 2037
 php_flag register_globals off
