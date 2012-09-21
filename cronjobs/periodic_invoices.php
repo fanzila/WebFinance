@@ -72,6 +72,7 @@ while(list($id_invoice) = mysql_fetch_row($result)) {
   $res=mysql_query($query)
     or die("$query:" . mysql_error());
 
+  // Update dates in invoices description
   while($invoice_row = mysql_fetch_array($res)) {
 
     if(!preg_match('/ du \d{4}-\d{2}-\d{2} au \d{4}-\d{2}-\d{2}/',
