@@ -214,7 +214,7 @@ msgstr "Mi empresa"
 msgid "Contacts"
 msgstr "Contactos"
 
-msgid "Flollow&nbsp;up"
+msgid "Follow&nbsp;up"
 msgstr "Seguimiento"
 
 msgid "Miscellaneous"

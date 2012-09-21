@@ -203,7 +203,7 @@ msgstr "Mon entreprise"
 msgid "Contacts"
 msgstr "Coordonnées"
 
-msgid "Flollow&nbsp;up"
+msgid "Follow&nbsp;up"
 msgstr "Suivi"
 
 msgid "Miscellaneous"
