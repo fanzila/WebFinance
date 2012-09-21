@@ -384,7 +384,7 @@ $options .= "<option ".($response->id_client==$facture->id_client ? 'selected="s
     </tr>
     <tr>
       <td colspan="2">
-      <a href="fiche_prospect.php?id=<?= $facture->id_client ?>&onglet=biling"><?=_('Back to client screen')?></a><br/>
+      <a href="fiche_prospect.php?id=<?= $facture->id_client ?>&onglet=billing"><?=_('Back to client screen')?></a><br/>
       <a href="edit_facture.php?id_facture=new&id_client=<?= $facture->id_client ?>"><?=_('Create a new')?></a><br/>
       <a href="save_facture.php?id=<?= $facture->id_facture ?>&action=duplicate"><?=_('Duplicate')?></a><br/>
       <a href="send_facture.php?id=<?= $facture->id_facture ?>"><?= _('Send by mail...') ?></a><br/>

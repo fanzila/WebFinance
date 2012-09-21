@@ -241,7 +241,7 @@ if ($action == "delete_facture") {
     $_SESSION['message'] .= "<br/>"._('Transaction deleted');
 
   }
-  header("Location: fiche_prospect.php?onglet=biling&tab=biling&id=$id_client");
+  header("Location: fiche_prospect.php?onglet=billing&tab=billing&id=$id_client");
   exit;
 }
 

@@ -100,7 +100,7 @@ foreach($mantis->fetchBillingInformation($date_start, $date_end)
     $url_ticket =
       "https://www.isvtec.com/infogerance/ticket/view.php?id=$ticket_number";
 
-    $url_webfinance = '/prospection/fiche_prospect.php?onglet=biling&id=' .
+    $url_webfinance = '/prospection/fiche_prospect.php?onglet=billing&id=' .
       $mantis2webfinance[$ticket['mantis_project_id']];
 
     $price = round($ticket['price'] * $ticket['quantity'], 2);
