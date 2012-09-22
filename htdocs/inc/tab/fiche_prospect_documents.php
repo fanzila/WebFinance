@@ -35,14 +35,6 @@ $document = new WebfinanceDocument;
 </tr>
 
 <?php
-    $query = 'SELECT id, date, filename, description '.
-    'FROM document '.
-    "WHERE id_client = $_GET[id] ".
-    'ORDER BY date';
-
-$result = mysql_query($query)
-  or die("$query ".mysql_error());
-
 foreach($document->ListByCompany($_GET['id']) as $filename => $file)
 {
 ?>
