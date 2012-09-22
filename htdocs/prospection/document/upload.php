@@ -40,23 +40,30 @@ $_POST['description'] = mysql_real_escape_string($_POST['description']);
 $_SESSION['id_user']  = mysql_real_escape_string($_SESSION['id_user']);
 
 $filename = basename($_FILES['file']['name']);
-$uploadfile = "../../../document/client-$_POST[client_id]/$filename";
+$main_doc_dir = '../../../document';
+$client_doc_dir = "$main_doc_dir/client-$_POST[client_id]";
+$upload_file = "$main_doc_dir/client-$_POST[client_id]/$filename";
 
 // Check $filename syntax
 if(preg_match('/(\.\.|\/)/', $filename))
   die("Invalid file name syntax: $filename");
 
-// Check if destination file already exists
-if(file_exists($uploadfile))
-  die("File $uploadfile alread exists");
+// Check if main document directory is writable
+if(!is_writable($main_doc_dir))
+  die("Directory is not writable: ". $main_doc_dir);
 
-// Check if destination directory is writable
-if(!is_writable(dirname($uploadfile)))
-  die("Directory is not writable: ". dirname($uploadfile));
+// Create client directory if needed
+if(!file_exists($client_doc_dir))
+  if(!mkdir($client_doc_dir))
+    die("Unable to create directory $client_doc_dir");
+
+// Check if destination file already exists
+if(file_exists($upload_file))
+  die("File $upload_file alread exists");
 
 // Move the uploaded file to the final destination
-if (!move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile))
-  die("Failed uploading $uploadfile");
+if (!move_uploaded_file($_FILES['file']['tmp_name'], $upload_file))
+  die("Failed uploading $upload_file");
 
 $result = mysql_query(
   'INSERT INTO document ' .
