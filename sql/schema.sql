@@ -509,7 +509,6 @@ CREATE TABLE direct_debit_row (
 
 CREATE TABLE document (
   id int(11) UNSIGNED NOT NULL auto_increment,
-  id_user int(11) NOT NULL,
   id_client int(11) NOT NULL,
   date datetime,
   filename varchar(128) NOT NULL,

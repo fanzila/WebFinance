@@ -60,8 +60,7 @@ if (!move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile))
 
 $result = mysql_query(
   'INSERT INTO document ' .
-  "SET id_user = $_SESSION[id_user], ".
-  "id_client = $_POST[client_id], " .
+  "SET id_client = $_POST[client_id], " .
   'date = NOW(), ' .
   "filename = '" . mysql_real_escape_string($filename) . "', ".
   "description = '$_POST[description]'")
