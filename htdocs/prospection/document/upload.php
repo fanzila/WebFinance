@@ -67,9 +67,11 @@ $result = mysql_query(
   "description = '$_POST[description]'")
 or die(mysql_error());
 
+$document_id = mysql_insert_id();
+
 // Log user action
-logmessage(_('Upload document').' for client:'. $_POST['client_id'],
-  $_POST['client_id']);
+logmessage(_('Upload document').
+  " doc:$document_id for client: $_POST[client_id]", $_POST['client_id']);
 
 header("Location: ../fiche_prospect.php?onglet=documents&id=$_POST[client_id]");
 exit;

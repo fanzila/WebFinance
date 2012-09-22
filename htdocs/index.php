@@ -36,7 +36,7 @@ require_once("top.php");
 <table border="0" cellspacing="5" cellpadding="0" class="mosaique">
 <tr>
   <td>
-    Chiffre d'affaires mensuel (18 derniers mois, total, incluant les impayés <a href="showca.php">plus</a>)<br/>
+    Chiffre d\'affaires mensuel (18 derniers mois, total, incluant les impayés <a href="showca.php">plus</a>)<br/>
     <a href="showca.php"><img src="/graphs/ca_mensuel.php?width=600&height=250&nb_months=18&grid=0" /></a>
   </td>
   <td width="350">
@@ -52,15 +52,18 @@ require_once("top.php");
     <div style="overflow: auto; height: 250px;">
     <table width="100%" border="0" cellspacing="0" cellpadding="5">
     <?php
-       $query= "SELECT id_userlog,log,date,wul.id_user,wu.login,wi.id_facture,wi.num_facture,wc.id_client," .
-               "       wc.nom as nom_client, date_format(date,'%d/%m/%y %k:%i') as nice_date " .
+       $query= "SELECT id_userlog,log,wul.date,wul.id_user,wu.login,wi.id_facture,wi.num_facture,wc.id_client," .
+               "       wc.nom as nom_client, date_format(wul.date,'%d/%m/%y %k:%i') as nice_date, " .
+               "       document.filename, document.id AS id_document ".
                "FROM webfinance_userlog wul ".
                "JOIN webfinance_users wu on (wu.id_user = wul.id_user)  " .
                "LEFT JOIN webfinance_invoices wi on wul.id_facture = wi.id_facture " .
                "LEFT JOIN webfinance_clients wc on wul.id_client = wc.id_client " .
-               "ORDER BY date DESC limit 100";
+               "LEFT JOIN document on (wc.id_client = document.id_client)  " .
+               "ORDER BY wul.date DESC limit 100";
 
-       $result = mysql_query($query);
+       $result = mysql_query($query)
+         or die(mysql_error());
        $count=1;
    
        while ($log = mysql_fetch_object($result)) {
@@ -77,6 +80,9 @@ require_once("top.php");
 
            $message = ((!empty($log->nom_client)) ?
                            str_replace('client:'.$log->id_client,'<a href="/prospection/fiche_prospect.php?id='.$log->id_client.'">'.$log->nom_client.'</a>',$message) : $message);
+
+           $message = ((!empty($log->filename)) ?
+                           str_replace('doc:'.$log->id_document,'<a href="/prospection/document/download.php?id='.$log->id_document.'">'.$log->filename.'</a>',$message) : $message);
                        
          
       print <<<EOF
