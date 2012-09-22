@@ -74,8 +74,8 @@ while ($row = mysql_fetch_assoc($result)) {
      <form method="POST" action="/prospection/document/upload.php"
        enctype="multipart/form-data">
        <input type="file" name="file" />
-       <input name="description" size="30" value="Description" type="text"
-          onfocus="this.value=''"/>
+       <input name="description" size="30" value="Description du fichier..."
+          type="text" onfocus="this.value=''"/>
        <input type="hidden" name="client_id" value="<?=$_GET[id]?>" />
        <input type="submit" name="upload" value="Upload"/>
      </form>
