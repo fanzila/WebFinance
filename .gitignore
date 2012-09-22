@@ -10,3 +10,4 @@ docs/.*~
 .DS_Store
 *~
 etc/wf.conf
+document/*
