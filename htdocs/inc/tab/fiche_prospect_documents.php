@@ -18,6 +18,8 @@
     along with Webfinance; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
+$document = new WebfinanceDocument;
 ?>
 <script type="text/javascript" language="javascript"
   src="/js/ask_confirmation.js"></script>
@@ -27,7 +29,7 @@
     <table width="100%" border="0" cellspacing="0" cellpadding="1">
 
 <tr>
-   <td style="border-bottom: solid 1px #777;" colspan="4">
+   <td style="border-bottom: solid 1px #777;" colspan="3">
           <b style="font-size: 16px;">Documents</b>
    </td>
 </tr>
@@ -41,19 +43,20 @@
 $result = mysql_query($query)
   or die("$query ".mysql_error());
 
-while ($row = mysql_fetch_assoc($result)) {
+foreach($document->ListByCompany($_GET['id']) as $filename => $file)
+{
 ?>
 
 <tr class="facture_line" onmouseover="return escape(\'%s\');" valign="middle">
- <td nowrap><?=$row['date']?></td>
- <td nowrap><?=$row['filename']?></td>
- <td nowrap><?=$row['description']?></td>
+    <td nowrap><?=date('Y-m-d', $file['mtime'])?></td>
+    <td nowrap><?=round($file['size']/1024)?>kB</td>
+ <td nowrap><?=$filename?></td>
 
- <td width="100%" style="text-align: right;" nowrap><a href="/prospection/document/download.php?id=<?=$row[id]?>"><img src="/imgs/icons/pdf.png" border="0"></a><a href="/prospection/document/delete.php?id=<?=$row[id]?>" onclick="return ask_confirmation('Are you sure you want to delete this file?')"><img src="/imgs/icons/delete.png" border="0"></a></td>
+ <td width="100%" style="text-align: right;" nowrap><a href="/prospection/document/download.php?company_id=<?=$_GET[id]?>&file=<?=urlencode($filename)?>"><img src="/imgs/icons/pdf.png" border="0"></a><a href="/prospection/document/delete.php?company_id=<?=$_GET[id]?>&filename=<?=urlencode($filename)?>" onclick="return ask_confirmation('Are you sure you want to delete this file?')"><img src="/imgs/icons/delete.png" border="0"></a></td>
 </tr>
 
 <?
-           }
+}
 ?>
 
  </table>
@@ -74,9 +77,7 @@ while ($row = mysql_fetch_assoc($result)) {
      <form method="POST" action="/prospection/document/upload.php"
        enctype="multipart/form-data">
        <input type="file" name="file" />
-       <input name="description" size="30" value="Description du fichier..."
-          type="text" onfocus="this.value=''"/>
-       <input type="hidden" name="client_id" value="<?=$_GET[id]?>" />
+       <input type="hidden" name="company_id" value="<?=$_GET[id]?>" />
        <input type="submit" name="upload" value="Upload"/>
      </form>
   </td>

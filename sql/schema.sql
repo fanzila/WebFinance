@@ -507,17 +507,5 @@ CREATE TABLE direct_debit_row (
   PRIMARY KEY (id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-CREATE TABLE document (
-  id int(11) UNSIGNED NOT NULL auto_increment,
-  id_client int(11) NOT NULL,
-  date datetime,
-  filename varchar(128) NOT NULL,
-  description varchar(128) NOT NULL,
-  PRIMARY KEY (id),
-  KEY (id_client),
-  KEY (date),
-  UNIQUE KEY (filename)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
 -- vim: fileencoding=utf8
 -- EOF

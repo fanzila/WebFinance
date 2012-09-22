@@ -34,10 +34,14 @@ if (!$User->isAuthorized("admin,manager")) {
 if (isset($_GET['action']) && $_GET['action'] == "delete") {
 
   $Client = new Client($_GET['id']);
+  $document = new WebfinanceDocument;
+  $document_dir = $document->GetCompanyDirectory($_GET['id']);
+  $files = $document->ListByCompany($_GET['id']);
 
   if($Client->exists()){
 
-    $q = mysql_query("SELECT id_facture FROM webfinance_invoices WHERE id_client=".$_GET['id']) or wf_mysqldie();
+    $q = mysql_query("SELECT id_facture FROM webfinance_invoices WHERE id_client=".$_GET['id'])
+      or wf_mysqldie();
     $clause= "WHERE (";
 
     while(list($id_inv) = mysql_fetch_array($q) )
@@ -46,12 +50,22 @@ if (isset($_GET['action']) && $_GET['action'] == "delete") {
     $clause = preg_replace('/OR$/',") AND type<>'real'",$clause);
 
     if(mysql_num_rows($q)>0)
-      mysql_query("DELETE FROM webfinance_transactions $clause") or wf_mysqldie();
+      mysql_query("DELETE FROM webfinance_transactions $clause")
+        or wf_mysqldie();
     mysql_free_result($q);
 
-    mysql_query("DELETE FROM webfinance_clients WHERE id_client=".$_GET['id']) or wf_mysqldie();
+    mysql_query("DELETE FROM webfinance_clients WHERE id_client=".$_GET['id'])
+      or wf_mysqldie();
 
     $User->delete($Client->id_user);
+
+    # Remove each document
+    foreach($files as $filename => $file)
+      unlink("$document_dir/$filename")
+        or die("Unable to unlink $document_dir/$filename");
+
+    rmdir($document_dir)
+      or die("Unable to remove directory $document_dir");
 
     $_SESSION['message'] = _('The company and related objects have been deleted');
 
@@ -132,6 +146,9 @@ if(!empty($login)){
 
  }
 
+$document = new WebfinanceDocument;
+$old_document_dir = $document->GetCompanyDirectory($id_client);
+
 $q = sprintf("UPDATE webfinance_clients SET ".
 	     "nom='%s' , addr1='%s' , addr2='%s' , addr3='%s' , cp='%s' , ".
 	     "ville='%s' , pays='%s', tel='%s' , fax='%s' , web='%s', ".
@@ -158,8 +175,14 @@ $q = sprintf("UPDATE webfinance_clients SET ".
              mysql_real_escape_string($id_client)
 	);
 
-//echo $q;
 mysql_query($q) or wf_mysqldie();
+
+# Rename document directory if needed
+$new_document_dir = $document->GetCompanyDirectory($id_client);
+
+if($old_document_dir != $new_document_dir)
+  rename($old_document_dir, $new_document_dir)
+    or die("Unable to rename $old_document_dir to $new_document_dir");
 
 if(isset($_SESSION['message']))
   $_SESSION['message'] .= "<br/>"._('Update customer');

@@ -53,13 +53,11 @@ require_once("top.php");
     <table width="100%" border="0" cellspacing="0" cellpadding="5">
     <?php
        $query= "SELECT id_userlog,log,wul.date,wul.id_user,wu.login,wi.id_facture,wi.num_facture,wc.id_client," .
-               "       wc.nom as nom_client, date_format(wul.date,'%d/%m/%y %k:%i') as nice_date, " .
-               "       document.filename, document.id AS id_document ".
+               "       wc.nom as nom_client, date_format(wul.date,'%d/%m/%y %k:%i') as nice_date " .
                "FROM webfinance_userlog wul ".
                "JOIN webfinance_users wu on (wu.id_user = wul.id_user)  " .
                "LEFT JOIN webfinance_invoices wi on wul.id_facture = wi.id_facture " .
                "LEFT JOIN webfinance_clients wc on wul.id_client = wc.id_client " .
-               "LEFT JOIN document on (wc.id_client = document.id_client)  " .
                "ORDER BY wul.date DESC limit 100";
 
        $result = mysql_query($query)
@@ -80,10 +78,6 @@ require_once("top.php");
 
            $message = ((!empty($log->nom_client)) ?
                            str_replace('client:'.$log->id_client,'<a href="/prospection/fiche_prospect.php?id='.$log->id_client.'">'.$log->nom_client.'</a>',$message) : $message);
-
-           $message = ((!empty($log->filename)) ?
-                           str_replace('doc:'.$log->id_document,'<a href="/prospection/document/download.php?id='.$log->id_document.'">'.$log->filename.'</a>',$message) : $message);
-                       
          
       print <<<EOF
     <tr class="row_$class">

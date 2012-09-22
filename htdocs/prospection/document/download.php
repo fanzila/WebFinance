@@ -20,7 +20,9 @@
 */
 
 require_once("../../inc/main.php");
+
 $User = new User();
+$document = new WebfinanceDocument;
 
 if(!$User->isAuthorized("manager,accounting,employee")){
   $_SESSION['came_from'] = $_SERVER['REQUEST_URI'];
@@ -28,18 +30,14 @@ if(!$User->isAuthorized("manager,accounting,employee")){
   exit;
 }
 
-$result = mysql_query(
-  "SELECT CONCAT('../../../document/client-', id_client, '/', filename) " .
-  'FROM document '.
-  "WHERE id = $_GET[id] ")
-or die(mysql_error());
+CybPHP_Validate::ValidateInt($_GET['company_id']);
+WebfinanceCompany::ValidateExists($_GET['company_id']);
+WebfinanceDocument::ValidateFileName($_GET['file']);
 
-list($path) = mysql_fetch_row($result);
+$path = $document->GetCompanyDirectory($_GET['company_id']) . "/$_GET[file]";
 
-if(!file_exists($path))
-  die("$path: no such file or directory");
-
-$fp = fopen($path, 'rb');
+$fp = fopen($path, 'r')
+  or die("Unable to open $path");
 
 header("Content-Type: application/pdf");
 header("Content-Length: " . filesize($path));

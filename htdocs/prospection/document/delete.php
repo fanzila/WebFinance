@@ -21,6 +21,7 @@
 
 require_once("../../inc/main.php");
 $User = new User();
+$document = new WebfinanceDocument;
 
 if(!$User->isAuthorized("manager,accounting,employee")){
   $_SESSION['came_from'] = $_SERVER['REQUEST_URI'];
@@ -28,43 +29,28 @@ if(!$User->isAuthorized("manager,accounting,employee")){
   exit;
 }
 
-if(!isset($_GET['id'], $_SESSION['id_user']))
+if(!isset($_GET['company_id'], $_GET['filename'], $_SESSION['id_user']))
   die('Too few argument');
 
-$_GET['id'] = mysql_real_escape_string($_GET['id']);
+CybPHP_Validate::ValidateInt($_GET['company_id']);
+WebfinanceCompany::ValidateExists($_GET['company_id']);
+WebfinanceDocument::ValidateFileName($_GET['file']);
+CybPHP_Validate::ValidateInt($_SESSION['id_user']);
 
-// Fetch document filename
-$result = mysql_query('SELECT filename, id_client '.
-       'FROM document '.
-       "WHERE id=$_GET[id] " .
-       'LIMIT 1')
-  or die(mysql_error());
-
-// Check if document exists
-if(mysql_num_rows($result) !== 1)
-  die('Unable to fetch document ID $_GET[id] from SQL.');
-
-// Fetch database information
-list($filename, $client_id) = mysql_fetch_row($result);
+$doc_dir = $document->GetCompanyDirectory($_GET['company_id']);
 
 // Check if destination directory is writable
-$upload_dir = "../../../document/client-$client_id/";
-if(!is_writable($upload_dir))
-  die("Directory is not writable: ". $upload_dir);
+if(!is_writable($doc_dir))
+  die("Directory is not writable: ". $doc_dir);
 
 // Delete document from filesystem
-if(!unlink("$upload_dir/$filename"))
-  die("Unable to delete $upload_dir/$filename");
-
-// Delete document from SQL
-mysql_query('DELETE FROM document '.
-  "WHERE id = $_GET[id] " .
-  'LIMIT 1')
-or die(mysql_error());
+if(!unlink("$doc_dir/$_GET[filename]"))
+  die("Unable to delete $doc_dir/$_GET[filename]");
 
 // Log user action
-logmessage(_('Delete document')." $filename for client:$client_id", $client_id);
+logmessage(_('Delete document')." $_GET[filename] for client:$_GET[company_id]",
+  $_GET['company_id']);
 
-header("Location: ../fiche_prospect.php?onglet=documents&id=$client_id");
+header("Location: ../fiche_prospect.php?onglet=documents&id=$_GET[company_id]");
 exit;
 ?>

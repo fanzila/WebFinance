@@ -23,10 +23,17 @@ include("../inc/main.php");
 $roles = "manager,employee,accounting";
 
 if (isset($_GET['action']) && $_GET['action'] == '_new') {
-  mysql_query("INSERT INTO webfinance_clients (nom,date_created) VALUES('Nouvelle Entreprise', now())") or wf_mysqldie();
-//$result = mysql_query("SELECT id_client FROM webfinance_clients WHERE date_sub(now(), INTERVAL 1 SECOND)<=date_created");
-//list($_GET['id']) = mysql_fetch_array($result);
+
+  mysql_query("INSERT INTO webfinance_clients (nom,date_created) VALUES('Nouvelle Entreprise', now())")
+    or wf_mysqldie();
+
   $_GET['id'] = mysql_insert_id();
+
+  $document = new WebfinanceDocument;
+  $document_dir = $document->GetCompanyDirectory($_GET['id']);
+  mkdir($document_dir)
+    or die("Unable to create directory $document_dir");
+
   $_SESSION['message']= _('New customer created');
   logmessage(_('Create customer')." client:".$_GET['id'],$_GET['id']);
 }

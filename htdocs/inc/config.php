@@ -58,6 +58,7 @@ if(!defined('WF_DEBUG_ALL')){
 
 # Autoload PHP classes
 set_include_path(get_include_path() .
+				 PATH_SEPARATOR . '../../../lib/' .
 				 PATH_SEPARATOR . '../../lib/' .
 				 PATH_SEPARATOR . '../lib/');
 
