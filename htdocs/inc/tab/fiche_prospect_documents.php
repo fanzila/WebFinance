@@ -29,7 +29,7 @@ $document = new WebfinanceDocument;
     <table width="100%" border="0" cellspacing="0" cellpadding="1">
 
 <tr>
-   <td style="border-bottom: solid 1px #777;" colspan="3">
+   <td style="border-bottom: solid 1px #777;" colspan="4">
           <b style="font-size: 16px;">Documents</b>
    </td>
 </tr>
@@ -58,7 +58,7 @@ foreach($document->ListByCompany($_GET['id']) as $filename => $file)
 
  <table width="100%" border="0" cellspacing="0" cellpadding="1">
 <tr>
-   <td style="border-bottom: solid 1px #777;" colspan="2">
+   <td style="border-bottom: solid 1px #777;">
           <b style="font-size: 16px;">Upload</b>
    </td>
 </tr>
