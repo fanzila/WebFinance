@@ -64,6 +64,33 @@ if (!move_uploaded_file($_FILES['file']['tmp_name'], $upload_file))
 logmessage(_('Upload document').
   " $filename for client:$_POST[company_id]", $_POST['company_id']);
 
+// Fetch company information
+$company = new Client($_POST['company_id']);
+
+// Fetch user information
+$user = $User->getInfos($_SESSION['id_user']);
+
+// Fetch document URL
+$document_url = 'http://';
+if($_SERVER['SERVER_PORT'] == 443)
+  $document_url = 'https://';
+$document_url .= $_SERVER['HTTP_HOST'] .
+  "/prospection/document/download.php?company_id=$_POST[company_id]&file=" .
+  urlencode($filename);
+
+// Récupérer les info sur la société
+$result = mysql_query('SELECT value '.
+          'FROM webfinance_pref '.
+          "WHERE type_pref='societe' AND owner=-1")
+  or wf_mysqldie();
+list($value) = mysql_fetch_array($result);
+$societe = unserialize(base64_decode($value));
+
+mail('cyril.bouthors@isvtec.com',
+  "$company->nom: new file \"$filename\" by $user->login",
+  $document_url,
+  "From: $societe->raison_sociale <$societe->email>");
+
 header("Location: ../fiche_prospect.php?onglet=documents&id=$_POST[company_id]");
 exit;
 ?>
