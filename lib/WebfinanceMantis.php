@@ -120,8 +120,8 @@ class WebfinanceMantis {
     // Prepare billing information
     while($row = mysql_fetch_assoc($res)) {
       if(!isset(self::$_mantis2webfinance[$row['project_id']]))
-        die('Unable to fetch ' . self::$_mantis2webfinance[$row[project_id]] .
-          " information for project $row[project_name]");
+        die("Unable to fetch information for project $row[project_name] ".
+          "(id $row[project_id])");
 
       // Skip internal, non billable projects
       if(self::$_mantis2webfinance[$row['project_id']] == 0)
