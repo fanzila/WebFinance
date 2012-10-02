@@ -89,6 +89,13 @@ class WebfinanceMantis {
     376 => 364,
     291 => 119,
     308 => 153,
+    307 => 154,
+    320 => 65,
+    330 => 235,
+    339 => 276,
+    345 => 242,
+    360 => 317,
+    377 => 372,
   );
 
   function fetchBillingInformation($start_date, $end_date) {
