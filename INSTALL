@@ -1,4 +1,4 @@
-- apt-get install php-fpdf apache php4 mysql-server-4.1 ttf-freefont gettext libphp-phpplot perlmagick libphp-phpmailer
+- apt-get install php-fpdf apache2 php4 mysql-server-4.1 ttf-freefont gettext libphp-phpplot perlmagick libphp-phpmailer
 
 - create a database
 - insert the SQL dump
@@ -8,9 +8,10 @@
 - add 'webfinance.dev.jexiste.org' in /etc/hosts
 - restart apache
 
-- cd webfinance/htdocs/inc
-- cp dbconnect.php.skel dbconnect.php
-- modify dbconnect.php
+- cp -R etc /etc/webfinance
+- cd /etc/webfinance
+- cp wf.conf.skel wf.conf
+- modify wf.conf
 
 - add an every day task with with the script 'webfinance/htdocs/inc/scheduler.php'
 echo '30 7  * * *  www-data  php /path/to/webfinance/htdocs/inc/scheduler.php' > /etc/cron.d/webfinance
