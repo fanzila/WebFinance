@@ -36,7 +36,9 @@ $res = mysql_query(
 <h1>Pending direct debits</h1>
 
 <h2>Details</h2>
-
+<br />
+<a href="cfonb.php">> Download remise prélèvements auto (CFONB160 format)</a>
+<br /><br />
 <table border="1">
  <tr>
   <th>Company</th>
@@ -75,6 +77,7 @@ while ($invoice = mysql_fetch_assoc($res)) {
   <td align="right"> <?=sprintf("%.2f", $total_ttc);?> &euro; </td>
 </tr>
 </table>
+
 
 <br/>
 <h2>Summary</h2>

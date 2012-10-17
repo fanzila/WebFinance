@@ -58,7 +58,7 @@ class Facture extends WFO {
     if (!is_numeric($id_facture)) {
       die("Facture:getInfos no id");
     }
-    $result = $this->SQL("SELECT c.id_client AS id_client, c.nom AS nom_client, c.addr1, c.addr2, c.addr3, c.cp, c.ville, c.vat_number, c.pays, f.periodic_next_deadline, f.delivery, f.payment_method,
+    $result = $this->SQL("SELECT c.id_client AS id_client, c.nom AS nom_client, c.addr1, c.addr2, c.addr3, c.cp, c.ville, c.rib_titulaire, c.rib_banque, c.rib_code_banque, c.rib_code_guichet, c.rib_code_compte, c.rib_code_cle, c.vat_number, c.pays, f.periodic_next_deadline, f.delivery, f.payment_method,
                                   date_format(f.date_created,'%d/%m/%Y') AS nice_date_created,
                                   date_format(f.date_paiement, '%d/%m/%Y') AS nice_date_paiement,
                                   date_format(f.date_sent, '%d/%m/%Y') AS nice_date_sent,
