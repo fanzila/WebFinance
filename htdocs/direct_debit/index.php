@@ -52,6 +52,7 @@ $res = mysql_query(
 <?
 $total_ht  = 0;
 $total_ttc = 0;
+$count = 0;
 while ($invoice = mysql_fetch_assoc($res)) {
   $info = $Invoice->getInfos($invoice['invoice_id']);
   $total[$info->nom_client]['HT'] += $info->total_ht;
@@ -66,15 +67,16 @@ while ($invoice = mysql_fetch_assoc($res)) {
 
   $total_ht  += $info->total_ht;
   $total_ttc += $info->total_ttc;
+  $count++; 
 }
 ?>
 
 <tr>
-  <td></td>
+  <td><b>Total debit(s): <?=$count?></b></td>
   <td></td>
   <td align="right"> <b>TOTAL</b> </td>
   <td align="right"> <?=sprintf("%.2f", $total_ht);?> &euro; </td>
-  <td align="right"> <?=sprintf("%.2f", $total_ttc);?> &euro; </td>
+  <td align="right"> <b><?=sprintf("%.2f", $total_ttc);?> &euro; </b></td>
 </tr>
 </table>
 

@@ -154,7 +154,7 @@ function GenerateCfonb() {
 		$nb_erreurs_ligne = 0;
 
 		// On définit les variables de la remise de virement
-		$ref_paiement = "FACT".$invoice['invoice_id'];
+		$ref_paiement = "F:".$info->num_facture;
 
 		// Formatage du montant
 		$montant = round($info->total_ttc, 2);
@@ -191,7 +191,7 @@ function GenerateCfonb() {
 		$ligne .= FormatBancaire("", 8); // Zone réservée (8 caractères)
 		$ligne .= FormatBancaire(NUMERO_EMETTEUR, 6); // Numéro d'émetteur (6 caractères)
 		$ligne .= FormatBancaire($ref_paiement, 12); // Référence (12 caractères)
-		$ligne .= FormatBancaire(stripAccents($info->rib_titulaire), 24); // Nom/Raison sociale du bénéficaire (24 caractères)
+		$ligne .= FormatBancaire(stripAccents($info->nom_client), 24); // Nom/Raison sociale du bénéficaire (24 caractères)
 		$ligne .= FormatBancaire(stripAccents($info->rib_banque), 20); // Domicialiation : facultatif (24 caractères)
 		$ligne .= FormatBancaire("", 12); // Déclaration à la balance des paiements : ??????? (8 caractères)
 		$ligne .= FormatBancaire($info->rib_code_guichet, 5); // Code guichet bénéficiaire (5 caractères)

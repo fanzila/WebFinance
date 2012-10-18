@@ -65,7 +65,7 @@ global $Client, $User;
 <br/>
   <b><?= _('RIB:') ?></b><br/>
 <table border="0">
-	<tr><td><?= _('Holder name:') ?></td><td><input type="text" size="10" maxsize="24" name="rib_titulaire" value="<?= addslashes($Client->rib_titulaire) ?>" style="color: #666;" /></td></tr>
+	<!-- <tr><td><?= _('Holder name:') ?></td><td><input type="text" size="10" maxsize="24" name="rib_titulaire" value="<?= addslashes($Client->rib_titulaire) ?>" style="color: #666;" /></td></tr> -->
     <tr><td><?= _('Bank name:') ?></td><td><input type="text" size="10" maxsize="24" name="rib_banque" value="<?= addslashes($Client->rib_banque) ?>" style="color: #666;" /></td></tr>
     <tr><td><?= _('Bank code:') ?></td><td><input type="text" size="5" maxlength="5" name="rib_code_banque" value="<?= addslashes($Client->rib_code_banque) ?>" style="color: #666;" /></td></tr>
     <tr><td><?= _('Bank agency:') ?></td><td><input type="text" size="5" maxlength="5" name="rib_code_guichet" value="<?= addslashes($Client->rib_code_guichet) ?>" style="color: #666;" /></td></tr>
