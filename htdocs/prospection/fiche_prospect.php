@@ -146,7 +146,7 @@ if(isset($_SESSION['message']) and !empty($_SESSION['message'])){
 $tab = new TabStrip();
 $tab->includeTab(_('Contacts'),"../inc/tab/fiche_prospect_contacts.php","contacts");
 $tab->includeTab(_('Billing'),"../inc/tab/fiche_prospect_billing.php","billing");
-$tab->includeTab(_('Follow&nbsp;up'),"../inc/tab/fiche_prospect_log.php","log");
+$tab->includeTab(_('Follow&nbsp;up'),"../inc/tab/fiche_prospect_log.php","followup");
 $tab->includeTab(_('Miscellaneous'),"../inc/tab/fiche_prospect_other.php","other");
 $tab->includeTab(_('Graphics'),"../inc/tab/fiche_prospect_graph.php","graph");
 $tab->includeTab(_('Events'),"../inc/tab/fiche_prospect_event.php","event");

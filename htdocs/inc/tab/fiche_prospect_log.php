@@ -1,6 +1,6 @@
 <?php
 /*
- Copyright (C) 2004-2006 NBI SARL, ISVTEC SARL
+ Copyright (C) 2004-2012 NBI SARL, ISVTEC SARL
 
    This file is part of Webfinance.
 
@@ -18,21 +18,14 @@
     along with Webfinance; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-?>
-<?php
-//
-// This file is part of « Webfinance »
-//
-// Copyright (c) 2004-2006 NBI SARL
-// Author : Nicolas Bouthors <nbouthors@nbi.fr>
-//
-// You can use and redistribute this file under the term of the GNU GPL v2.0
-//
 
 global $Client;
 ?>
 <table>
+     <!-- Ugly, close the previous bloody global form. I mean *global* form! -->
+     </form>
 <?php
+
 // Suivi
 
 // Ajout d'un élément de suivi
@@ -45,10 +38,16 @@ $ts_select .= "</select>";
 
 print <<<EOF
 <tr><td colspan="3">
+     <form method="POST" action="save_suivi.php">
+
 $ts_select<br/>
 
 <textarea name="new_suivi_comment" style="width: 600px; height: 90px; border: solid 1px #ccc;">
 </textarea>
+
+       <input type="hidden" name="company_id" value="$_GET[id]" />
+       <input type="submit" name="Go" value="Go"/>
+     </form>
 
 </td></tr>
 EOF;

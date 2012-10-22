@@ -1,6 +1,6 @@
 <?php
 /*
- Copyright (C) 2004-2006 NBI SARL, ISVTEC SARL
+ Copyright (C) 2004-2012 NBI SARL, ISVTEC SARL
 
    This file is part of Webfinance.
 
@@ -18,42 +18,30 @@
     along with Webfinance; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-?>
-<?php
-//
-// This file is part of « Webfinance »
-//
-// Copyright (c) 2004-2006 NBI SARL
-// Author : Nicolas Bouthors <nbouthors@nbi.fr>
-//
-// You can use and redistribute this file under the term of the GNU GPL v2.0
-//
-?>
-<?
-require("../nbi/functions.php");
-must_login();
-?>
-<?php
-connect();
-ini_set('session.gc_maxlifetime',3600);
-session_start();
-if (!nbi_is_logued()) {
-  nbi_redirect("/login.php");
-}
-if ($GLOBALS['HTTP_SERVER_VARS']['REQUEST_METHOD'] != "POST") {
-  die();
-}
-$user = nbi_get_user_info();
 
-if ($_POST['action'] == "create") {
-  $q = sprintf("INSERT INTO webfinance_suivi (type_suivi,id_objet,message,date_added,added_by,rappel) VALUES(%d, %d, '%s', now(), %d, %s)",
-               $_POST['type_suivi'], $_POST['id_client'], $_POST['message'], $user->id_user,
-               ($_POST['deltadays']!=0)?"date_add(now(), INTERVAL ".$_POST['deltadays']." DAY)":"NULL");
+require_once("../inc/main.php");
+$User = new User();
+$document = new WebfinanceDocument;
 
-  mysql_query($q) or wf_mysqldie();;
-} elseif ($_POST['action'] == "save") {
-} else {
-  die("Don't know what to do with posted data");
+if(!$User->isAuthorized("manager,accounting,employee")){
+  $_SESSION['came_from'] = $_SERVER['REQUEST_URI'];
+  header("Location: /login.php");
+  exit;
 }
-nbi_redirect("index.php?file=fiche_prospect&id=".$_POST['id_client']);
+
+if (!isset($_POST['new_suivi_comment'], $_POST['new_suivi_type'],
+    $_SESSION['id_user'], $_POST['company_id']))
+  die('Too few argument');
+
+mysql_query('INSERT INTO webfinance_suivi SET '.
+  'type_suivi =' . mysql_real_escape_string($_POST['new_suivi_type']) . ' ,'.
+  'id_objet   =' . mysql_real_escape_string($_POST['company_id']). ', '.
+  "message ='". mysql_real_escape_string($_POST['new_suivi_comment']) . "',".
+  'date_added = NOW(), ' .
+  'date_modified = NOW(), ' .
+  "added_by = $_SESSION[id_user]")
+or die(mysql_error());
+
+header("Location: fiche_prospect.php?onglet=followup&id=$_POST[company_id]");
+exit;
 ?>

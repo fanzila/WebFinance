@@ -64,8 +64,6 @@ foreach($document->ListByCompany($_GET['id']) as $filename => $file)
 </tr>
 <tr>
   <td>
-     <!-- Ugly, close the previous bloody global form. I mean *global* form! -->
-     </form>
      <form method="POST" action="/prospection/document/upload.php"
        enctype="multipart/form-data">
        <input type="file" name="file" />
