@@ -69,7 +69,7 @@ class Facture extends WFO {
                                   date_format(f.date_facture, '%Y%m') AS mois_facture,
                                   UPPER(LEFT(f.type_doc, 2)) AS code_type_doc,
                                   is_envoye AS is_sent,
-                                  f.type_paiement, f.is_paye, f.ref_contrat, f.extra_top, f.extra_bottom, f.num_facture, f.period, f.tax, f.id_compte, f.exchange_rate, f.*
+                                  f.type_paiement, f.is_paye, f.is_abandoned, f.ref_contrat, f.extra_top, f.extra_bottom, f.num_facture, f.period, f.tax, f.id_compte, f.exchange_rate, f.*
                            FROM webfinance_clients AS c, webfinance_invoices AS f
                            WHERE f.id_client=c.id_client
                            AND f.id_facture=$id_facture")

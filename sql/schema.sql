@@ -170,6 +170,7 @@ CREATE TABLE `webfinance_invoices` (
   `payment_method` ENUM('unknown', 'direct_debit', 'check', 'wire_transfer'),
   `tax` DECIMAL(5,2) NOT NULL default '19.60',
   `exchange_rate` decimal(8,2) NOT NULL default '1.00',
+  `is_abandoned` tinyint(4) default '0',
   PRIMARY KEY  (`id_facture`),
   UNIQUE KEY `num_facture` (`num_facture`),
   KEY `id_compte` (`id_compte`),

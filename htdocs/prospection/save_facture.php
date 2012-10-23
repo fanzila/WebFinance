@@ -75,6 +75,9 @@ if ($action == "save_facture") {
   if(!isset($is_paye))
     $is_paye='off';
 
+  if(!isset($is_abandoned))
+    $is_abandoned='off';
+
   // Enregistrement des paramètres facture
   preg_match("/([0-9]{2})\/([0-9]{2})\/([0-9]{4})/", $date_facture, $ma);
   $date_facture = $ma[3]."/".$ma[2]."/".$ma[1];
@@ -129,6 +132,7 @@ if ($action == "save_facture") {
                "type_doc='%s', ".
                "commentaire='%s', ".
                "id_type_presta=%d, ".
+			   "is_abandoned=%d, ".
                "id_compte=%d, ".
                "is_envoye=%d, ".
                "tax='%s', ".
@@ -153,6 +157,7 @@ if ($action == "save_facture") {
                $type_doc,
                $commentaire,
                $id_type_presta,
+			   ($is_abandoned=="on")?1:0,
                $id_compte,
                ($is_envoye=="on")?1:0,
                $tax,

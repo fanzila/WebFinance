@@ -363,7 +363,7 @@ $options .= "<option ".($response->id_client==$facture->id_client ? 'selected="s
       </tr>
 
       <tr>
-       <td><input type="checkbox" name="is_paye" <?=$facture->is_paye?"checked":""?> />&nbsp;<?=_('Paid')?></td>
+       <td><input type="checkbox" name="is_paye" <?=$facture->is_paye?"checked":""?> <?=$facture->is_abandoned?"disabled":""?> />&nbsp;<?=_('Paid')?></td>
        <td><?
 	  if(empty($facture->timestamp_date_paiement) or $facture->timestamp_date_paiement < $facture->timestamp_date_facture){
 	    makeDateField('date_paiement', time());
@@ -373,8 +373,12 @@ $options .= "<option ".($response->id_client==$facture->id_client ? 'selected="s
            ?>
        </td>
 
-      <?php } // FIN CAS FACTURE/DEVIS ?>
+    <tr>
+      <td colspan="2"><input type="checkbox" name="is_abandoned" <?=$facture->is_abandoned?"checked":""?> />&nbsp;<?=_('Abandoned')?><br/><br/>
+      </td>
+    </tr>
 
+      <?php } // FIN CAS FACTURE/DEVIS ?>
     <tr>
       <td colspan="2">
         Commentaire : <br/>
