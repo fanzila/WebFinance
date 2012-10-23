@@ -30,7 +30,7 @@ global $Client;
 
 // Ajout d'un élément de suivi
 $ts_select = '<select name="new_suivi_type">';
-$result = mysql_query("SELECT id_type_suivi,name FROM webfinance_type_suivi ORDER BY name");
+$result = mysql_query("SELECT id_type_suivi,name FROM webfinance_type_suivi ORDER BY id_type_suivi DESC");
 while (list($id,$ts) = mysql_fetch_array($result)) {
   $ts_select .= sprintf('<option value="%d">%s</option>', $id, $ts);
 }
