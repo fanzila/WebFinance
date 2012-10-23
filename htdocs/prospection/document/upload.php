@@ -86,7 +86,7 @@ $result = mysql_query('SELECT value '.
 list($value) = mysql_fetch_array($result);
 $societe = unserialize(base64_decode($value));
 
-mail('cyril.bouthors@isvtec.com',
+mail('administratif@isvtec.com',
   "$company->nom: new file \"$filename\" by $user->login",
   $document_url,
   "From: $societe->raison_sociale <$societe->email>");
