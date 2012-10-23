@@ -38,6 +38,7 @@ $roles = "manager,employee,accounting";
 include("../top.php");
 include("nav.php");
 
+$listing_limit = 300;
 $Facture = new Facture();
 $total_ca_ht = 0;
 
@@ -50,8 +51,9 @@ if (isset($_GET['mois']) && $_GET['mois'] != "") {
 }
 if (isset($_GET['type']) && $_GET['type']!="") {
   switch ($_GET['type']) {
-    case "unpaid" : $where_clause .= " AND f.is_paye=0"; break;
-    case "paid" : $where_clause .= " AND f.is_paye=1"; break;
+    case "unpaid" : $where_clause .= " AND f.is_paye=0 AND is_abandoned = 0 "; break;
+	case "unpaid_late" : $where_clause .= " AND f.is_paye=0 AND is_abandoned = 0 AND date_facture<=now() - INTERVAL 34 DAY "; break;
+    case "paid" : $where_clause .= " AND f.is_paye=1 "; break;
   }
 }
 
@@ -94,7 +96,7 @@ $result = mysql_query("SELECT f.id_facture
                        AND f.id_client=c.id_client
                        AND f.date_facture<=now()
                        AND ".$where_clause."
-                       ORDER BY $order_clause") or wf_mysqldie();
+                       ORDER BY $order_clause LIMIT $listing_limit") or wf_mysqldie();
 $mois = array();
 while (list($id_facture) = mysql_fetch_array($result)) {
   $count++;
@@ -173,6 +175,7 @@ EOF;
     $choices = array(
                  "Toutes" => "",
                  "Impayées" => "unpaid",
+				 "Impayées en retard" => "unpaid_late",
                  "Payées" => "paid",
                );
     foreach ($choices as $n=>$v) {
@@ -201,6 +204,7 @@ EOF;
 
 </td></tr>
 </table>
+(LIMIT <?=$listing_limit?>)
 
 <?php
 
