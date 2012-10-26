@@ -42,7 +42,7 @@ foreach($document->ListByCompany($_GET['id']) as $filename => $file)
 <tr class="facture_line" onmouseover="return escape(\'%s\');" valign="middle">
     <td nowrap><?=date('Y-m-d', $file['mtime'])?></td>
     <td nowrap><?=round($file['size']/1024)?>kB</td>
- <td nowrap><?=$filename?></td>
+ <td nowrap><?=wordwrap($filename, 80, "<br />\n");?></td>
 
  <td width="100%" style="text-align: right;" nowrap><a href="/prospection/document/download.php?company_id=<?=$_GET[id]?>&file=<?=urlencode($filename)?>"><img src="/imgs/icons/pdf.png" border="0"></a><a href="/prospection/document/delete.php?company_id=<?=$_GET[id]?>&filename=<?=urlencode($filename)?>" onclick="return ask_confirmation('Are you sure you want to delete this file?')"><img src="/imgs/icons/delete.png" border="0"></a></td>
 </tr>
