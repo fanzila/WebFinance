@@ -77,7 +77,11 @@ global $Client, $User;
                $icon = $facture->is_paye?"paid.gif":"not_paid.gif";
              else
                $icon = "ok.gif";
-
+					
+			if($facture->is_abandoned == 1 ) { 
+				$icon = "paid_orange.gif";
+			}
+			
              $icon_period='';
              if ($facture->period !== 'none')
                $icon_period = $facture->period;
