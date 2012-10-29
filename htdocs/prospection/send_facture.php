@@ -182,7 +182,11 @@ $invoice = $Facture->getInfos($id);
   </tr>
   <tr><td colspan='2'><hr/></td></tr>
 <?php
-$result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='mail_invoice'") or wf_mysqldie();
+
+$type_doc = 'invoice';
+if($invoice->type_doc == 'devis') $type_doc = 'quote';
+
+$result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='mail_".$type_doc."'") or wf_mysqldie();
 list($data) = mysql_fetch_array($result);
 $pref = unserialize(base64_decode($data));
 
