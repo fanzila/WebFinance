@@ -39,8 +39,8 @@ $res = mysql_query(
 <br />
 <a href="cfonb.php">> Download remise prélèvements auto (CFONB160 format)</a>
 <br /><br />
-<table border="1">
- <tr>
+<table width="100%" border="0" cellspacing="0" cellpadding="5">
+<tr class="row_header">
   <th>Company</th>
   <th>Reference</th>
   <th>Date</th>
@@ -71,7 +71,7 @@ while ($invoice = mysql_fetch_assoc($res)) {
 }
 ?>
 
-<tr>
+<tr class="row_header">
   <td><b>Total debit(s): <?=$count?></b></td>
   <td></td>
   <td align="right"> <b>TOTAL</b> </td>
@@ -79,13 +79,13 @@ while ($invoice = mysql_fetch_assoc($res)) {
   <td align="right"> <b><?=sprintf("%.2f", $total_ttc);?> &euro; </b></td>
 </tr>
 </table>
-
-
+<br/>
+<hr>
 <br/>
 <h2>Summary</h2>
 
-<table border="1">
- <tr>
+<table width="100%" border="0" cellspacing="0" cellpadding="5">
+<tr class="row_header">
   <th>Company</th>
   <th>Amount excl. VAT</th>
   <th>Amount incl. VAT</th>
@@ -101,20 +101,22 @@ while ($invoice = mysql_fetch_assoc($res)) {
 </tr>
 <?  } ?>
 
-<tr>
+<tr class="row_header">
   <td align="right"> <b>TOTAL</b> </td>
   <td align="right"> <?=sprintf("%.2f", $total_ht);?> &euro; </td>
   <td align="right"> <?=sprintf("%.2f", $total_ttc);?> &euro; </td>
 </tr>
 
 </table>
-
+<br>
 <form action="process.php" onsubmit="return confirm('Are you sure you want to process the direct debit?')">
-  <input type="submit" name="debit" value="Mark invoices as debited">
+  <input style="width: 150px; height: 40px;" class="bordered" type="submit" name="debit" value="Mark invoices as debited">
 </form>
 
 <br/>
+<hr>
 <br/>
+
 <h1>Previous debits</h1>
 
 <?
