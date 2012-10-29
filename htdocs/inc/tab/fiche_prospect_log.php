@@ -21,7 +21,7 @@
 
 global $Client;
 ?>
-<table>
+<table width="100%" border="0" cellspacing="0" cellpadding="5">
      <!-- Ugly, close the previous bloody global form. I mean *global* form! -->
      </form>
 <?php
@@ -30,7 +30,7 @@ global $Client;
 
 // Ajout d'un élément de suivi
 $ts_select = '<select name="new_suivi_type">';
-$result = mysql_query("SELECT id_type_suivi,name FROM webfinance_type_suivi ORDER BY id_type_suivi ASC");
+$result = mysql_query("SELECT id_type_suivi,name FROM webfinance_type_suivi ORDER BY id_type_suivi DESC");
 while (list($id,$ts) = mysql_fetch_array($result)) {
   $ts_select .= sprintf('<option value="%d">%s</option>', $id, $ts);
 }
@@ -67,10 +67,11 @@ while ($log = mysql_fetch_object($result)) {
   $class = ($count%2)?"even":"odd";
   $date = strftime("%e %b %y", $log->ts_date_added);
   $date = preg_replace("/([^0-9])0/", '\\1', $date); // year >= 2000 this app is not expected to still exist in y3K :)
+  $txt_msg = nl2br($log->message);
   print <<<EOF
 <tr class="$class" valign="top">
   <td nowrap align="center"><b>$date</b></td>
-  <td>$log->message</td>
+  <td>$txt_msg</td>
   <td nowrap class="type_suivi_$log->id_type_suivi">$log->type_suivi</td>
 </tr>
 EOF;
