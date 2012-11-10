@@ -38,7 +38,8 @@ class WebfinanceMantis {
 		$list[381] = 0;		//ISVTEC project
 		$list[305] = 0;		//NIPLEX project
 		$list[313] = 0;		//custemail project
-		$list[320] = 0;		//galaxya project		
+		$list[320] = 0;		//galaxya project
+		$list[327] = 0;		//GOM project		
 		$list[295] = 96;	//double project for Apocop (Nespresso)
 
 		return $list;
