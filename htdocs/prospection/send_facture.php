@@ -63,9 +63,16 @@ if(isset($_POST['action'],$_POST['id'],$_POST['mails2']) &&
 	$subject = stripslashes($_POST['subject']) ;
     $body = stripslashes($_POST['body']) ;
 
-	$invoice = new Facture;
+	$contract 				= false; 
+	$introduction_letter	= false; 
+
+	$invoice = new Facture;	
+	
+	if($_POST['contract'] == 1) 			$contract				= true; 
+	if($_POST['introduction_letter'] == 1)	$introduction_letter	= true; 
+		
 	if(!$invoice->sendByEmail($id_invoice, $mails, $from, $fromname, $subject,
-							  $body)) {
+							  $body, $introduction_letter, $contract)) {
 		$_SESSION['message'] = _('Invoice was not sent');
 		$_SESSION['error'] = 1;
 		echo _("Invoice was not sent");
@@ -143,12 +150,18 @@ $societe = unserialize(base64_decode($value));
 $Facture = new Facture();
 $invoice = $Facture->getInfos($id);
 
+$contract 			 = false;
+$introduction_letter = false; 
+if(isset($_GET['contract'])) 			$contract 				= 1;
+if(isset($_GET['introduction_letter'])) $introduction_letter 	= 1;
 
 ?>
 
 <form id="main_form" method="post">
   <input type="hidden" name="action" value="send">
   <input type="hidden" name="id" value="<?= $id ?>">
+  <input type="hidden" name="contract" value="<?=$contract?>">
+  <input type="hidden" name="introduction_letter" value="<?=$introduction_letter?>">
   <table class="bordered" border="0" cellspacing="0" cellpadding="3" width="500">
   <tr>
     <td>From</td>
@@ -178,7 +191,12 @@ $invoice = $Facture->getInfos($id);
 ?>
   <tr>
   <td></td>
-  <td><img src='/imgs/icons/attachment.png'><a href="gen_facture.php?id=<?=$invoice->id_facture?>"><?=$filename?></a></td>
+  <td><img src='/imgs/icons/attachment.png'><a href="gen_facture.php?id=<?=$invoice->id_facture?>&contract=<?=$contract?>&introduction_letter=<?=$introduction_letter?>"><?=$filename?>
+	<?
+	if(isset($_GET['contract'])) echo ' + contract + auto prelev'; 	
+	if(isset($_GET['introduction_letter'])) echo ' + cover letter ';
+	?></a>
+	</td>
   </tr>
   <tr><td colspan='2'><hr/></td></tr>
 <?php

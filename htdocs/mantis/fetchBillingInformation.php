@@ -1,149 +1,162 @@
 <?php
 
-  /*
-   * Copyright (C) 2012 Cyril Bouthors <cyril@bouthors.org>
-   *
-   * This program is free software: you can redistribute it and/or modify it
-   * under the terms of the GNU General Public License as published by the
-   * Free Software Foundation, either version 3 of the License, or (at your
-   * option) any later version.
-   *
-   * This program is distributed in the hope that it will be useful, but
-   * WITHOUT ANY WARRANTY; without even the implied warranty of
-   * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
-   * Public License for more details.
-   *
-   * You should have received a copy of the GNU General Public License along
-   * with this program. If not, see <http://www.gnu.org/licenses/>.
-   *
-   */
+/*
+* Copyright (C) 2012 Cyril Bouthors <cyril@bouthors.org>
+*
+* This program is free software: you can redistribute it and/or modify it
+* under the terms of the GNU General Public License as published by the
+* Free Software Foundation, either version 3 of the License, or (at your
+* option) any later version.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+* Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program. If not, see <http://www.gnu.org/licenses/>.
+*
+*/
 
 require_once('../inc/main.php');
 $title = _('Mantis');
 $roles='manager,accounting,employee';
 require_once('../top.php');
 require_once('../../lib/WebfinanceMantis.php');
+must_login();
 ?>
 
 <script type="text/javascript" language="javascript"
-  src="/js/ask_confirmation.js"></script>
+src="/js/ask_confirmation.js"></script>
 
 <?
 
 mysql_connect('localhost', 'root')
-    or die(mysql_error());
+	or die(mysql_error());
 
 mysql_query('SET character_set_results = utf8')
-  or die(mysql_error());
+	or die(mysql_error());
 
 mysql_select_db('mantis')
-  or die(mysql_error());
+	or die(mysql_error());
 
 $mantis = new WebfinanceMantis;
 
 ?>
 
 <form action="fetchBillingInformation.php">
-  <select name="month">
-  <?
-  $year = ( isset($_GET['year']) ? $_GET['year'] : strftime('%Y', time()));
-  $month = ( isset($_GET['month']) ? $_GET['month'] : strftime('%m', time()));
+	<select name="month">
+		<?
+	$year = ( isset($_GET['year']) ? $_GET['year'] : strftime('%Y', time()));
+	$month = ( isset($_GET['month']) ? $_GET['month'] : strftime('%m', time()));
 
-  for($i=1; $i<=12; $i++) {
-    $month_name = strftime('%B', mktime(0, 0, 0, $i));
-    $selected='';
-    if($i == $month)
-      $selected='selected';
-    echo "<option value=\"$i\" $selected> $month_name </option>\n";
-  }
-  ?>
-  </select>
+	for($i=1; $i<=12; $i++) {
+		$month_name = strftime('%B', mktime(0, 0, 0, $i));
+		$selected='';
+		if($i == $month)
+			$selected='selected';
+		echo "<option value=\"$i\" $selected> $month_name </option>\n";
+	}
+	?>
+</select>
 
-  <select name="year">
-  <?
-  for($i=2050; $i>=2012; $i--) {
-    $selected='';
+<select name="year">
+	<?
+for($i=2050; $i>=2012; $i--) {
+	$selected='';
 
-    if($i == $year)
-      $selected='selected';
+	if($i == $year)
+		$selected='selected';
 
-    echo "<option value=\"$i\" $selected> $i </option>\n";
-  }
-  ?>
-  </select>
+	echo "<option value=\"$i\" $selected> $i </option>\n";
+}
+?>
+</select>
 
-  <input type="submit" value="Search">
+<input type="submit" value="Search">
 
 </form>
+<br /><br />
+<table width="100%" border="0" cellspacing="0" cellpadding="5">
+<tr class="row_header">
+		<th>Client</th>
+		<th>Description</th>
+		<th>Time</th>
+		<th>Price</th>
+		<th>Result</th>
+	</tr>
 
-<table border="1">
+	<?
+	$action = false;
+	if(isset($_GET['action'])) { 
+		if($_GET['action'] == 'send') {
+			$action = 'send';
+		}
+	}
+	
+	$date_start = "$year-$month-01";
+	$date_end = "$year-" . ($month + 1) . "-01";
 
- <tr>
-  <th>Client</th>
-  <th>Description</th>
-  <th>Time</th>
-  <th>Price</th>
- </tr>
+	// Print preview
+	foreach($mantis->fetchBillingInformation($date_start, $date_end)
+	as $webfinance_id => $billing) {
 
-<?
+		$total = 0;
+		$description = '';
+		
+		foreach($billing as $ticket_number => $ticket) {
 
-$date_start = "$year-$month-01";
-$date_end = "$year-" . ($month + 1) . "-01";
+			$url_ticket =
+				"https://www.isvtec.com/infogerance/ticket/view.php?id=$ticket_number";
 
-// Print preview
-foreach($mantis->fetchBillingInformation($date_start, $date_end)
-  as $webfinance_id => $billing) {
+			$url_webfinance = '/prospection/fiche_prospect.php?onglet=billing&id='.$ticket['id_client'];
 
-  $total = 0;
+			$price = round($ticket['price'] * $ticket['quantity'], 2);
 
-  foreach($billing as $ticket_number => $ticket) {
-    $url_ticket =
-      "https://www.isvtec.com/infogerance/ticket/view.php?id=$ticket_number";
+			$time_human_readable = sprintf('%dh%02d',
+			floor(abs($ticket['time']) / 60),
+			abs($ticket['time']) % 60);
 
-    $url_webfinance = '/prospection/fiche_prospect.php?onglet=billing&id=' .
-      $mantis2webfinance[$ticket['mantis_project_id']];
+			echo "<tr>\n<td> <a href=\"$url_webfinance\">$ticket[mantis_project_name]</a></td>\n";
 
-    $price = round($ticket['price'] * $ticket['quantity'], 2);
+			if($ticket_number == 0)
+				echo "  <td> $ticket[mantis_ticket_summary] </td>\n";
+			else
+				echo "  <td> <a href=\"$url_ticket\"".
+				">$ticket[mantis_ticket_summary]</a> </td>\n";
 
-    $time_human_readable = sprintf('%dh%02d',
-                           floor(abs($ticket['time']) / 60),
-                           abs($ticket['time']) % 60);
+			echo "  <td align=\"right\"> $time_human_readable</td>\n";
+			echo "  <td align=\"right\"> $price&euro; </td>\n";
+			echo "</tr>\n";
 
-    echo "<tr>\n  <td> <a href=\"$url_webfinance\">$ticket[mantis_project_name]</a></td>\n";
+			$total += $ticket['time'];
+			$description .= $ticket['mantis_ticket_summary'] ." > $time_human_readable = $price € HT\n"; 
+		}
 
-    if($ticket_number == 0)
-      echo "  <td> $ticket[mantis_ticket_summary] </td>\n";
-    else
-      echo "  <td> <a href=\"$url_ticket\"".
-      ">$ticket[mantis_ticket_summary]</a> </td>\n";
+		$total_time_client_human_readable = sprintf('%dh%02d',
+		floor($total / 60),
+		$total % 60);
 
-    echo "  <td align=\"right\"> $time_human_readable</td>\n";
-    echo "  <td align=\"right\"> $price&euro; </td>\n";
-    echo "</tr>\n";
+		$total_price = round($total * $ticket['price'] / 60, 2);
 
-    $total += $ticket['time'];
-  }
+		echo "<tr> <td></td> <td align=\"right\"><b>TOTAL INVOICED</b></td> ".
+		"<td align=\"right\"><b>$total_time_client_human_readable</b></td> ".
+		"<td align=\"right\"><b>$total_price&euro;</b></td>\n" .
+		"<td align=\"right\"><b>";
+		if($total_price > 1 && $action == 'send') { if($mantis->createAndSendInvoice($ticket['id_client'], $total_price, $description)) { echo 'Sent'; } }
+		echo "</b></td></tr>\n";
+	}
 
-  $total_time_client_human_readable = sprintf('%dh%02d',
-                                      floor($total / 60),
-                                      $total % 60);
-
-  $total_price = round($total * $ticket['price'] / 60, 2);
-
-  echo "<tr> <td></td> <td align=\"right\"><b>TOTAL INVOICED</b></td> ".
-  "<td align=\"right\"><b>$total_time_client_human_readable</b></td> ".
-    "<td align=\"right\"><b>$total_price&euro;</b></td></tr>\n";
-}
-
-?>
+	?>
 
 </table>
 
-<form action="sendInvoices.php" method="POST">
-  <input type="submit" name="send_invoices" value="Send invoices to clients"
-onclick="return ask_confirmation('<?= _('Do you really want to send the invoices to clients?') ?>')">
-  <input type="hidden" name="month" value="<?=$month;?>" />
-  <input type="hidden" name="year" value="<?=$year;?>" />
+<font color="red"><blink><b>> A générer UNE seule fois par mois <</b></blink></font><br />
+<form action="fetchBillingInformation.php?month=<?=$month?>&year=<?=$year?>&action=send" method="POST">
+	<input type="submit" name="send_invoices" value="Send invoices to clients"
+	onclick="return ask_confirmation('<?= _('Do you really want to send the invoices to clients?') ?>')">
+	<input type="hidden" name="month" value="<?=$month;?>" />
+	<input type="hidden" name="year" value="<?=$year;?>" />
 
 </form>
 
