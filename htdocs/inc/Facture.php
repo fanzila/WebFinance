@@ -497,7 +497,7 @@ D'UNE PART
 
 ET
 
-La société ".$facture->nom_client.", au capital de ".$facture->capital." dont le siège social se situe au ".$facture->addr2." ".$facture->addr3.", immatriculée sous le numéro RCS ".$facture->rcs.", représentée par ".$facture->addr1.", gérant
+La société ").$facture->nom_client.utf8_decode(", au capital de ".$facture->capital." dont le siège social se situe au ").$facture->addr2." ".$facture->addr3.utf8_decode(", immatriculée sous le numéro RCS ".$facture->rcs.", représentée par ").$facture->addr1.utf8_decode(", gérant
 
 Ci-après dénommée « le Client ».
 
@@ -714,7 +714,7 @@ En vue de trouver ensemble une solution à tout litige qui surviendrait dans l'e
 	Fait en deux exemplaires à Paris, le ".strftime("%e %B %Y", mktime())."		
 
 
-		Cyril BOUTHORS					                                                                             ".$facture->addr1."
+		Cyril BOUTHORS					                                                                             ").$facture->addr1.utf8_decode("
 		     Gérant						    
 
 "));
