@@ -39,7 +39,7 @@ require_once("inc/main.php");
 $elements = array(_('Home') => array( 'url' => '/', 'roles' => 'any' ),
                   _('My invoices') => array( 'url' => '/client/', 'roles' => 'client' ),
                   _('Companies') => array( 'url' => '/prospection/?q=1', 'roles' => 'manager,employee,accounting' ),
-                  _('Cashflow') => array( 'url' => '/cashflow/', 'roles' => 'manager,accounting' ),
+                  //_('Cashflow') => array( 'url' => '/cashflow/', 'roles' => 'manager,accounting' ),
                   _('Direct debit') => array( 'url' => '/direct_debit/', 'roles' => 'manager,accounting' ),
                   _('Ticket billing') => array( 'url' => '/mantis/fetchBillingInformation.php', 'roles' => 'manager,accounting' ),
                   _('My account') => array( 'url' => '/moncompte/', 'roles' => 'any' ),

@@ -388,39 +388,49 @@ $options .= "<option ".($response->id_client==$facture->id_client ? 'selected="s
     </tr>
     <tr>
       <td colspan="2">
-      <a href="fiche_prospect.php?id=<?= $facture->id_client ?>&onglet=billing"><b>>> <?=_('Back to client screen')?></b></a><br/>
-      <a href="edit_facture.php?id_facture=new&id_client=<?= $facture->id_client ?>"><?=_('Create a new')?></a><br/>
-      <a href="save_facture.php?id=<?= $facture->id_facture ?>&action=duplicate"><?=_('Duplicate')?></a><br/>
+	  <input style="width: 200px; background: #eee; color: #7f7f7f; border: solid 1px #aaa;" id="" type="button" onclick="window.location='fiche_prospect.php?id=<?= $facture->id_client ?>&onglet=billing';" value="<?=_('Back to client screen')?>" />
+      </td></tr>
+	<tr>
+      <td colspan="2">
+	<input style="width: 100px; background: #eee; color: #7f7f7f; border: solid 1px #aaa;" id="submit_button" type="submit" value="<?=_('Save')?>" /><input style="width: 98px; background: #eee; color: #7f7f7f; border: solid 1px #aaa;" id="cancel_button" type="button" onclick="window.location='fiche_prospect.php?id=<?= $facture->id_client ?>';" value="<?=_('Cancel')?>" />
+ 	</td></tr>
+    <tr>
+      <td colspan="2">
+      <a href="edit_facture.php?id_facture=new&id_client=<?= $facture->id_client ?>">> <?=_('Create a new')?></a><br/>
+      <a href="save_facture.php?id=<?= $facture->id_facture ?>&action=duplicate">> <?=_('Duplicate')?></a><br/>
      <?php
         if (! $facture->immuable)
           printf('<a href="save_facture.php?id_facture=%d&action=delete_facture" onclick="return ask_confirmation(\'%s\');">%s</a><br/>', $facture->id_facture,_('Do you really want to delete it ?'), _('Delete'));
       ?>
 
-      <a href="../direct_debit/push.php?id=<?= $facture->id_facture ?>" onclick="return ask_confirmation('Are you sure you want to mark this invoice as paid and plan a direct debit?');"><?=_('Plan for direct debit')?></a>
-<hr>
-      <a href="send_facture.php?id=<?= $facture->id_facture ?>"><?= _('Send by mail') ?></a><br/>
-     <a href="send_facture.php?id=<?= $facture->id_facture ?>&introduction_letter=1"><?= _('Send by mail with cover') ?></a><br/>
-      <a href="send_facture.php?id=<?= $facture->id_facture ?>&contract=1"><?= _('Send by mail with contract + auto prelev') ?></a><br/>
-      <a href="send_facture.php?id=<?= $facture->id_facture ?>&contract=1&introduction_letter=1"><?= _('Send by mail with cover, contract, auto prelev') ?></a><br/>
+      <a href="../direct_debit/push.php?id=<?= $facture->id_facture ?>" onclick="return ask_confirmation('Are you sure you want to mark this invoice as paid and plan a direct debit?');">> <?=_('Plan for direct debit')?></a>
+    </td></tr>
+	<tr>
+      <td colspan="2">
+      <a href="send_facture.php?id=<?= $facture->id_facture ?>">> <?= _('Send by mail') ?></a><br/>
+     <a href="send_facture.php?id=<?= $facture->id_facture ?>&introduction_letter=1">> <?= _('Send by mail with cover') ?></a><br/>
+      <a href="send_facture.php?id=<?= $facture->id_facture ?>&contract=1">> <?= _('Send by mail with contract + auto prelev') ?></a><br/>
+      <a href="send_facture.php?id=<?= $facture->id_facture ?>&contract=1&introduction_letter=1">> <?= _('Send by mail with cover, contract, auto prelev') ?></a><br/>
 
 <?php
+/**
       $tr_ids = $Facture->getTransactions($facture->id_facture);
       foreach($tr_ids as $id_tr=>$text){
 	printf('<a href="#" title="%s" onclick="inpagePopup(event, this, 450, 500, \'../cashflow/fiche_transaction.php?id=%d\');" >%s #%d</a><br/>',$text, $id_tr, _('Transaction'),$id_tr);
       }
+**/
 ?>
-<hr>
-<a href="gen_facture.php?id=<?=$facture->id_facture?>">Download PDF</a><br/>
-<a href="gen_facture.php?id=<?=$facture->id_facture?>&introduction_letter=1">Download PDF with cover</a><br/>
-<a href="gen_facture.php?id=<?=$facture->id_facture?>&contract=1">Download PDF with contract + auto prelev</a><br/>
-<a href="gen_facture.php?id=<?=$facture->id_facture?>&contract=1&introduction_letter=1">Download PDF with cover, contract, auto prelev</a><br/>
-<hr>
+</td></tr>
+<tr>
+  <td colspan="2">
+<a href="gen_facture.php?id=<?=$facture->id_facture?>">> Download PDF</a><br/>
+<a href="gen_facture.php?id=<?=$facture->id_facture?>&introduction_letter=1">> Download PDF with cover</a><br/>
+<a href="gen_facture.php?id=<?=$facture->id_facture?>&contract=1">> Download PDF with contract + auto prelev</a><br/>
+<a href="gen_facture.php?id=<?=$facture->id_facture?>&contract=1&introduction_letter=1">> Download PDF with cover, contract, auto prelev</a><br/>
       </td>
     </tr>
     <tr>
       <td colspan="2" style="text-align: center;">
-      <input style="width: 90px; background: #eee; color: #7f7f7f; border: solid 1px #aaa;" id="submit_button" type="submit" value="<?=_('Save')?>" />
-      <input style="width: 90px; background: #eee; color: #7f7f7f; border: solid 1px #aaa;" id="cancel_button" type="button" onclick="window.location='fiche_prospect.php?id=<?= $facture->id_client ?>';" value="<?=_('Cancel')?>" />
       </td>
     </tr>
     </table>
