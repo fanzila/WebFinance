@@ -399,8 +399,8 @@ $options .= "<option ".($response->id_client==$facture->id_client ? 'selected="s
       <a href="../direct_debit/push.php?id=<?= $facture->id_facture ?>" onclick="return ask_confirmation('Are you sure you want to mark this invoice as paid and plan a direct debit?');"><?=_('Plan for direct debit')?></a>
 <hr>
       <a href="send_facture.php?id=<?= $facture->id_facture ?>"><?= _('Send by mail') ?></a><br/>
-      <a href="send_facture.php?id=<?= $facture->id_facture ?>&contract=1"><?= _('Send by mail with contract') ?></a><br/>
-      <a href="send_facture.php?id=<?= $facture->id_facture ?>&introduction_letter=1"><?= _('Send by mail with cover') ?></a><br/>
+     <a href="send_facture.php?id=<?= $facture->id_facture ?>&introduction_letter=1"><?= _('Send by mail with cover') ?></a><br/>
+      <a href="send_facture.php?id=<?= $facture->id_facture ?>&contract=1"><?= _('Send by mail with contract + auto prelev') ?></a><br/>
       <a href="send_facture.php?id=<?= $facture->id_facture ?>&contract=1&introduction_letter=1"><?= _('Send by mail with cover, contract, auto prelev') ?></a><br/>
 
 <?php
@@ -411,8 +411,8 @@ $options .= "<option ".($response->id_client==$facture->id_client ? 'selected="s
 ?>
 <hr>
 <a href="gen_facture.php?id=<?=$facture->id_facture?>">Download PDF</a><br/>
-<a href="gen_facture.php?id=<?=$facture->id_facture?>&contract=1">Download PDF with contract</a><br/>
 <a href="gen_facture.php?id=<?=$facture->id_facture?>&introduction_letter=1">Download PDF with cover</a><br/>
+<a href="gen_facture.php?id=<?=$facture->id_facture?>&contract=1">Download PDF with contract + auto prelev</a><br/>
 <a href="gen_facture.php?id=<?=$facture->id_facture?>&contract=1&introduction_letter=1">Download PDF with cover, contract, auto prelev</a><br/>
 <hr>
       </td>
