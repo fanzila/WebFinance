@@ -24,8 +24,9 @@ $roles = "manager,employee,accounting";
 
 if (isset($_GET['action']) && $_GET['action'] == '_new') {
 
-  mysql_query("INSERT INTO webfinance_clients (nom,date_created) VALUES('Nouvelle Entreprise', now())")
-    or wf_mysqldie();
+  $ts = time();
+  mysql_query("INSERT INTO webfinance_clients (nom,date_created) VALUES('Nouvelle Entreprise_".$ts."', now())")
+    or die(mysql_error());
 
   $_GET['id'] = mysql_insert_id();
 
