@@ -314,11 +314,7 @@ class Facture extends WFO {
 			  return date('Y-m-d', mktime(0, 0, 0, $month+1, $day, $year));
 
 		  case 'quarterly':
-			  # Inspired by quarterByDate() as seen on
-			  # http://php.net/manual/function.date.php
-			  return date('Y-m-d',
-						  mktime(0,0,0,((int) floor($month / 3.1) + 1)*3+1, $day,
-								 $year));
+			  return date('Y-m-d', mktime(0, 0, 0, $month+3, $day, $year));
 
 		  case 'yearly':
 			  return date('Y-m-d', mktime(0, 0, 0, $month, $day, $year+1));
