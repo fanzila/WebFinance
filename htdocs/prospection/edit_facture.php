@@ -430,7 +430,8 @@ $options .= "<option ".($response->id_client==$facture->id_client ? 'selected="s
       </td>
     </tr>
     <tr>
-      <td colspan="2" style="text-align: center;">
+      <td colspan="2">
+<!--	<a href="paypal.php?total=<?= number_format($facture->total_ttc,2, ',', ' '); ?>&facture=<?=$facture->id_facture?>">> Request a PayPal payment</a><br/> -->
       </td>
     </tr>
     </table>

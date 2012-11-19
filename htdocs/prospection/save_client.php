@@ -41,7 +41,7 @@ if (isset($_GET['action']) && $_GET['action'] == "delete") {
   if($Client->exists()){
 
     $q = mysql_query("SELECT id_facture FROM webfinance_invoices WHERE id_client=".$_GET['id'])
-      or wf_mysqldie();
+      or die(mysql_error());
     $clause= "WHERE (";
 
     while(list($id_inv) = mysql_fetch_array($q) )
@@ -51,11 +51,11 @@ if (isset($_GET['action']) && $_GET['action'] == "delete") {
 
     if(mysql_num_rows($q)>0)
       mysql_query("DELETE FROM webfinance_transactions $clause")
-        or wf_mysqldie();
+        or die(mysql_error());
     mysql_free_result($q);
 
     mysql_query("DELETE FROM webfinance_clients WHERE id_client=".$_GET['id'])
-      or wf_mysqldie();
+      or die(mysql_error());
 
     $User->delete($Client->id_user);
 
@@ -184,7 +184,7 @@ $q = sprintf("UPDATE webfinance_clients SET ".
              mysql_real_escape_string($id_client)
 	);
 
-mysql_query($q) or wf_mysqldie();
+mysql_query($q) or die(mysql_error());
 
 # Rename document directory if needed
 $new_document_dir = $document->GetCompanyDirectory($id_client);
