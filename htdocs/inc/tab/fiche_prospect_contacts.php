@@ -50,7 +50,7 @@ global $Client, $User;
   <input type="text" name="password" value="<?= $Client->password ?>" class="keyring" />
 <?php
    if(!empty($Client->email)){
-     printf('<a href="javascript:confirmSendInfo(%d,\'%s\');"><img src="../imgs/icons/mail-send.png" title="%s" /></a>',$Client->id,_('Send info to client?'),_('Send informations'));
+     printf('<a href="javascript:confirmSendInfo(%d,\'%s\');"><img src="../imgs/icons/mail-send.png" title="%s" /></a>',$Client->id,_('Send info to client?'),_('Send information'));
    }
   ?>
 <br/>
