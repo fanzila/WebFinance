@@ -21,6 +21,12 @@
 @ini_set('session.gc_maxlifetime',3600);
 session_start();
 
+//Get IE out of here
+if (isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false)) {
+	echo "Webfinance does not fit with Internet Explorer, please be kind with yourself and use a working browser like <a href='http://www.mozilla.org/'>Firefox</a>.";
+	exit;
+}
+
 require_once("dbconnect.php");
 require_once("WFO.php");
 require_once("User.php");
