@@ -20,12 +20,13 @@
 $res = mysql_query(
   'select type_pref, value '.
   'from webfinance_pref '.
-  "where type_pref in ('mantis_login', 'mantis_password')")
+  "where type_pref in ('mantis_login', 'mantis_password', 'mantis_api_url')")
     or die(mysql_error());
 
 $mantis = array(
   'mantis_login'    => '',
   'mantis_password' => '',
+  'mantis_api_url'  => 'http://localhost/mantis/api/soap/mantisconnect.php',
 );
 
 while ($row = mysql_fetch_assoc($res))
@@ -48,7 +49,12 @@ while ($row = mysql_fetch_assoc($res))
 
   <tr class="row_even">
    <td>Password</td>
-   <td><input type="text" name="password" value="<?=$mantis[mantis_password]?>" /></td>
+   <td><input type="password" name="password" value="<?=$mantis[mantis_password]?>" /></td>
+  </tr>
+
+  <tr class="row_even">
+   <td>API URL</td>
+   <td><input type="text" name="api_url" value="<?=$mantis[mantis_api_url]?>" /></td>
   </tr>
 
 <tr class="row_even">

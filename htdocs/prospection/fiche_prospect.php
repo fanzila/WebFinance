@@ -24,12 +24,21 @@ $roles = "manager,employee,accounting";
 
 if (isset($_GET['action']) && $_GET['action'] == '_new') {
 
-  $ts = time();
-  mysql_query("INSERT INTO webfinance_clients (nom,date_created) VALUES('Nouvelle Entreprise_".$ts."', now())")
+  $client_name = 'Nouvelle Entreprise_' . time();
+  mysql_query("INSERT INTO webfinance_clients (nom,date_created) VALUES('$client_name', now())")
     or die(mysql_error());
 
   $_GET['id'] = mysql_insert_id();
 
+  $mantis_project = array(
+    'name'       => $client_name,
+    # private = 50 according to mantis/ticket/core/constant_inc.php
+    'view_state' => array( 'id' => 50),
+  );
+  $mantis = new WebfinanceMantis;
+  $mantis->createProject($_GET['id'], $mantis_project);
+
+  # Create document directory
   $document = new WebfinanceDocument;
   $document_dir = $document->GetCompanyDirectory($_GET['id']);
   mkdir($document_dir)

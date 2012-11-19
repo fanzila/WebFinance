@@ -19,7 +19,33 @@
 
 class WebfinanceMantis {
 
-	static private $_mantis_database = 'mantis';
+	static private $_database = 'mantis';
+	static private $_login = '';
+	static private $_password = '';
+        static private $_soapclient = null;
+
+        function __construct() {
+
+          $res = mysql_query(
+            'select type_pref, value '.
+            'from webfinance_pref '.
+            "where type_pref in ('mantis_login', 'mantis_password', 'mantis_api_url')")
+            or die(mysql_error());
+
+          while ($row = mysql_fetch_assoc($res))
+            $mantis[$row['type_pref']] = $row['value'];
+
+          if(isset($mantis['mantis_login'], $mantis['mantis_password'],
+              $mantis['mantis_api_url']))
+            {
+              $this->_login    = $mantis['mantis_login'];
+              $this->_password = $mantis['mantis_password'];
+              $this->_soapclient = new SoapClient(null, array(
+                                     'location' => $mantis['mantis_api_url'],
+                                     'uri'      => 'ns1',
+                                   ));
+            }
+        }
 
 	function mantisIdToIdClient() {  
 
@@ -50,7 +76,7 @@ class WebfinanceMantis {
 		$mantisid = self::mantisIdToIdClient();
 
 		// Select the Mantis MySQL database
-		if(!mysql_select_db(self::$_mantis_database))
+		if(!mysql_select_db(self::$_database))
 			throw new Exception(mysql_error());
 
 		$start_date = mysql_real_escape_string($start_date) . ' 00:00:00';
@@ -231,6 +257,30 @@ Détails des tickets ci-dessous : \n$items";
 		
 		return true;
 	}
+
+        /**
+         * Add a new project.
+         *
+         * @param Int client_id The Webfinance client id.
+         *
+         * @param Array $project A new ProjectData structure. See
+         * mantis/api/soap/mc_project_api.php for more information
+         *
+         **/
+
+        function createProject($client_id = 0, array $mantis_project = array())
+        {
+          if(empty($this->_soapclient))
+            return true;
+
+          $project_id = $this->_soapclient->mc_project_add($this->_login,
+                        $this->_password, $mantis_project);
+
+          mysql_query('update webfinance_clients '.
+            "set id_mantis = $project_id ".
+            "where id_client = $client_id")
+            or die(mysql_error());
+        }
 
 }
 
