@@ -28,7 +28,7 @@ $pref = unserialize(base64_decode($data));
 <tr>
   <td><?=_('Subject')?></td>
 <?php
-  $subject="%%COMPANY%%: "._('your account informations');
+  $subject="%%COMPANY%%: "._('your account information');
 if(isset($pref->subject))
   $subject = stripslashes(utf8_decode($pref->subject));
 ?>

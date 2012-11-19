@@ -372,7 +372,7 @@ class User {
     if(isset($pref->subject) && !empty($pref->body)){
       $subject = preg_replace($patterns, $replacements, stripslashes(utf8_decode($pref->subject)) );
     }else
-      $subject= $societe->raison_sociale.": "._('your account informations');
+      $subject= $societe->raison_sociale.": "._('your account information');
 
     //body
     if(isset($pref->body) AND !empty($pref->body) ){
