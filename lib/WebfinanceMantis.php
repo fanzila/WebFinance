@@ -282,6 +282,23 @@ Détails des tickets ci-dessous : \n$items";
             or die(mysql_error());
         }
 
+        /**
+         * Update project.
+         *
+         * @param integer $project_id A project's id
+         * @param Array $mantis_project A new ProjectData structure
+         *
+         **/
+
+        function updateProject($project_id = 0, array $mantis_project = array())
+        {
+          if(empty($this->_soapclient))
+            return true;
+
+          $this->_soapclient->mc_project_update($this->_login, $this->_password,
+            $project_id, $mantis_project);
+        }
+
 }
 
 ?>

@@ -189,9 +189,20 @@ mysql_query($q) or die(mysql_error());
 # Rename document directory if needed
 $new_document_dir = $document->GetCompanyDirectory($id_client);
 
-if($old_document_dir != $new_document_dir)
+if($old_document_dir != $new_document_dir) {
   rename($old_document_dir, $new_document_dir)
     or die("Unable to rename $old_document_dir to $new_document_dir");
+
+  # Rename Mantis project
+  $mantis_project = array(
+    'name' => $nom,
+    # private = 50 according to mantis/ticket/core/constant_inc.php
+    'view_state' => array( 'id' => 50),
+  );
+  $mantis = new WebfinanceMantis;
+  $mantis->updateProject($id_mantis, $mantis_project);
+
+}
 
 if(isset($_SESSION['message']))
   $_SESSION['message'] .= "<br/>"._('Update customer');
