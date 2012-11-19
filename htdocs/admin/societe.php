@@ -167,7 +167,7 @@ while (list($id_pref,$value) = mysql_fetch_array($result)) {
     $img = "not_paid";
     $hover_text = addslashes(sprintf(_('Checksum fail on account number. Check digits entered. With this account number checksum should be %d'), $key));
   }
-  $check_img = sprintf('<img src="/imgs/icons/%s.gif" onmouseover="return escape(\'%s\');" />',
+  $check_img = sprintf('<img src="/imgs/icons/%s.gif" onMouseOut="UnTip();" onmouseover="Tip(\'%s\');" />',
                        $img, $hover_text );
 
 

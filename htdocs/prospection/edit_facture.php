@@ -164,7 +164,7 @@ function subQtt(id,tva) {
 <tr>
   <td width="300">
     <table width="300" border="0" cellspacing="0" cellpadding="2">
-    <tr><td width="100"><?= ucfirst($facture->type_doc) ?> n&deg;</td><td><input type="text" style="width:85px; text-align: center;" name="num_facture" value="<?= $facture->num_facture ?>" /><img src="/imgs/icons/help.png" onmouseover="return escape('Le num&eacute;ro de facture est g&eacute;n&eacute;r&eacute; automatiquement lorsqu\'on marque la facture comme envoy&eacute;e.<br/><br/>On peut forcer ce num&eacute;ro arbitrairement mais souvenez-vous que la loi fran&ccedil;aise oblige les num&eacute;ros de facture &agrave; &ecirc;tre s&eacute;quenciels (pas de trous ni de YYYYMMDD');" /></td></tr>
+    <tr><td width="100"><?= ucfirst($facture->type_doc) ?> n&deg;</td><td><input type="text" style="width:85px; text-align: center;" name="num_facture" value="<?= $facture->num_facture ?>" /><img src="/imgs/icons/help.png" onMouseOut="UnTip();" onmouseover="Tip('Le num&eacute;ro de facture est g&eacute;n&eacute;r&eacute; automatiquement lorsqu\'on marque la facture comme envoy&eacute;e.<br/><br/>On peut forcer ce num&eacute;ro arbitrairement mais souvenez-vous que la loi fran&ccedil;aise oblige les num&eacute;ros de facture &agrave; &ecirc;tre s&eacute;quenciels (pas de trous ni de YYYYMMDD');" /></td></tr>
     <tr><td>Date <?= $facture->type_doc ?></td><td><?php makeDateField('date_facture', $facture->timestamp_date_facture) ?></td></tr>
     <tr><td>Code TVA Client</td><td><input style="width: 110px;" type="text" name="vat_number" value="<?= $facture->vat_number ?>" /></td></tr>
     <tr><td>Ref Contrat</td><td><input style="width: 200px;" type="text" name="ref_contrat" value="<?= $facture->ref_contrat ?>" /></td></tr>
@@ -240,7 +240,7 @@ $options .= "<option ".($response->id_client==$facture->id_client ? 'selected="s
 	  <option value="yearly" <?= ($facture->period=="yearly")?"selected":"" ?>  ><?=_('yearly')?></option>
 	</select>
 	  <img src="/imgs/icons/help.png"
-	      onmouseover="return escape('<?= addslashes(_('This option allows to periodically duplicate an invoice')) ?>');" />
+	      onMouseOut="UnTip();" onmouseover="Tip('<?= addslashes(_('This option allows to periodically duplicate an invoice')) ?>');" />
 
 	</td>
     </tr>
@@ -285,7 +285,7 @@ $options .= "<option ".($response->id_client==$facture->id_client ? 'selected="s
 	  <option value="30"><?=_('+ 1 month')?></option>
 	</select>
         <img src="/imgs/icons/help.png"
-              onmouseover="return escape('Cette option permet de d&eacute;caler la date de la transaction par rapport &agrave; la date de la facture');" />
+              onMouseOut="UnTip();" onmouseover="Tip('Cette option permet de d&eacute;caler la date de la transaction par rapport &agrave; la date de la facture');" />
 	</td>
     </tr>
 

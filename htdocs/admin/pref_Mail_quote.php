@@ -50,7 +50,7 @@ $pref = unserialize(base64_decode($data));
    "<br/>RIB: %%RIB%%";
 ?>
 <tr>
-   <td><?=_('Body')?><img src="/imgs/icons/help.png" onmouseover="return escape('<?=$help?>');"/></td>
+   <td><?=_('Body')?><img src="/imgs/icons/help.png" onMouseOut="UnTip();" onmouseover="Tip('<?=$help?>');"/></td>
   <td>
 <textarea name="body" style="width: 500px; height: 350px; border: solid 1px #ccc;">
 <?

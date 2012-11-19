@@ -65,6 +65,7 @@ global $Client, $User;
                $l->description = preg_replace("/\r\n/", " ", $l->description);
                $l->description = preg_replace("/\"/", "", $l->description);
                $l->description = preg_replace("/\'/", "", $l->description);
+			   $l->description = preg_replace("/\n/", "<br>", $l->description);
                $description .= $l->description."<br/>";
              }
 
@@ -86,7 +87,7 @@ global $Client, $User;
              if ($facture->period !== 'none')
                $icon_period = $facture->period;
 
-             printf('<tr class="facture_line" onmouseover="return escape(\'%s\');" valign=middle>
+             printf('<tr class="facture_line" onMouseOut="UnTip();" onmouseover="Tip(\'%s\');" valign=middle>
                        <td nowrap>%s</td>
                        <td>%s%s</td>
                        <td class="euro" nowrap>%s %s HT</td>

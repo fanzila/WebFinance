@@ -35,7 +35,7 @@ $help_rights=addslashes("Les valeurs possible sont: client,manager,accounting,em
 
 <table border="0" cellspacing="0" cellpadding="3" class="framed">
 <tr style="text-align: center;" class="row_header">
-  <td><?= _('Name') ?><img class="help_icon" src="/imgs/icons/help.png" onmouseover="return escape('<?= $help_rights ?>');" /> </td>
+  <td><?= _('Name') ?><img class="help_icon" src="/imgs/icons/help.png" onMouseOut="UnTip();" onmouseover="Tip('<?= $help_rights ?>');" /> </td>
   <td><?= _('Description') ?></td>
   <td><?= _('Actions') ?></td>
 </tr>

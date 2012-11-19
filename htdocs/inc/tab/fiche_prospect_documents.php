@@ -39,7 +39,7 @@ foreach($document->ListByCompany($_GET['id']) as $filename => $file)
 {
 ?>
 
-<tr class="facture_line" onmouseover="return escape(\'%s\');" valign="middle">
+<tr class="facture_line" valign="middle">
     <td nowrap><?=date('Y-m-d', $file['mtime'])?></td>
     <td nowrap><?=round($file['size']/1024)?>kB</td>
  <td nowrap><?=wordwrap($filename, 80, "<br />\n");?></td>

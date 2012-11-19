@@ -104,7 +104,7 @@ class Client extends WFO
     // sensible default value
         $this->link_societe = 
             sprintf('<a href="http://www.societe.com/cgi-bin/liste?nom=%s&dep=%s">
-                          <img src="/imgs/icons/societe.com.gif" class="bouton" onmouseover="return escape(\'%s\');" /></a>',
+                          <img src="/imgs/icons/societe.com.gif" class="bouton" onMouseOut="UnTip();" onmouseover="Tip(\'%s\');" /></a>',
                     (isset($this->nom))?urlencode($this->nom):'', (isset($this->departement))?$this->departement:'',
                     addslashes( _('Cannot link to societe.com if no RCS or siren specified. Click icon to perform a search.') ) );
         if ( isset($this->siren) and $this->siren != "") {
@@ -112,13 +112,13 @@ class Client extends WFO
             $this->siren = preg_replace("/[^0-9]/", "", $this->siren);
             switch (strlen($this->siren)) {
             case 9: // RCS
-                $this->link_societe = sprintf('<a href="http://www.societe.com/cgi-bin/recherche?rncs=%s"><img src="/imgs/icons/societe.com.gif" class="bouton" onmouseover="return escape(\'%s\');" /></a>',
+                $this->link_societe = sprintf('<a href="http://www.societe.com/cgi-bin/recherche?rncs=%s"><img src="/imgs/icons/societe.com.gif" class="bouton" onMouseOut="UnTip();" onmouseover="Tip(\'%s\');" /></a>',
                                               $this->siren, addslashes( _('See financial info about this company on Societe.com') )
                                               );
                 $this->siren = preg_replace("!([0-9]{3})([0-9]{3})([0-9]{3})!", '\\1 \\2 \\3', $this->siren);
                 break;
             case 14: // INSEE
-                $this->link_societe = sprintf('<a href="http://www.societe.com/cgi-bin/recherche?rncs=%s"><img src="/imgs/icons/societe.com.gif" class="bouton" onmouseover="return escape(\'%s\');" /></a>',
+                $this->link_societe = sprintf('<a href="http://www.societe.com/cgi-bin/recherche?rncs=%s"><img src="/imgs/icons/societe.com.gif" class="bouton" onMouseOut="UnTip();" onmouseover="Tip(\'%s\');" /></a>',
                                               substr($this->siren, 0, 9), addslashes( _('See financial info about this company on Societe.com') )
                                        );
                 $this->siren = preg_replace("!([0-9]{3})([0-9]{3})([0-9]{3})([0-9]{5})!", '\\1 \\2 \\3 \\4', $this->siren);

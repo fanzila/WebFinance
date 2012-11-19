@@ -182,7 +182,7 @@ if(isset($_GET['introduction_letter'])) $introduction_letter 	= 1;
   }
   ?>
     <input type='text' name='mails2' style='width: 400px;'>
-    <img src="/imgs/icons/help.png" onmouseover="return escape('Adresses mails s&eacute;par&eacute;es par des virgules<br/>exemple: toto@exemple.com,foo@example.com');">
+    <img src="/imgs/icons/help.png" onMouseOut="UnTip();" onmouseover="Tip('Adresses mails s&eacute;par&eacute;es par des virgules<br/>exemple: toto@exemple.com,foo@example.com');">
    </td>
   </tr>
 <?php
@@ -279,7 +279,7 @@ if(isset($pref->subject) && !empty($pref->body)){
    <td><?=_('Subject')?></td>
    <td>
      <input type="text" name="subject" style="width: 400px;" value="<?=$subject?>">
-     <img src="/imgs/icons/help.png" onmouseover="return escape('Personnalisez le sujet et le corps de l\'email dans:<br/>Administration > Preferences');">
+     <img src="/imgs/icons/help.png" onMouseOut="UnTip();" onmouseover="Tip('Personnalisez le sujet et le corps de l\'email dans:<br/>Administration > Preferences');">
    </td>
   </tr>
 <tr>

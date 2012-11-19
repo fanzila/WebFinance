@@ -118,7 +118,7 @@ while (list($id_facture) = mysql_fetch_array($result)) {
    mysql_free_result($result2);
 
   print <<<EOF
-<tr onmouseover="return escape('$description');" class="row_$class">
+<tr onMouseOut="UnTip();" onmouseover="Tip('$description');" class="row_$class">
   <td>$count</td>
   <td>$fa->nice_date_facture</td>
   <td><img src="/imgs/icons/$icon.gif" alt="$icon" /></td>
