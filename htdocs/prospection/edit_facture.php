@@ -458,10 +458,10 @@ foreach ($facture->lignes as $l) {
   print <<<EOF
 <tr>
   <td>
-    <div onclick="location.href='change_rows.php?id_facture=$facture->id_facture&id_facture_ligne=$l->id_facture_ligne&raise_lower=raise';" style="cursor:pointer;width:10px;height:10px;position:relative;top:39px;left:2px;"></div>
-    <div onclick="location.href='change_rows.php?id_facture=$facture->id_facture&id_facture_ligne=$l->id_facture_ligne&raise_lower=lower';" style="cursor:pointer;width:10px;height:10px;position:relative;top:40px;left:2px;"></div>
-    <div onclick="location.href='change_rows.php?id_facture=$facture->id_facture&id_facture_ligne=$l->id_facture_ligne&raise_lower=delete';" style="cursor:pointer;width:10px;height:10px;position:relative;top:48px;left:2px;"></div>
-    <img border="0" src="/imgs/icons/facture_row_handle.gif" alt=""  />
+    <a href="change_rows.php?id_facture=$facture->id_facture&id_facture_ligne=$l->id_facture_ligne&raise_lower=raise"><img border="0" src="/imgs/icons/up.gif"></a>
+    <a href="change_rows.php?id_facture=$facture->id_facture&id_facture_ligne=$l->id_facture_ligne&raise_lower=lower"><img border="0" src="/imgs/icons/down.gif"></a>
+    <a href="change_rows.php?id_facture=$facture->id_facture&id_facture_ligne=$l->id_facture_ligne&raise_lower=delete"><img border="0" src="/imgs/icons/delete.png"></a>
+
   </td>
   <td><textarea style="height: 100px; width: 300px;" name="line_$l->id_facture_ligne">$l->description</textarea></td>
   <td align="center">
