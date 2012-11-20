@@ -151,7 +151,7 @@ if ($action == "save_facture") {
                ($is_envoye=="on")?"date_sent='$date_sent', ":"date_sent='$date_facture' , ",
                $ref_contrat,
                $extra_top,
-               $extra_bottom,
+               mysql_real_escape_string($extra_bottom),
                WFO::stripMonetaryFormat($accompte),
                $date_facture,
                $type_doc,
