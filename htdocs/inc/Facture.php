@@ -34,7 +34,16 @@ class Facture extends WFO {
 
   function addLigne($id_facture, $desc, $pu_ht, $qtt) {
     $desc = preg_replace("/\'/", "\\'", $desc);
-    $result = $this->SQL("INSERT INTO webfinance_invoice_rows (date_creation, id_facture, description, pu_ht, qtt) VALUES(now(), $id_facture, '$desc', '$pu_ht', $qtt)");
+
+    # Fetch order
+    $result = $this->SQL('select if(max(ordre) is NULL, 1, max(ordre + 1)) '.
+              'from webfinance_invoice_rows '.
+              "where id_facture = $id_facture");
+    list($order) = mysql_fetch_array($result);
+
+    $this->SQL('INSERT INTO webfinance_invoice_rows '.
+      '(date_creation, id_facture, description, pu_ht, qtt, ordre) '.
+      "VALUES(now(), $id_facture, '$desc', '$pu_ht', $qtt, $ordre)");
     $this->_markForRebuild($id_facture);
   }
 
@@ -1123,6 +1132,7 @@ $pdf->Image(dirname(__FILE__). '/../../lib/auto_automatique.png', 4, 4, 205);
 
     $invoiceId = mysql_insert_id();
 
+    $ordre = 1;
     foreach($invoice['rows'] as $row) {
       $row['description'] = mysql_real_escape_string($row['description']);
 
@@ -1130,8 +1140,11 @@ $pdf->Image(dirname(__FILE__). '/../../lib/auto_automatique.png', 4, 4, 205);
         "SET id_facture    = $invoiceId, ".
         "    description   = \"$row[description]\", " .
         "    prix_ht       = $row[price], " .
-        "    qtt           = $row[quantity]")
+        "    qtt           = $row[quantity], ".
+        "    ordre         = $ordre")
         or die(mysql_error());
+
+      $ordre++;
     }
 
     logmessage(_('Create invoice').' for client:'. $invoice['client_id'],

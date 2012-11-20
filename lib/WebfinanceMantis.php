@@ -226,7 +226,7 @@ Détails des tickets ci-dessous : \n$items";
 		
 		// Add service rows to invoice
 		$q = sprintf("INSERT INTO webfinance_invoice_rows (id_facture,description,prix_ht,qtt,ordre) ".
-			"SELECT %d, '%s', %s, %s, MAX(ordre) + 1 ".
+			"SELECT %d, '%s', %s, %s, if(max(ordre) is null, 1, max(ordre + 1) ".
 			"FROM webfinance_invoice_rows ".
 			"WHERE id_facture=%d",
 		$id_facture,

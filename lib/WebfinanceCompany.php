@@ -309,12 +309,16 @@ class WebfinanceCompany {
 
 		$invoice_id = mysql_insert_id();
 
-		foreach($invoice['items'] as $item)
+                $ordre = 1;
+		foreach($invoice['items'] as $item) {
 			CybPHP_MySQL::Query('INSERT INTO webfinance_invoice_rows SET '.
 								"id_facture  = $invoice_id, ".
 								"description = '$item[description]', ".
 								"qtt         = $item[quantity], ".
-								"prix_ht     = $item[price]");
+								"prix_ht     = $item[price], ".
+								"ordre       = $ordre");
+                        $ordre++;
+                }
 
 		CybPHP_MySQL::Query('COMMIT');
 
@@ -411,12 +415,16 @@ class WebfinanceCompany {
 		CybPHP_MySQL::Query('DELETE FROM webfinance_invoice_rows '.
 							"WHERE id_facture = $invoice_id");
 
-		foreach($invoice['items'] as $item)
+                $ordre=1;
+		foreach($invoice['items'] as $item) {
 			CybPHP_MySQL::Query('INSERT INTO webfinance_invoice_rows SET '.
 								"id_facture  = $invoice_id, ".
 								"description = '$item[description]', ".
 								"qtt         = $item[quantity], ".
-								"prix_ht     = $item[price]");
+								"prix_ht     = $item[price], ".
+								"ordre       = $ordre");
+                        $ordre++;
+                }
 
 		CybPHP_MySQL::Query('COMMIT');
 	}

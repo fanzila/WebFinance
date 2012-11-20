@@ -183,7 +183,7 @@ if ($action == "save_facture") {
     
     
     $q = sprintf("INSERT INTO webfinance_invoice_rows (id_facture,description,prix_ht,qtt,ordre) ".
-                 "SELECT %d, '%s', %s, %s, MAX(ordre) + 1 ".
+                 "SELECT %d, '%s', %s, %s, if(max(ordre) is NULL, 1, max(ordre) + 1) ".
 		 "FROM webfinance_invoice_rows ".
 		 "WHERE id_facture=%d",
                  $_POST['id_facture'],
