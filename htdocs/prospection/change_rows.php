@@ -7,11 +7,11 @@ $action           = isset($_GET['raise_lower']) ?$_GET['raise_lower'] : 0;
 $authorized       = array ("raise", "lower", "delete");
 
 if (empty($id_facture_ligne) || empty($id_facture)) {
-    exit("invoice dos not exist");
+    die("invoice does not exist");
 }
 
 if (! in_array($action, $authorized)) {
-    exit("action not exist");
+    die("action does not exist");
 }
    
 function renum ($id_facture, $id_facture_ligne, $order = 'DESC') 
