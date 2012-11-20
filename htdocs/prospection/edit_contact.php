@@ -101,7 +101,7 @@ function checkTel(input) {
     alert('in test func');
   }
 
-  input.value = input.value.replace(/[^0-9]/g, "");
+  //input.value = input.value.replace(/[^0-9]/g, "");
   if (input.value.length < 10) {
     alert('Les numéros de téléphone s\'écrivent sur 10 chiffres !');
     input.select();
@@ -109,7 +109,7 @@ function checkTel(input) {
     return false;
   }
 
-  input.value = input.value.substring(0,2)+' '+input.value.substring(2,4)+' '+input.value.substring(4,6)+' '+input.value.substring(6,8)+' '+input.value.substring(8,10);
+  //input.value = input.value.substring(0,2)+' '+input.value.substring(2,4)+' '+input.value.substring(4,6)+' '+input.value.substring(6,8)+' '+input.value.substring(8,10);
 
   return true;
 }
