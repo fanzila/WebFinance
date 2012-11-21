@@ -259,7 +259,7 @@ function GenerateCfonb() {
 		<?
 	} else {
 
-		$myFile = "export/remise_".REF_REMISE.".txt";
+		$myFile = "../../export_cfonb/remise_".REF_REMISE.".txt";
 		unlink($myFile);
 		$fh = fopen($myFile, 'w') or die("can't open file");
 		fwrite($fh, $chaine_totale);
