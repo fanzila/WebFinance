@@ -880,8 +880,11 @@ $pdf->Image(dirname(__FILE__). '/../../lib/auto_automatique.png', 4, 4, 205);
 
 	  // Extra data
 	  $pdf->SetFont('Arial', '', '10');
-	  $pdf->Ln(10, 210);
-	  $pdf->MultiCell(120, 6, $facture->extra_bottom, 0);
+
+	  if(!empty($facture->extra_bottom)) {
+	    $pdf->Ln(10);
+	    $pdf->MultiCell(120, 6, $facture->extra_bottom, 0);
+	  }
 
 	  // RIB
 	  $result = mysql_query('SELECT value ' .
@@ -904,7 +907,7 @@ $pdf->Image(dirname(__FILE__). '/../../lib/auto_automatique.png', 4, 4, 205);
 	  }
 
 	  $pdf->SetFont('Arial', 'B', '10');
-	  $pdf->Ln(10, 243);
+	  $pdf->Ln();
 	  $pdf->Cell(160, 6, utf8_decode(_("Bank references"))." ", "LTR", 0, "C");
 	  $pdf->Ln();
 
