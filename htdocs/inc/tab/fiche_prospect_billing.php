@@ -33,7 +33,7 @@ global $Client, $User;
 			    $q="SELECT YEAR(f.date_facture) as annee, ".
 			    "SUM( IF(f.type_doc='facture', ".
 			    "(fl.qtt*fl.prix_ht)/f.exchange_rate, 0)) as ca_ht_total, ".
-			    "SUM( IF(f.type_doc='facture', IF(f.is_paye=0, (fl.qtt*fl.prix_ht)/f.exchange_rate, 0), 0)) as du_ht_total ".
+			    "SUM( IF(f.type_doc='facture' AND f.is_paye=0 AND f.is_abandoned=0, (fl.qtt*fl.prix_ht)/f.exchange_rate, 0)) as du_ht_total ".
 			    "FROM webfinance_invoices f LEFT JOIN webfinance_invoice_rows fl ON f.id_facture=fl.id_facture ".
 			    "WHERE f.id_client=$Client->id ".
 			    "GROUP BY YEAR(date_facture) ".
