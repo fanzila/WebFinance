@@ -35,10 +35,12 @@ include("nav.php");
 
 <?
 $q = "SELECT s.id_suivi, s.message, ts.name as type_suivi, c.nom, s.id_objet,
-             c.id_client, UNIX_TIMESTAMP(s.date_added) as ts_date_added
+             c.id_client, UNIX_TIMESTAMP(s.date_added) as ts_date_added,
+             u.first_name, u.last_name
       FROM webfinance_suivi s
       JOIN webfinance_type_suivi ts ON ts.id_type_suivi = s.type_suivi
       JOIN webfinance_clients c ON c.id_client = s.id_objet
+      JOIN webfinance_users u ON s.added_by = u.id_user
       WHERE s.done = 0
       ORDER BY s.date_added DESC";
 
@@ -56,6 +58,7 @@ while ($log = mysql_fetch_object($result)) {
 <tr class="$class" valign="top">
   <td nowrap align="center"><b>$date</b></td>
   <td><a href="fiche_prospect.php?id=$log->id_client">$log->nom</a></td>
+  <td>$log->first_name&nbsp;$log->last_name</td>
   <td>$txt_msg</td>
   <td><a href="update_suivi.php?id=$log->id_suivi&action=done&company_id=$log->id_objet"><font color="red">todo</font></a> </td>
   <td nowrap class="type_suivi_$log->id_type_suivi">$log->type_suivi</td>
