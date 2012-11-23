@@ -880,7 +880,7 @@ $pdf->Image(dirname(__FILE__). '/../../lib/auto_automatique.png', 4, 4, 205);
 
 	  // Extra data
 	  $pdf->SetFont('Arial', '', '10');
-	  $pdf->SetXY(10, 210);
+	  $pdf->Ln(10, 210);
 	  $pdf->MultiCell(120, 6, $facture->extra_bottom, 0);
 
 	  // RIB
@@ -904,7 +904,7 @@ $pdf->Image(dirname(__FILE__). '/../../lib/auto_automatique.png', 4, 4, 205);
 	  }
 
 	  $pdf->SetFont('Arial', 'B', '10');
-	  $pdf->SetXY(10, 243);
+	  $pdf->Ln(10, 243);
 	  $pdf->Cell(160, 6, utf8_decode(_("Bank references"))." ", "LTR", 0, "C");
 	  $pdf->Ln();
 
