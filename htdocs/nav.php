@@ -34,7 +34,11 @@ require_once("inc/main.php");
 <div class="nav">
 <?php
 
-//$Id: nav.php 532 2007-06-14 10:39:19Z thierry $
+$req =mysql_query('select count(*) from webfinance_suivi where done=0');
+list($todo_number) = mysql_fetch_row($req);
+$todo='Todo';
+if($todo_number > 0)
+  $todo .= " ($todo_number)";
 
 $elements = array(_('Home') => array( 'url' => '/', 'roles' => 'any' ),
                   _('My invoices') => array( 'url' => '/client/', 'roles' => 'client' ),
@@ -42,7 +46,7 @@ $elements = array(_('Home') => array( 'url' => '/', 'roles' => 'any' ),
                   //_('Cashflow') => array( 'url' => '/cashflow/', 'roles' => 'manager,accounting' ),
                   _('Direct debit') => array( 'url' => '/direct_debit/', 'roles' => 'manager,accounting' ),
                   _('Ticket billing') => array( 'url' => '/mantis/fetchBillingInformation.php', 'roles' => 'manager,accounting' ),
-                  _('Todo') => array( 'url' => '/prospection/todo.php', 'roles' => 'manager,accounting' ),
+                  _($todo) => array( 'url' => '/prospection/todo.php', 'roles' => 'manager,accounting' ),
                   _('My account') => array( 'url' => '/moncompte/', 'roles' => 'any' ),
                   _('Administration') => array( 'url' => '/admin/', 'roles' => 'manager,admin' ),
                   _('Logout') => array( 'url' => '/logout.php', 'roles' => 'any' ),
