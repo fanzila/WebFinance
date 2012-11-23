@@ -29,20 +29,18 @@ if(!$User->isAuthorized("manager,accounting,employee")){
   exit;
 }
 
-if (!isset($_POST['new_suivi_comment'], $_POST['new_suivi_type'],
-    $_SESSION['id_user'], $_POST['company_id']))
+if (!isset($_GET['id'], $_GET['action'], $_GET['company_id']))
   die('Too few argument');
 
-mysql_query('INSERT INTO webfinance_suivi SET '.
-  'type_suivi =' . mysql_real_escape_string($_POST['new_suivi_type']) . ' ,'.
-  'id_objet   =' . mysql_real_escape_string($_POST['company_id']). ', '.
-  "message ='". mysql_real_escape_string($_POST['new_suivi_comment']) . "',".
-  'date_added = NOW(), ' .
-  'date_modified = NOW(), ' .
-  'done = ' . mysql_real_escape_string($_POST['done']) . ', '.
-  "added_by = $_SESSION[id_user]")
+$done=1;
+if($_GET['action'] === 'todo')
+  $done=0;
+
+mysql_query('UPDATE webfinance_suivi SET '.
+  "done = $done " .
+  'WHERE id_suivi = ' . mysql_real_escape_string($_GET['id']))
 or die(mysql_error());
 
-header("Location: fiche_prospect.php?onglet=followup&id=$_POST[company_id]");
+header("Location: fiche_prospect.php?onglet=followup&id=$_GET[company_id]");
 exit;
 ?>

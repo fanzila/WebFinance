@@ -244,7 +244,8 @@ CREATE TABLE `webfinance_suivi` (
   `rappel` datetime default NULL,
   `done` tinyint(3) unsigned default '0',
   `done_date` datetime default NULL,
-  PRIMARY KEY  (`id_suivi`)
+  PRIMARY KEY  (`id_suivi`),
+  KEY date_added (date_added)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `webfinance_transactions`;
