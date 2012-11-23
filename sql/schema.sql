@@ -417,7 +417,9 @@ INSERT INTO `webfinance_type_suivi` (`id_type_suivi`, `name`, `selectable`) VALU
 (3, 'Courier envoyé', 1),
 (4, 'Courier reçu', 1),
 (5, 'Rendez-vous', 1),
-(6, 'Presta', 1);
+(6, 'Presta', 1),
+(7, 'Facturation', 1),
+(8, 'Documents', 1);
 
 INSERT INTO `webfinance_users` (`id_user`, `last_name`, `first_name`, `login`, `password`, `email`, `disabled`, `last_login`, `creation_date`, `role`, `modification_date`, `prefs`) VALUES (1, NULL, NULL, 'admin', '21232f297a57a5a743894a0e4a801fc3', NULL, 0, '2006-04-06 16:34:51', NULL, 'admin,manager', NULL, '');
 
