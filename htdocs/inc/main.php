@@ -47,6 +47,24 @@ if(WF_DEBUG){
       $mt_start=getMicroTime();
  }
 
+function GetCompanyInfo() {
+
+	// Get my company info (address...)
+	$result = mysql_query('SELECT value ' .
+							'FROM webfinance_pref '.
+							"WHERE type_pref='societe' AND owner=-1");
+
+	if (mysql_num_rows($result) != 1)
+	  die(_("You didn't setup your company address and name. ".
+			"<a href='../admin/societe'>Go to 'Admin' and " .
+			"'My company'</a>"));
+
+	list($value) = mysql_fetch_array($result);
+	mysql_free_result($result);
+
+	return unserialize(base64_decode($value));
+} 
+
 function parselogline($str) {
   if (preg_match("/(user|fa|client):([0-9]+)/", $str)) {
     while (preg_match("/(user|fa|client):([0-9]+)/", $str, $matches)) {

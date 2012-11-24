@@ -170,7 +170,7 @@ class Facture extends WFO {
 	  $query="INSERT INTO webfinance_invoices (id_client,date_created,date_facture,num_facture) ".
 		  "VALUES ($id_client, now(), now(), $num_facture)";
       $this->SQL($query)
-		  or wf_mysqldie();
+		  or die(mysql_error());
 
       $id_new_facture = mysql_insert_id();
 
@@ -305,7 +305,7 @@ class Facture extends WFO {
 		  $invoice_number = sprintf('%d%.2d', $prefix, $suffix);
 
 		  $result = $this->SQL("SELECT num_facture FROM webfinance_invoices WHERE num_facture='$invoice_number'")
-			  or wf_mysqldie();
+			  or die(mysql_error());
 
 		  if(mysql_num_rows($result)==0)
 			  break;
@@ -887,7 +887,7 @@ $pdf->Image(dirname(__FILE__). '/../../lib/auto_automatique.png', 4, 4, 205);
 	  $result = mysql_query('SELECT value ' .
 							'FROM webfinance_pref '.
 							'WHERE id_pref='.$facture->id_compte)
-		  or wf_mysqldie();
+		  or die(mysql_error());
 
 	  list($cpt) = mysql_fetch_array($result);
 	  mysql_free_result($result);
@@ -947,7 +947,7 @@ $pdf->Image(dirname(__FILE__). '/../../lib/auto_automatique.png', 4, 4, 205);
 	  $result = mysql_query('SELECT value ' .
 							'FROM webfinance_pref '.
 							"WHERE type_pref='societe' AND owner=-1")
-		  or wf_mysqldie();
+		  or die('sendByEmail-950'.mysql_error());
 	  list($value) = mysql_fetch_array($result);
 	  mysql_free_result($result);
 	  $societe = unserialize(base64_decode($value));
@@ -962,7 +962,7 @@ $pdf->Image(dirname(__FILE__). '/../../lib/auto_automatique.png', 4, 4, 205);
 	  $result = mysql_query('SELECT value ' .
 							'FROM webfinance_pref ' .
 							"WHERE id_pref=".$invoice->id_compte)
-		  or wf_mysqldie();
+		  or die('sendByEmail-965'.mysql_error());
 
 	  list($cpt) = mysql_fetch_array($result);
 	  mysql_free_result($result);
@@ -976,7 +976,8 @@ $pdf->Image(dirname(__FILE__). '/../../lib/auto_automatique.png', 4, 4, 205);
 		  $cpt->$n = utf8_decode($cpt->$n);
 
 	  // Fetch preference information
-	  $result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='mail_invoice'") or wf_mysqldie();
+	  $result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='mail_invoice'") 
+		or die('sendByEmail-980'.mysql_error());
 	  list($data) = mysql_fetch_array($result);
 	  $pref = unserialize(base64_decode($data));
 
@@ -1003,7 +1004,7 @@ $pdf->Image(dirname(__FILE__). '/../../lib/auto_automatique.png', 4, 4, 205);
 								"WHERE id_invoice=$invoice->id_facture ".
 								'ORDER BY date '.
 								'DESC')
-			  or die(mysql_error());
+			  or die('sendByEmail-1006'.mysql_error());
 
 		  if(mysql_num_rows($result)==1){
 			  list($tr_date) = mysql_fetch_array($result);
@@ -1082,7 +1083,7 @@ $pdf->Image(dirname(__FILE__). '/../../lib/auto_automatique.png', 4, 4, 205);
 	  mysql_query('UPDATE webfinance_invoices '.
 				  'SET is_envoye=1, date_sent=NOW() '.
 				  "WHERE id_facture=$id_facture")
-		  or die(mysql_error());
+		  or die('setSent-1086'.mysql_error());
   }
 
   /**
