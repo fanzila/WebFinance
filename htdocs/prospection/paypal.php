@@ -40,7 +40,7 @@ if(isset($_GET['action']) AND $_GET['action'] == 'send') {
 	$fromname = '';
 	$subject = '';
 	$body = "Bonjour,
-Veuillez trouver ci-joint la facture numéro $invoice->num_facture de $invoice->nice_total_ttc Euro.
+Veuillez trouver ci-joint la facture numéro #$invoice->num_facture de $invoice->nice_total_ttc Euro.
 	
 Pour la payer via Paypal, cliquez sur ce lien : $link
 	

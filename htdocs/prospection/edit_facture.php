@@ -260,6 +260,7 @@ $options .= "<option ".($response->id_client==$facture->id_client ? 'selected="s
 	  <option value="direct_debit" <?= ($facture->payment_method=="direct_debit")?"selected":"" ?>><?=_('Direct debit')?></option>
 	  <option value="check" <?= ($facture->payment_method=="check")?"selected":"" ?>><?= _('Check')?></option>
 	  <option value="wire_transfer" <?= ($facture->payment_method=="wire_transfer")?"selected":"" ?>><?=_('Wire transfer')?></option>
+	  <option value="paypal" <?= ($facture->payment_method=="paypal")?"selected":"" ?>><?=_('Paypal')?></option>
 	</select>
 	</td>
     </tr>
@@ -400,7 +401,7 @@ $options .= "<option ".($response->id_client==$facture->id_client ? 'selected="s
       <a href="save_facture.php?id=<?= $facture->id_facture ?>&action=duplicate">> <?=_('Duplicate')?></a><br/>
      <?php
         if (! $facture->immuable)
-          printf('<a href="save_facture.php?id_facture=%d&action=delete_facture" onclick="return ask_confirmation(\'%s\');">%s</a><br/>', $facture->id_facture,_('Do you really want to delete it ?'), _('Delete'));
+          printf('<a href="save_facture.php?id_facture=%d&action=delete_facture" onclick="return ask_confirmation(\'%s\');">%s</a><br/>', $facture->id_facture,_('Do you really want to delete it ?'), _('> Delete'));
       ?>
 
       <a href="../direct_debit/push.php?id=<?= $facture->id_facture ?>" onclick="return ask_confirmation('Are you sure you want to mark this invoice as paid and plan a direct debit?');">> <?=_('Plan for direct debit')?></a>
