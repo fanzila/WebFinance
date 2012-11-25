@@ -37,10 +37,10 @@ mysql_connect('localhost', 'root')
 mysql_query('SET character_set_results = utf8')
 	or die(mysql_error());
 
+$mantis = new WebfinanceMantis;
+
 mysql_select_db('mantis')
 	or die(mysql_error());
-
-$mantis = new WebfinanceMantis;
 
 ?>
 
