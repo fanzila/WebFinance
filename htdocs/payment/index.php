@@ -27,11 +27,11 @@ $societe = GetCompanyInfo();
 
 //PAYPAL Vars
 $paypal_params = array(
-'paypal_url_form' 		=> 'https://www.sandbox.paypal.com/cgi-bin/webscr', //prod: https://www.paypal.com/cgi-bin/webscr
+'paypal_url_form' 		=> 'https://www.paypal.com/cgi-bin/webscr', // dev 'https://www.sandbox.paypal.com/cgi-bin/webscr',
 'paypal_url_return' 	=> $societe->wf_url.'/payment/return.php',
 'paypal_url_cancel' 	=> $societe->wf_url.'/payment/cancel.php',
 'paypal_url_notify'		=> $societe->wf_url.'/payment/paypal/ipn.php',
-'paypal_email_account'	=> 'paypal@isvtec.com',
+'paypal_email_account'	=> 'paypal@isvtec.com', //dev 'pierre_1353785552_biz@isvtec.com',
 'id_payment_type' 		=> '2');
 
 $converter = new Encryption;
@@ -76,7 +76,7 @@ if($Invoice->exists($id_invoice)){
 //insert the transation in the db
 $ref_cmd = "WEBFINANCE;".random_int(10) ;
 $r = mysql_query("INSERT INTO webfinance_payment SET id_invoice=$inv->id_facture, ".
-	"email='".$params['PORTEUR']."' , ".
+	"email='".$Client->email."' , ".
 	"reference='".$ref_cmd."' , ".
 	"state='pending', ".
 	"amount='$inv->nice_total_ttc' , ".
@@ -159,13 +159,12 @@ $r = mysql_query("INSERT INTO webfinance_payment SET id_invoice=$inv->id_facture
 					<input type="hidden" name="amount" value="<?=$inv->nice_total_ttc?>">
 					<input name="item_name" type="hidden" value="Paiement facture <?=$societe->raison_sociale?> <?=$inv->num_facture?>"> 
 					<input name="cmd" type="hidden" value="_xclick"> 
-					<input type="hidden" name="hosted_button_id" value="5CN3PZJQ3TVE2">
 					<input name="business" type="hidden" value="<? echo $paypal_params['paypal_email_account']; ?>"> 
 					<input name="currency_code" type="hidden" value="EUR"> 
-					<input name="custom" type="hidden" value="<?=$inv->nom_client?>"> 
-					<input name="return" type="hidden" value="http://<? echo $paypal_params['paypal_url_return']; ?>"> 
-					<input name="cancel_return" type="hidden" value="http://<? echo $paypal_params['paypal_url_cancel']; ?>"> 
-					<input name="notify_url" type="hidden" value="http://<? echo $paypal_params['paypal_url_notify']; ?>"> 
+					<input name="custom" type="hidden" value="<?=$ref_cmd?>"> 
+					<input name="return" type="hidden" value="<? echo $paypal_params['paypal_url_return']; ?>"> 
+					<input name="cancel_return" type="hidden" value="<? echo $paypal_params['paypal_url_cancel']; ?>"> 
+					<input name="notify_url" type="hidden" value="<? echo $paypal_params['paypal_url_notify']; ?>"> 
 					<input name="no_note" type="hidden" value="1"> 
 					<input name="no_shipping" type="hidden" value="1"> 
 					<input name="last_name" type="hidden" value="<?=$inv->nom_client?>"> 

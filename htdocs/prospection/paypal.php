@@ -28,6 +28,12 @@ $Invoice = new Facture();
 $invoice = $Invoice->getInfos($_GET['id_invoice']);
 $client = new Client($invoice->id_client);
 $societe = GetCompanyInfo();
+	
+if(empty($client->email)) {
+	echo "<br /><h2>This client has no email... :-(</h2><br />You must add an email for this client before.";
+	include("../bottom.php");
+	exit;
+}
 
 if(isset($_GET['action']) AND $_GET['action'] == 'send') { 
 	

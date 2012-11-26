@@ -28,8 +28,8 @@ environment it is better to have that log file outside of the web root.
 */
 
 $paypal_params = array (
-	'email' 	=> 'pierre@doleans.net',
-	'debug' 	=> true, 
+	'email' 	=> 'paypal@isvtec.com',
+	'debug' 	=> false, 
 	'log_error' => true
 );
 
@@ -38,11 +38,9 @@ $tnx_state = 'cancel';
 ini_set('log_errors', $paypal_params['log_error']);
 ini_set('error_log', '../../../logs/ipn_errors.log');
 
-
 // instantiate the IpnListener class
 include('../../../lib/paypal/ipnlistener.php');
 $listener = new IpnListener();
-
 
 /*
 When you are testing your IPN script you should be using a PayPal "Sandbox"
@@ -92,14 +90,8 @@ if ($verified) {
 
 	require_once("../../inc/main.php");
 
-	$result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='societe' AND owner=-1") 
-		or die(mysql_error());
-	list($value) = mysql_fetch_array($result);
-	mysql_free_result($result);
-	$societe = unserialize(base64_decode($value));
-
-	$req = mysql_query("SELECT email, amount, currency, id_invoice FROM webfinance_payment WHERE reference = '".$_POST['txn_id']."' AND state ='pending' AND id_payment_type = 2' LIMIT 1 ORDER BY id DESC") 
-		or die(mysql_error());
+	$req = mysql_query("SELECT email, amount, currency, id_invoice FROM webfinance_payment WHERE reference = '".$_POST['custom']."' AND state ='pending' AND id_payment_type = 2 ORDER BY id DESC LIMIT 1") 
+		or die(error_log(mysql_error()));
 	$paypal_return = mysql_fetch_array($req);
 	$error = '';
 
@@ -108,59 +100,60 @@ if ($verified) {
 		$error .= "No initiated transaction for this IPN\n";
 		
 	} else {
-		if($paypal_return['email'] != $_POST['receiver_email']) $error .= "Invalid email, expected: $paypal_return[email] got: $_POST[receiver_email]\n";
-		if($paypal_return['amount'] != $_POST['payment_amount']) $error .= "Invalid amount, expected: $paypal_return[amount] got: $_POST[payment_amount]\n";
+		if($paypal_return['amount'] != $_POST['mc_gross']) $error .= "Invalid amount, expected: $paypal_return[amount] got: $_POST[payment_amount]\n";
 		if($paypal_return['currency'] != $_POST['mc_currency']) $error .= "Invalid currency, expected: $paypal_return[currency] got: $_POST[mc_currency]\n";
 		if($_POST['payment_status'] != 'Completed') $error .= "Invalid payment status: $_POST[payment_status]\n";
-		if(!$paypal_params['debug']) if($_POST['test_ipn'] != 0) $error .= "No test payment are allowed test_ipn: $_POST[test_ipn]\n";
+		if(!$paypal_params['debug']) if($_POST['test_ipn'] == 1) $error .= "No test payment are allowed test_ipn: $_POST[test_ipn]\n";
 
 		$Facture = new Facture();
 		$facture = $Facture->getInfos($paypal_return['id_invoice']);
+		$societe = GetCompanyInfo();
 
-		if($facture->is_paye > 0) $error .= "Invoice is already paid\n";
-		if($facture->is_abandoned > 0 ) $error .= "Invoice has abandoned status\n";
+		if($facture->is_paye > 0) $error .= "We received a paypal payment for invoice: $facture->num_facture but it has already been paid ?!\n";
+		if($facture->is_abandoned > 0 ) $error .= "We received a paypal payment for invoice: $facture->num_facture but invoice got abandoned status?!\n";
 	}
 
 	if(!empty($error)) {
 
-		mail($paypal_params['email'], 'PAYPAL WARINING - IPN PROCESSING ERROR', $listener->getTextReport());
+		mail($paypal_params['email'], 'PAYPAL WARINING - IPN PROCESSING ERROR', $error."\n\nDEBUG: \n\n". $listener->getTextReport());
 		error_log($listener->getTextReport());
 
 	//Transaction OK
 	} else {
 
 		//Update invoice
-		mysql_query("UPDATE webfinance_invoices SET 
+		$req_update_invoice = "UPDATE webfinance_invoices SET 
 		payment_method	= 'paypal', 
 		is_paye			= 1, 
-		date_paiement	= NOW(), 
-		WHERE id_invoice = $paypal_return[id_invoice]")
-		 or die(mysql_error());
-		
+		date_paiement	= NOW() 
+		WHERE id_facture = ".$paypal_return[id_invoice];
+		mysql_query($req_update_invoice) 
+			or die(error_log($req_update_invoice.' '. mysql_error()));
+
 		//Send email to staff
-		mail($paypal_params['email'], "FA: $facture->num_facture / $facture->nom_client has been paid with Paypal by $paypal_return[email]", $listener->getTextReport());
-		
+		mail($paypal_params['email'], "FA: #$facture->num_facture / $facture->nom_client has been paid with Paypal by $paypal_return[email]", "FYI:\n\n".$listener->getTextReport());
+
 		//Send email to client
 		$mails = array();
 		$from = '';
 		$fromname = '';
 		$subject = '';
 		$body = "Bonjour,
-		Veuillez trouver ci-joint la facture numéro %%NUM_INVOICE%% %%DELAY%% de %%AMOUNT%% Euro payé par Paypal, transaction numéro : $_POST[receipt_id].
+Veuillez trouver ci-joint la facture numéro #$facture->num_facture de $facture->nice_total_ttc Euro payée par Paypal, transaction numéro : $_POST[txn_id].
 		
-		Pour visualiser et imprimer cette facture (au format PDF) vous pouvez utiliser \"Adobe Acrobat Reader\" disponible à l'adresse suivante :
-		http://www.adobe.com/products/acrobat/readstep2.html
+Pour visualiser et imprimer cette facture (au format PDF) vous pouvez utiliser \"Adobe Acrobat Reader\" disponible à l'adresse suivante :
+http://www.adobe.com/products/acrobat/readstep2.html
 
-		Cordialement,
-		L'équipe %%COMPANY%%.";
+Cordialement,
+L'équipe $societe->raison_sociale.";
 		
-		if(!$invoice->sendByEmail($paypal_return['id_invoice'], $mails, $from, $fromname, $subject,
+		if(!$Facture->sendByEmail($paypal_return['id_invoice'], $mails, $from, $fromname, $subject,
 								  $body)) {
 									
 			mail($paypal_params['email'], 'PAYPAL WARINING - Invoice was not sent to client after payment', $listener->getTextReport());
 			error_log('Invoice was not sent to client '.$listener->getTextReport());
 	    }
-		
+
 		//Debug
 		if($paypal_params['debug']) mail($paypal_params['email'], 'Verified IPN', $listener->getTextReport());
 		if($paypal_params['debug']) error_log($listener->getTextReport());
@@ -169,20 +162,22 @@ if ($verified) {
 	} 
 
 	//update transaction 
-	mysql_query("UPDATE webfinance_payment SET 
+	$req_update_payment = "UPDATE webfinance_payment SET 
 	state			= '".$tnx_state."',
-	autorisation	= $_POST[receipt_id],
+	transaction_id	= '".$_POST[txn_id]."',
 	payment_fee		= $_POST[mc_fee], 	
-	payment_date	= NOW(), 
-	WHERE reference = '".$_POST['txn_id']."'")
-	 or die(mysql_error());
-			
+	payment_date	= NOW()
+	WHERE reference = '".$_POST['custom']."'";
+	mysql_query($req_update_payment)
+	    or die(error_log(mysql_error()));
+
 } else {
 	/*
 	An Invalid IPN *may* be caused by a fraudulent transaction attempt. It's
 	a good idea to have a developer or sys admin manually investigate any 
 	invalid IPN.
 	*/
+
 	mail($paypal_params['email'], 'PAYPAL WARINING - INVALID IPN', $listener->getTextReport());
 	error_log($listener->getTextReport());
 }
