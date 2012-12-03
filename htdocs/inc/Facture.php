@@ -1157,7 +1157,42 @@ $pdf->Image(dirname(__FILE__). '/../../lib/auto_automatique.png', 4, 4, 205);
     return $invoiceId;
   }
 
+	function SendPaymentRequest($id_invoice, $mode='paypal') {
 
+		$Invoice = new Facture();
+		$invoice = $Invoice->getInfos($id_invoice);
+		$client = new Client($invoice->id_client);
+		$societe = GetCompanyInfo();
+
+		$varlink = $id_invoice.'|'.$invoice->id_client;
+		$converter = new Encryption;
+		$encoded_varlink = $converter->encode($varlink);
+		$link = $societe->wf_url."/payment/?id=$encoded_varlink";
+		$mails = array();
+		$from = '';
+		$fromname = '';
+		$subject = '';
+		$body = "Bonjour,
+Veuillez trouver ci-joint la facture numéro #$invoice->num_facture de $invoice->nice_total_ttc Euro.
+
+Pour la payer via Paypal, cliquez sur ce lien : $link
+
+Pour visualiser et imprimer cette facture (au format PDF) vous pouvez utiliser \"Adobe Acrobat Reader\" disponible à l'adresse suivante :
+http://www.adobe.com/products/acrobat/readstep2.html
+
+Cordialement,
+L'équipe $societe->raison_sociale.";
+
+		if($Invoice->sendByEmail($id_invoice, $mails, $from, $fromname, $subject,
+		$body)) {
+			$_SESSION['message'] = _('Invoice was not sent');
+			$_SESSION['error'] = 1;
+			return $link; 
+		} else { 
+			echo _("Invoice was not sent");
+			die();
+		} 
+	}
 }
 
 ?>

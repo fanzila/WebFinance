@@ -99,7 +99,7 @@ while(list($id_invoice) = mysql_fetch_row($result)) {
 
     // Send invoice by email to the client
     case 'email':
-      $Invoice->sendByEmail($id_new_invoice);
+	  if($invoice->payment_method == 'direct_debit') $Invoice->sendByEmail($id_new_invoice);
       break;
 
       // Send the invoice to me in order to print and send it to the client
@@ -127,6 +127,11 @@ while(list($id_invoice) = mysql_fetch_row($result)) {
       "    state='todo'")
       or die(mysql_error());
 
+  }
+
+  // Process paypal invoices
+  if($invoice->payment_method=='paypal') {
+	$Invoice->SendPaymentRequest($id_new_invoice);
   }
 
   // Update deadline

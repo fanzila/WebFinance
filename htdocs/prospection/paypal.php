@@ -36,38 +36,12 @@ if(empty($client->email)) {
 }
 
 if(isset($_GET['action']) AND $_GET['action'] == 'send') { 
-	
-	$varlink = $_GET['id_invoice'].'|'.$invoice->id_client;
-	$converter = new Encryption;
-	$encoded_varlink = $converter->encode($varlink);
-	$link = $societe->wf_url."/payment/?id=$encoded_varlink";
-	$mails = array();
-	$from = '';
-	$fromname = '';
-	$subject = '';
-	$body = "Bonjour,
-Veuillez trouver ci-joint la facture numéro #$invoice->num_facture de $invoice->nice_total_ttc Euro.
-	
-Pour la payer via Paypal, cliquez sur ce lien : $link
-	
-Pour visualiser et imprimer cette facture (au format PDF) vous pouvez utiliser \"Adobe Acrobat Reader\" disponible à l'adresse suivante :
-http://www.adobe.com/products/acrobat/readstep2.html
 
-Cordialement,
-L'équipe $societe->raison_sociale.";
-	
-	if(!$Invoice->sendByEmail($_GET['id_invoice'], $mails, $from, $fromname, $subject,
-							  $body, $introduction_letter, $contract)) {
-		$_SESSION['message'] = _('Invoice was not sent');
-		$_SESSION['error'] = 1;
-		echo _("Invoice was not sent");
-		die();
-    }
-
+	$link = $Invoice->SendPaymentRequest($_GET['id_invoice']);
 	echo "<br /><h2>Invoice and payment link has been sent.</h2><br />FYI Payment link: <a href=\"$link\">$link</a>";
-	
 	include("../bottom.php");
 	exit;
+	
 }
 
 ?>
