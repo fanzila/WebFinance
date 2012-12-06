@@ -1173,12 +1173,16 @@ $pdf->Image(dirname(__FILE__). '/../../lib/auto_automatique.png', 4, 4, 205);
 		$fromname = '';
 		$subject = '';
 		$body = "Bonjour,
-Veuillez trouver ci-joint la facture numéro #$invoice->num_facture de $invoice->nice_total_ttc Euro.
+Veuillez trouver ci-joint la facture numéro #$invoice->num_facture de $invoice->nice_total_ttc Euro correspondant au devis accepté.
 
 Pour la payer via Paypal, cliquez sur ce lien : $link
 
+Notre équipe d’exploitation interviendra sur vos serveurs dans les délais discutés avec nos équipes suivant votre paiement.
+
 Pour visualiser et imprimer cette facture (au format PDF) vous pouvez utiliser \"Adobe Acrobat Reader\" disponible à l'adresse suivante :
 http://www.adobe.com/products/acrobat/readstep2.html
+
+Pour toute question à propos de nos services ou notre société, n’hésitez pas à nous contacter au +33 1 84 16 16 17 du lundi au vendredi de 9h à 19h. 
 
 Cordialement,
 L'équipe $societe->raison_sociale.";
