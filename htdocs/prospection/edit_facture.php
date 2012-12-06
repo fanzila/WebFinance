@@ -374,12 +374,11 @@ $options .= "<option ".($response->id_client==$facture->id_client ? 'selected="s
            ?>
        </td>
 
+      <?php } // FIN CAS FACTURE/DEVIS ?>
     <tr>
       <td colspan="2"><input type="checkbox" name="is_abandoned" <?=$facture->is_abandoned?"checked":""?> />&nbsp;<?=_('Abandoned')?><br/><br/>
       </td>
     </tr>
-
-      <?php } // FIN CAS FACTURE/DEVIS ?>
     <tr>
       <td colspan="2">
         Commentaire : <br/>

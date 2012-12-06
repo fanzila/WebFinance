@@ -89,7 +89,7 @@ global $Client, $User;
 
              printf('<tr class="facture_line" onMouseOut="UnTip();" onmouseover="Tip(\'%s\');" valign=middle>
                        <td nowrap>%s</td>
-                       <td>%s%s</td>
+                       <td style="text-align:left"><b>%s</b>%s</td>
                        <td class="euro" nowrap>%s %s HT</td>
                        <td class="euro" nowrap>%s %s TTC</td>
                        <td width="100%%" style="text-align: right;" nowrap>%s<img src="/imgs/icons/%s" alt=""><a href="edit_facture.php?id_facture=%d"><img src="/imgs/icons/edit.png" border="0"></a>%s</td>
