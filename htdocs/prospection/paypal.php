@@ -63,5 +63,5 @@ if(isset($_GET['action']) AND $_GET['action'] == 'send') {
 </table>
 </form>	
 <?
-include("../bottom.php");
+include("../bottom.php"); 
 ?>
