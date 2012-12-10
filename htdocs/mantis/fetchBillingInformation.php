@@ -24,6 +24,7 @@ $roles='manager,accounting,employee';
 require_once('../top.php');
 require_once('../../lib/WebfinanceMantis.php');
 must_login();
+setlocale(LC_NUMERIC, "en_US.UTF8");
 ?>
 
 <script type="text/javascript" language="javascript"
