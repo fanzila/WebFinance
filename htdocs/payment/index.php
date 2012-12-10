@@ -181,4 +181,4 @@ $r = mysql_query("INSERT INTO webfinance_payment SET id_invoice=$inv->id_facture
 	</table>
 	</form>
 </body>
-</html>
+</html> 
