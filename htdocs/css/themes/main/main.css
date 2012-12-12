@@ -70,6 +70,9 @@ table.facture td { font-size: 12px; }
 table.facture input { border: solid 1px #cecece; }
 table.facture textarea { border: solid 1px #cecece; }
 
+.misc1 { font-size: 12px; text-align: left; background-color: #edeeff; }
+.misc2 { font-size: 12px; text-align: left; background-color: #fff; }
+
 .fiche_prospect td { font-size: 11px; }
 form input { border: solid 1px #ddd;  margin-right: 2px; margin-bottom: 2px; font-size: 11px; }
 form textarea { border: solid 1px #ddd; }

@@ -1,1 +1,0 @@
-[22-Nov-2012 12:49:47 UTC] PHP Fatal error:  Class 'IpnListener' not found in /var/www/webfinance/htdocs/payment/paypal/ipn.php on line 36

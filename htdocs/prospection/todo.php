@@ -31,7 +31,7 @@ include("nav.php");
 
 <br />
 
-<table border="1">
+<table width="100%" border="1" cellspacing="0" cellpadding="5">
 
 <?
 $q = "SELECT s.id_suivi, s.message, ts.name as type_suivi, c.nom, s.id_objet,

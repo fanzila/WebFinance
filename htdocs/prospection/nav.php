@@ -43,7 +43,7 @@ function confirmAddCompany(txt) {
 //$Id: nav.php 532 2007-06-14 10:39:19Z thierry $
 
 $elements = array( _('Customers') => array( 'url' => './?q=1', 'roles' => 'manager,accounting,employee' ),
-                   _('Targets') => array( 'url' => './?q=2', 'roles' => 'manager,accounting,employee' ),
+                   _('Reporting') => array( 'url' => 'reporting.php', 'roles' => 'manager,accounting,employee' ),
 		   _('Add company') => array( 'url' => 'javascript:confirmAddCompany(\'Do you really want to add a new company?\');', 'roles' => 'manager,accounting' ),
                   _('Billing') => array( 'url' => 'facturation.php', 'roles' => 'manager,accounting' )
                  );
