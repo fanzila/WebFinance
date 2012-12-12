@@ -53,7 +53,7 @@ $recurrent_invoice_rows = array(
 	"%hébergement d\'une VM adaptée%", 
 	"%Location serveur OVH%", 
 	"%Option « Redondance multi%", 
-	"%du 20%au%"
+	"%du%au%"
 	);	
 
 $select_sum = "SELECT ROUND(SUM(r.qtt*r.prix_ht)) AS total ";
