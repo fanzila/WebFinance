@@ -151,71 +151,74 @@ $req5c = "SELECT id_client, nom, date_created
 	FROM webfinance_clients AS c  
 	WHERE YEAR(c.date_created) = $year";
 	
-$req6 = "SELECT count(*) AS total
-		FROM webfinance_invoices AS f 
-		LEFT JOIN webfinance_invoice_rows AS r ON f.id_facture = r.id_facture 
-		LEFT JOIN webfinance_clients AS c ON f.id_client = c.id_client 
-		WHERE r.description LIKE '%GTR%' 
-		AND r.description NOT LIKE '%Pas de GTR%' 
-		AND qtt > 0 
+$select_gtr = "SELECT count(*) AS total
+			FROM webfinance_invoices AS f 
+			LEFT JOIN webfinance_invoice_rows AS r ON f.id_facture = r.id_facture 
+			LEFT JOIN webfinance_clients AS c ON f.id_client = c.id_client ";
+
+$select_gtr_clt = "SELECT c.id_client, c.nom
+			FROM webfinance_invoices AS f 
+			LEFT JOIN webfinance_invoice_rows AS r ON f.id_facture = r.id_facture 
+			LEFT JOIN webfinance_clients AS c ON f.id_client = c.id_client ";
+
+$where_gtr = " AND qtt > 0 
 		AND f.id_client IN (SELECT id_facture 
 			FROM webfinance_invoices 
 			WHERE f.period <> 'none' 
 			AND f.type_doc = 'facture')";
 
-$req6_gtr4 = "SELECT count(*) AS total
-			FROM webfinance_invoices AS f 
-			LEFT JOIN webfinance_invoice_rows AS r ON f.id_facture = r.id_facture 
-			LEFT JOIN webfinance_clients AS c ON f.id_client = c.id_client 
-			WHERE r.description LIKE '%GTR%' 
-			AND description LIKE '%bureau%' 
-			AND r.description NOT LIKE '%Pas de GTR%' 
-			AND qtt > 0 
-			AND f.id_client IN (SELECT id_facture 
-				FROM webfinance_invoices 
-				WHERE f.period <> 'none' 
-				AND f.type_doc = 'facture')";
+$req6 					= $select_gtr. " WHERE r.description LIKE '%GTR%'	AND r.description NOT LIKE '%Pas de GTR%' ".$where_gtr;
+$req6_gtr4				= $select_gtr ." WHERE r.description LIKE '%GTR%' AND description LIKE '%bureau%' AND r.description NOT LIKE '%Pas de GTR%' ".$where_gtr;
+$req6_gtr4_gold 		= $select_gtr ." WHERE r.description LIKE '%GTR Gold%' ". $where_gtr;
+$req6_gtr4_prems 		= $select_gtr ." WHERE r.description LIKE '%GTR Premium%' ". $where_gtr;
+$req6_gtr4_plus1 		= $select_gtr ." WHERE r.description LIKE '%GTR h+1%'". $where_gtr;
 
-$req6_gtr4_gold = "SELECT count(*) AS total
-			FROM webfinance_invoices AS f 
-			LEFT JOIN webfinance_invoice_rows AS r ON f.id_facture = r.id_facture 
-			LEFT JOIN webfinance_clients AS c ON f.id_client = c.id_client 
-			WHERE r.description LIKE '%GTR Gold%' 
-			AND qtt > 0 
-			AND f.id_client IN (SELECT id_facture 
-				FROM webfinance_invoices 
-				WHERE f.period <> 'none' 
-				AND f.type_doc = 'facture')";
+$req6_assu 				= $select_gtr ." WHERE r.description LIKE '%ption%ssuran%'". $where_gtr;
+$req6_redon				= $select_gtr ." WHERE r.description LIKE '%ption%edondance%'". $where_gtr;
+$req6_amaz 				= $select_gtr ." WHERE r.description LIKE '%mazon%'". $where_gtr;
 
-$req6_gtr4_prems = "SELECT count(*) AS total
-			FROM webfinance_invoices AS f 
-			LEFT JOIN webfinance_invoice_rows AS r ON f.id_facture = r.id_facture 
-			LEFT JOIN webfinance_clients AS c ON f.id_client = c.id_client 
-			WHERE r.description LIKE '%GTR Premium%' 
-			AND qtt > 0 
-			AND f.id_client IN (SELECT id_facture 
-				FROM webfinance_invoices 
-				WHERE f.period <> 'none' 
-				AND f.type_doc = 'facture')";
+$req6_clt 				= $select_gtr_clt ." WHERE r.description LIKE '%GTR%'	AND r.description NOT LIKE '%Pas de GTR%' ".$where_gtr;
+$req6_gtr4_clt			= $select_gtr_clt ." WHERE r.description LIKE '%GTR%' AND description LIKE '%bureau%' AND r.description NOT LIKE '%Pas de GTR%' ".$where_gtr;
+$req6_gtr4_gold_clt 	= $select_gtr_clt ." WHERE r.description LIKE '%GTR Gold%' ". $where_gtr;
+$req6_gtr4_prems_clt 	= $select_gtr_clt ." WHERE r.description LIKE '%GTR Premium%' ". $where_gtr;
+$req6_gtr4_plus1_clt 	= $select_gtr_clt ." WHERE r.description LIKE '%GTR h+1%'". $where_gtr;
 
-$req6_gtr4_plus1 = "SELECT count(*) AS total
-			FROM webfinance_invoices AS f 
-			LEFT JOIN webfinance_invoice_rows AS r ON f.id_facture = r.id_facture 
-			LEFT JOIN webfinance_clients AS c ON f.id_client = c.id_client 
-			WHERE r.description LIKE '%GTR h+1%' 
-			AND qtt > 0 
-			AND f.id_client IN (SELECT id_facture 
-				FROM webfinance_invoices 
-				WHERE f.period <> 'none' 
-				AND f.type_doc = 'facture')";
-							
+$req6_assu_clt 			= $select_gtr_clt ." WHERE r.description LIKE '%ption%ssuran%'". $where_gtr;
+$req6_redon_clt 		= $select_gtr_clt ." WHERE r.description LIKE '%ption%edondance%'". $where_gtr;
+$req6_amaz_clt 			= $select_gtr_clt ." WHERE r.description LIKE '%mazon%'". $where_gtr;
+
+$total4 			= mysqlQuery($req4)->total;
+$total4_ponctu		= mysqlQuery($req4a)->total;
+$recu4 				= $total4 - $total4_ponctu;
+$perc_recu4 		= round(($recu4*100)/$total4);
+$perc_ponctu4 		= round(($total4_ponctu*100)/$total4);
+
+$total5 			= mysqlQuery($req5)->total;
+$total5_ponctu 		= mysqlQuery($req5a)->total;
+$recu5	 			= $total5 - $total5_ponctu;
+$perc_recu5			= round(($recu5*100)/$total5);
+$perc_ponctu5 		= round(($total5_ponctu*100)/$total5);
+
+$total6 			= mysqlQuery($req6)->total;
+$total6_gtr 		= mysqlQuery($req6_gtr4)->total;
+$total6_gtr_per 	= round(($total6_gtr*100)/$total6,2);
+$total6_gtr4g		= mysqlQuery($req6_gtr4_gold)->total;
+$total6_gtr4g_per	= round(($total6_gtr4g*100)/$total6,2);
+$total6_gtrprem 	= mysqlQuery($req6_gtr4_prems)->total;
+$total6_gtrprem_per	= round(($total6_gtrprem*100)/$total6,2);
+$total6_plus1		= mysqlQuery($req6_gtr4_plus1)->total;
+$total6_plus1_per	= round(($total6_plus1*100)/$total6,2);
+
+$total6_assu		= mysqlQuery($req6_assu)->total;
+$total6_redon		= mysqlQuery($req6_redon)->total;
+$total6_amaz		= mysqlQuery($req6_amaz)->total;
+
 if(isset($_GET['popup'])) { 
-
-$Facture = new Facture();
 
 ?>	
 	<br /><br />
 	<table border="0" cellspacing="0" cellpadding="10" class="framed">
+		
 	<?
 	if($_GET['popup'] == 'devis_ip') {
 		?>
@@ -225,7 +228,8 @@ $Facture = new Facture();
 			<td>Client</td>
 		</tr>
 		<?
-		$result = mysql_query($req3c);
+		$Facture = new Facture();
+		$result = mysql_query($req3c) or die("QUERY ERROR: $q ".mysql_error());
 		while ($row = mysql_fetch_object($result)) {
 			$info_facture = $Facture->getInfos($row->id_facture)
 	?>	
@@ -245,7 +249,7 @@ $Facture = new Facture();
 			<td>Date de création</td>
 		</tr>
 		<?
-			$result = mysql_query($req5c);
+			$result = mysql_query($req5c) or die("QUERY ERROR: $q ".mysql_error());
 			while ($row = mysql_fetch_object($result)) {
 		?>		
 		<tr>
@@ -256,35 +260,35 @@ $Facture = new Facture();
 		<?
 		}
 	}
+	
+	if($_GET['popup'] == 'service_client') {
+		?>
+		<tr class="row_header" style="text-align: center;">
+			<td>Client</td>
+			<td>Services</td>
+		</tr>
+		<?
+		$srv	= $_GET['service'];
+		$var	= 'req6_'.$srv.'_clt';
+		$toreq	= $$var;
+		
+		$result = mysql_query($toreq) or die("QUERY ERROR: $q ".mysql_error());
+		while ($row = mysql_fetch_object($result)) {
+	?>	
+		<tr>
+			<td><a href="/prospection/fiche_prospect.php?onglet=contacts&id=<?=$row->id_client?>"><?=$row->nom?></a></td>
+			<td><?=strtoupper($srv)?></td>
+			
+		</tr>
+		<?
+		}
+	}
 	?>
 	</table>
 	<?
 	include("../bottom.php"); 
 	exit;
 }
-
-$total4 			= mysqlQuery($req4)->total;
-$total4_ponctu		= mysqlQuery($req4a)->total;
-$recu4 				= $total4 - $total4_ponctu;
-$perc_recu4 		= round(($recu4*100)/$total4);
-$perc_ponctu4 		= round(($total4_ponctu*100)/$total4);
-
-$total5 			= mysqlQuery($req5)->total;
-$total5_ponctu 		= mysqlQuery($req5a)->total;
-$recu5	 			= $total5 - $total5_ponctu;
-$perc_recu5			= round(($recu5*100)/$total5);
-$perc_ponctu5 		= round(($total5_ponctu*100)/$total5);
-
-$total6 			= mysqlQuery($req6)->total;
-$total6_gtr 		= mysqlQuery($req6_gtr4)->total;
-$total6_gtr_per 	= ($total6_gtr*100)/$total6;
-$total6_gtr4g		= mysqlQuery($req6_gtr4_gold)->total;
-$total6_gtr4g_per	= ($total6_gtr4g*100)/$total6;
-$total6_gtrprem 	= mysqlQuery($req6_gtr4_prems)->total;
-$total6_gtrprem_per	= ($total6_gtrprem*100)/$total6;
-$total6_plus1		= mysqlQuery($req6_gtr4_plus1)->total;
-$total6_plus1_per	= round(($total6_plus1*100)/$total6,2);
-
 ?>
 <br />
 <form onsubmit="">
@@ -317,18 +321,27 @@ $total6_plus1_per	= round(($total6_plus1*100)/$total6,2);
 	</tr>
 	<tr class="misc1">
 		<td><!-- REQ5 -->5. CA des nouveaux clients de l'année</a>
-		</th><td><?=numberFormat(mysqlQuery($req5)->total)?> € - <a href="/prospection/reporting.php?popup=new_client&month=<?=$month?>&year=<?=$year?>"><?=numberFormat(mysqlQuery($req5b)->total)?> nouveaux clients</a> <br /> <?=numberFormat($recu5)?> €, <?=$perc_recu5?>% récurrent <br /> <?=numberFormat($total5_ponctu)?> €, <?=$perc_ponctu5?>% ponctuel</td><td></td>
+		</td><td><?=numberFormat(mysqlQuery($req5)->total)?> € - <a href="/prospection/reporting.php?popup=new_client&month=<?=$month?>&year=<?=$year?>"><?=numberFormat(mysqlQuery($req5b)->total)?> nouveaux clients</a> <br /> <?=numberFormat($recu5)?> €, <?=$perc_recu5?>% récurrent <br /> <?=numberFormat($total5_ponctu)?> €, <?=$perc_ponctu5?>% ponctuel</td><td></td>
 	</tr>
 	<tr class="misc2">
 		<td><!-- REQ6 -->6. Nombre de serveurs en infogérance avec GTR</td><td>
-				<table width="300" border="0" cellspacing="0" cellpadding="0">
-					<tr><td width="150">Total</td><td width="50"><?=$total6?></td><td width="100">100%</td></tr>
-					<tr><td>GTR +4 HO</td><td><?=$total6_gtr?></td><td><?=$total6_gtr_per?>%</td></tr>
-					<tr><td>GTR +4 HNO Gold</td><td><?=$total6_gtr4g?></td><td><?=$total6_gtr4g_per?>%</td></tr>
-					<tr><td>GTR +2 HNO Premium</td><td><?=$total6_gtrprem?></td><td><?=$total6_gtrprem_perc?>%</td></tr>
-					<tr><td>GTR +1 HNO</td><td><?=$total6_plus1?></td><td><?=$total6_plus1_perc?>%</td></tr>
-				</table>
+			<table width="300" border="0" cellspacing="0" cellpadding="0">
+				<tr><td width="150">Total</td><td width="50"><?=$total6?></td><td width="100">100%</td></tr>
+				<tr><td><a href="/prospection/reporting.php?popup=service_client&service=gtr4">GTR +4 HO</a></td><td><?=$total6_gtr?></td><td><?=$total6_gtr_per?>%</td></tr>
+				<tr><td><a href="/prospection/reporting.php?popup=service_client&service=gtr4_gold">GTR +4 HNO Gold</a></td><td><?=$total6_gtr4g?></td><td><?=$total6_gtr4g_per?>%</td></tr>
+				<tr><td><a href="/prospection/reporting.php?popup=service_client&service=gtr4_prems">GTR +2 HNO Premium</a></td><td><?=$total6_gtrprem?></td><td><?=$total6_gtrprem_per?>%</td></tr>
+				<tr><td><a href="/prospection/reporting.php?popup=service_client&service=gtr4_plus1">GTR +1 HNO</a></td><td><?=$total6_plus1?></td><td><?=$total6_plus1_per?>%</td></tr>		
+			</table>
 		</td><td></td>
+	</tr>
+	<tr class="misc1">
+		<td><!-- REQ6 -->6a. Nombre de serveurs en infogérance avec services</td><td>
+			<table width="300" border="0" cellspacing="0" cellpadding="0">
+				<tr><td><a href="/prospection/reporting.php?popup=service_client&service=assu">Assurance, garanties jusqu'à 150 000 €</a></td><td><?=$total6_assu?></td></tr>
+				<tr><td><a href="/prospection/reporting.php?popup=service_client&service=redon">Redondance</a></td><td><?=$total6_redon?></td></tr>
+				<tr><td><a href="/prospection/reporting.php?popup=service_client&service=amaz">Amazon Elastic Cloud</a></td><td><?=$total6_amaz?></td></tr>					
+			</table>
+		</td><td></td>	
 	</tr>
 </table>
 <br/>
