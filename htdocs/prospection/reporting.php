@@ -166,7 +166,7 @@ $select_gtr = "SELECT count(*) AS total
 			LEFT JOIN webfinance_invoice_rows AS r ON f.id_facture = r.id_facture 
 			LEFT JOIN webfinance_clients AS c ON f.id_client = c.id_client ";
 
-$select_gtr_clt = "SELECT c.id_client, c.nom
+$select_gtr_clt = "SELECT c.id_client, c.nom, r.qtt AS qty
 			FROM webfinance_invoices AS f 
 			LEFT JOIN webfinance_invoice_rows AS r ON f.id_facture = r.id_facture 
 			LEFT JOIN webfinance_clients AS c ON f.id_client = c.id_client ";
@@ -280,6 +280,7 @@ if(isset($_GET['popup'])) {
 		<tr class="row_header" style="text-align: center;">
 			<td>Client</td>
 			<td>Services</td>
+			<td>QTY</td>
 		</tr>
 		<?
 		$srv	= $_GET['service'];
@@ -292,6 +293,7 @@ if(isset($_GET['popup'])) {
 		<tr>
 			<td><a href="/prospection/fiche_prospect.php?onglet=contacts&id=<?=$row->id_client?>"><?=$row->nom?></a></td>
 			<td><?=strtoupper($srv)?></td>
+			<td><?=$row->qty?></td>
 			
 		</tr>
 		<?
