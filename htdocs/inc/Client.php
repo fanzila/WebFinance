@@ -139,6 +139,16 @@ class Client extends WFO
 
   }
 
+  function GetCompanyTypeById($id) {
+    switch ($id) {
+		case 1: $txt = 'Client';		break;
+		case 2: $txt = 'Prospect' ;		break;
+		case 3: $txt = 'Fournisseur';	break;
+		case 4: $txt = 'Archive';		break;	
+    }
+	return $txt;
+  }
+
   function Client($id = null) {
     if (is_numeric($id)) {
       $this->id = $id;

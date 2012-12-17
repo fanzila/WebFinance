@@ -55,6 +55,15 @@ class Facture extends WFO {
     return $total;
   }
 
+  function getTotalCAClient($id_client) {
+    $result = $this->SQL("SELECT ROUND(SUM(r.qtt*r.prix_ht)) FROM webfinance_invoices AS f LEFT JOIN webfinance_invoice_rows AS r ON f.id_facture = r.id_facture
+ 	WHERE f.is_paye = 1  AND f.type_doc = 'facture' AND f.id_client=$id_client");
+    list($total) = mysql_fetch_array($result);
+    mysql_free_result($result);
+	if($total == null) $total = 0; 
+    return $total;
+  }
+
   function exists($id_facture=null){
     if ($id_facture == "") { return 0; }
     $result = $this->SQL("SELECT count(*) FROM webfinance_invoices WHERE id_facture=$id_facture");
