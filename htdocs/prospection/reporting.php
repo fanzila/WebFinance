@@ -103,11 +103,13 @@ $req3b = "SELECT id_facture
 		AND f.is_abandoned = 0 
 		AND f.type_doc = 'devis'";
 		
-$req3c = "SELECT date_created, num_facture, id_facture, id_client
+$req3c = "SELECT f.date_created, f.num_facture, f.id_client, f.id_facture, 
+		(SELECT ROUND(SUM(r.qtt*r.prix_ht)) AS total FROM webfinance_invoice_rows AS r where id_facture = f.id_facture) AS total  
 		FROM webfinance_invoices AS f  
 		WHERE f.is_envoye = 1 
 		AND f.is_abandoned = 0 
-		AND f.type_doc = 'devis'";
+		AND f.type_doc = 'devis' 
+		ORDER BY total DESC";
 
 $req4 = $select_sum . "
 		FROM webfinance_invoices AS f 
@@ -147,9 +149,17 @@ $req5b = "SELECT COUNT(*) AS total
 	FROM webfinance_clients AS c  
 	WHERE YEAR(c.date_created) = $year";
 
-$req5c = "SELECT id_client, nom, date_created
-	FROM webfinance_clients AS c  
-	WHERE YEAR(c.date_created) = $year";
+$req5c = "SELECT c.id_client, c.nom, c.date_created, 
+	(SELECT ROUND(SUM(r.qtt*r.prix_ht)) AS total 
+	FROM webfinance_invoices AS f 
+		LEFT JOIN webfinance_invoice_rows AS r ON f.id_facture = r.id_facture 
+			WHERE f.type_doc = 'facture' 
+			AND is_paye = 1 
+			AND f.id_client = c.id_client) AS total 
+	FROM webfinance_clients AS c 
+	WHERE YEAR(c.date_created) = $year 
+	AND id_company_type = 1
+	ORDER BY total DESC";
 	
 $select_gtr = "SELECT count(*) AS total
 			FROM webfinance_invoices AS f 
@@ -226,6 +236,7 @@ if(isset($_GET['popup'])) {
 			<td>N devis</td>
 			<td>Date de création</td>
 			<td>Client</td>
+			<td>Amount</td>
 		</tr>
 		<?
 		$Facture = new Facture();
@@ -237,6 +248,7 @@ if(isset($_GET['popup'])) {
 			<td><a href="/prospection/edit_facture.php?id_facture=<?=$row->id_facture?>">DE<?=$row->num_facture?></a></td>
 			<td><?=$row->date_created?></td>
 			<td><a href="/prospection/fiche_prospect.php?onglet=contacts&id=<?=$row->id_client?>"><?=$info_facture->nom_client?></a></td>
+			<td><?=numberFormat($row->total)?></a></td>
 		</tr>
 		<?
 		}
@@ -247,6 +259,7 @@ if(isset($_GET['popup'])) {
 		<tr class="row_header" style="text-align: center;">
 			<td>Client</td>
 			<td>Date de création</td>
+			<td>CA HT</td>
 		</tr>
 		<?
 			$result = mysql_query($req5c) or die("QUERY ERROR: $q ".mysql_error());
@@ -255,6 +268,7 @@ if(isset($_GET['popup'])) {
 		<tr>
 			<td><a href="/prospection/fiche_prospect.php?onglet=contacts&id=<?=$row->id_client?>"><?=$row->nom?></a></td>
 			<td><?=$row->date_created?></td>
+			<td><?=numberFormat($row->total)?></td>
 		</tr>
 		
 		<?
