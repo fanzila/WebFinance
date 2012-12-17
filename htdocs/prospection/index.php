@@ -139,7 +139,8 @@ while ($client = mysql_fetch_object($result)) {
   $client->ca_total_ht = ($client->ca_total_ht==0)?"-&nbsp;&nbsp;":number_format($client->ca_total_ht, 0, ',', ' ')."&euro; HT";
   $client->ca_total_ht_year = ($client->ca_total_ht_year==0)?"-&nbsp;&nbsp;":number_format($client->ca_total_ht_year, 0, ',', ' ')."&euro; HT";
 
-  $type_comp = strtoupper($Client->GetCompanyTypeById($client->id_company_type)[0]);
+  $type_comp_temp = strtoupper($Client->GetCompanyTypeById($client->id_company_type));
+  $type_comp      = $type_comp_temp[0];
 
   print "<tr align=center class=row_".(($count%2 == 0)?"even":"odd").">\n"
     ."  <td><a href=fiche_prospect.php?onglet=billing&id=".$client->id_client."&onglet=facturation>"
