@@ -200,7 +200,7 @@ if($old_document_dir != $new_document_dir) {
     'view_state' => array( 'id' => 50),
   );
   $mantis = new WebfinanceMantis;
-  $mantis->updateProject($id_mantis, $mantis_project);
+  $return = $mantis->updateProject($id_mantis, $mantis_project);
 
 }
 
@@ -213,5 +213,4 @@ logmessage(_('Update customer')." client:$id_client ($nom)",$id_client);
 
 header("Location: /prospection/fiche_prospect.php?id=$id_client&onglet=".$focused_onglet);
 exit;
-
 ?>

@@ -300,5 +300,4 @@ Détails des tickets ci-dessous : \n$items";
         }
 
 }
-
-?> 
+?>
