@@ -160,7 +160,7 @@ function logmessage($msg, $id_client = 'NULL', $id_facture = 'NULL')
         sprintf("INSERT INTO webfinance_userlog " .
                 " (log,date,id_user,id_client,id_facture) VALUES('%s', now(), %s, %s, %s) ", $msg, $id, $id_client,$id_facture);
 
-    mysql_query($query) or wf_mysqldie();
+    mysql_query($query) or wf_mysqldie($query);
 }
 
 // crée un champ date avec calendrier dans un formulaire

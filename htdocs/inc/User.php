@@ -46,7 +46,7 @@ class User {
                                   date_format(creation_date,'%d/%m/%Y') as nice_creation_date,
                                   date_format(modification_date,'%d/%m/%Y') as nice_modification_date
                            FROM webfinance_users WHERE id_user=$id_user")
-      or wf_mysqldie();
+       or die(mysql_error());
 
     $user = mysql_fetch_object($result);
     $this->userData = $user;
@@ -66,12 +66,12 @@ class User {
       list($exists) = mysql_fetch_array($result);
       mysql_free_result($result);
       if ($exists) {
-        $result = mysql_query("SELECT id_user FROM webfinance_users WHERE login='".$data['login']."' AND md5('".$data['password']."')=password");
+        $result = mysql_query("SELECT id_user FROM webfinance_users WHERE login='".$data['login']."' AND md5('".$data['password']."')=password") or die(mysql_error());
         list($id_user) = mysql_fetch_array($result);
         mysql_free_result($result);
         $_SESSION['id_user'] = $id_user;
 
-        $result = mysql_query("UPDATE webfinance_users SET last_login=now() WHERE id_user=$id_user");
+        $result = mysql_query("UPDATE webfinance_users SET last_login=now() WHERE id_user=$id_user") or die(mysql_error());
         logmessage("Connected");
         return $id_user;
       }
@@ -131,8 +131,8 @@ class User {
       if (isset($_SESSION["auth"][$id_user]) && !empty($_SESSION["auth"][$id_user]))  {
           $user_roles = unserialize($_SESSION["auth"][$id_user]);
       } else {
-          $query = sprintf("SELECT role FROM webfinance_users  WHERE id_user=%d", $id_user);
-          $req=mysql_query($query) or wf_mysqldie();
+          $query = sprintf("SELECT role FROM webfinance_users  WHERE id_user=%d", $id_user) or die(mysql_error());
+          $req=mysql_query($query) or die(mysql_error());
       
           list($user_roles)=mysql_fetch_array($req);
           $user_roles=explode(",",$user_roles);
@@ -152,7 +152,7 @@ class User {
 
 
   function hasRole($role,$id_user) {
-    $result = mysql_query("SELECT COUNT(*) FROM webfinance_users WHERE id_user=$id_user AND role RLIKE '(^|,)$role(,|$)' ") or wf_mysqldie();
+    $result = mysql_query("SELECT COUNT(*) FROM webfinance_users WHERE id_user=$id_user AND role RLIKE '(^|,)$role(,|$)' ") or die(mysql_error());
     list($hasRole) = mysql_fetch_array($result);
     mysql_free_result($result);
 
@@ -192,7 +192,7 @@ class User {
 		     $first_name, $last_name, $login, $email, ($disabled == "on")?1:0, $roles, $password,
 		     $id_user );
       }
-      mysql_query($q) or wf_mysqldie();
+      mysql_query($q) or die($q . mysql_error());
       logmessage("Modified user:$id_user ($last_name $first_name)");
       $_SESSION['message'] = _("Data saved");
 
@@ -205,7 +205,7 @@ class User {
   }
 
   function existsLogin($login){
-    $result = mysql_query("SELECT id_user FROM webfinance_users WHERE login='$login'") or wf_mysqldie();
+    $result = mysql_query("SELECT id_user FROM webfinance_users WHERE login='$login'") or die(mysql_error());
     if(mysql_num_rows($result)>0){
       list($exists) = mysql_fetch_array($result);
       return $exists;
@@ -216,7 +216,7 @@ class User {
   }
 
   function exists($id_user){
-    $result = mysql_query("SELECT count(*) FROM webfinance_users WHERE id_user=$id_user") or wf_mysqldie();
+    $result = mysql_query("SELECT count(*) FROM webfinance_users WHERE id_user=$id_user") or die(mysql_error());
     list($exists) = mysql_fetch_array($result);
     return $exists;
   }
@@ -263,11 +263,11 @@ class User {
       $_SESSION['error'] = 1;
       return false;
     }
-    $result = mysql_query("SELECT login,first_name,last_name FROM webfinance_users WHERE id_user=$id_user");
+    $result = mysql_query("SELECT login,first_name,last_name FROM webfinance_users WHERE id_user=$id_user") or die(mysql_error());
     list($login, $prenom, $nom) = mysql_fetch_array($result);
     mysql_free_result($result);
     logmessage("Deleted user $login ($prenom $nom)");
-    mysql_query("DELETE FROM webfinance_users WHERE id_user=$id_user");
+    mysql_query("DELETE FROM webfinance_users WHERE id_user=$id_user") or die(mysql_error());
     $_SESSION['message'] = _("User deleted");
   }
 
@@ -285,12 +285,12 @@ class User {
   }
 
   function changePass($id_user, $old_pass, $new_pass) {
-    $result = mysql_query("SELECT count(*) FROM webfinance_users WHERE id_user=$id_user AND password=md5('$old_pass')");
+    $result = mysql_query("SELECT count(*) FROM webfinance_users WHERE id_user=$id_user AND password=md5('$old_pass')") or die(mysql_error());
     list($ok) = mysql_fetch_array($result);
     mysql_free_result($result);
 
     if ($ok) {
-      mysql_query("UPDATE webfinance_users SET password=md5('$new_pass') WHERE id_user=$id_user");
+      mysql_query("UPDATE webfinance_users SET password=md5('$new_pass') WHERE id_user=$id_user") or die(mysql_error());
       logmessage("Changed password for user:$id_user");
       $_SESSION['message'] = _('Password changed');
     } else {
@@ -301,8 +301,7 @@ class User {
   }
 
   function setPass($id_user, $new_pass) {
-    mysql_query("UPDATE webfinance_users SET password=md5('$new_pass') WHERE id_user=$id_user")
-      or wf_mysqldie();
+    mysql_query("UPDATE webfinance_users SET password=md5('$new_pass') WHERE id_user=$id_user") or die(mysql_error());
     logmessage("Changed password for user:$id_user");
     $_SESSION['message'] = _('Password changed');
     return true;
@@ -311,13 +310,16 @@ class User {
   // Expects an object
   function setPrefs($prefs) {
     $data = base64_encode(serialize($prefs));
-    $result = mysql_query("SELECT count(*) FROM webfinance_pref WHERE owner=".$_SESSION['id_user']." AND type_pref='user_pref'") or wf_mysqldie();
+	$q = "SELECT count(*) FROM webfinance_pref WHERE owner=".$_SESSION['id_user']." AND type_pref='user_pref'";
+    $result = mysql_query($q) or die($q . mysql_error());
     list($has_pref) = mysql_fetch_array($result);
     mysql_free_result($result);
     if ($has_pref) {
-      mysql_query("UPDATE webfinance_pref SET value='$data' WHERE owner=".$_SESSION['id_user']." AND type_pref='user_pref'") or wf_mysqldie();
+	  $q = "UPDATE webfinance_pref SET value='$data' WHERE owner=".$_SESSION['id_user']." AND type_pref='user_pref'";
+      mysql_query($q) or die($q . mysql_error());
     } else {
-      mysql_query("INSERT INTO webfinance_pref (value,owner,type_pref) VALUES('$data', ".$_SESSION['id_user'].",'user_pref')") or wf_mysqldie();
+	  $q = "INSERT INTO webfinance_pref (value,owner,type_pref) VALUES('$data', ".$_SESSION['id_user'].",'user_pref')";
+      mysql_query($q) or die($q . mysql_error());
     }
     $_SESSION['message'] = _('The data has been saved');
   }
@@ -325,7 +327,8 @@ class User {
   // Expects an object
   function getPrefs() 
   {
-      $result = mysql_query("SELECT value FROM webfinance_pref WHERE owner=".$_SESSION['id_user']." AND type_pref='user_pref'") or wf_mysqldie();
+	  $q = "SELECT value FROM webfinance_pref WHERE owner=".$_SESSION['id_user']." AND type_pref='user_pref'";
+      $result = mysql_query($q) or die ($q . mysql_error());
       list($data) = mysql_fetch_array($result);
       $this->prefs = unserialize(base64_decode($data));
       
@@ -344,12 +347,12 @@ class User {
 
     //récupérer les info sur la société
     $result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='societe' AND owner=-1")
-      or wf_mysqldie();
+       or die(mysql_error());
     list($value) = mysql_fetch_array($result);
     mysql_free_result($result);
     $societe = unserialize(base64_decode($value));
 
-    $result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='mail_user'") or wf_mysqldie();
+    $result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='mail_user'") or die(mysql_error());
     list($data) = mysql_fetch_array($result);
     $pref = unserialize(base64_decode($data));
 
