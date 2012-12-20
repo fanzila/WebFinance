@@ -402,8 +402,7 @@ $options .= "<option ".($response->id_client==$facture->id_client ? 'selected="s
         if (! $facture->immuable)
           printf('<a href="save_facture.php?id_facture=%d&action=delete_facture" onclick="return ask_confirmation(\'%s\');">%s</a><br/>', $facture->id_facture,_('Do you really want to delete it ?'), _('> Delete'));
       ?>
-
-      <a href="../direct_debit/push.php?id=<?= $facture->id_facture ?>" onclick="return ask_confirmation('Are you sure you want to mark this invoice as paid and plan a direct debit?');">> <?=_('Plan for direct debit')?></a>
+      <? if ($facture->is_paye != 1) { ?><a href="../direct_debit/push.php?id=<?= $facture->id_facture ?>" onclick="return ask_confirmation('Are you sure you want to mark this invoice as paid and plan a direct debit?');">> <?=_('Plan for direct debit')?></a><? } ?>
     </td></tr>
 	<tr>
       <td colspan="2">
@@ -429,11 +428,13 @@ $options .= "<option ".($response->id_client==$facture->id_client ? 'selected="s
 <a href="gen_facture.php?id=<?=$facture->id_facture?>&contract=1&introduction_letter=1">> Download PDF with cover, contract, auto prelev</a><br/>
       </td>
     </tr>
-    <tr>
-      <td colspan="2">
-		<a href="paypal.php?id_invoice=<?=$facture->id_facture?>">> Request a PayPal payment</a><br/>
-      </td>
-    </tr>
+    <? if ($facture->is_paye != 1) { ?>
+		<tr>
+      		<td colspan="2">
+				<a href="paypal.php?id_invoice=<?=$facture->id_facture?>">> Request a PayPal payment</a><br/>
+      		</td>
+    	</tr>
+	<? } ?>
     </table>
   </td>
 </tr>

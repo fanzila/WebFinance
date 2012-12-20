@@ -297,6 +297,11 @@ function get_include_contents($filename) {
   return false;
 }
 
+function format_phone($phone)
+{
+	return preg_replace("/[^0-9++]/", "", $phone);
+}
+
 header("Content-Type: text/html; charset=utf-8");
 
 // This array starts empty here and is filled by pages

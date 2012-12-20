@@ -43,14 +43,18 @@
     if ($contact->tel != "") $tel = sprintf('<img style="vertical-align: middle;" src="/imgs/icons/tel.gif" alt="Tel" />&nbsp;%s<br/>', $contact->tel); else $tel = "";
     if ($contact->mobile != "") $mobile = sprintf('<img style="vertical-align: middle;" src="/imgs/icons/gsm.gif" alt="GSM" />&nbsp;%s<br/>', $contact->mobile); else $mobile = "";
     if ($contact->note != "") $note = sprintf('<img style="vertical-align: middle;" src="/imgs/icons/notes.gif" onMouseOut="UnTip();" onmouseover="Tip(\'%s\')"/>', addslashes($contact->note)); else $note = "";
-    print <<<EOF
+    $c_mobile	= format_phone($mobile);
+	$c_tel		= format_phone($tel);
+	$c_id 		= $_GET['id'];
+	
+	print <<<EOF
       <tr onmouseover="this.className='row_over';" onmouseout="this.className='row_$class';" class="row_$class" valign="top">
         <td width="16">$mail</td>
-        <td onclick="inpagePopup(event, this, 240, 220, 'edit_contact.php?id_personne=$contact->id_personne');" ><b>$contact->prenom $contact->nom</b></td>
-        <td onclick="inpagePopup(event, this, 240, 220, 'edit_contact.php?id_personne=$contact->id_personne');" >$contact->fonction</td>
-        <td onclick="inpagePopup(event, this, 240, 220, 'edit_contact.php?id_personne=$contact->id_personne');" >$mobile</td>
-        <td onclick="inpagePopup(event, this, 240, 220, 'edit_contact.php?id_personne=$contact->id_personne');" >$tel</td>
-        <td onclick="inpagePopup(event, this, 240, 220, 'edit_contact.php?id_personne=$contact->id_personne');" >$note</td>
+        <td onclick="inpagePopup(event, this, 240, 220, 'edit_contact.php?id_personne=$contact->id_personne');"><b>$contact->prenom $contact->nom</b></td>
+        <td onclick="inpagePopup(event, this, 240, 220, 'edit_contact.php?id_personne=$contact->id_personne');">$contact->fonction</td>
+        <td onclick="ctc('$c_mobile',$c_id)" class="show_hide">$mobile</td>
+        <td onclick="ctc('$c_tel',$c_id)" class="show_hide">$tel</td>
+        <td>$note</td>
       </tr>
 EOF;
     $count++;

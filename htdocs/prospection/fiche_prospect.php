@@ -22,6 +22,29 @@
 include("../inc/main.php");
 $roles = "manager,employee,accounting";
 
+$User = new User;
+$User->getInfos();
+
+if(isset($_GET['ctc'])) { 
+	$num = $_GET['num'];
+	$id_client = $_GET['id'];
+  	
+	echo "Calling $num ...";
+	logmessage(_("Call contact: ")." $num", $id_client);
+	
+	try
+	{
+	  ini_set('default_socket_timeout', 60);
+	  $soap = new SoapClient('https://www.ovh.com/soapi/soapi-re-1.3.wsdl');
+	  $soap->telephonyClick2CallDo('cybclick2call', $User->prefs->ctc_ovh_pass, $User->prefs->ctc_ovh_login, $num, $User->prefs->ctc_ovh_login);
+	}
+	catch(SoapFault $fault)
+	{
+	  echo $fault;
+	}
+	exit; 
+}
+
 if (isset($_GET['action']) && $_GET['action'] == '_new') {
 
   $client_name = 'Nouvelle Entreprise_' . time();
@@ -48,18 +71,16 @@ if (isset($_GET['action']) && $_GET['action'] == '_new') {
   logmessage(_('Create customer')." client:".$_GET['id'],$_GET['id']);
 }
 
-if (!preg_match("/^[0-9]+$/", $_GET['id'])) {
-  header("Location: /prospection/");
-  die();
-}
-
 $Client = new Client($_GET['id']);
 $title = $Client->nom;
 
 array_push($extra_js, "/js/onglets.js");
 
-$User = new User;
-$User->getInfos();
+if (!preg_match("/^[0-9]+$/", $_GET['id'])) {
+  header("Location: /prospection/");
+  die();
+}
+
 // Onglet affiché par défaut
 if (isset($_GET['onglet'])) {
   $shown_tab = $_GET['onglet'];
@@ -71,7 +92,20 @@ if (isset($_GET['onglet'])) {
 
 include("../top.php");
 include("nav.php");
+
 ?>
+
+<script type="text/javascript">
+
+function ctc(num, id) {
+
+    $(document).ready(function() {
+	   	$(".show_hide").show();
+		$(".slidingDiv").load('/prospection/fiche_prospect.php?ctc=1&num=' + num + '&id=' + id).slideToggle().delay(5000).fadeOut('slow')
+    });    
+};
+
+</script>
 
 <script type="text/javascript" language="javascript"
   src="/js/ask_confirmation.js"></script>

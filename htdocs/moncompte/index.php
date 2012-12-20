@@ -209,6 +209,19 @@ function checkForm(f) {
   </select>&nbsp;<?=_('per')?> page
 </td>
 </tr>
+</table>
+
+<h2><?=_('Misc')?></h2>
+
+<table border="0" cellspacing="0" cellpadding="5">
+<tr>
+  <td><?= _("Click to Call OVH login") ?></td>
+  <td><input name="pref_ctc_ovh_login" type="text" value="<?=$User->prefs->ctc_ovh_login?>" /></td>
+</tr>
+<tr>
+  <td><?= _("Click to Call OVH password") ?></td>
+  <td><input name="pref_ctc_ovh_pass" type="password" value="<?=$User->prefs->ctc_ovh_pass?>"/></td>
+</tr>
 <tr>
   <td colspan="2" style="text-align: center;">
     <input type="submit" value="<?= _('Save') ?>" />

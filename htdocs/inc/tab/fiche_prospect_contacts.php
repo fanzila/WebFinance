@@ -31,9 +31,9 @@
 # $Id: fiche_prospect_contacts.php 556 2007-08-02 08:29:36Z gassla $
 
 global $Client, $User;
-
-
 ?>
+  <div id="LoadPage" class="slidingDiv"> </div>
+
   <table border="0" width="100%"><tr valign="top"><td>
   <br/>
   <b><?= _('Contact name:') ?></b> <input type="text" name="addr1" value="<?= preg_replace('/"/', '\\"', $Client->addr1) ?>" style="color: #666; width: 200px" /><br/>
@@ -55,7 +55,7 @@ global $Client, $User;
   ?>
 <br/>
   <b><?= _('Phone and URL:') ?></b><br/>
-  <input type="text" name="tel" value="<?= addslashes($Client->tel) ?>" class="tel" /><input type="text" name="fax" value="<?= $Client->fax ?>" class="fax" /><br/>
+  <input type="text" name="tel" value="<?= addslashes(format_phone($Client->tel)) ?>" class="tel" /><? if($User->prefs->ctc_ovh_login != null AND !empty($Client->tel)) { ?> <a href="#" onclick="ctc('<?=format_phone($Client->tel)?>',<?=$Client->id ?>)" class="show_hide">> Call</a><? } ?><br/>
   <input type="text" name="web" value="<?= addslashes($Client->web) ?>" class="web" /><br/>
 <?php
 
@@ -66,6 +66,7 @@ global $Client, $User;
 
 ?>
   <input type="text" name="email[]" class="email" /><br/>
+<input type="text" name="fax" value="<?= $Client->fax ?>" class="fax" />
 <br/>
   <b><?= _('RIB:') ?></b><br/>
 <table border="0">
