@@ -78,7 +78,7 @@ if ($action == "save_facture") {
   if(!isset($is_abandoned))
     $is_abandoned='off';
 
-  // Enregistrement des paramÃ¨tres facture
+  // Enregistrement des paramÃƒÂ¨tres facture
   preg_match("/([0-9]{2})\/([0-9]{2})\/([0-9]{4})/", $date_facture, $ma);
   $date_facture = $ma[3]."/".$ma[2]."/".$ma[1];
   $date_facture_ts = mktime(0,0,0,$ma[2],$ma[1],$ma[3]);
@@ -280,18 +280,18 @@ if($action == "send"){
 
   if(count($mails)>0){
 
-    //récupérer les info sur la société
+    //rÃ©cupÃ©rer les info sur la sociÃ©tÃ©
     $result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='societe' AND owner=-1")
       or wf_mysqldie();
     list($value) = mysql_fetch_array($result);
     mysql_free_result($result);
     $societe = unserialize(base64_decode($value));
 
-    //récupération des infos sur la facture
+    //rÃ©cupÃ©ration des infos sur la facture
     $Facture = new Facture();
     $invoice = $Facture->getInfos($id);
 
-    //compléter l'entête de l'email
+    //complÃ©ter l'entÃªte de l'email
     $mail = new PHPMailer();
     if(preg_match('/^[A-z0-9][\w.-]*@[A-z0-9][\w\-\.]+\.[A-Za-z]{2,4}$/',$from) )
       $mail->From = $from;
@@ -308,7 +308,7 @@ if($action == "send"){
 
     $mail->WordWrap = 80;
 
-    //générer la facture en pdf
+    //gÃ©nÃ©rer la facture en pdf
     //$fp = fopen("http://".$_SERVER['SERVER_NAME']."/prospection/gen_facture.php?dest=file&id=$id","r");
     //fclose($fp);
 
@@ -327,7 +327,7 @@ if($action == "send"){
 
       } else{
 	/* $_SESSION['message'] = _('Invoice sent'); */
-	//mettre à jour l'état de la facture, update sql
+	//mettre Ã  jour l'Ã©tat de la facture, update sql
 	mysql_query("UPDATE webfinance_invoices SET is_envoye=1 WHERE id_facture=$id ")
 	  or wf_mysqldie();
 	/* $_SESSION['message'] .= "<br/>"._('Invoice updated'); */

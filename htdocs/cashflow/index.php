@@ -19,7 +19,7 @@
 ?>
 <?php
 //
-// This file is part of « Webfinance »
+// This file is part of Â« Webfinance Â»
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
@@ -216,7 +216,7 @@ if(isset($filter)){
     $filter['start_date'] = strftime("%d/%m/%Y",$ts_start_date);
   }
 
-  #si la date end est vide on utilise la plus r�cente date d'une transaction
+  #si la date end est vide on utilise la plus récente date d'une transaction
   if( ( isset($filter['end_date']) AND empty($filter['end_date']) ) OR ( !isset($filter['end_date']) ) ){
     $result = WFO::SQL("SELECT UNIX_TIMESTAMP(MAX(date)) as ts_end_date FROM webfinance_transactions");
     list($ts_end_date) = mysql_fetch_array($result);
@@ -401,7 +401,7 @@ if(isset($filter['shown_type']) && count($filter['shown_type'])){
 
      while ($tr = mysql_fetch_object($result)) {
 
-       //id des factures li�es
+       //id des factures liées
        $id_invoices = array();
        $result_invoices = mysql_query("SELECT id_invoice as id , num_facture , ref_contrat ".
 				      "FROM webfinance_transaction_invoice AS wf_tr_inv LEFT JOIN webfinance_invoices AS wf_inv ON (wf_tr_inv.id_invoice = wf_inv.id_facture) ".
@@ -418,7 +418,7 @@ if(isset($filter['shown_type']) && count($filter['shown_type'])){
        if(empty($tr->exchange_rate))
 	 $tr->exchange_rate=1;
 
-       //s�parer les mois
+       //sï¿½parer les mois
        $current_month=ucfirst(strftime("%B %Y",$tr->ts_date));
        if(!empty($prev_date)){
 	 if(date("m",$prev_date)!=date("m",$tr->ts_date))

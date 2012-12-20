@@ -20,7 +20,7 @@
 <?php
 include("inc/main.php");
 
-$text=$_SESSION['code']; //on récupére le code à générer
+$text=$_SESSION['code']; //on rÃ©cupÃ©re le code Ã  gÃ©nÃ©rer
 
 $im = imagecreatefromjpeg("./imgs/secret.jpg");
 $id = imagecreatefromjpeg("./imgs/secret.jpg");

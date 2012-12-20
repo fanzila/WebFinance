@@ -19,7 +19,7 @@
 ?>
 <?php
 //
-// This file is part of « Webfinance »
+// This file is part of Â« Webfinance Â»
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
@@ -135,7 +135,7 @@ if($id_transaction>0){
  }
 
 
-//fichiers attach�s
+//fichiers attachés
 $File = new FileTransaction();
 
 if(isset($file_del)){
@@ -154,7 +154,7 @@ if (isset($_FILES['file']) && is_uploaded_file($_FILES['file']['tmp_name'])) {
  }
 
 
-//factures li�es
+//factures liées
 if(isset($id_invoices)){
   mysql_query("DELETE FROM webfinance_transaction_invoice WHERE id_transaction=$id_transaction") or wf_mysqldie();
 

@@ -141,7 +141,7 @@ while ($client = mysql_fetch_object($result)) {
 
   $type_comp_temp = strtoupper($Client->GetCompanyTypeById($client->id_company_type));
   $type_comp      = $type_comp_temp[0];
-
+	
   print "<tr align=center class=row_".(($count%2 == 0)?"even":"odd").">\n"
     ."  <td><a href=fiche_prospect.php?onglet=billing&id=".$client->id_client."&onglet=facturation>"
     ."    <img src=\"/imgs/icons/".(($client->has_unpaid)?"not_paid":(($client->has_devis)?"paid_orange":"paid")).".gif\" /></a>\n"

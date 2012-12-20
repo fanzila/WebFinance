@@ -72,7 +72,7 @@ class PHPlot {
     var $y_precision = 1;
     var $x_precision = 1;
 
-    var $data_units_text = '';              // Units text for 'data' labels (i.e: '¤', '$', etc.)
+    var $data_units_text = '';              // Units text for 'data' labels (i.e: 'Â¤', '$', etc.)
 
 // Titles
     var $title_txt = '';

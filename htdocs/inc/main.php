@@ -189,20 +189,24 @@ function makeDateField($input_name, $defaulttime=null, $autosubmit=0, $input_id=
 }
 
 function wf_mysqldie($message="") {
-  if ($_SESSION['debug'] == 1) {
-    if (headers_sent()) {
+  //if ($_SESSION['debug'] == 1) {
+    /** 
+	if (headers_sent()) {
       print '<div style="position: absolute; border: solid 5px red; background: #ffcece; left: 100px top: 100px;"><pre>';
     } else {
       header("Content-Type: text/plain; charset=utf8");
-    }
+    } 
+	**/
     print "Page : ".$GLOBALS['_SERVER']['SCRIPT_NAME']."\n";
     print "Message : $message\n";
     print "Mysql error : \n";
     print mysql_error();
-    if (headers_sent()) {
+    /** 
+	if (headers_sent()) {
       print '</pre></div>';
     }
   }
+**/
   die();
 }
 

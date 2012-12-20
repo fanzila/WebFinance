@@ -20,7 +20,7 @@
 */
 //
 // $Id: gen_facture.php 532 2007-06-14 10:39:19Z thierry $
-// Génère un PDF pour une facture
+// GÃ©nÃ¨re un PDF pour une facture
 
 require("../inc/main.php");
 

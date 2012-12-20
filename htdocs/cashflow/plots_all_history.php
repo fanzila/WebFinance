@@ -78,14 +78,14 @@ function getRoundMin($min){
 
 
 /*
- * Evolution de chaque categorie depuis le d�but
+ * Evolution de chaque categorie depuis le début
  */
 if(isset($_GET['type']) AND isset($_GET['sign']) AND isset($_GET['plot']) AND $_GET['type']=="category"){
 
 	if($_GET['plot']=="bars"){
 
 	    /*
-	     * calculer les dates min et max des opérations
+	     * calculer les dates min et max des opÃ©rations
 	     */
 
 	  if($_GET['sign']=="positive"){
@@ -122,9 +122,9 @@ if(isset($_GET['type']) AND isset($_GET['sign']) AND isset($_GET['plot']) AND $_
 	  }
 
 	  /*
-	   * identifier les catégories
-	   * - catégories de dépenses
-	   * - catégories de revenus
+	   * identifier les catÃ©gories
+	   * - catÃ©gories de dÃ©penses
+	   * - catÃ©gories de revenus
 	   */
 	  $query_categories= mysql_query("SELECT ".
 					 "webfinance_categories.name as name , ".

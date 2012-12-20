@@ -31,7 +31,7 @@ if(isset($_GET['ref']) ){
   extract($_GET);
 
   if($error>=100 AND $error<200)
-    printf("<span class='text'>%s</span>", _("Paiement refusÈ par le centre d'autorisation"));
+    printf("<span class='text'>%s</span>", _("Paiement refus√© par le centre d'autorisation"));
   else if(isset($error)){
 
     $_SESSION['error']=1;
@@ -46,16 +46,16 @@ if(isset($_GET['ref']) ){
       $_SESSION['message']=_("Erreur Paybox");
       break;
     case 4:
-      printf("<span class='text'>%s</span>", _("NumÈro de porteur ou cryptogramme visuel invalide"));
-      $_SESSION['message']=_("NumÈro de porteur ou cryptogramme visuel invalide");
+      printf("<span class='text'>%s</span>", _("Num√©ro de porteur ou cryptogramme visuel invalide"));
+      $_SESSION['message']=_("Num√©ro de porteur ou cryptogramme visuel invalide");
       break;
     case 6:
-      printf("<span class='text'>%s</span>", _("AccËs refusÈ ou site/rang/identifiant incorrect"));
-      $_SESSION['message']=_("AccËs refusÈ ou site/rang/identifiant incorrect");
+      printf("<span class='text'>%s</span>", _("Acc√®s refus√© ou site/rang/identifiant incorrect"));
+      $_SESSION['message']=_("Acc√®s refus√© ou site/rang/identifiant incorrect");
       break;
     case 8:
-      printf("<span class='text'>%s</span>", _("date de fin de validitÈ incorrect"));
-      $_SESSION['message']=_("date de fin de validitÈ incorrect");
+      printf("<span class='text'>%s</span>", _("date de fin de validit√© incorrect"));
+      $_SESSION['message']=_("date de fin de validit√© incorrect");
       break;
     case 11:
       printf("<span class='text'>%s</span>", _("Montant incorrect"));
@@ -66,12 +66,12 @@ if(isset($_GET['ref']) ){
       $_SESSION['message']=_("Erreur Paybox");
       break;
     case 16:
-      printf("<span class='text'>%s</span>", _("AbonnÈe dÈj‡ existant..."));
-      $_SESSION['message']=_("AbonnÈe dÈj‡ existant...");
+      printf("<span class='text'>%s</span>", _("Abonn√©e d√©j√† existant..."));
+      $_SESSION['message']=_("Abonn√©e d√©j√† existant...");
       break;
     case 21:
-      printf("<span class='text'>%s</span>", _("Bin de carte non autorisÈe"));
-      $_SESSION['message']=_("Bin de carte non autorisÈe");
+      printf("<span class='text'>%s</span>", _("Bin de carte non autoris√©e"));
+      $_SESSION['message']=_("Bin de carte non autoris√©e");
       break;
     }
   }else{

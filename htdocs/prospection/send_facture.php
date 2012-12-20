@@ -80,7 +80,7 @@ if(isset($_POST['action'],$_POST['id'],$_POST['mails2']) &&
     }
 
 	/* $_SESSION['message'] = _('Invoice sent'); */
-	//mettre à jour l'état de la facture, update sql
+	//mettre Ã  jour l'Ã©tat de la facture, update sql
 	mysql_query("UPDATE webfinance_invoices ".
 				"SET is_envoye=1 ".
 				"WHERE id_facture=$id_invoice")
@@ -111,7 +111,7 @@ require("nav.php");
 extract($_GET);
 $mails=array();
 
-//Récupérer les adresses mails:
+//RÃ©cupÃ©rer les adresses mails:
 $result = mysql_query("SELECT webfinance_invoices.id_client as id_client, email, nom ".
 		      "FROM webfinance_clients LEFT JOIN webfinance_invoices ON (webfinance_clients.id_client = webfinance_invoices.id_client) ".
 		      "WHERE id_facture=$id")
@@ -139,14 +139,14 @@ while($person=mysql_fetch_assoc($result)){
  }
 mysql_free_result($result);
 
-//récupérer les info sur la société
+//rÃ©cupÃ©rer les info sur la sociÃ©tÃ©
 $result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='societe' AND owner=-1")
   or wf_mysqldie();
 list($value) = mysql_fetch_array($result);
 mysql_free_result($result);
 $societe = unserialize(base64_decode($value));
 
-//récupération des infos sur la facture
+//rÃ©cupÃ©ration des infos sur la facture
 $Facture = new Facture();
 $invoice = $Facture->getInfos($id);
 

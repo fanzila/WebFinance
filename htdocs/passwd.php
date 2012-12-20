@@ -21,7 +21,7 @@
 ?>
 <?php
 //
-// This file is part of « Webfinance »
+// This file is part of Â« Webfinance Â»
 //
 // Copyright (c) 2004-2006 NBI SARL
 // Author : Nicolas Bouthors <nbouthors@nbi.fr>
@@ -68,7 +68,7 @@ if(isset($_POST['login'])){
 
 $chars = "abBCDEFcdefghijkLmnPQRSTUVWXYpqrstxyz123456789";
 $code="";
-srand((double)microtime()*1000000); //  Génération aléatoire du code
+srand((double)microtime()*1000000); //  GÃ©nÃ©ration alÃ©atoire du code
 for($i=0; $i<5;$i++){
   $code.= $chars[rand()%strlen($chars)];
  }
