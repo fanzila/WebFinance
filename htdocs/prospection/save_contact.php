@@ -34,10 +34,6 @@
 include("../inc/main.php");
 must_login();
 
-if ($GLOBALS['HTTP_SERVER_VARS']['REQUEST_METHOD'] != "POST") {
-  die();
-}
-
 if ($_POST['action'] == "create") {
 
   $_SESSION['tmp_message'] = $_SESSION['message'];
@@ -45,7 +41,7 @@ if ($_POST['action'] == "create") {
   $q = sprintf("INSERT INTO webfinance_personne (nom,prenom,email,tel,mobile,client,fonction,date_created,note) VALUES ('%s', '%s', '%s', '%s', '%s', %d, '%s', now(),'%s')",
 	       $_POST['nom'], $_POST['prenom'], $_POST['email'], $_POST['tel'], $_POST['mobile'], $_POST['client'], $_POST['fonction'], $_POST['note'] );
 
-  mysql_query($q) or wf_mysqldie("Error inserting personne");
+  mysql_query($q) or die("QUERY ERROR: $q ".mysql_error());
 
   $_SESSION['message'] = _("Contact added");
 
@@ -53,22 +49,20 @@ if ($_POST['action'] == "create") {
 
 } elseif ($_POST['action'] == "save") {
 
-  //  echo "<pre/>"; print_r($user_data); exit;
-
   $q = sprintf("UPDATE webfinance_personne SET nom='%s',prenom='%s',email='%s',tel='%s',mobile='%s',fonction='%s',note='%s' WHERE id_personne=%d",
                $_POST['nom'], $_POST['prenom'], $_POST['email'], $_POST['tel'], $_POST['mobile'], $_POST['fonction'], $_POST['note'], $_POST['id_personne']);
 
-  mysql_query($q) or wf_mysqldie("Saving person");
+  mysql_query($q) or die("QUERY ERROR: $q ".mysql_error());
 
   $_SESSION['message'] = _("Contact updated");
 
-  $res=mysql_query("SELECT client FROM webfinance_personne WHERE id_personne=".$_POST['id_personne']);
+  $res=mysql_query("SELECT client FROM webfinance_personne WHERE id_personne=".$_POST['id_personne']) or die("QUERY ERROR: ".mysql_error());
   list($client)=mysql_fetch_array($res);
 
   logmessage(_('Update contact')." ".$_POST['nom']." ".$_POST['prenom']." ( client:$client)", $client);
 
 } elseif ($_POST['action'] == "delete") {
-  $res=mysql_query("SELECT nom, prenom, client FROM webfinance_personne WHERE id_personne=".$_POST['id_personne']);
+  $res=mysql_query("SELECT nom, prenom, client FROM webfinance_personne WHERE id_personne=".$_POST['id_personne'])  or die("QUERY ERROR: ".mysql_error());
   list($nom, $prenom,$client)=mysql_fetch_array($res);
   logmessage(_('Delete contact')." $nom $prenom client:$client ", $client);
 

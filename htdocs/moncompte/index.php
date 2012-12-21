@@ -219,6 +219,10 @@ function checkForm(f) {
   <td><input name="pref_ctc_ovh_login" type="text" value="<?=$User->prefs->ctc_ovh_login?>" /></td>
 </tr>
 <tr>
+  <td><?= _("Click to Call OVH number") ?></td>
+  <td><input name="pref_ctc_ovh_num" type="text" value="<?=$User->prefs->ctc_ovh_num?>"/></td>
+</tr>
+<tr>
   <td><?= _("Click to Call OVH password") ?></td>
   <td><input name="pref_ctc_ovh_pass" type="password" value="<?=$User->prefs->ctc_ovh_pass?>"/></td>
 </tr>

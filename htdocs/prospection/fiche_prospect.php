@@ -36,7 +36,7 @@ if(isset($_GET['ctc'])) {
 	{
 	  ini_set('default_socket_timeout', 60);
 	  $soap = new SoapClient('https://www.ovh.com/soapi/soapi-re-1.3.wsdl');
-	  $soap->telephonyClick2CallDo('cybclick2call', $User->prefs->ctc_ovh_pass, $User->prefs->ctc_ovh_login, $num, $User->prefs->ctc_ovh_login);
+	  $soap->telephonyClick2CallDo($User->prefs->ctc_ovh_login, $User->prefs->ctc_ovh_pass, $User->prefs->ctc_ovh_num, $num, $User->prefs->ctc_ovh_num);
 	}
 	catch(SoapFault $fault)
 	{
@@ -101,7 +101,7 @@ function ctc(num, id) {
 
     $(document).ready(function() {
 	   	$(".show_hide").show();
-		$(".slidingDiv").load('/prospection/fiche_prospect.php?ctc=1&num=' + num + '&id=' + id).slideToggle().delay(5000).fadeOut('slow')
+		$(".slidingDiv").load('/prospection/fiche_prospect.php?ctc=1&num=' + num + '&id=' + id).slideToggle().delay(3000).fadeOut('slow')
     });    
 };
 
