@@ -60,7 +60,7 @@ while(list($id_invoice) = mysql_fetch_row($result)) {
   // Delete setup fees that only have to be paid once
   $query='DELETE FROM webfinance_invoice_rows '.
     "WHERE (description LIKE '%Frais d\'accès au service%' " .
-    "OR description LIKE '%Frais d\'installation%') " .
+    "OR description LIKE '%Frais d\'installation%' " .
 	"OR description LIKE '%rais de migration%') " .
     "AND id_facture=$id_new_invoice";
   mysql_query($query)
