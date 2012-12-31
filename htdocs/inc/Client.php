@@ -52,7 +52,7 @@ class Client extends WFO
               "SELECT c.id_client as id, c.id_client, c.nom, c.date_created,c.tel, c.fax, c.web,"
             . "c.addr1, c.addr2, c.addr3, c.cp, c.ville, c.pays, c.email, left(cp, 2) as departement,"
             . "c.has_devis, c.has_unpaid, sub1.ca_total_ht, sub2.ca_total_ht_year, sub3.total_du_ht,"
-            . "c.vat_number, c.siren, c.id_company_type,c.id_user,c.password, c.rcs, c.capital, c.rib_titulaire, c.rib_banque, c.rib_code_banque, c.rib_code_guichet, c.rib_code_compte, c.rib_code_cle, c.id_mantis, ct.nom as type_name " 
+            . "c.vat_number, c.siren, c.id_company_type,c.id_user,c.password, c.rcs, c.capital, c.rib_titulaire, c.rib_banque, c.rib_code_banque, c.rib_code_guichet, c.rib_code_compte, c.rib_code_cle, c.id_mantis, c.language, ct.nom as type_name " 
             . "FROM webfinance_clients as c " 
             . "JOIN webfinance_company_types as ct USING (id_company_type)  "
             . "LEFT JOIN ("

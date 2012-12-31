@@ -47,13 +47,11 @@ if( !isset($_SESSION['id_user']) || $_SESSION['id_user'] < 1 ) {
 if(!isset($_GET['id']) or !is_numeric($_GET['id']))
 	die(_("Error: Missing invoice id"));
 
-$introduction_letter = false;
-$contract			 = false;
-if($_GET['introduction_letter'] == 1 ) $introduction_letter = true;
-if($_GET['contract'] == 1 ) 		   $contract = true;
+$docs = false;
+if($_GET['docs'] == 1 ) $docs = true;
 
 $invoice = new Facture;
-$filename = $invoice->generatePDF($_GET['id'], $introduction_letter, $target = 'file', $contract);
+$filename = $invoice->generatePDF($_GET['id'], false, $target = 'file', $docs);
 
 header('Content-Type: application/pdf');
 header('Content-Disposition: attachment; filename="'.basename($filename).'"');

@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Dec 20, 2012 at 02:50 PM
+-- Generation Time: Dec 22, 2012 at 02:08 PM
 -- Server version: 5.5.24-1~dotdeb.1-log
--- PHP Version: 5.4.7-1~dotdeb.0
+-- PHP Version: 5.4.9-1~dotdeb.0
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `direct_debit` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=50 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=51 ;
 
 -- --------------------------------------------------------
 
@@ -99,10 +99,11 @@ CREATE TABLE IF NOT EXISTS `webfinance_clients` (
   `rcs` varchar(100) NOT NULL,
   `capital` varchar(100) NOT NULL,
   `id_mantis` int(11) NOT NULL,
+  `language` varchar(3) NOT NULL DEFAULT 'fr',
   PRIMARY KEY (`id_client`),
   UNIQUE KEY `nom` (`nom`),
   KEY `id_user` (`id_user`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=561 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=567 ;
 
 -- --------------------------------------------------------
 
@@ -238,7 +239,7 @@ CREATE TABLE IF NOT EXISTS `webfinance_invoices` (
   UNIQUE KEY `num_facture` (`num_facture`),
   KEY `period` (`period`),
   KEY `id_client` (`id_client`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3193 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3204 ;
 
 -- --------------------------------------------------------
 
@@ -255,7 +256,7 @@ CREATE TABLE IF NOT EXISTS `webfinance_invoice_rows` (
   `prix_ht` decimal(20,5) DEFAULT NULL,
   PRIMARY KEY (`id_facture_ligne`),
   KEY `pfk_facture` (`id_facture`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=14198 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=14221 ;
 
 -- --------------------------------------------------------
 
@@ -300,7 +301,7 @@ CREATE TABLE IF NOT EXISTS `webfinance_payment` (
   KEY `email` (`email`),
   KEY `amount` (`amount`),
   KEY `currency` (`currency`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=39 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=54 ;
 
 -- --------------------------------------------------------
 
@@ -332,7 +333,7 @@ CREATE TABLE IF NOT EXISTS `webfinance_personne` (
   PRIMARY KEY (`id_personne`),
   KEY `pfk_client` (`client`),
   KEY `pfk_user` (`id_user`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=74 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=77 ;
 
 -- --------------------------------------------------------
 
@@ -347,7 +348,7 @@ CREATE TABLE IF NOT EXISTS `webfinance_pref` (
   `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `value` blob,
   PRIMARY KEY (`id_pref`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=91 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=92 ;
 
 -- --------------------------------------------------------
 
@@ -396,7 +397,7 @@ CREATE TABLE IF NOT EXISTS `webfinance_suivi` (
   `done_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id_suivi`),
   KEY `date_added` (`date_added`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=131 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=146 ;
 
 -- --------------------------------------------------------
 
@@ -426,7 +427,7 @@ CREATE TABLE IF NOT EXISTS `webfinance_transactions` (
   KEY `id_category` (`id_category`),
   KEY `date` (`date`),
   KEY `id_invoice` (`id_invoice`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5413 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5430 ;
 
 -- --------------------------------------------------------
 
@@ -494,7 +495,7 @@ CREATE TABLE IF NOT EXISTS `webfinance_userlog` (
   `id_facture` int(11) DEFAULT NULL,
   `id_client` int(11) DEFAULT NULL,
   PRIMARY KEY (`id_userlog`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=15583 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=15873 ;
 
 -- --------------------------------------------------------
 

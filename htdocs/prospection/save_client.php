@@ -153,8 +153,9 @@ $q = sprintf("UPDATE webfinance_clients SET ".
 	     "nom='%s' , addr1='%s' , addr2='%s' , addr3='%s' , cp='%s' , ".
 	     "ville='%s' , rcs='%s' , capital='%s' ,pays='%s', tel='%s' , fax='%s' , web='%s', ".
 	     " email='%s', ".
-	     "vat_number='%s', siren='%s' , id_company_type='%d' , id_user=%d , password='%s', rib_titulaire='%s', rib_banque='%s', rib_code_banque='%s', rib_code_guichet='%s', rib_code_compte='%s', rib_code_cle='%s', id_mantis='%s'
-              WHERE id_client=%d",
+	     "vat_number='%s', siren='%s' , id_company_type='%d' , id_user=%d , password='%s', rib_titulaire='%s', rib_banque='%s', rib_code_banque='%s', rib_code_guichet='%s', " .
+		 "rib_code_compte='%s', rib_code_cle='%s', id_mantis='%s', language='%s'
+          WHERE id_client=%d",
 
 			 mysql_real_escape_string($nom),
 			 mysql_real_escape_string($addr1),
@@ -180,7 +181,8 @@ $q = sprintf("UPDATE webfinance_clients SET ".
 			 mysql_real_escape_string($rib_code_guichet),
 			 mysql_real_escape_string($rib_code_compte),
 			 mysql_real_escape_string($rib_code_cle),
-			mysql_real_escape_string($id_mantis),
+			 mysql_real_escape_string($id_mantis),
+			 mysql_real_escape_string($clt_language),
              mysql_real_escape_string($id_client)
 	);
 

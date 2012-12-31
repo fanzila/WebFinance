@@ -47,18 +47,29 @@ if(preg_match('/^mail_/',$_POST['action']) ){
 
   $_SESSION['message']=_('Preference saved');
 
-  if(preg_match('/invoice/i',$_POST['action'])) {
-    header("Location: preferences.php?tab=Mail_invoice");
+  if(preg_match('/Mail_invoice/i',$_POST['action'])) {
+    header("Location: preferences.php?tab=Mail_invoice&mail_tpl_lang=$_POST[mail_tpl_lang]");
 	exit;
   }
 
-  header("Location: preferences.php?tab=Mail_user");
+  if(preg_match('/Mail_quote/i',$_POST['action'])) {
+    header("Location: preferences.php?tab=Mail_quote&mail_tpl_lang=$_POST[mail_tpl_lang]");
+	exit;
+  }
+
+  if(preg_match('/Invoice_docs/i',$_POST['action'])) {
+    header("Location: preferences.php?tab=Invoice_docs&mail_tpl_lang=$_POST[mail_tpl_lang]");
+	exit;
+  }
+
+  if(preg_match('/Mail_paypal/i',$_POST['action'])) {
+    header("Location: preferences.php?tab=Mail_paypal&mail_tpl_lang=$_POST[mail_tpl_lang]");
+	exit;
+  }
+
+  header("Location: preferences.php?tab=Mail_user&mail_tpl_lang=$_POST[mail_tpl_lang]");
   die();
  }
-
-//type presta
-//echo "<pre/>";
-//print_r($_POST);
 
 if ($_GET['action'] == "type_presta_delete") {
   mysql_query("DELETE FROM webfinance_type_presta WHERE id_type_presta=".$_GET['id']);

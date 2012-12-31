@@ -40,7 +40,7 @@ global $Client, $User;
   <b><?= _('Address 1:') ?></b> <input type="text" name="addr2" value="<?= preg_replace('/"/', '\\"', $Client->addr2) ?>" style="color: #666; width: 200px" /><br/>
   <b><?= _('Address 2:') ?></b> <input type="text" name="addr3" value="<?= preg_replace('/"/', '\\"', $Client->addr3) ?>" style="color: #666; width: 200px" /><br/>
   <input type="text" name="cp" value="<?= preg_replace('/"/', '\\"', $Client->cp) ?>" style="text-align: center; color: #666; width: 48px" /><input type="text" name="ville" value="<?= $Client->ville ?>" style="color: #666; width: 148px" /><br/>
-  <input type="text" name="pays" value="<?= preg_replace('/"/', '\\"', $Client->pays) ?>" style="color: #666; width: 80px; text-align: center;" /><br/>
+  <input type="text" name="pays" value="<?= preg_replace('/"/', '\\"', $Client->pays) ?>" style="color: #666; width: 80px; text-align: center;" />Lang: <select name="clt_language"><option value='fr_FR' <? if($Client->language == 'fr_FR') { ?>selected <? } ?>>French</option><option value='en_US' <? if($Client->language == 'en_US') { ?>selected <? } ?>>English</option></select><br/>
   <table border="0"><tr><td><?= _('RCS:') ?></td><td><input type="text" name="rcs" value="<?= preg_replace('/"/', '\\"', $Client->rcs) ?>" style="color: #666; width: 100px; text-align: center;" /></tr></td>
   <tr><td><?= _('Capital:') ?></td><td><input type="text" name="capital" value="<?= preg_replace('/"/', '\\"', $Client->capital ) ?>" style="color: #666; width: 100px; text-align: center;" /></tr></td></table>
 

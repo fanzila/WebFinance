@@ -388,7 +388,7 @@ $options .= "<option ".($response->id_client==$facture->id_client ? 'selected="s
     </tr>
     <tr>
       <td colspan="2">
-	  <input style="width: 200px; background: #eee; color: #7f7f7f; border: solid 1px #aaa;" id="" type="button" onclick="window.location='fiche_prospect.php?id=<?= $facture->id_client ?>&onglet=billing';" value="<?=_('Back to client screen')?>" />
+	  <input style="width: 200px; background: #a88a87; color: #fff; border: solid 1px #aaa;" id="" type="button" onclick="window.location='fiche_prospect.php?id=<?= $facture->id_client ?>&onglet=billing';" value="<?=_('Back to client screen')?>" />
       </td></tr>
 	<tr>
       <td colspan="2">
@@ -407,9 +407,7 @@ $options .= "<option ".($response->id_client==$facture->id_client ? 'selected="s
 	<tr>
       <td colspan="2">
       <a href="send_facture.php?id=<?= $facture->id_facture ?>">> <?= _('Send by mail') ?></a><br/>
-     <a href="send_facture.php?id=<?= $facture->id_facture ?>&introduction_letter=1">> <?= _('Send by mail with cover') ?></a><br/>
-      <a href="send_facture.php?id=<?= $facture->id_facture ?>&contract=1">> <?= _('Send by mail with contract + auto prelev') ?></a><br/>
-      <a href="send_facture.php?id=<?= $facture->id_facture ?>&contract=1&introduction_letter=1">> <?= _('Send by mail with cover, contract, auto prelev') ?></a><br/>
+     <a href="send_facture.php?id=<?= $facture->id_facture ?>&docs=1">> <?= _('Send by mail with docs') ?></a><br/>
 
 <?php
 /**
@@ -423,9 +421,7 @@ $options .= "<option ".($response->id_client==$facture->id_client ? 'selected="s
 <tr>
   <td colspan="2">
 <a href="gen_facture.php?id=<?=$facture->id_facture?>">> Download PDF</a><br/>
-<a href="gen_facture.php?id=<?=$facture->id_facture?>&introduction_letter=1">> Download PDF with cover</a><br/>
-<a href="gen_facture.php?id=<?=$facture->id_facture?>&contract=1">> Download PDF with contract + auto prelev</a><br/>
-<a href="gen_facture.php?id=<?=$facture->id_facture?>&contract=1&introduction_letter=1">> Download PDF with cover, contract, auto prelev</a><br/>
+<a href="gen_facture.php?id=<?=$facture->id_facture?>&docs=1">> Download PDF with docs</a><br/>
       </td>
     </tr>
     <? if ($facture->is_paye != 1) { ?>

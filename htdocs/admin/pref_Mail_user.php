@@ -16,14 +16,15 @@
     along with Webfinance; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-?>
-<?
-$result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='mail_user'") or wf_mysqldie();
+
+$result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='mail_user_$mail_tpl_lang'") or wf_mysqldie();
 list($data) = mysql_fetch_array($result);
 $pref = unserialize(base64_decode($data));
 ?>
+<?=$language_form?>
 <form id="main_form" action="save_preferences.php" method="post">
-<input type="hidden" name="action" value="mail_user" />
+<input type="hidden" name="action" value="mail_user_<?=$mail_tpl_lang?>" />
+<input type="hidden" name="mail_tpl_lang" value="<?=$mail_tpl_lang?>" />
 <table border="0" cellspacing="7" cellpadding="0">
 <tr>
   <td><?=_('Subject')?></td>
@@ -71,7 +72,7 @@ Password: %%PASSWORD%%
 </tr>
 <tr>
   <td style="text-align: center;" colspan="2">
-    <input type="submit" value="<?= _("Save") ?>" />
+    <input type="submit" value="<?= _("Save") ?> <?=$mail_tpl_lang?> version" />
   </td>
 </tr>
 </table>

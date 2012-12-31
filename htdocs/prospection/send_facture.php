@@ -63,16 +63,14 @@ if(isset($_POST['action'],$_POST['id'],$_POST['mails2']) &&
 	$subject = stripslashes($_POST['subject']) ;
     $body = stripslashes($_POST['body']) ;
 
-	$contract 				= false; 
-	$introduction_letter	= false; 
+	$docs 				= false; 
 
 	$invoice = new Facture;	
 	
-	if($_POST['contract'] == 1) 			$contract				= true; 
-	if($_POST['introduction_letter'] == 1)	$introduction_letter	= true; 
+	if($_POST['docs'] == 1) $docs = true; 
 		
 	if(!$invoice->sendByEmail($id_invoice, $mails, $from, $fromname, $subject,
-							  $body, $introduction_letter, $contract)) {
+							  $body, false, $docs)) {
 		$_SESSION['message'] = _('Invoice was not sent');
 		$_SESSION['error'] = 1;
 		echo _("Invoice was not sent");
@@ -150,18 +148,14 @@ $societe = unserialize(base64_decode($value));
 $Facture = new Facture();
 $invoice = $Facture->getInfos($id);
 
-$contract 			 = false;
-$introduction_letter = false; 
-if(isset($_GET['contract'])) 			$contract 				= 1;
-if(isset($_GET['introduction_letter'])) $introduction_letter 	= 1;
-
+$docs = false;
+if(isset($_GET['docs'])) $docs = 1;
 ?>
 
 <form id="main_form" method="post">
   <input type="hidden" name="action" value="send">
   <input type="hidden" name="id" value="<?= $id ?>">
-  <input type="hidden" name="contract" value="<?=$contract?>">
-  <input type="hidden" name="introduction_letter" value="<?=$introduction_letter?>">
+  <input type="hidden" name="docs" value="<?=$docs?>">
   <table class="bordered" border="0" cellspacing="0" cellpadding="3" width="500">
   <tr>
     <td>From</td>
@@ -186,15 +180,17 @@ if(isset($_GET['introduction_letter'])) $introduction_letter 	= 1;
    </td>
   </tr>
 <?php
-  $filename=ucfirst($invoice->type_doc)."_".$invoice->num_facture."_".preg_replace("/[ ]/", "_", $invoice->nom_client).".pdf";
+  $type_doc = $invoice->type_doc; 
+  if($invoice->language == 'en_US' AND $invoice->type_doc == 'facture') $type_doc	= 'invoice';
+  if($invoice->language == 'en_US' AND $invoice->type_doc == 'devis') $type_doc	= 'quote';
+  $filename=ucfirst($type_doc)."_".$invoice->num_facture."_".preg_replace("/[ ]/", "_", $invoice->nom_client).".pdf";
   $path="/tmp/".$filename;
 ?>
   <tr>
   <td></td>
-  <td><img src='/imgs/icons/attachment.png'><a href="gen_facture.php?id=<?=$invoice->id_facture?>&contract=<?=$contract?>&introduction_letter=<?=$introduction_letter?>"><?=$filename?>
+  <td><img src='/imgs/icons/attachment.png'><a href="gen_facture.php?id=<?=$invoice->id_facture?>&docs=<?=$docs?>"><?=$filename?>
 	<?
-	if(isset($_GET['contract'])) echo ' + contract + auto prelev'; 	
-	if(isset($_GET['introduction_letter'])) echo ' + cover letter ';
+	if(isset($_GET['docs'])) echo ' + docs'; 	
 	?></a>
 	</td>
   </tr>
@@ -204,7 +200,7 @@ if(isset($_GET['introduction_letter'])) $introduction_letter 	= 1;
 $type_doc = 'invoice';
 if($invoice->type_doc == 'devis') $type_doc = 'quote';
 
-$result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='mail_".$type_doc."'") or wf_mysqldie();
+$result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='mail_".$type_doc."_".$invoice->language."'") or wf_mysqldie();
 list($data) = mysql_fetch_array($result);
 $pref = unserialize(base64_decode($data));
 
@@ -242,7 +238,6 @@ if(mysql_num_rows($result)==1){
     $delay=_('payable avant le')." $tr_date" ;
  }
 mysql_free_result($result);
-
 
 $patterns=array(
 		'/%%LOGIN%%/',

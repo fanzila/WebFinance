@@ -33,6 +33,14 @@ if (isset($_GET['tab']) AND !empty($_GET['tab'])) {
 
 include("../top.php");
 include("nav.php");
+
+$mail_tpl_lang = 'fr_FR';
+if(isset($_GET['mail_tpl_lang'])) $mail_tpl_lang = $_GET['mail_tpl_lang'];
+$language_form = "<br />&nbsp;&nbsp;<?=_('Language:')?><form><input type='hidden' name='tab' value='$shown_tab'><select onchange='this.form.submit ()' name='mail_tpl_lang'><option value='fr_FR'";
+if($mail_tpl_lang == 'fr_FR') { $language_form .= "selected"; } 
+$language_form .= ">French</option><option value='en_US'";
+if($mail_tpl_lang == 'en_US') { $language_form .= "selected"; }
+$language_form .= ">English</option></select></form><hr />";
 ?>
 
 <script type="text/javascript">
@@ -102,7 +110,6 @@ foreach (glob("pref_*.php") as $pref) {
 <?
 foreach (glob("pref_*.php") as $pref) {
   preg_match("/pref_(.*).php$/", $pref, $matches);
-
   printf('<div id="tab_%s" style="display: none;">',$matches[1]);
   include($pref);
   echo "</div>";
