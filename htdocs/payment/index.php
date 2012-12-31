@@ -90,7 +90,7 @@ $r = mysql_query("INSERT INTO webfinance_payment SET id_invoice=$inv->id_facture
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<link rel="stylesheet" type="text/css" href="/css/themes/main/main.css" />
-	<title>Facture <?=$societe->raison_sociale?> : <?=$inv->num_facture?></title>
+	<title><?= _("Invoice") ?> <?=$societe->raison_sociale?> : <?=$inv->num_facture?></title>
 	
 	<script type="text/javascript">
 	<!--
@@ -101,7 +101,7 @@ $r = mysql_query("INSERT INTO webfinance_payment SET id_invoice=$inv->id_facture
 
 	    if ( document.paypalform.terms.checked == false )
 	    {
-	        alert ( 'Vous devez accepter le contrat pour continuer.' );
+	        alert ( '<?= _("You must accept the agreement to continue.") ?>' );
 	        valid = false;
 	    }
 	    return valid;
@@ -127,7 +127,7 @@ $r = mysql_query("INSERT INTO webfinance_payment SET id_invoice=$inv->id_facture
 	</tr>
 	<tr>
 
-		<td style="border-bottom: 1px solid silver;"><b>Facture <?=$inv->num_facture?></b> du <?=$inv->nice_date_facture?> de <?=$inv->nice_total_ht?> EUR HT, <?=$inv->nice_total_ttc?> EUR TTC
+		<td style="border-bottom: 1px solid silver;"><b><?= _("Invoice") ?> <?=$inv->num_facture?></b> <?= _("from the") ?>  <?=$inv->nice_date_facture?> <?= _("of") ?>  <?=$inv->nice_total_ht?> <?= _("EUR HT") ?> , <?=$inv->nice_total_ttc?> <?= _("EUR TTC") ?> 
 		</td>
 	</tr>
 	<tr>
@@ -148,14 +148,14 @@ $r = mysql_query("INSERT INTO webfinance_payment SET id_invoice=$inv->id_facture
 			</form></td>
 		</tr>
 		<tr>
-			<td style="border-bottom: 1px solid silver;"><input type="checkbox" name="terms" value=""> J'accepte le contrat</td>
+			<td style="border-bottom: 1px solid silver;"><input type="checkbox" name="terms" value=""> <?= _("I accept the agreement") ?> </td>
 		</tr>
 		<tr>
-			<td>Payer <?=$inv->nice_total_ttc?> EUR TTC avec : </td>
+			<td><?= _("Pay") ?> <?=$inv->nice_total_ttc?> <?= _("EUR TTC with:") ?> </td>
 		</tr>
 		<tr>
 			<td align="center">
-					<input type="image" src="/imgs/bt_paypal_pay.png" border="0" name="submit" onClick="validate_form();" alt="PayPal - la solution de paiement en ligne la plus simple et la plus sécurisée !">
+					<input type="image" src="/imgs/bt_paypal_pay.png" border="0" name="submit" onClick="validate_form();" alt="PayPal">
 					<input type="hidden" name="amount" value="<?=$inv->nice_total_ttc?>">
 					<input name="item_name" type="hidden" value="Paiement facture <?=$societe->raison_sociale?> <?=$inv->num_facture?>"> 
 					<input name="cmd" type="hidden" value="_xclick"> 
