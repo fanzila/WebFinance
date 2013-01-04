@@ -43,8 +43,8 @@
     if ($contact->tel != "") $tel = sprintf('<img style="vertical-align: middle;" src="/imgs/icons/tel.gif" alt="Tel" />&nbsp;%s<br/>', $contact->tel); else $tel = "";
     if ($contact->mobile != "") $mobile = sprintf('<img style="vertical-align: middle;" src="/imgs/icons/gsm.gif" alt="GSM" />&nbsp;%s<br/>', $contact->mobile); else $mobile = "";
     if ($contact->note != "") $note = sprintf('<img style="vertical-align: middle;" src="/imgs/icons/notes.gif" onMouseOut="UnTip();" onmouseover="Tip(\'%s\')"/>', addslashes($contact->note)); else $note = "";
-    $c_mobile	= format_phone($mobile);
-	$c_tel		= format_phone($tel);
+    $c_mobile	= urlencode(format_phone($mobile));
+	$c_tel		= urlencode(format_phone($tel));
 	$c_id 		= $_GET['id'];
 	
 	print <<<EOF

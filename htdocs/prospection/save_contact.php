@@ -39,7 +39,7 @@ if ($_POST['action'] == "create") {
   $_SESSION['tmp_message'] = $_SESSION['message'];
 
   $q = sprintf("INSERT INTO webfinance_personne (nom,prenom,email,tel,mobile,client,fonction,date_created,note) VALUES ('%s', '%s', '%s', '%s', '%s', %d, '%s', now(),'%s')",
-	       $_POST['nom'], $_POST['prenom'], $_POST['email'], $_POST['tel'], $_POST['mobile'], $_POST['client'], $_POST['fonction'], $_POST['note'] );
+	       $_POST['nom'], $_POST['prenom'], $_POST['email'], removeSpace($_POST['tel']), removeSpace($_POST['mobile']), $_POST['client'], $_POST['fonction'], $_POST['note'] );
 
   mysql_query($q) or die("QUERY ERROR: $q ".mysql_error());
 
@@ -50,7 +50,7 @@ if ($_POST['action'] == "create") {
 } elseif ($_POST['action'] == "save") {
 
   $q = sprintf("UPDATE webfinance_personne SET nom='%s',prenom='%s',email='%s',tel='%s',mobile='%s',fonction='%s',note='%s' WHERE id_personne=%d",
-               $_POST['nom'], $_POST['prenom'], $_POST['email'], $_POST['tel'], $_POST['mobile'], $_POST['fonction'], $_POST['note'], $_POST['id_personne']);
+               $_POST['nom'], $_POST['prenom'], $_POST['email'], removeSpace($_POST['tel']), removeSpace($_POST['mobile']), $_POST['fonction'], $_POST['note'], $_POST['id_personne']);
 
   mysql_query($q) or die("QUERY ERROR: $q ".mysql_error());
 

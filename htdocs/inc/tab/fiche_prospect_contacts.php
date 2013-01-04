@@ -55,7 +55,7 @@ global $Client, $User;
   ?>
 <br/>
   <b><?= _('Phone and URL:') ?></b><br/>
-  <input type="text" name="tel" value="<?= addslashes(format_phone($Client->tel)) ?>" class="tel" /><? if($User->prefs->ctc_ovh_login != null AND !empty($Client->tel)) { ?> <a href="#" onclick="ctc('<?=format_phone($Client->tel)?>',<?=$Client->id ?>)" class="show_hide">> Call</a><? } ?><br/>
+  <input type="text" name="tel" value="<?= addslashes(format_phone($Client->tel)) ?>" class="tel" /><? if($User->prefs->ctc_ovh_login != null AND !empty($Client->tel)) { ?> <a href="#" onclick="ctc('<?=urlencode(format_phone($Client->tel))?>',<?=$Client->id ?>)" class="show_hide">> Call</a><? } ?><br/>
   <input type="text" name="web" value="<?= addslashes($Client->web) ?>" class="web" /><br/>
 <?php
 

@@ -26,9 +26,8 @@ $User = new User;
 $User->getInfos();
 
 if(isset($_GET['ctc'])) { 
-	$num = $_GET['num'];
+	$num = removeSpace($_GET['num']);
 	$id_client = $_GET['id'];
-  	
 	echo "Calling $num ...";
 	logmessage(_("Call contact: ")." $num", $id_client);
 	
@@ -98,10 +97,11 @@ include("nav.php");
 <script type="text/javascript">
 
 function ctc(num, id) {
-
+	
     $(document).ready(function() {
 	   	$(".show_hide").show();
-		$(".slidingDiv").load('/prospection/fiche_prospect.php?ctc=1&num=' + num + '&id=' + id).slideToggle().delay(3000).fadeOut('slow')
+		params = 'ctc=1&num=' + num + '&id=' + id;
+		$(".slidingDiv").load("/prospection/fiche_prospect.php?" + params).slideToggle().delay(3000).fadeOut('slow')
     });    
 };
 

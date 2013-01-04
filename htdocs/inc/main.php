@@ -214,6 +214,12 @@ function check_email($param){
   return preg_match('/^[A-z0-9][\w.-]*@[A-z0-9][\w\-\.]+\.[A-Za-z]{2,4}$/',$param);
 }
 
+function removeSpace($string){
+	$sPattern		= '/\s*/m';
+	$sReplace		= '';
+	return preg_replace( $sPattern, $sReplace, $string );
+}
+
 function getTVA(){
   $result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='taxe_TVA' OR type_pref='taxe_tva' ");
   list($tva) = mysql_fetch_array($result);
@@ -299,7 +305,7 @@ function get_include_contents($filename) {
 
 function format_phone($phone)
 {
-	return preg_replace("/[^0-9++]/", "", $phone);
+	return preg_replace("/[^0-9++]/", "", removeSpace($phone));
 }
 
 header("Content-Type: text/html; charset=utf-8");
