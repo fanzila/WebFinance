@@ -494,7 +494,9 @@ CREATE TABLE IF NOT EXISTS `webfinance_userlog` (
   `id_user` int(11) DEFAULT NULL,
   `id_facture` int(11) DEFAULT NULL,
   `id_client` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id_userlog`)
+  PRIMARY KEY (`id_userlog`),
+  KEY `date` (`date`),
+  KEY `id_user` (`id_user`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=15873 ;
 
 -- --------------------------------------------------------

@@ -40,13 +40,16 @@ global $Client;
 </tr>
 <?php
   //client
-  $clause=" log REGEXP 'client:".$_GET['id']."$|client:".$_GET['id']." ' OR";
+  // Search 'word boundaries' at
+  // https://dev.mysql.com/doc/refman/5.0/en/regexp.html
+
+  $clause=" log REGEXP '[[:<:]]client:$_GET[id][[:>:]]$' OR";
 
 //invoices
 $result = mysql_query("SELECT id_facture FROM webfinance_invoices WHERE id_client=".$_GET['id'])
   or wf_mysqldie();
 while( list($id) = mysql_fetch_array($result))
-  $clause .=" log REGEXP 'fa:$id$|fa:$id ' OR";
+  $clause .=" log REGEXP '[[:<:]]fa:$id" . "[[:>:]]' OR";
 
 $clause = preg_replace('/OR$/','',$clause);
 
