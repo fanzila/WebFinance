@@ -63,7 +63,7 @@ mysql_select_db('mantis')
 
 <select name="year">
 	<?
-for($i=2050; $i>=2012; $i--) {
+for($i=2020; $i>=2009; $i--) {
 	$selected='';
 
 	if($i == $year)
@@ -95,11 +95,9 @@ for($i=2050; $i>=2012; $i--) {
 		}
 	}
 	
-	$date_start = "$year-$month-01";
-	$date_end = "$year-" . ($month + 1) . "-01";
-
+	$total_end = 0;
 	// Print preview
-	foreach($mantis->fetchBillingInformation($date_start, $date_end)
+	foreach($mantis->fetchBillingInformation($year, $month)
 	as $webfinance_id => $billing) {
 
 		$total = 0;
@@ -134,12 +132,20 @@ for($i=2050; $i>=2012; $i--) {
 			$description .= $ticket['mantis_ticket_summary'] ." > $time_human_readable = $price € HT\n"; 
 		}
 
+		$total_end = $total+$total_end; 
+		$total_time_client_human_readable_end = sprintf('%dh%02d',
+		floor($total_end / 60),
+		$total_end % 60);
+		
+		if($total_price > 0) 
+			$total_price_end =  $total_price+$total_price_end; 
+		
 		$total_time_client_human_readable = sprintf('%dh%02d',
 		floor($total / 60),
 		$total % 60);
 
 		$total_price = round($total * $ticket['price'] / 60, 2);
-
+		 
 		echo "<tr> <td></td> <td align=\"right\"><b>TOTAL INVOICED</b></td> ".
 		"<td align=\"right\"><b>$total_time_client_human_readable</b></td> ".
 		"<td align=\"right\"><b>$total_price&euro;</b></td>\n" .
@@ -149,9 +155,9 @@ for($i=2050; $i>=2012; $i--) {
 	}
 
 	?>
-
+<tr style="background:#dddddd;" align="right"><td colspan="6" align="right"><b>Total:</b> <?=$total_price_end?>&euro; - <?=$total_time_client_human_readable_end?></td></tr>
 </table>
-
+<br />
 <font color="red"><blink><b>> A générer UNE seule fois par mois <</b></blink></font><br />
 <form action="fetchBillingInformation.php?month=<?=$month?>&year=<?=$year?>&action=send" method="POST">
 	<input type="submit" name="send_invoices" value="Send invoices to clients"
@@ -160,6 +166,7 @@ for($i=2050; $i>=2012; $i--) {
 	<input type="hidden" name="year" value="<?=$year;?>" />
 
 </form>
-
+<br />
+<br />
 </body>
 </html>
