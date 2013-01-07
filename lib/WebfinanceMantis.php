@@ -93,7 +93,7 @@ class WebfinanceMantis {
 			'JOIN mantis_user_table user ON user.id = bug.reporter_id '.
 			'JOIN mantis_user_table handler ON handler.id = bug.handler_id '.
 			'WHERE '.
-			" bugnote.last_modified BETWEEN '$startDate' ".
+			" bugnote.date_submitted BETWEEN '$startDate' ".
 			" AND '$endDate' ".
 			'GROUP BY bugnote.bug_id '.
 			'ORDER BY project.id';
