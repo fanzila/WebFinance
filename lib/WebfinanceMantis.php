@@ -71,18 +71,19 @@ class WebfinanceMantis {
 		return $list;
 	}
 
-	function fetchBillingInformation($start_date, $end_date) {
+	function fetchBillingInformation($year, $month) {
 
 		$mantisid = self::mantisIdToIdClient();
 
+		$dataparam = date_parse_from_format('d-m-Y', "01-$month-$year");
+		$startDate = mktime(0, 0, 0, $dataparam['month'], $dataparam['day'], $dataparam['year']);
+		$endDate = strtotime("+1 month", $startDate); 
+		
 		// Select the Mantis MySQL database
 		if(!mysql_select_db(self::$_database))
 			throw new Exception(mysql_error());
 
-		$start_date = mysql_real_escape_string($start_date) . ' 00:00:00';
-		$end_date   = mysql_real_escape_string($end_date)   . ' 00:00:00';
-
-		$res = mysql_query('SELECT bug.id, bug.summary, user.realname AS client, '.
+		$req = 'SELECT bug.id, bug.summary, user.realname AS client, '.
 			'  project.name AS project_name, ' .
 			'  SUM(bugnote.time_tracking) AS time, bug.date_submitted, ' .
 			'  handler.realname AS handler, project.id AS project_id '.
@@ -92,10 +93,12 @@ class WebfinanceMantis {
 			'JOIN mantis_user_table user ON user.id = bug.reporter_id '.
 			'JOIN mantis_user_table handler ON handler.id = bug.handler_id '.
 			'WHERE '.
-			"  bugnote.last_modified BETWEEN UNIX_TIMESTAMP('$start_date') ".
-			"    AND UNIX_TIMESTAMP('$end_date') ".
+			" bugnote.last_modified BETWEEN '$startDate' ".
+			" AND '$endDate' ".
 			'GROUP BY bugnote.bug_id '.
-			'ORDER BY project.id')
+			'ORDER BY project.id';
+			
+		$res = mysql_query($req)
 			or die(mysql_error());
 
 		$billing = array();
@@ -124,7 +127,6 @@ class WebfinanceMantis {
 			strftime('%x', $row['date_submitted']),
 			$row['summary']);
 
-
 			if(!isset($billing[$webfinance_project_id]))
 				$billing[$webfinance_project_id] = array();
 
@@ -134,12 +136,12 @@ class WebfinanceMantis {
 				'quantity'              => $row['time'] / 60,
 				'price'                 => 55,
 				'mantis_project_name'   => $row['project_name'],
-				'id_client'			  => $webfinance_project_id,
+				'id_client'			  	=> $webfinance_project_id,
 				'time'                  => $row['time'],
 				'mantis_ticket_summary' => $row['summary'],
 				'mantis_project_id'     => $row['project_id'],
 			);
-
+			
 			// Process total time
 			if(!isset($total_time[$webfinance_project_id]))
 				$total_time[$webfinance_project_id] = 0;
@@ -165,7 +167,7 @@ class WebfinanceMantis {
 				'id_client'			    => $webfinance_project_id,
 				'price'                 => 55,
 				'mantis_project_name'   => '',
-				'mantis_project_id'     => $row['project_id'],
+				'mantis_project_id'     => $row['project_id']
 			);
 		}
 
