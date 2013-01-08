@@ -1,7 +1,7 @@
 <?php
 
 /*
-* Copyright (C) 2012 Cyril Bouthors <cyril@bouthors.org>
+* Copyright (C) 2012-2013 Cyril Bouthors <cyril@bouthors.org>
 *
 * This program is free software: you can redistribute it and/or modify it
 * under the terms of the GNU General Public License as published by the
@@ -81,9 +81,10 @@ for($i=2020; $i>=2009; $i--) {
 <table width="100%" border="0" cellspacing="0" cellpadding="5">
 <tr class="row_header">
 		<th>Client</th>
-		<th>Support type</th>
+		<th>Support type (green=invoiced)</th>
 		<th>Description</th>
 		<th>Time</th>
+		<th>Invoiced&nbsp;time</th>
 		<th>Price</th>
 		<th>Result</th>
 	</tr>
@@ -113,13 +114,26 @@ for($i=2020; $i>=2009; $i--) {
 
 			$price = round($ticket['price'] * $ticket['quantity'], 2);
 
+                        # Convert time as human readable
 			$time_human_readable = sprintf('%dh%02d',
-			floor(abs($ticket['time']) / 60),
-			abs($ticket['time']) % 60);
+                                               floor(abs($ticket['time']) / 60),
+                                               abs($ticket['time']) % 60);
+
+			$invoiced_time_human_readable = sprintf('%dh%02d',
+                                               floor(abs($ticket['invoiced_time']) / 60),
+                                               abs($ticket['invoiced_time']) % 60);
+
+                        # Define background color based on invoice
+                        $color='white';
+                        if(isset($ticket['invoiced'])) {
+                          $color='red';
+                          if($ticket['invoiced'])
+                            $color='lightgreen';
+                        }
 
 			echo "<tr>\n<td> <a href=\"$url_webfinance\">$ticket[mantis_project_name]</a></td>\n";
 
-                        echo "  <td> $ticket[support_type] </td>\n";
+                        echo "  <td bgcolor=\"$color\"> $ticket[support_type] </td>\n";
 
 			if($ticket_number == 0)
 				echo "  <td> $ticket[mantis_ticket_summary] </td>\n";
@@ -128,10 +142,12 @@ for($i=2020; $i>=2009; $i--) {
 				">$ticket[mantis_ticket_summary]</a> </td>\n";
 
 			echo "  <td align=\"right\"> $time_human_readable</td>\n";
-			echo "  <td align=\"right\"> $price&euro; </td>\n";
+			echo "  <td align=\"right\"> $invoiced_time_human_readable</td>\n";
+			echo "  <td bgcolor=\"$color\" align=\"right\"> $price&euro; </td>\n";
 			echo "</tr>\n";
 
-			$total += $ticket['time'];
+                        if($ticket['invoiced'])
+				$total += $ticket['time'];
 			$description .= $ticket['mantis_ticket_summary'] ." > $time_human_readable = $price € HT\n"; 
 		}
 
@@ -149,7 +165,7 @@ for($i=2020; $i>=2009; $i--) {
 
 		$total_price = round($total * $ticket['price'] / 60, 2);
 		 
-		echo "<tr> <td></td> <td align=\"right\"><b>TOTAL INVOICED</b></td> ".
+		echo "<tr> <td colspan=\"3\"></td> <td align=\"right\"><b>TOTAL</b></td> ".
 		"<td align=\"right\"><b>$total_time_client_human_readable</b></td> ".
 		"<td align=\"right\"><b>$total_price&euro;</b></td>\n" .
 		"<td align=\"right\"><b>";

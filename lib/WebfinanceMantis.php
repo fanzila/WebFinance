@@ -1,6 +1,6 @@
 <?php
 /*
-* Copyright (C) 2012 Cyril Bouthors <cyril@bouthors.org>
+* Copyright (C) 2012-2013 Cyril Bouthors <cyril@bouthors.org>
 *
 * This program is free software: you can redistribute it and/or modify it
 * under the terms of the GNU General Public License as published by the
@@ -23,6 +23,25 @@ class WebfinanceMantis {
 	static private $_login = '';
 	static private $_password = '';
         static private $_soapclient = null;
+        static private $_support_type_not_invoiced = array
+          (
+            'Kernel: mise à jour de sécurité' => true,
+            'Kernel: crash, reboot et analyse' => true,
+            'OS: mise à jour de sécurité' => true,
+            'OS: mise à niveau' => true,
+            'MySQL: mise à jour de sécurité' => true,
+            'MySQL: optimisation de base' => true,
+            'MySQL: sauvegardes' => true,
+            'MySQL: restaurations (dans la limite 1/mois)' => true,
+            'Virtualisation: fonctionnalité et mise à jour' => true,
+            'Sauvegarde des fichiers, données et configurations' => true,
+            'Redondance machine virtuelle' => true,
+            'Serveur HTTP, FTP, mail: maintenance et mise à jour' => true,
+            "Analyse des causes d'un piratage" => true,
+            "Réparation suite à piratage d'une brique sous notre responsabilité" => true,
+            'Monitoring' => true,
+	    'Forfait prépayé' => true,
+        );
 
         function __construct() {
 
@@ -131,17 +150,29 @@ class WebfinanceMantis {
 			if(!isset($billing[$webfinance_project_id]))
 				$billing[$webfinance_project_id] = array();
 
+			$invoiced = true;
+			$price = 55;
+			$invoiced_time = $row['time'];
+                        if(isset(self::$_support_type_not_invoiced[$row['support_type']]))
+			{
+				$invoiced = false;
+				$price = 0;
+				$invoiced_time = 0;
+			}
+
 			$billing[$webfinance_project_id][$row['id']] =
 			array(
 				'description'           => $description,
 				'quantity'              => $row['time'] / 60,
-				'price'                 => 55,
+				'price'                 => $price,
 				'mantis_project_name'   => $row['project_name'],
 				'id_client'			  	=> $webfinance_project_id,
 				'time'                  => $row['time'],
+				'invoiced_time'         => $invoiced_time,
 				'mantis_ticket_summary' => $row['summary'],
 				'mantis_project_id'     => $row['project_id'],
                                 'support_type'          => $row['support_type'],
+                                'invoiced'              => $invoiced,
 			);
 			
 			// Process total time
@@ -166,10 +197,12 @@ class WebfinanceMantis {
 				'mantis_ticket_summary' => $description,
 				'quantity'              => - $time_to_deduce / 60,
 				'time'                  => - $time_to_deduce,
+				'invoiced_time'         => - $time_to_deduce,
 				'id_client'			    => $webfinance_project_id,
-				'price'                 => 55,
+				'price'                 => $price,
 				'mantis_project_name'   => '',
-				'mantis_project_id'     => $row['project_id']
+				'mantis_project_id'     => $row['project_id'],
+				'invoiced'              => true,
 			);
 		}
 
