@@ -81,7 +81,7 @@ for($i=2020; $i>=2009; $i--) {
 <table width="100%" border="0" cellspacing="0" cellpadding="5">
 <tr class="row_header">
 		<th>Client</th>
-		<th>Support type (green=invoiced)</th>
+		<th>Support type</th>
 		<th>Description</th>
 		<th>Time</th>
 		<th>Invoiced&nbsp;time</th>
@@ -125,10 +125,8 @@ for($i=2020; $i>=2009; $i--) {
 
                         # Define background color based on invoice
                         $color='white';
-                        if(isset($ticket['invoiced'])) {
+                        if(isset($ticket['invoiced']) and !$ticket['invoiced']) {
                           $color='red';
-                          if($ticket['invoiced'])
-                            $color='lightgreen';
                         }
 
 			echo "<tr>\n<td> <a href=\"$url_webfinance\">$ticket[mantis_project_name]</a></td>\n";
@@ -139,17 +137,31 @@ for($i=2020; $i>=2009; $i--) {
 				echo "  <td> $ticket[mantis_ticket_summary] </td>\n";
 			else
 				echo "  <td> <a href=\"$url_ticket\"".
-				">$ticket[mantis_ticket_summary]</a> </td>\n";
+				">$ticket[mantis_ticket_summary] #$ticket_number</a> </td>\n";
 
 			echo "  <td align=\"right\"> $time_human_readable</td>\n";
 			echo "  <td align=\"right\"> $invoiced_time_human_readable</td>\n";
+
+			$color='white';
+			if($price==0)
+				$color='red';
 			echo "  <td bgcolor=\"$color\" align=\"right\"> $price&euro; </td>\n";
+
 			echo "</tr>\n";
 
-                        if($ticket['invoiced'])
+			$type = ' (inclus dans le forfait)';
+                        if($ticket['invoiced']) {
 				$total += $ticket['time'];
-			$description .= $ticket['mantis_ticket_summary'] ." > $time_human_readable = $price € HT\n"; 
+				$type = '';
+			}
+
+			if($ticket_number>0)
+				$description.= "Ticket #$ticket_number: ";
+
+			$description .= "$ticket[mantis_ticket_summary], $time_human_readable$type, ${price} €\n";
 		}
+
+		// echo "<tr><td><pre>$description </pre> </td> </tr>";
 
 		$total_end = $total+$total_end; 
 		$total_time_client_human_readable_end = sprintf('%dh%02d',
@@ -164,7 +176,7 @@ for($i=2020; $i>=2009; $i--) {
 		$total % 60);
 
 		$total_price = round($total * $ticket['price'] / 60, 2);
-		 
+
 		echo "<tr> <td colspan=\"3\"></td> <td align=\"right\"><b>TOTAL</b></td> ".
 		"<td align=\"right\"><b>$total_time_client_human_readable</b></td> ".
 		"<td align=\"right\"><b>$total_price&euro;</b></td>\n" .
