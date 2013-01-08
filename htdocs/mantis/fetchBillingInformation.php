@@ -158,7 +158,10 @@ for($i=2020; $i>=2009; $i--) {
 			if($ticket_number>0)
 				$description.= "Ticket #$ticket_number: ";
 
-			$description .= "$ticket[mantis_ticket_summary], $time_human_readable$type, ${price} €\n";
+			$description .= "$ticket[mantis_ticket_summary], $time_human_readable$type\n";
+
+			if(!empty($ticket['mantis_project_name']))
+				$client_name = $ticket['mantis_project_name'];
 		}
 
 		// echo "<tr><td><pre>$description </pre> </td> </tr>";
@@ -177,9 +180,9 @@ for($i=2020; $i>=2009; $i--) {
 
 		$total_price = round($total * $ticket['price'] / 60, 2);
 
-		echo "<tr> <td colspan=\"3\"></td> <td align=\"right\"><b>TOTAL</b></td> ".
-		"<td align=\"right\"><b>$total_time_client_human_readable</b></td> ".
-		"<td align=\"right\"><b>$total_price&euro;</b></td>\n" .
+		echo "<tr> <td colspan=\"3\"></td> <td align=\"right\" bgcolor=\"lightblue\"><b>TOTAL <a href=\"$url_webfinance\">$client_name</a> </b></td> ".
+		"<td align=\"right\" bgcolor=\"lightblue\"><b>$total_time_client_human_readable</b></td> ".
+		"<td align=\"right\" bgcolor=\"lightblue\"><b>$total_price&euro;</b></td>\n" .
 		"<td align=\"right\"><b>";
 		if($total_price > 1 && $action == 'send') { if($mantis->createAndSendInvoice($ticket['id_client'], $total_price, $description)) { echo 'Sent'; } }
 		echo "</b></td></tr>\n";
