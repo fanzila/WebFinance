@@ -28,7 +28,6 @@ class WebfinanceMantis {
             'Kernel: mise à jour de sécurité' => true,
             'Kernel: crash, reboot et analyse' => true,
             'OS: mise à jour de sécurité' => true,
-            'OS: mise à niveau' => true,
             'MySQL: mise à jour de sécurité' => true,
             'MySQL: optimisation de base' => true,
             'MySQL: sauvegardes' => true,
