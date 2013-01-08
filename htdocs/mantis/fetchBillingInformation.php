@@ -81,6 +81,7 @@ for($i=2020; $i>=2009; $i--) {
 <table width="100%" border="0" cellspacing="0" cellpadding="5">
 <tr class="row_header">
 		<th>Client</th>
+		<th>Support type</th>
 		<th>Description</th>
 		<th>Time</th>
 		<th>Price</th>
@@ -117,6 +118,8 @@ for($i=2020; $i>=2009; $i--) {
 			abs($ticket['time']) % 60);
 
 			echo "<tr>\n<td> <a href=\"$url_webfinance\">$ticket[mantis_project_name]</a></td>\n";
+
+                        echo "  <td> $ticket[support_type] </td>\n";
 
 			if($ticket_number == 0)
 				echo "  <td> $ticket[mantis_ticket_summary] </td>\n";

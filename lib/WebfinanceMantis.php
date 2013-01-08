@@ -86,18 +86,20 @@ class WebfinanceMantis {
 		$req = 'SELECT bug.id, bug.summary, user.realname AS client, '.
 			'  project.name AS project_name, ' .
 			'  SUM(bugnote.time_tracking) AS time, bug.date_submitted, ' .
-			'  handler.realname AS handler, project.id AS project_id '.
+			'  handler.realname AS handler, project.id AS project_id, '.
+			"  IF(custom_field_string.value IS NULL, 'À définir', custom_field_string.value) AS support_type ".
 			'FROM mantis_bug_table bug '.
 			'JOIN mantis_bugnote_table bugnote ON bug.id = bugnote.bug_id '.
 			'JOIN mantis_project_table project ON bug.project_id = project.id '.
 			'JOIN mantis_user_table user ON user.id = bug.reporter_id '.
-			'JOIN mantis_user_table handler ON handler.id = bug.handler_id '.
-			'WHERE '.
-			" bugnote.date_submitted BETWEEN '$startDate' ".
-			" AND '$endDate' ".
+			'LEFT JOIN mantis_user_table handler ON handler.id = bug.handler_id '.
+			'LEFT JOIN mantis_custom_field_string_table custom_field_string ON custom_field_string.bug_id = bug.id '.
+			'LEFT JOIN mantis_custom_field_table custom_field ON custom_field.id = custom_field_string.field_id '.
+			"WHERE bugnote.date_submitted BETWEEN $startDate AND $endDate ".
+			"AND (custom_field.name = 'Support type' OR custom_field.name IS NULL) ".
 			'GROUP BY bugnote.bug_id '.
 			'ORDER BY project.id';
-			
+
 		$res = mysql_query($req)
 			or die(mysql_error());
 
@@ -107,7 +109,6 @@ class WebfinanceMantis {
 
 		// Prepare billing information
 		while($row = mysql_fetch_assoc($res)) {
-
 			$webfinance_project_id = $mantisid[$row['project_id']];
 
 			if(!isset($webfinance_project_id))
@@ -140,6 +141,7 @@ class WebfinanceMantis {
 				'time'                  => $row['time'],
 				'mantis_ticket_summary' => $row['summary'],
 				'mantis_project_id'     => $row['project_id'],
+                                'support_type'          => $row['support_type'],
 			);
 			
 			// Process total time
