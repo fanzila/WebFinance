@@ -180,9 +180,9 @@ for($i=2020; $i>=2009; $i--) {
 
 		$total_price = round($total * $ticket['price'] / 60, 2);
 
-		echo "<tr> <td colspan=\"3\"></td> <td align=\"right\" bgcolor=\"lightblue\"><b>TOTAL <a href=\"$url_webfinance\">$client_name</a> </b></td> ".
-		"<td align=\"right\" bgcolor=\"lightblue\"><b>$total_time_client_human_readable</b></td> ".
-		"<td align=\"right\" bgcolor=\"lightblue\"><b>$total_price&euro;</b></td>\n" .
+		echo "<tr bgcolor=\"lightblue\"> <td colspan=\"3\"></td> <td align=\"right\"><b>TOTAL <a href=\"$url_webfinance\">$client_name</a> </b></td> ".
+		"<td align=\"right\"><b>$total_time_client_human_readable</b></td> ".
+		"<td align=\"right\"><b>$total_price&euro;</b></td>\n" .
 		"<td align=\"right\"><b>";
 		if($total_price > 1 && $action == 'send') { if($mantis->createAndSendInvoice($ticket['id_client'], $total_price, $description)) { echo 'Sent'; } }
 		echo "</b></td></tr>\n";
