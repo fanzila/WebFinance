@@ -178,7 +178,8 @@ class WebfinanceMantis {
 			if(!isset($total_time[$webfinance_project_id]))
 				$total_time[$webfinance_project_id] = 0;
 
-			$total_time[$webfinance_project_id] += $row['time'];
+			if($invoiced)
+				$total_time[$webfinance_project_id] += $row['time'];
 		}
 
 		// Process total time
