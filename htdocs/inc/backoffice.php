@@ -38,7 +38,7 @@ require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/User.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/Facture.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/Client.php");
 $language='fr_FR';
-foreach(array(LC_MESSAGES, LC_TIME, LC_MONETARY) as $locale)
+foreach(array(LC_MESSAGES, LC_TIME, LC_MONETARY, LC_CTYPE) as $locale)
   setlocale($locale, $language.".UTF-8")
     or die("locale $locale language failed $language");
 

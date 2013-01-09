@@ -29,7 +29,7 @@ try{
   $company->ValidatePermission($_SESSION['cybsso_user']['email']);
 
   // Display localized amounts and dates
-  foreach(array(LC_MESSAGES, LC_TIME, LC_MONETARY) as $locale)
+  foreach(array(LC_MESSAGES, LC_TIME, LC_MONETARY, LC_CTYPE) as $locale)
     setlocale($locale, $_SESSION['cybsso_user']['language'].".UTF-8")
       or die("locale $locale language failed $_SESSION[cybsso_user][language]");
 

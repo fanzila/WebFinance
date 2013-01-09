@@ -400,7 +400,7 @@ class Facture extends WFO {
 
 	  $facture	= Facture::getInfos($id_invoice);
 
-          foreach(array(LC_MESSAGES, LC_TIME, LC_MONETARY) as $locale)
+          foreach(array(LC_MESSAGES, LC_TIME, LC_MONETARY, LC_CTYPE) as $locale)
             setlocale($locale, $facture->language.".UTF-8")
               or die("locale $locale language failed $facture->language");
 
@@ -670,7 +670,7 @@ class Facture extends WFO {
 
 	  global $language;
 	
-          foreach(array(LC_MESSAGES, LC_TIME, LC_MONETARY) as $locale)
+          foreach(array(LC_MESSAGES, LC_TIME, LC_MONETARY, LC_CTYPE) as $locale)
             setlocale($locale, $language.".UTF-8")
               or die("locale $locale language failed $language");
 

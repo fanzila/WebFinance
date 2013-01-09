@@ -42,7 +42,7 @@ if (isset($language) and $language!='en_US') {
 		  die("Error running msgfmt in ".__FILE__." (retcode=$retval)");
   }
 
-  foreach(array(LC_MESSAGES, LC_TIME, LC_MONETARY) as $locale)
+  foreach(array(LC_MESSAGES, LC_TIME, LC_MONETARY, LC_CTYPE) as $locale)
     setlocale($locale, $language.".UTF-8")
     or die("locale $locale language failed $language");
 
