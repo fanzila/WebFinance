@@ -214,10 +214,9 @@ class WebfinanceMantis {
 	}
 
 	function createAndSendInvoice($id_client, $prix_ht, $items) {
-		
-		$month = date('m/Y');
-		$description = "Infogérance ponctuelle $month
-Détails des tickets ci-dessous : \n$items";
+
+		$previous_month = date('m/Y', mktime(0, 0, 0, date('n') - 1));
+		$description = "Détails des interventions du support professionnel $previous_month : \n$items";
 		
 		// Create invoice
 		$Facture = new Facture();
@@ -229,19 +228,30 @@ Détails des tickets ci-dessous : \n$items";
 		$id_facture = $Facture->create($invoice);
 		
 		// Get invoice payement and delivery type 
-		$res = mysql_query("SELECT payment_method,delivery  FROM webfinance_invoices WHERE id_client = $id_client AND type_doc = 'facture' AND is_envoye = 1 ORDER BY id_facture DESC LIMIT 1")
-			or wf_mysqldie();
+		$res = mysql_query(
+                  'SELECT payment_method,delivery  '.
+                  'FROM webfinance_invoices '.
+                  "WHERE id_client = $id_client ".
+                  "  AND type_doc = 'facture' " .
+                  '  AND is_envoye = 1 '.
+                  'ORDER BY id_facture DESC '.
+                  'LIMIT 1')
+			or die(mysql_error());
+                $payment_method = 'unknown';
+                $delivery_method = 'email';
 		if(mysql_num_rows($res) > 0) {
 			$type_payment_res = mysql_fetch_array($res);
 			$payment_method = $type_payment_res['payment_method'];
 			$delivery_method = $type_payment_res['delivery'];
-		} else {
-			$payment_method = 'unknown';
-			$delivery_method = 'email';
 		}
 
 		// Get id_compte
-		$result = mysql_query("SELECT id_pref,value FROM webfinance_pref WHERE type_pref='rib' LIMIT 1") or die(mysql_error());
+		$result = mysql_query(
+                  'SELECT id_pref,value '.
+                  'FROM webfinance_pref '.
+                  "WHERE type_pref='rib' ".
+                  'LIMIT 1')
+                  or die(mysql_error());
 		$cpt = mysql_fetch_object($result);
 		$id_compte = $cpt->id_pref;
 
@@ -259,7 +269,8 @@ Détails des tickets ci-dessous : \n$items";
 		$payment_method,
 		$id_compte,
 		$id_facture);
-		mysql_query($q) or die(mysql_error());
+		mysql_query($q)
+                  or die(mysql_error());
 		
 		// Add service rows to invoice
 		$q = sprintf("INSERT INTO webfinance_invoice_rows (id_facture,description,prix_ht,qtt,ordre) ".
