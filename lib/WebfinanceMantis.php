@@ -285,11 +285,14 @@ class WebfinanceMantis {
 
 		if($payment_method == 'direct_debit') { 
 			// Plan the invoice to be debited if needed
-			mysql_query(
-			"INSERT INTO direct_debit_row ".
-				"SET invoice_id = $id_facture, ".
-				"    state='todo'")
-				or die(mysql_error());
+
+			if ($prix_ht > 0)
+				mysql_query(
+					"INSERT INTO direct_debit_row ".
+					"SET invoice_id = $id_facture, ".
+					"    state='todo'")
+					or die(mysql_error());
+
 			// Flag invoice as paid 
 			$Facture->setPaid($id_facture);
 		}
@@ -302,6 +305,9 @@ class WebfinanceMantis {
 			$attachments[] = $Facture->generatePDF($id_facture, true);
 			$Facture->setSent($id_facture);
 		}
+
+		if ($prix_ht == 0)
+			$Facture->setPaid($id_facture);
 		
 		return true;
 	}

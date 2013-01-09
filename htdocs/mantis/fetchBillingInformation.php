@@ -83,7 +83,7 @@ for($i=2020; $i>=2009; $i--) {
 		<th>Client</th>
 		<th>Support type</th>
 		<th>Description</th>
-		<th>Time</th>
+		<th align="right">Time</th>
 		<th>Invoiced&nbsp;time</th>
 		<th>Price</th>
 		<th>Result</th>
@@ -184,7 +184,15 @@ for($i=2020; $i>=2009; $i--) {
 		"<td align=\"right\"><b>$total_time_client_human_readable</b></td> ".
 		"<td align=\"right\"><b>$total_price&euro;</b></td>\n" .
 		"<td align=\"right\"><b>";
-		if($total_price > 1 && $action == 'send') { if($mantis->createAndSendInvoice($ticket['id_client'], $total_price, $description)) { echo 'Sent'; } }
+
+		if($action == 'send')
+                {
+                    if($mantis->createAndSendInvoice(
+                        $ticket['id_client'], $total_price, $description))
+                    {
+                      echo 'Sent';
+                    }
+                }
 		echo "</b></td></tr>\n";
 	}
 
