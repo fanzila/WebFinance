@@ -123,7 +123,7 @@ class WebfinanceMantis {
 
 		$billing = array();
 
-		setlocale(LC_TIME, 'fr_FR');
+		setlocale(LC_TIME, 'fr_FR.UTF8');
 
 		// Prepare billing information
 		while($row = mysql_fetch_assoc($res)) {
@@ -214,10 +214,6 @@ class WebfinanceMantis {
 	}
 
 	function createAndSendInvoice($id_client, $prix_ht, $items) {
-
-		$previous_month = date('m/Y', mktime(0, 0, 0, date('n') - 1));
-		$description = "Détails des interventions du support professionnel $previous_month : \n$items";
-		
 		// Create invoice
 		$Facture = new Facture();
 		$invoice = array(
@@ -278,9 +274,10 @@ class WebfinanceMantis {
 			"FROM webfinance_invoice_rows ".
 			"WHERE id_facture=%d",
 		$id_facture,
-		mysql_real_escape_string($description),
+		mysql_real_escape_string($items),
 		$prix_ht, 1, $id_facture);
-		$result = mysql_query($q) or die(mysql_error());
+		$result = mysql_query($q)
+                  or die(mysql_error());
 		mysql_query("UPDATE webfinance_invoices SET date_generated=NULL WHERE id_facture=".$id_facture) or die(mysql_error());
 
 		if($payment_method == 'direct_debit') { 
