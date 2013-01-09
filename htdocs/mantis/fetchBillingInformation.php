@@ -191,7 +191,8 @@ for($i=2020; $i>=2009; $i--) {
                 {
                     if($mantis->createAndSendInvoice(
                         $ticket['id_client'],
-                        $total_price,
+                        $ticket['price'], # unit price
+                        $total / 60,      # quantity in hours
                         $description))
                     {
                       echo 'Sent';

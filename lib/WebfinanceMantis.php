@@ -213,7 +213,7 @@ class WebfinanceMantis {
 		return $billing;
 	}
 
-	function createAndSendInvoice($id_client, $prix_ht, $items) {
+	function createAndSendInvoice($id_client, $prix_ht, $quantity, $items) {
 		// Create invoice
 		$Facture = new Facture();
 		$invoice = array(
@@ -275,7 +275,7 @@ class WebfinanceMantis {
 			"WHERE id_facture=%d",
 		$id_facture,
 		mysql_real_escape_string($items),
-		$prix_ht, 1, $id_facture);
+		$prix_ht, $quantity, $id_facture);
 		$result = mysql_query($q)
                   or die(mysql_error());
 		mysql_query("UPDATE webfinance_invoices SET date_generated=NULL WHERE id_facture=".$id_facture) or die(mysql_error());
@@ -283,7 +283,7 @@ class WebfinanceMantis {
 		if($payment_method == 'direct_debit') { 
 			// Plan the invoice to be debited if needed
 
-			if ($prix_ht > 0)
+			if ($prix_ht*$quantity > 0)
 				mysql_query(
 					"INSERT INTO direct_debit_row ".
 					"SET invoice_id = $id_facture, ".
@@ -303,7 +303,7 @@ class WebfinanceMantis {
 			$Facture->setSent($id_facture);
 		}
 
-		if ($prix_ht == 0)
+		if ($prix_ht*$quantity == 0)
 			$Facture->setPaid($id_facture);
 		
 		return true;
