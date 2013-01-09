@@ -98,12 +98,14 @@ for($i=2020; $i>=2009; $i--) {
 	}
 	
 	$total_end = 0;
+	$total_price_end = 0;
+
 	// Print preview
 	foreach($mantis->fetchBillingInformation($year, $month)
-	as $webfinance_id => $billing) {
+          as $webfinance_id => $billing) {
 
 		$total = 0;
-		$description = "ATTENTION : Veuillez prendre note de l'entrée en vigueur de notre nouveau tarif horaire au 1er mars 2013 : 75€ HT.\n\n";
+		$description = "Veuillez prendre note de l'entrée en vigueur de notre nouveau tarif horaire au 1er mars 2013 : 75€ HT.\n\n";
 		$description .= strftime("Détails des interventions du support professionnel pour le mois de %B %Y : \n", mktime(0, 0, 0, $month, 1, $year));
 		
 		foreach($billing as $ticket_number => $ticket) {
@@ -167,17 +169,16 @@ for($i=2020; $i>=2009; $i--) {
 
 		// echo "<tr><td><pre>$description </pre> </td> </tr>";
 
-		$total_end = $total+$total_end; 
+		$total_end += $total;
 		$total_time_client_human_readable_end = sprintf('%dh%02d',
-		floor($total_end / 60),
-		$total_end % 60);
-		
-		if($total_price > 0) 
-			$total_price_end =  $total_price+$total_price_end; 
+                                                        floor($total_end / 60),
+                                                        $total_end % 60);
+
+                $total_price_end += $total_price;
 		
 		$total_time_client_human_readable = sprintf('%dh%02d',
-		floor($total / 60),
-		$total % 60);
+                                                    floor($total / 60),
+                                                    $total % 60);
 
 		$total_price = round($total * $ticket['price'] / 60, 2);
 
@@ -189,7 +190,9 @@ for($i=2020; $i>=2009; $i--) {
 		if($action == 'send')
                 {
                     if($mantis->createAndSendInvoice(
-                        $ticket['id_client'], $total_price, $description))
+                        $ticket['id_client'],
+                        $total_price,
+                        $description))
                     {
                       echo 'Sent';
                     }
