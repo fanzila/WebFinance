@@ -37,7 +37,10 @@ require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/dbconnect.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/User.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/Facture.php");
 require($GLOBALS['_SERVER']['DOCUMENT_ROOT']."/inc/Client.php");
-setlocale(LC_ALL, "fr_FR.UTF-8");
+$language='fr_FR';
+foreach(array(LC_MESSAGES, LC_TIME, LC_MONETARY) as $locale)
+  setlocale($locale, $language.".UTF-8")
+    or die("locale $locale language failed $language");
 
 function parselogline($str) {
   if (preg_match("/(user|fa|client):([0-9]+)/", $str)) {

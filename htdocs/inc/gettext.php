@@ -42,8 +42,9 @@ if (isset($language) and $language!='en_US') {
 		  die("Error running msgfmt in ".__FILE__." (retcode=$retval)");
   }
 
-  setlocale(LC_ALL, $language.".UTF-8")
-    or die("local LC_ALL language failed $language");
+  foreach(array(LC_MESSAGES, LC_TIME, LC_MONETARY) as $locale)
+    setlocale($locale, $language.".UTF-8")
+    or die("locale $locale language failed $language");
 
   bindtextdomain('webfinance', dirname(__FILE__) . '/../../lang')
 	  or die("Set gettext bindtextdomain language failed\n");

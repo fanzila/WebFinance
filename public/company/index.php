@@ -29,7 +29,9 @@ try{
   $company->ValidatePermission($_SESSION['cybsso_user']['email']);
 
   // Display localized amounts and dates
-  setlocale(LC_ALL, $_SESSION['cybsso_user']['language'] . '.utf8');
+  foreach(array(LC_MESSAGES, LC_TIME, LC_MONETARY) as $locale)
+    setlocale($locale, $_SESSION['cybsso_user']['language'].".UTF-8")
+      or die("locale $locale language failed $_SESSION[cybsso_user][language]");
 
   $user = new WebfinanceUser($_SESSION['cybsso_user']['email']);
   $smarty->assign('this_company_id', $_GET['company_id']);
