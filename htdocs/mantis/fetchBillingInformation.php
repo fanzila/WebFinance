@@ -180,7 +180,9 @@ for($i=2020; $i>=2009; $i--) {
                                                     floor($total / 60),
                                                     $total % 60);
 
-		$total_price = round($total * $ticket['price'] / 60, 2);
+		$total_price = round(
+                  round($total / 60, 2) * $ticket['price'],
+                  2);
 
 		echo "<tr bgcolor=\"lightblue\"> <td colspan=\"3\"></td> <td align=\"right\"><b>TOTAL <a href=\"$url_webfinance\">$client_name</a> </b></td> ".
 		"<td align=\"right\"><b>$total_time_client_human_readable</b></td> ".
@@ -192,7 +194,7 @@ for($i=2020; $i>=2009; $i--) {
                     if($mantis->createAndSendInvoice(
                         $ticket['id_client'],
                         $ticket['price'], # unit price
-                        $total / 60,      # quantity in hours
+                        round($total / 60, 2),      # quantity in hours
                         $description))
                     {
                       echo 'Sent';
