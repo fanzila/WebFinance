@@ -80,7 +80,6 @@ for($i=2020; $i>=2009; $i--) {
 <br /><br />
 <table width="100%" border="0" cellspacing="0" cellpadding="5">
 <tr class="row_header">
-		<th>Client</th>
 		<th>Support type</th>
 		<th>Description</th>
 		<th align="right">Time</th>
@@ -132,9 +131,7 @@ for($i=2020; $i>=2009; $i--) {
                           $color='red';
                         }
 
-			echo "<tr>\n<td> <a href=\"$url_webfinance\">$ticket[mantis_project_name]</a></td>\n";
-
-                        echo "  <td bgcolor=\"$color\"> $ticket[support_type] </td>\n";
+                        echo "<tr>\n  <td bgcolor=\"$color\"> $ticket[support_type] </td>\n";
 
 			if($ticket_number == 0)
 				echo "  <td> $ticket[mantis_ticket_summary] </td>\n";
@@ -184,7 +181,7 @@ for($i=2020; $i>=2009; $i--) {
                   round($total / 60, 2) * $ticket['price'],
                   2);
 
-		echo "<tr bgcolor=\"lightblue\"> <td colspan=\"3\"></td> <td align=\"right\"><b>TOTAL <a href=\"$url_webfinance\">$client_name</a> </b></td> ".
+		echo "<tr bgcolor=\"lightblue\"> <td colspan=\"2\"></td> <td align=\"right\"><b>TOTAL <a href=\"$url_webfinance\">$client_name</a> </b></td> ".
 		"<td align=\"right\"><b>$total_time_client_human_readable</b></td> ".
 		"<td align=\"right\"><b>$total_price&euro;</b></td>\n" .
 		"<td align=\"right\"><b>";
@@ -204,7 +201,7 @@ for($i=2020; $i>=2009; $i--) {
 	}
 
 	?>
-<tr style="background:#dddddd;" align="right"><td colspan="6" align="right"><b>Total:</b> <?=$total_price_end?>&euro; - <?=$total_time_client_human_readable_end?></td></tr>
+<tr style="background:#dddddd;" align="right"><td colspan="5" align="right"><b>Total:</b> <?=$total_price_end?>&euro; - <?=$total_time_client_human_readable_end?></td></tr>
 </table>
 <br />
 <font color="red"><blink><b>> A générer UNE seule fois par mois <</b></blink></font><br />
