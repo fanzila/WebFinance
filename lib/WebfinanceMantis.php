@@ -40,6 +40,8 @@ class WebfinanceMantis {
             "Réparation suite à piratage d'une brique sous notre responsabilité" => true,
             'Monitoring' => true,
 	    'Forfait prépayé' => true,
+	    'Commercial' => true,
+	    'Administratif' => true,
         );
 
         function __construct() {
