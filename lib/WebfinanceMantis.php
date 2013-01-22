@@ -29,9 +29,8 @@ class WebfinanceMantis {
             'Forfait Prépayé' => true,
             'Infogérance - Inclus' => true,
             'ISVTEC - Interne' => true,
-            'Commercial' => true,
 
-            // To be removed:
+            // To be removed on Feb 2013
             'Kernel: mise à jour de sécurité' => true,
             'Kernel: crash, reboot et analyse' => true,
             'OS: mise à jour de sécurité' => true,
@@ -47,6 +46,7 @@ class WebfinanceMantis {
             "Réparation suite à piratage d'une brique sous notre responsabilité" => true,
             'Monitoring' => true,
 	    'Forfait prépayé' => true,
+            'Commercial' => true,
         );
 
         function __construct() {
