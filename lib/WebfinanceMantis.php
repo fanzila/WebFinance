@@ -25,6 +25,13 @@ class WebfinanceMantis {
         static private $_soapclient = null;
         static private $_support_type_not_invoiced = array
           (
+            'Administratif' => true,
+            'Forfait Prépayé' => true,
+            'Infogérance - Inclus' => true,
+            'ISVTEC - Interne' => true,
+            'Commercial' => true,
+
+            // To be removed:
             'Kernel: mise à jour de sécurité' => true,
             'Kernel: crash, reboot et analyse' => true,
             'OS: mise à jour de sécurité' => true,
@@ -40,8 +47,6 @@ class WebfinanceMantis {
             "Réparation suite à piratage d'une brique sous notre responsabilité" => true,
             'Monitoring' => true,
 	    'Forfait prépayé' => true,
-	    'Commercial' => true,
-	    'Administratif' => true,
         );
 
         function __construct() {
