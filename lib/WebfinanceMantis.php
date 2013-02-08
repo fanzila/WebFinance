@@ -404,16 +404,20 @@ class WebfinanceMantis {
 
               $url_ticket =
                 "https://www.isvtec.com/infogerance/ticket/view.php?id=$ticket_number";
-              $pdf->Write(5,utf8_decode("\n\nTicket #$ticket_number :"), $url_ticket);
-
-              $pdf->Write(5,utf8_decode("Description de l'intervention: $ticket[mantis_ticket_summary]\n"));
-
-              $pdf->Write(5,utf8_decode("Temps passé: $ticket[time_human_readable]\n"));
 
               $type = 'Inclus dans le forfait';
-
               if($ticket['invoiced'])
-                $type = 'Hors forfait';
+                $type = 'Hors périmètre de contrat';
+
+              $pdf->SetFont('Times','B',12);
+              $pdf->Write(5,utf8_decode("\n$ticket[mantis_ticket_summary]\n"));
+              $pdf->SetFont('Times','',12);
+
+              $pdf->Write(5,utf8_decode("Ticket #$ticket_number\n"),
+                $url_ticket);
+
+              $pdf->Write(5,
+                utf8_decode("Temps passé: $ticket[time_human_readable]\n"));
 
               $pdf->Write(5,utf8_decode("$type\n"));
             }
