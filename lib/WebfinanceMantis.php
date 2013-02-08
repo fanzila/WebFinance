@@ -74,25 +74,26 @@ class WebfinanceMantis {
 
 	function mantisIdToIdClient() {  
 
-		mysql_select_db('webfinance');
-		$query = "SELECT id_client, id_mantis FROM webfinance_clients";
+		$query = "SELECT id_client, id_mantis ".
+                  "FROM webfinance.webfinance_clients ".
+                  "WHERE id_mantis != 0";
+
 		$result = mysql_query($query)
                   or die(mysql_error());
-		$list = array();
-		while($row = mysql_fetch_assoc($result))
-		{
-			$list[$row['id_mantis']] = $row['id_client']; 
-		}
 
-		//special case
+		$list = array();
+
+		while($row = mysql_fetch_assoc($result))
+                  $list[$row['id_mantis']] = $row['id_client'];
+
+		// Special case
 		$list[338] = 0;		//ISVTEC project
 		$list[387] = 0;		//ISVTEC project
 		$list[381] = 0;		//ISVTEC project
 		$list[305] = 0;		//NIPLEX project
 		$list[313] = 0;		//custemail project
-		$list[320] = 0;		//galaxya project
 		$list[327] = 0;		//GOM project		
-		$list[295] = 96;	//double project for Apocop (Nespresso)
+		$list[295] = 96;	//double project for Apocope (Nespresso)
 
 		return $list;
 	}
