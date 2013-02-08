@@ -23,7 +23,7 @@ require_once("WFO.php");
 require_once(dirname(__FILE__)."/../inc/main.php");
 require_once("/usr/share/php/libphp-phpmailer/class.phpmailer.php");
 require_once("/usr/share/fpdf/fpdf.php");
-require_once(dirname(__FILE__)."/../../lib/fpdi/fpdi.php");
+require_once('fpdi/fpdi.php');
 
 class Facture extends WFO {
   function Facture() {
