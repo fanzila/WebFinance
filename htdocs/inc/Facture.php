@@ -662,7 +662,7 @@ class Facture extends WFO {
           if($target == 'file')
             $pdf->Output($filename, 'F');
           else
-            $pdf->Output($filename, 'I');
+            $pdf->Output(basename($filename), 'I');
 	  $pdf->Close();
 
 	  // Delete temporary logo file
