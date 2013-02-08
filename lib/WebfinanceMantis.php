@@ -17,6 +17,8 @@
 *
 */
 
+require_once('WebfinancePreferences.php');
+
 class WebfinanceMantis {
 
 	static private $_database = 'mantis';
@@ -51,22 +53,15 @@ class WebfinanceMantis {
 
         function __construct() {
 
-          $res = mysql_query(
-            'SELECT type_pref, value '.
-            'FROM webfinance_pref '.
-            "WHERE type_pref IN ('mantis_login', 'mantis_password', 'mantis_api_url')")
-            or die(mysql_error());
+          $prefs = new WebfinancePreferences;
 
-          while ($row = mysql_fetch_assoc($res))
-            $mantis[$row['type_pref']] = $row['value'];
-
-          if(isset($mantis['mantis_login'], $mantis['mantis_password'],
-              $mantis['mantis_api_url']))
+          if(isset($prefs->prefs['mantis_login'], $prefs->prefs['mantis_password'],
+              $prefs->prefs['mantis_api_url']))
             {
-              $this->_login    = $mantis['mantis_login'];
-              $this->_password = $mantis['mantis_password'];
+              $this->_login    = $prefs->prefs['mantis_login'];
+              $this->_password = $prefs->prefs['mantis_password'];
               $this->_soapclient = new SoapClient(null, array(
-                                     'location' => $mantis['mantis_api_url'],
+                                     'location' => $prefs->prefs['mantis_api_url'],
                                      'uri'      => 'ns1',
                                    ));
             }
