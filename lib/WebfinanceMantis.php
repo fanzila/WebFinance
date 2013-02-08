@@ -423,6 +423,30 @@ class WebfinanceMantis {
             }
           }
 
+          $pdf->AddPage();
+          $pdf->SetFont('Times','B',12);
+          $pdf->Write(5,utf8_decode("Les informations utiles ISVTEC\n\n"));
+          $pdf->SetFont('Times','',12);
+
+          $pdf->Write(5,utf8_decode("\nNotre équipe est à votre disposition pour tout renseignements complémentaires.\n\n"));
+
+          $url = 'https://www.isvtec.com/infogerance/ticket/';
+          $pdf->Write(5,utf8_decode(
+              "Le centre de services en ligne : $url\n\n"), $url);
+
+          $url = 'https://panel.isvtec.com/';
+          $pdf->Write(5,utf8_decode("Le panel de self-service : $url\n\n"),
+            $url);
+
+          $pdf->Write(5,utf8_decode(
+              "Le numéro de téléphone ISVTEC : +33 (0)1 84 16 16 17\n\n"));
+
+          $pdf->Write(5,utf8_decode(
+              "   Centre de service : option 3 (avec votre numéro de demande\n\n"));
+
+          $pdf->Write(5,utf8_decode(
+              "   Question commerciale ou admninistrative : option 1\n\n"));
+
           if($target == 'file')
             $pdf->Output($filename, 'F');
           else
