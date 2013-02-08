@@ -385,7 +385,9 @@ class WebfinanceMantis {
           $pdf->AddPage();
           $pdf->SetFont('Times','',12);
 
-          $pdf->Write(5,utf8_decode(strftime("Voici le récapitulatif des interventions effectuées par le support professionnel ISVTEC au mois de %B %Y dans le cadre de votre contrat d'infogérance.\n\n", mktime(0, 0, 0, $month, 1, $year))));
+          $pdf->Write(5,utf8_decode(strftime("Voici le récapitulatif du temps passé sur les interventions effectuées au mois de %B %Y par le support professionnel ISVTEC dans le cadre de votre contrat d'infogérance.\n\n", mktime(0, 0, 0, $month, 1, $year))));
+
+          $pdf->Write(5,utf8_decode(strftime("Dans le cas d'intervention s'étallant sur plusieurs mois, seul le temps de comptabilisé sur le mois de %B %Y vous  est ici présenté.\n\n", mktime(0, 0, 0, $month, 1, $year))));
 
           $pdf->Write(5,utf8_decode("Veuillez prendre note de l'entrée en vigueur de notre nouveau tarif horaire au 1er mars 2013 : 75") . chr(128) . utf8_decode(" HT.\n"));
 
