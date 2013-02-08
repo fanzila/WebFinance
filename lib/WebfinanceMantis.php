@@ -52,9 +52,9 @@ class WebfinanceMantis {
         function __construct() {
 
           $res = mysql_query(
-            'select type_pref, value '.
-            'from webfinance_pref '.
-            "where type_pref in ('mantis_login', 'mantis_password', 'mantis_api_url')")
+            'SELECT type_pref, value '.
+            'FROM webfinance_pref '.
+            "WHERE type_pref IN ('mantis_login', 'mantis_password', 'mantis_api_url')")
             or die(mysql_error());
 
           while ($row = mysql_fetch_assoc($res))
@@ -76,7 +76,8 @@ class WebfinanceMantis {
 
 		mysql_select_db('webfinance');
 		$query = "SELECT id_client, id_mantis FROM webfinance_clients";
-		$result = mysql_query($query) or die(mysql_error());
+		$result = mysql_query($query)
+                  or die(mysql_error());
 		$list = array();
 		while($row = mysql_fetch_assoc($result))
 		{
@@ -96,7 +97,7 @@ class WebfinanceMantis {
 		return $list;
 	}
 
-	function fetchBillingInformation($year, $month) {
+	function fetchBillingInformation($year, $month, $mantis_project_id) {
 
 		$mantisid = self::mantisIdToIdClient();
 
@@ -107,6 +108,10 @@ class WebfinanceMantis {
 		// Select the Mantis MySQL database
 		if(!mysql_select_db(self::$_database))
 			throw new Exception(mysql_error());
+
+                $where_mantis_project_id = '';
+                if(isset($mantis_project_id))
+                  $where_mantis_project_id = "AND bug.project_id = $mantis_project_id ";
 
 		$req = 'SELECT bug.id, bug.summary, user.realname AS client, '.
 			'  project.name AS project_name, ' .
@@ -122,6 +127,7 @@ class WebfinanceMantis {
 			'LEFT JOIN mantis_custom_field_table custom_field ON custom_field.id = custom_field_string.field_id '.
 			"WHERE bugnote.date_submitted BETWEEN $startDate AND $endDate ".
 			"AND (custom_field.name = 'Support type' OR custom_field.name IS NULL) ".
+			"$where_mantis_project_id".
 			'GROUP BY bugnote.bug_id '.
 			'ORDER BY project.id';
 
@@ -166,14 +172,19 @@ class WebfinanceMantis {
 				$invoiced_time = 0;
 			}
 
+                        $time_human_readable = sprintf('%dh%02d',
+                                               floor(abs($row['time']) / 60),
+                                               abs($row['time']) % 60);
+
 			$billing[$webfinance_project_id][$row['id']] =
 			array(
 				'description'           => $description,
 				'quantity'              => $row['time'] / 60,
 				'price'                 => $price,
 				'mantis_project_name'   => $row['project_name'],
-				'id_client'			  	=> $webfinance_project_id,
+				'id_client'             => $webfinance_project_id,
 				'time'                  => $row['time'],
+                                'time_human_readable'   => $time_human_readable,
 				'invoiced_time'         => $invoiced_time,
 				'mantis_ticket_summary' => $row['summary'],
 				'mantis_project_id'     => $row['project_id'],
@@ -334,9 +345,9 @@ class WebfinanceMantis {
           $project_id = $this->_soapclient->mc_project_add($this->_login,
                         $this->_password, $mantis_project);
 
-          mysql_query('update webfinance_clients '.
-            "set id_mantis = $project_id ".
-            "where id_client = $client_id")
+          mysql_query('UPDATE webfinance_clients '.
+            "SET id_mantis = $project_id ".
+            "WHERE id_client = $client_id")
             or die(mysql_error());
         }
 
@@ -355,6 +366,66 @@ class WebfinanceMantis {
 
           $this->_soapclient->mc_project_update($this->_login, $this->_password,
             $project_id, $mantis_project);
+        }
+
+        function createReport($year, $month, $id_client, $target = 'file')
+        {
+          global $pdf_title;
+
+          require_once('InfogerancePdfReport.php');
+
+          $client = new Client($id_client);
+
+	  // Generate PDF filename
+	  $filename = sys_get_temp_dir() .
+            '/Rapport_infogerance_' . str_replace(' ', '_', $client->nom) .
+            "_$year" . "_$month.pdf";
+
+          $pdf_title = strftime("Rapport support professionnel $client->nom %B %Y", mktime(0, 0, 0, $month, 1, $year));
+
+          $pdf = new InfogerancePdfReport();
+
+          $pdf->AliasNbPages();
+          $pdf->AddPage();
+          $pdf->SetFont('Times','',12);
+
+          $pdf->Write(5,utf8_decode(strftime("Voici le récapitulatif des interventions effectuées par le support professionnel ISVTEC au mois de %B %Y dans le cadre de votre contrat d'infogérance.\n\n", mktime(0, 0, 0, $month, 1, $year))));
+
+          $pdf->Write(5,utf8_decode("Veuillez prendre note de l'entrée en vigueur de notre nouveau tarif horaire au 1er mars 2013 : 75") . chr(128) . utf8_decode(" HT.\n"));
+
+          foreach($this->fetchBillingInformation($year, $month,
+              $client->id_mantis) as $webfinance_id => $billing) {
+
+            foreach($billing as $ticket_number => $ticket) {
+
+              if($ticket_number == 0)
+                continue;
+
+              $url_ticket =
+                "https://www.isvtec.com/infogerance/ticket/view.php?id=$ticket_number";
+              $pdf->Write(5,utf8_decode("\n\nTicket #$ticket_number :"), $url_ticket);
+
+              $pdf->Write(5,utf8_decode("Description de l'intervention: $ticket[mantis_ticket_summary]\n"));
+
+              $pdf->Write(5,utf8_decode("Temps passé: $ticket[time_human_readable]\n"));
+
+              $type = 'Inclus dans le forfait';
+
+              if($ticket['invoiced'])
+                $type = 'Hors forfait';
+
+              $pdf->Write(5,utf8_decode("$type\n"));
+            }
+          }
+
+          if($target == 'file')
+            $pdf->Output($filename, 'F');
+          else
+            $pdf->Output(basename($filename), 'I');
+
+	  $pdf->Close();
+
+          return($filename);
         }
 
 }

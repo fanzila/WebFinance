@@ -85,6 +85,7 @@ for($i=2020; $i>=2009; $i--) {
 		<th align="right">Time</th>
 		<th>Invoiced&nbsp;time</th>
 		<th>Price</th>
+		<th>Report</th>
 		<th>Result</th>
 	</tr>
 
@@ -117,10 +118,6 @@ for($i=2020; $i>=2009; $i--) {
 			$price = round($ticket['price'] * $ticket['quantity'], 2);
 
                         # Convert time as human readable
-			$time_human_readable = sprintf('%dh%02d',
-                                               floor(abs($ticket['time']) / 60),
-                                               abs($ticket['time']) % 60);
-
 			$invoiced_time_human_readable = sprintf('%dh%02d',
                                                floor(abs($ticket['invoiced_time']) / 60),
                                                abs($ticket['invoiced_time']) % 60);
@@ -139,7 +136,7 @@ for($i=2020; $i>=2009; $i--) {
 				echo "  <td> <a href=\"$url_ticket\"".
 				">$ticket[mantis_ticket_summary] #$ticket_number</a> </td>\n";
 
-			echo "  <td align=\"right\"> $time_human_readable</td>\n";
+			echo "  <td align=\"right\"> $ticket[time_human_readable]</td>\n";
 			echo "  <td align=\"right\"> $invoiced_time_human_readable</td>\n";
 
 			$color='white';
@@ -184,6 +181,7 @@ for($i=2020; $i>=2009; $i--) {
 		echo "<tr bgcolor=\"lightblue\"> <td colspan=\"2\"></td> <td align=\"right\"><b>TOTAL <a href=\"$url_webfinance\">$client_name</a> </b></td> ".
 		"<td align=\"right\"><b>$total_time_client_human_readable</b></td> ".
 		"<td align=\"right\"><b>$total_price&euro;</b></td>\n" .
+		"<td align=\"right\"> <a href=\"report.php?id_client=$ticket[id_client]&year=$year&month=$month\">Rapport</a> </td>\n" .
 		"<td align=\"right\"><b>";
 
 		if($action == 'send')
