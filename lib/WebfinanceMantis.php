@@ -414,7 +414,10 @@ class WebfinanceMantis {
               $pdf->Write(5,
                 utf8_decode("Temps passé: $ticket[time_human_readable]\n"));
 
-              $pdf->Write(5,utf8_decode("$type\n"));
+              $pdf->Write(5,utf8_decode("$type\n\n"));
+
+              $pdf->Line($pdf->GetX(), $pdf->GetY(), $pdf->GetX() + 190,
+                $pdf->GetY());
             }
           }
 
