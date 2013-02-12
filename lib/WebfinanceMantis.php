@@ -227,8 +227,11 @@ class WebfinanceMantis {
 		return $billing;
 	}
 
-	function createAndSendInvoice($id_client, $prix_ht, $quantity, $items) {
-		// Create invoice
+	function createAndSendInvoice($id_client, $prix_ht, $quantity, $description) {
+		# No invoice if amount is zero
+		if($prix_ht * $quantity <= 0)
+			return true;
+
 		$Facture = new Facture();
 		$invoice = array(
 			'client_id' => $id_client,
@@ -288,7 +291,7 @@ class WebfinanceMantis {
 			"FROM webfinance_invoice_rows ".
 			"WHERE id_facture=%d",
 		$id_facture,
-		mysql_real_escape_string($items),
+		mysql_real_escape_string($description),
 		$prix_ht, $quantity, $id_facture);
 		$result = mysql_query($q)
                   or die(mysql_error());
