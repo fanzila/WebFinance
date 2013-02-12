@@ -92,6 +92,9 @@ for($i=2020; $i>=2009; $i--) {
 	<?
 	$total_end = 0;
 	$total_price_end = 0;
+	$invoice_description = strftime(
+	  "Support professionnel hors périmètre de contrat\nPériode: %B %Y",
+	  mktime(0, 0, 0, $month, 1, $year));
 
 	// Print preview
 	foreach($mantis->fetchBillingInformation($year, $month)
@@ -154,8 +157,6 @@ for($i=2020; $i>=2009; $i--) {
 				$client_name = $ticket['mantis_project_name'];
 		}
 
-		// echo "<tr><td><pre>$description </pre> </td> </tr>";
-
 		$total_end += $total;
 		$total_time_client_human_readable_end = sprintf('%dh%02d',
                                                         floor($total_end / 60),
@@ -181,12 +182,10 @@ for($i=2020; $i>=2009; $i--) {
                 {
                     if($mantis->createAndSendInvoice(
                         $ticket['id_client'],
-                        $ticket['price'], # unit price
-                        round($total / 60, 2),      # quantity in hours
-                        $description))
-                    {
+                        $total_price,
+                        1,
+                        $invoice_description))
                       echo 'Sent';
-                    }
                 }
 		echo "</b></td></tr>\n";
 	}
