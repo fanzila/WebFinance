@@ -50,11 +50,7 @@ define('LONGUEUR_ENREGISTREMENT','160');
 GenerateCfonb();
 
 function stripAccents($string){
-    $a = 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûýýþÿŔŕ';
-    $b = 'aaaaaaaceeeeiiiidnoooooouuuuybsaaaaaaaceeeeiiiidnoooooouuuyybyRr';
-    $string = utf8_decode($string);    
-    $string = strtr($string, utf8_decode($a), $b);
-    return utf8_encode($string);
+  return iconv('utf-8', 'ascii//TRANSLIT', $string);
 }
 
 function FormatBancaire ($data, $longueur_donnee, $caractere_defaut = " ", $cadrage_data = "left") {
