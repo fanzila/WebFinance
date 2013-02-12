@@ -50,8 +50,11 @@ define('LONGUEUR_ENREGISTREMENT','160');
 GenerateCfonb();
 
 function stripAccents($string){
-	return strtr($string,'àáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ',
-	'aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY');
+    $a = 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûýýþÿŔŕ';
+    $b = 'aaaaaaaceeeeiiiidnoooooouuuuybsaaaaaaaceeeeiiiidnoooooouuuyybyRr';
+    $string = utf8_decode($string);    
+    $string = strtr($string, utf8_decode($a), $b);
+    return utf8_encode($string);
 }
 
 function FormatBancaire ($data, $longueur_donnee, $caractere_defaut = " ", $cadrage_data = "left") {
@@ -185,6 +188,7 @@ function GenerateCfonb() {
 		* Enregistrement et données de la remise d'ordres de virement
 		* Enregistrement "Destinataire"
 		*/
+		
 		$ligne = "";
 		$ligne .= FormatBancaire("06", 2); // Code d'enregistrement - Constante à "06" (2 caractères)
 		$ligne .= FormatBancaire(CODE_OPERATION, 2); // Code opération (2 caractères)
