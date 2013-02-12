@@ -57,10 +57,13 @@ if(!defined('WF_DEBUG_ALL')){
  }
 
 # Autoload PHP classes
-set_include_path(get_include_path() .
-				 PATH_SEPARATOR . '../../../lib/' .
-				 PATH_SEPARATOR . '../../lib/' .
-				 PATH_SEPARATOR . '../lib/');
+set_include_path(
+  get_include_path() . PATH_SEPARATOR .
+  '../../../lib/' . PATH_SEPARATOR .
+  '../../lib/' . PATH_SEPARATOR .
+  '../lib/' . PATH_SEPARATOR .
+  dirname(__FILE__).'/../../lib'
+);
 
 if(!function_exists('__autoload')) {
 	function __autoload($class_name) {
