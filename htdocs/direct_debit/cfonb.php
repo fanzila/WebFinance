@@ -32,7 +32,7 @@ must_login();
 $company_rib = GetCompanyMaiRIB();
 
 define('NUMERO_EMETTEUR', '484779');
-define('RAISON_SOCIAL', 'SARL ISVTEC'); 
+define('RAISON_SOCIALE', 'SARL ISVTEC'); 
 define('SIRET','44875254300034');
 
 define('CODE_GUICHET_SOCIETE', $company_rib->code_guichet);
@@ -113,7 +113,7 @@ function GenerateCfonb() {
 	$ligne .= FormatBancaire("", 1); // Code CCD : inutile dans notre cas (1 caractères)
 	$ligne .= FormatBancaire("", 6); // Zone réservée (6 caractères)
 	$ligne .= FormatBancaire(date('dm').substr(date('y'), -1), 5); // Date (JJMMA) (5 caractères)
-	$ligne .= FormatBancaire(stripAccents(RAISON_SOCIAL), 24); // Nom ou raison sociale du donneur d'ordre (24 caractères)
+	$ligne .= FormatBancaire(stripAccents(RAISON_SOCIALE), 24); // Nom ou raison sociale du donneur d'ordre (24 caractères)
 	$ligne .= FormatBancaire(stripAccents(REF_REMISE), 11); // Référence de la remise (7 caractères)
 	$ligne .= FormatBancaire("", 15); // Zone réservée (17 caractères)
 	$ligne .= FormatBancaire("E", 1); // Code monnaie - Constante à "E" (1 caractères)
