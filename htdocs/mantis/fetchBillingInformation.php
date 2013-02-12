@@ -90,13 +90,6 @@ for($i=2020; $i>=2009; $i--) {
 	</tr>
 
 	<?
-	$action = false;
-	if(isset($_GET['action'])) { 
-		if($_GET['action'] == 'send') {
-			$action = 'send';
-		}
-	}
-	
 	$total_end = 0;
 	$total_price_end = 0;
 
@@ -184,7 +177,7 @@ for($i=2020; $i>=2009; $i--) {
 		"<td align=\"right\"> <a href=\"report.php?id_client=$ticket[id_client]&year=$year&month=$month\">Rapport</a> </td>\n" .
 		"<td align=\"right\"><b>";
 
-		if($action == 'send')
+                if(isset($_POST['action']) && $_POST['action'] == 'send')
                 {
                     if($mantis->createAndSendInvoice(
                         $ticket['id_client'],
@@ -203,12 +196,12 @@ for($i=2020; $i>=2009; $i--) {
 </table>
 <br />
 <font color="red"><blink><b>> A générer UNE seule fois par mois <</b></blink></font><br />
-<form action="fetchBillingInformation.php?month=<?=$month?>&year=<?=$year?>&action=send" method="POST">
+<form action="fetchBillingInformation.php?month=<?=$month?>&year=<?=$year?>" method="POST">
 	<input type="submit" name="send_invoices" value="Send invoices to clients"
 	onclick="return ask_confirmation('<?= _('Do you really want to send the invoices to clients?') ?>')">
 	<input type="hidden" name="month" value="<?=$month;?>" />
 	<input type="hidden" name="year" value="<?=$year;?>" />
-
+	<input type="hidden" name="action" value="send" />
 </form>
 <br />
 <br />
