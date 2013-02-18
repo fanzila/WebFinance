@@ -716,6 +716,12 @@ class Facture extends WFO {
 		  $emails = explode(',',$Client->email);
 	  }
 
+          if(empty($emails))
+          {
+            echo _("Missing email address!");
+            return false;
+          }
+
 	  if(empty($subject))
 		  $subject = ucfirst($invoice->type_doc)." #".$invoice->num_facture.
 			  " pour ".$invoice->nom_client;
