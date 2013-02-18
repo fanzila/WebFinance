@@ -100,6 +100,13 @@ for($i=2020; $i>=2009; $i--) {
 	foreach($mantis->fetchBillingInformation($year, $month)
           as $webfinance_id => $billing) {
 
+          $url_webfinance = "/prospection/fiche_prospect.php?id=$webfinance_id";
+
+          // Check that the client has an email address
+          $client = new Client($webfinance_id);
+          if(empty($client->email))
+            die("Email adress not set for client <a href=\"$url_webfinance\">$client->nom</a>");
+
 		$total = 0;
 		$description = "Veuillez prendre note de l'entrée en vigueur de notre nouveau tarif horaire au 1er mars 2013 : 75€ HT.\n\n";
 		$description .= strftime("Détails des interventions du support professionnel pour le mois de %B %Y : \n", mktime(0, 0, 0, $month, 1, $year));
@@ -108,8 +115,6 @@ for($i=2020; $i>=2009; $i--) {
 
 			$url_ticket =
 				"https://www.isvtec.com/infogerance/ticket/view.php?id=$ticket_number";
-
-			$url_webfinance = '/prospection/fiche_prospect.php?onglet=billing&id='.$ticket['id_client'];
 
 			$price = round($ticket['price'] * $ticket['quantity'], 2);
 
@@ -172,7 +177,7 @@ for($i=2020; $i>=2009; $i--) {
                   round($total / 60, 2) * $ticket['price'],
                   2);
 
-		echo "<tr bgcolor=\"lightblue\"> <td colspan=\"2\"></td> <td align=\"right\"><b>TOTAL <a href=\"$url_webfinance\">$client_name</a> </b></td> ".
+		echo "<tr bgcolor=\"lightblue\"> <td colspan=\"2\"></td> <td align=\"right\"><b>TOTAL <a href=\"$url_webfinance&onglet=billing\">$client_name</a> </b></td> ".
 		"<td align=\"right\"><b>$total_time_client_human_readable</b></td> ".
 		"<td align=\"right\"><b>$total_price&euro;</b></td>\n" .
 		"<td align=\"right\"> <a href=\"report.php?id_client=$ticket[id_client]&year=$year&month=$month\">Rapport</a> </td>\n" .
