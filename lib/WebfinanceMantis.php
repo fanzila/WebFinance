@@ -376,7 +376,9 @@ class WebfinanceMantis {
             '/Rapport_infogerance_' . str_replace(' ', '_', $client->nom) .
             "_$year" . "_$month.pdf";
 
-          $pdf_title = strftime("Rapport support professionnel $client->nom %B %Y", mktime(0, 0, 0, $month, 1, $year));
+          $pdf_title = strftime(
+            "Rapport support professionnel $client->nom %B %Y",
+            mktime(0, 0, 0, $month, 1, $year));
 
           $pdf = new InfogerancePdfReport();
 
