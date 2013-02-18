@@ -311,7 +311,8 @@ class WebfinanceMantis {
 
 		// Manage invoice delivery and send by email to client 
 		if($delivery_method == 'email') {
-			$Facture->sendByEmail($id_facture);
+			$Facture->sendByEmail($id_facture)
+                          or die("Unable to send email for invoice ID $id_facture");
 		} elseif ($delivery_method == 'postal') {
 			$send_mail_print_invoice=true;
 			$attachments[] = $Facture->generatePDF($id_facture, true);
