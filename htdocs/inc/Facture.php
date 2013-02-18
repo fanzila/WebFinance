@@ -712,15 +712,15 @@ class Facture extends WFO {
 	  if(empty($fromname))
 		  $fromname = $societe->raison_sociale;
 
+          if(empty($Client->email))
+          {
+            echo _('Missing email address $Client->email!');
+            return false;
+          }
+
 	  if(empty($emails)) {
 		  $emails = explode(',',$Client->email);
 	  }
-
-          if(empty($emails))
-          {
-            echo _("Missing email address!");
-            return false;
-          }
 
 	  if(empty($subject))
 		  $subject = ucfirst($invoice->type_doc)." #".$invoice->num_facture.
@@ -778,8 +778,8 @@ class Facture extends WFO {
 	  $mail->CharSet = 'UTF-8';
 
 	foreach($emails as $email)
-	
-	  $mail->AddAddress($email);	
+	  $mail->AddAddress($email);
+
 	  $mail->From = $from;
 	  $mail->FromName = $fromname;
 	  $mail->Subject = $subject;
