@@ -150,7 +150,7 @@ L'équipe $societe->raison_sociale.";
 		if(!$Facture->sendByEmail($paypal_return['id_invoice'], $mails, $from, $fromname, $subject,
 								  $body)) {
 									
-			mail($paypal_params['email'], 'PAYPAL WARINING - Invoice was not sent to client after payment', $listener->getTextReport());
+			mail($paypal_params['email'], 'PAYPAL WARNING - Invoice was not sent to client after payment', $listener->getTextReport());
 			error_log('Invoice was not sent to client '.$listener->getTextReport());
 	    }
 
