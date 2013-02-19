@@ -70,7 +70,8 @@ class Client extends WFO
   c.rib_code_cle,
   c.id_mantis,
   c.language,
-  ct.nom as type_name
+  ct.nom as type_name,
+  sub4.personnes_emails
 FROM webfinance_clients as c
   JOIN webfinance_company_types as ct USING (id_company_type)
   LEFT JOIN
@@ -102,7 +103,14 @@ FROM webfinance_clients as c
       f.date_facture<=now() AND
       f.id_facture=fl.id_facture
     GROUP BY f.id_client
-  ) as sub3 ON sub3.id_client = c.id_client ";
+  ) as sub3 ON sub3.id_client = c.id_client
+  LEFT JOIN
+  (
+    SELECT GROUP_CONCAT(p.email) AS personnes_emails, p.client
+    FROM webfinance_personne p
+    GROUP BY p.client
+  ) AS sub4 ON sub4.client = c.id_client
+  ";
   }
 
   function _getInfos() 
@@ -123,7 +131,7 @@ FROM webfinance_clients as c
     // If user specified data in the siren field it can be either the RCS number
     // (format 9 digits) or the INSEE code (format : same 9 digits + 5 digits for
     // address identifier).
-    // See : http://fr.wikipedia.org/wiki/Codes_INSEE
+    // See : https://fr.wikipedia.org/wiki/Codes_INSEE
 
     // sensible default value
         $this->link_societe = 
