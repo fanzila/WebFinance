@@ -126,7 +126,7 @@ FROM webfinance_clients as c
                 $this->$n = $v;
 
             mysql_free_result($result);
-    }
+        }
 
     // If user specified data in the siren field it can be either the RCS number
     // (format 9 digits) or the INSEE code (format : same 9 digits + 5 digits for
