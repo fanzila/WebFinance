@@ -106,8 +106,9 @@ FROM webfinance_clients as c
   ) as sub3 ON sub3.id_client = c.id_client
   LEFT JOIN
   (
-    SELECT GROUP_CONCAT(p.email) AS personnes_emails, p.client
+    SELECT GROUP_CONCAT(DISTINCT p.email) AS personnes_emails, p.client
     FROM webfinance_personne p
+    WHERE p.email != ''
     GROUP BY p.client
   ) AS sub4 ON sub4.client = c.id_client
   ";
@@ -124,6 +125,9 @@ FROM webfinance_clients as c
             $data = mysql_fetch_assoc($result);
             foreach ($data as $n=>$v)
                 $this->$n = $v;
+
+            // Convert a MySQL GROUP_CONCAT() to a PHP array()
+            $data['personnes_emails'] = explode(',', $data['personnes_emails']);
 
             mysql_free_result($result);
         }
