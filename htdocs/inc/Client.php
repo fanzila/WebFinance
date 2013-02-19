@@ -32,42 +32,77 @@ class Client extends WFO
    *
    * @return (string) main request
    */
-  public static function getRequest() 
+  public static function getRequest()
   {
-      return 
-              "SELECT c.id_client as id, c.id_client, c.nom, c.date_created,c.tel, c.fax, c.web,"
-            . "c.addr1, c.addr2, c.addr3, c.cp, c.ville, c.pays, c.email, left(cp, 2) as departement,"
-            . "c.has_devis, c.has_unpaid, sub1.ca_total_ht, sub2.ca_total_ht_year, sub3.total_du_ht,"
-            . "c.vat_number, c.siren, c.id_company_type,c.id_user,c.password, c.rcs, c.capital, c.rib_titulaire, c.rib_banque, c.rib_code_banque, c.rib_code_guichet, c.rib_code_compte, c.rib_code_cle, c.id_mantis, c.language, ct.nom as type_name " 
-            . "FROM webfinance_clients as c " 
-            . "JOIN webfinance_company_types as ct USING (id_company_type)  "
-            . "LEFT JOIN ("
-            . "    SELECT f.id_client as id_client,round(sum(fl.qtt*fl.prix_ht),0) as ca_total_ht "
-            . "    FROM webfinance_invoice_rows as fl, webfinance_invoices as f "
-            . "    WHERE fl.id_facture=f.id_facture "
-            . "    AND f.type_doc='facture' "
-            . "    AND f.is_abandoned=0 "
-            . "    GROUP BY f.id_client "
-            . ") as sub1 ON sub1.id_client = c.id_client "
-            . "LEFT JOIN ("
-            . "    SELECT f.id_client as id_client,round(sum(fl.qtt*fl.prix_ht),0) as ca_total_ht_year "
-            . "    FROM webfinance_invoice_rows as fl, webfinance_invoices as f "
-            . "    WHERE fl.id_facture=f.id_facture "
-            . "    AND f.type_doc='facture' "
-            . "    AND f.is_abandoned=0 "
-            . "    AND f.date_facture>=date_sub(now(), INTERVAL 1 YEAR)"
-            . "    GROUP BY f.id_client "
-            . ") as sub2 ON sub2.id_client = c.id_client "
-            . "LEFT JOIN ("
-            . "    SELECT sum(prix_ht*qtt) as total_du_ht, f.id_client "
-            . "    FROM webfinance_invoice_rows fl, webfinance_invoices f "
-            . "    WHERE f.is_paye=0 "
-            . "    AND f.type_doc='facture' "
-            . "    AND f.is_abandoned=0 "
-            . "    AND f.date_facture<=now() "
-            . "    AND f.id_facture=fl.id_facture "
-            . "    GROUP BY f.id_client"
-              . ") as sub3 ON sub3.id_client = c.id_client ";
+      return "SELECT
+  c.id_client as id,
+  c.id_client,
+  c.nom,
+  c.date_created,
+  c.tel,
+  c.fax,
+  c.web,
+  c.addr1,
+  c.addr2,
+  c.addr3,
+  c.cp,
+  c.ville,
+  c.pays,
+  c.email,
+  left(c.cp, 2) as departement,
+  c.has_devis,
+  c.has_unpaid,
+  sub1.ca_total_ht,
+  sub2.ca_total_ht_year,
+  sub3.total_du_ht,
+  c.vat_number,
+  c.siren,
+  c.id_company_type,
+  c.id_user,
+  c.password,
+  c.rcs,
+  c.capital,
+  c.rib_titulaire,
+  c.rib_banque,
+  c.rib_code_banque,
+  c.rib_code_guichet,
+  c.rib_code_compte,
+  c.rib_code_cle,
+  c.id_mantis,
+  c.language,
+  ct.nom as type_name
+FROM webfinance_clients as c
+  JOIN webfinance_company_types as ct USING (id_company_type)
+  LEFT JOIN
+  (
+    SELECT f.id_client as id_client,round(sum(fl.qtt*fl.prix_ht),0) as ca_total_ht
+    FROM webfinance_invoice_rows as fl, webfinance_invoices as f
+    WHERE fl.id_facture=f.id_facture AND
+      f.type_doc='facture'
+      AND f.is_abandoned=0
+    GROUP BY f.id_client
+  ) AS sub1 ON sub1.id_client = c.id_client
+  LEFT JOIN
+  (
+    SELECT f.id_client as id_client,round(sum(fl.qtt*fl.prix_ht),0) as ca_total_ht_year
+    FROM webfinance_invoice_rows as fl, webfinance_invoices as f
+    WHERE fl.id_facture=f.id_facture
+      AND f.type_doc='facture'
+      AND f.is_abandoned=0
+      AND f.date_facture>=date_sub(now(), INTERVAL 1 YEAR)
+    GROUP BY f.id_client
+  ) as sub2 ON sub2.id_client = c.id_client
+  LEFT JOIN
+  (
+    SELECT sum(prix_ht*qtt) as total_du_ht, f.id_client
+    FROM webfinance_invoice_rows fl, webfinance_invoices f
+    WHERE f.is_paye=0 AND
+      f.type_doc='facture' AND
+      f.is_abandoned=0 AND
+      f.date_facture<=now() AND
+      f.id_facture=fl.id_facture
+    GROUP BY f.id_client
+  ) as sub3 ON sub3.id_client = c.id_client ";
   }
 
   function _getInfos() 
