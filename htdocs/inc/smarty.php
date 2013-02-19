@@ -16,7 +16,7 @@
 // this program. If not, see <http://www.gnu.org/licenses/>.
 //
 
-require('smarty/Smarty.class.php');
+require('smarty/libs/Smarty.class.php');
 $smarty = new Smarty();
 
 $smarty_home = dirname(__FILE__) . '/../../template/';
