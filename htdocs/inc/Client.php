@@ -135,12 +135,8 @@ FROM webfinance_clients as c
             // Append 'email' to 'emails'. 'email' might contains several
             // email addresses as well!!
             foreach(explode(',', $this->email) as $email)
-            {
-              if(empty($email) or in_array($email, $this->emails))
-                continue;
-
-              array_push($this->emails, $email);
-            }
+              if(!empty($email) and !in_array($email, $this->emails))
+                array_push($this->emails, $email);
 
             mysql_free_result($result);
         }
