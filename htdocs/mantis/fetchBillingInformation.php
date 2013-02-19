@@ -206,7 +206,7 @@ for($i=2020; $i>=2009; $i--) {
 <br />
 <font color="red"><blink><b>> A générer UNE seule fois par mois <</b></blink></font><br />
 <form action="fetchBillingInformation.php?month=<?=$month?>&year=<?=$year?>" method="POST">
-	<input type="submit" name="send_invoices" value="Send invoices to clients"
+	<input type="submit" name="send_invoices" value="Send invoices and reports to clients"
 	onclick="return ask_confirmation('<?= _('Do you really want to send the invoices to clients?') ?>')">
 	<input type="hidden" name="month" value="<?=$month;?>" />
 	<input type="hidden" name="year" value="<?=$year;?>" />
