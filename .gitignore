@@ -3,7 +3,6 @@ docs/html
 docs/latex
 fo/docs/_*
 docs/.*~
-.gitignore
 *.bat
 *.pyc
 .ropeproject
