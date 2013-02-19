@@ -451,7 +451,7 @@ class WebfinanceMantis {
               "   Centre de service : option 3 (avec votre numéro de demande\n\n"));
 
           $pdf->Write(5,utf8_decode(
-              "   Question commerciale ou admninistrative : option 1\n\n"));
+              "   Question commerciale ou administrative : option 1\n\n"));
 
           if($target == 'file')
             $pdf->Output($filename, 'F');
@@ -487,15 +487,16 @@ class WebfinanceMantis {
             // Define template variables
             $smarty->assign('email', $email);
             $smarty->assign('client_nom', $client->nom);
+            $smarty->assign('panel_url', 'https://panel.isvtec.com/');
+            $smarty->assign('phone_number', '+33 (0)1 84 16 16 17');
+            $smarty->assign('mantis_url',
+              'https://www.isvtec.com/infogerance/ticket/');
             $smarty->assign('date_year', strftime('%B %Y',
                 mktime(0, 0, 0, $month, 1, $year)));
 
             // Send email
             $phpmailer->ClearAllRecipients();
             $phpmailer->AddAddress($email);
-            $phpmailer->AddBCC('patrice.albaret@isvtec.com');
-            $phpmailer->AddBCC('jonathan.vercoutre@isvtec.com');
-            $phpmailer->AddBCC('cyril.bouthors@isvtec.com');
             $phpmailer->AddAttachment($pdf_file, basename($pdf_file), 'base64',
               'application/pdf');
             $phpmailer->Body = $smarty->fetch('mantis/mail_report.tpl');
