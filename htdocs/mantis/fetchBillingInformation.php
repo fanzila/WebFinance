@@ -185,6 +185,11 @@ for($i=2020; $i>=2009; $i--) {
 
                 if(isset($_POST['action']) && $_POST['action'] == 'send')
                 {
+                  // Send report by email
+                  $mantis->sendReportByEmail($year, $month, $webfinance_id)
+                    or die("Unable to send report for client ID $webfinance_id");
+
+                  // Send invoice by email
                     if($mantis->createAndSendInvoice(
                         $ticket['id_client'],
                         $total_price,
