@@ -332,7 +332,8 @@ CREATE TABLE IF NOT EXISTS `webfinance_personne` (
   `client` int(11) NOT NULL DEFAULT '-1',
   PRIMARY KEY (`id_personne`),
   KEY `pfk_client` (`client`),
-  KEY `pfk_user` (`id_user`)
+  KEY `pfk_user` (`id_user`),
+  KEY `email` (`email`),
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=77 ;
 
 -- --------------------------------------------------------
