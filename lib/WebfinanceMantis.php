@@ -18,6 +18,8 @@
 */
 
 require_once('WebfinancePreferences.php');
+require_once(dirname(__FILE__) . '/../htdocs/inc/smarty.php');
+require_once("/usr/share/php/libphp-phpmailer/class.phpmailer.php");
 
 class WebfinanceMantis {
 
@@ -458,5 +460,51 @@ class WebfinanceMantis {
           return($filename);
         }
 
+        function sendReportByEmail($year, $month, $webfinance_id)
+        {
+          global $smarty;
+
+          $client = new Client($webfinance_id);
+
+          $prefs = new WebfinancePreferences;
+
+          $phpmailer = new PHPMailer();
+	  $phpmailer->CharSet = 'UTF-8';
+          $phpmailer->From     = $prefs->prefs['societe']->email;
+          $phpmailer->FromName = $prefs->prefs['societe']->raison_sociale;
+          $phpmailer->WordWrap = 80;
+          $phpmailer->Subject  = strftime(
+            "Rapport d'infogérance ISVTEC/$client->nom du mois de %B %Y",
+            mktime(0, 0, 0, $month, 1, $year));
+
+          $pdf_file = $this->createReport($year, $month, $webfinance_id);
+
+          foreach($client->emails as $email)
+          {
+            // Define template variables
+            $smarty->assign('email', $email);
+            $smarty->assign('client_nom', $client->nom);
+            $smarty->assign('date_year', strftime('%B %Y',
+                mktime(0, 0, 0, $month, 1, $year)));
+
+            // Send email
+            $phpmailer->ClearAllRecipients();
+            $phpmailer->AddAddress($email);
+            $phpmailer->AddBCC('patrice.albaret@isvtec.com');
+            $phpmailer->AddBCC('jonathan.vercoutre@isvtec.com');
+            $phpmailer->AddBCC('cyril.bouthors@isvtec.com');
+            $phpmailer->AddAttachment($pdf_file, basename($pdf_file), 'base64',
+              'application/pdf');
+            $phpmailer->Body = $smarty->fetch('mantis/mail_report.tpl');
+            $phpmailer->Send();
+
+            echo "ID $webfinance_id: sending PDF report $pdf_file to $email<br/>";
+          }
+
+          unlink($pdf_file)
+            or die("Unable to unlink $pdf_file");
+
+          return true;
+        }
 }
 ?>
