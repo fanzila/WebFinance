@@ -127,7 +127,10 @@ FROM webfinance_clients as c
                 $this->$n = $v;
 
             // Convert a MySQL GROUP_CONCAT() to a PHP array()
-            $this->personnes_emails = explode(',', $this->personnes_emails);
+            if(empty($this->personnes_emails))
+              $this->personnes_emails = array();
+            else
+              $this->personnes_emails = explode(',', $this->personnes_emails);
 
             mysql_free_result($result);
         }
