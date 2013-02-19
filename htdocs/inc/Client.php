@@ -22,7 +22,6 @@ class Client extends WFO
   var $id = -1;
   var $data = null;
 
-
   /**
    * return all information on a client 
    */
@@ -71,7 +70,7 @@ class Client extends WFO
   c.id_mantis,
   c.language,
   ct.nom as type_name,
-  sub4.personnes_emails
+  sub4.emails
 FROM webfinance_clients as c
   JOIN webfinance_company_types as ct USING (id_company_type)
   LEFT JOIN
@@ -106,7 +105,7 @@ FROM webfinance_clients as c
   ) as sub3 ON sub3.id_client = c.id_client
   LEFT JOIN
   (
-    SELECT GROUP_CONCAT(DISTINCT p.email) AS personnes_emails, p.client
+    SELECT GROUP_CONCAT(DISTINCT p.email) AS emails, p.client
     FROM webfinance_personne p
     WHERE p.email != ''
     GROUP BY p.client
@@ -119,7 +118,8 @@ FROM webfinance_clients as c
       $query = sprintf(self::getRequest() 
                        . "WHERE c.id_client = %d",$this->id);
 
-        $result = $this->SQL(sprintf($query, $this->id)) or wf_mysqldie("Client::_getInfos");
+        $result = $this->SQL(sprintf($query, $this->id))
+          or wf_mysqldie("Client::_getInfos");
 
         if (mysql_num_rows($result)) {
             $data = mysql_fetch_assoc($result);
@@ -127,10 +127,20 @@ FROM webfinance_clients as c
                 $this->$n = $v;
 
             // Convert a MySQL GROUP_CONCAT() to a PHP array()
-            if(empty($this->personnes_emails))
-              $this->personnes_emails = array();
+            if(empty($this->emails))
+              $this->emails = array();
             else
-              $this->personnes_emails = explode(',', $this->personnes_emails);
+              $this->emails = explode(',', $this->emails);
+
+            // Append 'email' to 'emails'. 'email' might contains several
+            // email addresses as well!!
+            foreach(explode(',', $this->email) as $email)
+            {
+              if(empty($email) or in_array($email, $this->emails))
+                continue;
+
+              array_push($this->emails, $email);
+            }
 
             mysql_free_result($result);
         }
