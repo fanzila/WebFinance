@@ -60,6 +60,9 @@ class InfogerancePdfReport extends FPDF
     $this->Cell(190, 5,
       utf8_decode($prefs->prefs['societe']->invoice_top_line2), "B", 0, "C");
     $this->Ln(10);
+
+    unlink($tempfile_logo)
+      or die("Unable to unlink $tempfile_logo");
   }
 
   function Footer()
