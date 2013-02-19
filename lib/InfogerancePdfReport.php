@@ -24,8 +24,6 @@ class InfogerancePdfReport extends FPDF
 {
   function Header()
   {
-    global $pdf_title;
-
     $prefs = new WebfinancePreferences;
 
     // Save the logo to a temp file since fpdf cannot read from a var
@@ -61,13 +59,7 @@ class InfogerancePdfReport extends FPDF
     $this->SetXY(10,$logo_height+8);
     $this->Cell(190, 5,
       utf8_decode($prefs->prefs['societe']->invoice_top_line2), "B", 0, "C");
-
-    // Title
-    $this->SetFont('Arial','B',15);
     $this->Ln(10);
-    $this->Cell(80);
-    $this->Cell(30,10,utf8_decode($pdf_title),0,0,'C');
-    $this->Ln(20);
   }
 
   function Footer()

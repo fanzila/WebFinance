@@ -367,8 +367,6 @@ class WebfinanceMantis {
 
         function createReport($year, $month, $id_client, $target = 'file')
         {
-          global $pdf_title;
-
           require_once('InfogerancePdfReport.php');
 
           $client = new Client($id_client);
@@ -378,14 +376,19 @@ class WebfinanceMantis {
             '/Rapport_infogerance_' . str_replace(' ', '_', $client->nom) .
             "_$year" . "_$month.pdf";
 
-          $pdf_title = strftime(
-            "Rapport support professionnel $client->nom %B %Y",
-            mktime(0, 0, 0, $month, 1, $year));
-
           $pdf = new InfogerancePdfReport();
 
           $pdf->AliasNbPages();
           $pdf->AddPage();
+
+          // Title
+          $pdf->SetFont('Arial','B',15);
+          $pdf->Cell(80);
+          $pdf->Cell(30,10,utf8_decode(strftime(
+                "Rapport support professionnel $client->nom %B %Y",
+                mktime(0, 0, 0, $month, 1, $year))),0,0,'C');
+          $pdf->Ln(20);
+
           $pdf->SetFont('Times','',12);
 
           $pdf->Write(5,utf8_decode(strftime("Voici le récapitulatif du temps passé sur les interventions effectuées au mois de %B %Y par le support professionnel ISVTEC dans le cadre de votre contrat d'infogérance.\n\n", mktime(0, 0, 0, $month, 1, $year))));
@@ -497,8 +500,6 @@ class WebfinanceMantis {
               'application/pdf');
             $phpmailer->Body = $smarty->fetch('mantis/mail_report.tpl');
             $phpmailer->Send();
-
-            echo "ID $webfinance_id: sending PDF report $pdf_file to $email<br/>";
           }
 
           unlink($pdf_file)
