@@ -105,7 +105,7 @@ for($i=2020; $i>=2009; $i--) {
           // Check that the client has an email address
           $client = new Client($webfinance_id);
           if(empty($client->email))
-            die("Email adress not set for client <a href=\"$url_webfinance\">$client->nom</a>");
+            die("Email address not set for client <a href=\"$url_webfinance\">$client->nom</a>");
 
 		$total = 0;
 		$description = "Veuillez prendre note de l'entrée en vigueur de notre nouveau tarif horaire au 1er mars 2013 : 75€ HT.\n\n";
