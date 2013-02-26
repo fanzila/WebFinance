@@ -249,7 +249,7 @@ function GenerateCfonb() {
 			Remise d'ordres de virement abandonnée
 		</div>
 		<br /><br />
-		<?
+		<? # '
 	} else {
 
 		$myFile = "../../export_cfonb/remise_".REF_REMISE.".txt";
