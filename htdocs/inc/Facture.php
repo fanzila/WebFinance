@@ -923,15 +923,10 @@ class Facture extends WFO {
 				
 		$body = stripslashes(preg_replace($patterns, $replacements, stripslashes(utf8_decode($pref->body)) ));
 
-		if($Invoice->sendByEmail($id_invoice, $mails, $from, $fromname, $subject,
-		$body)) {
-			$_SESSION['message'] = _('Invoice was not sent');
-			$_SESSION['error'] = 1;
-			return $link; 
-		} else { 
-			echo _("Invoice was not sent");
-			die();
-		} 
+		if(!$Invoice->sendByEmail($id_invoice, $mails, $from, $fromname, $subject,
+		$body))
+			die(_('Invoice was not sent'));
+                return $link;
 	}
 }
 
