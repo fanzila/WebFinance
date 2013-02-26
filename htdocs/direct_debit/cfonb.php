@@ -268,6 +268,7 @@ function GenerateCfonb() {
 		header("Content-Transfer-Encoding: binary");
 		header("Content-Length: ".filesize($myFile));
 		readfile($myFile);
+                unlink($myFile);
 		exit();
 	}
 }
