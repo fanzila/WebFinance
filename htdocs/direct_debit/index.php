@@ -36,9 +36,7 @@ $res = mysql_query(
 <h1>Pending direct debits</h1>
 
 <h2>Details</h2>
-<br />
-<a href="cfonb.php">> Download remise prélèvements auto (CFONB160 format)</a>
-<br /><br />
+
 <table width="100%" border="0" cellspacing="0" cellpadding="5">
 <tr class="row_header">
   <th>Company</th>
@@ -119,15 +117,20 @@ while ($invoice = mysql_fetch_assoc($res)) {
 
 <h1>Previous debits</h1>
 
+<table border="1">
 <?
 $res = mysql_query(
   'SELECT id, date '.
-  'FROM direct_debit')
+  'FROM direct_debit '.
+  'ORDER BY date desc')
   or die(mysql_error());
 
 while ($debit = mysql_fetch_assoc($res)) {
-  echo "<a href=\"detail.php?id=$debit[id]\">$debit[date]</a> <br/>";
+  echo "<tr><td><a href=\"detail.php?id=$debit[id]\">$debit[date]</a> </td>";
+  echo "    <td><a href=\"cfonb.php?debit_id=$debit[id]\">CFONB</a> </td> </tr>";
 }
+
+echo '</table>';
 
 include("../bottom.php");
 

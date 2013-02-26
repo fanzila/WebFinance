@@ -40,7 +40,10 @@ define('LONGUEUR_NUMERO_COMPTE','11');
 define('LONGUEUR_ENREGISTREMENT','160');
 
 
-GenerateCfonb();
+if(empty($_GET['debit_id']) or !is_numeric($_GET['debit_id']))
+  die('Invalid $_GET[debit_id] ' . $_GET['debit_id'] );
+
+GenerateCfonb($_GET['debit_id']);
 
 function stripAccents($string){
   return iconv('utf-8', 'ascii//TRANSLIT', $string);
@@ -82,7 +85,9 @@ function FormatBancaire ($data, $longueur_donnee, $caractere_defaut = " ", $cadr
 	return $data;
 }
 
-function GenerateCfonb() {
+function GenerateCfonb($debit_id = null) {
+  if(!is_numeric($debit_id))
+    die('Invalid $debit_id');
 
 	/**
 	* On définit les non constantes
@@ -133,7 +138,7 @@ function GenerateCfonb() {
 	$res = mysql_query(
 	'SELECT id, invoice_id '.
 		'FROM direct_debit_row '.
-		"WHERE state='todo'")
+		"WHERE debit_id = $debit_id")
 		or die(mysql_error());
 
 	$total_ttc = 0;
@@ -252,9 +257,9 @@ function GenerateCfonb() {
 		<? # '
 	} else {
 
-		$myFile = "../../export_cfonb/remise_".REF_REMISE.".txt";
-		unlink($myFile);
-		$fh = fopen($myFile, 'w') or die("can't open file");
+		$myFile = sys_get_temp_dir() . "/cfonb-$debit_id.txt";
+		$fh = fopen($myFile, 'w')
+                  or die("can't open file");
 		fwrite($fh, $chaine_totale);
 		fclose($fh);
 

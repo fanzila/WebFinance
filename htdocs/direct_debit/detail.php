@@ -106,6 +106,8 @@ while ($invoice = mysql_fetch_assoc($res)) {
 
 </table>
 
+  <a href="cfonb.php?debit_id=<?=$_GET[id]?>">CFONB</a> <br/>
+
 <a href="./">Back</a>
 
 <?
