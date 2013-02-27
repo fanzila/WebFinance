@@ -525,10 +525,14 @@ class Facture extends WFO {
 		  $x = $pdf->getX();
 		  $y = $pdf->getY();
 		  $pdf->setXY(120, $y_start);
-		  $pdf->Cell(20, $y - $y_start, $ligne->qtt, "LR", 0, "C" );
-		  $pdf->Cell(30, $y - $y_start, preg_replace("/\./", ",", sprintf("%.2f".EURO, $ligne->prix_ht)), "LR", 0, "R"  );
-		  $pdf->Cell(30, $y - $y_start, preg_replace("/\./", ",", sprintf("%.2f".EURO, $ligne->prix_ht * $ligne->qtt)), "LR", 0, "R" );
+		  $pdf->Cell(20, 6, $ligne->qtt, "LR", 0, "C" );
+		  $pdf->Cell(30, 6, preg_replace("/\./", ",", sprintf("%.2f".EURO, $ligne->prix_ht)), "LR", 0, "R"  );
+		  $pdf->Cell(30, 6, preg_replace("/\./", ",", sprintf("%.2f".EURO, $ligne->prix_ht * $ligne->qtt)), "LR", 0, "R" );
 
+		  $pdf->setXY(120, $y_start);
+		  $pdf->Cell(20, $y - $y_start, '', "LR", 0, "C" );
+		  $pdf->Cell(30, $y - $y_start, '', "LR", 0, "R"  );
+		  $pdf->Cell(30, $y - $y_start, '', "LR", 0, "R" );
 
 		  $total_ht += $ligne->prix_ht * $ligne->qtt;
 		  $pdf->Ln();
