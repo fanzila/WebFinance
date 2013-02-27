@@ -67,7 +67,7 @@ if (isset($_GET['q']) && ($_GET['q']!=0)) {
   $where_clause = "c.id_company_type=".$_GET['q'];
 }
 
-if ( isset($_GET['namelike']) and preg_match("/[a-zA-Z ]+/", $_GET['namelike']) ) {
+if ( isset($_GET['namelike']) and preg_match("/[a-zA-Z0-9 ]+/", $_GET['namelike']) ) {
   $where_clause .= " AND c.nom LIKE '%".  mysql_real_escape_string($_GET['namelike'])."%'";
 }
 
