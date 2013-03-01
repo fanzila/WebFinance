@@ -118,16 +118,37 @@ while ($invoice = mysql_fetch_assoc($res)) {
 <h1>Previous debits</h1>
 
 <table border="1">
+    <tr>
+    <th>Date</th>
+    <th>Invoices</th>
+    <th>Excl. taxes</th>
+    <th>Inc. taxes</th>
+    <th>Download</th>
+    </tr>
 <?
-$res = mysql_query(
-  'SELECT id, date '.
-  'FROM direct_debit '.
-  'ORDER BY date desc')
+$res = mysql_query('
+  SELECT
+    d.id,
+    d.date,
+    COUNT(DISTINCT(dr.id)) AS total_invoices,
+    ROUND(SUM(ir.qtt*ir.prix_ht), 2) AS HT,
+    ROUND(SUM(ir.qtt*ir.prix_ht)*(100+i.tax)/100, 2) AS TTC
+  FROM direct_debit d
+  JOIN direct_debit_row dr ON dr.debit_id = d.id
+  JOIN webfinance_invoices i ON i.id_facture = dr.invoice_id
+  JOIN webfinance_invoice_rows ir ON ir.id_facture = i.id_facture
+  GROUP BY d.id
+  ORDER BY d.date DESC
+')
   or die(mysql_error());
 
 while ($debit = mysql_fetch_assoc($res)) {
-  echo "<tr><td><a href=\"detail.php?id=$debit[id]\">$debit[date]</a> </td>";
-  echo "    <td><a href=\"cfonb.php?debit_id=$debit[id]\">CFONB</a> </td> </tr>";
+  echo "<tr><td> <a href=\"detail.php?id=$debit[id]\">$debit[date]</a> </td>\n";
+  echo "    <td> $debit[total_invoices] </td>\n";
+  echo "    <td align=\"right\"> $debit[HT] &euro;</td>\n";
+  echo "    <td align=\"right\"> $debit[TTC] &euro; </td>\n";
+  echo "    <td><a href=\"cfonb.php?debit_id=$debit[id]\">CFONB</a> </td>\n";
+  echo "</tr>\n";
 }
 
 echo '</table>';
