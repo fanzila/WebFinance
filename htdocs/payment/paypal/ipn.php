@@ -115,7 +115,7 @@ if ($verified) {
 
 	if(!empty($error)) {
 
-		mail($paypal_params['email'], 'PAYPAL WARINING - IPN PROCESSING ERROR', $error."\n\nDEBUG: \n\n". $listener->getTextReport());
+		mail($paypal_params['email'], 'PAYPAL WARNING - IPN PROCESSING ERROR', $error."\n\nDEBUG: \n\n". $listener->getTextReport());
 		error_log($listener->getTextReport());
 
 	//Transaction OK
@@ -178,7 +178,7 @@ L'équipe $societe->raison_sociale.";
 	invalid IPN.
 	*/
 
-	mail($paypal_params['email'], 'PAYPAL WARINING - INVALID IPN', $listener->getTextReport());
+	mail($paypal_params['email'], 'PAYPAL WARNING - INVALID IPN', $listener->getTextReport());
 	error_log($listener->getTextReport());
 }
 
