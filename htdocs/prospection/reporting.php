@@ -330,7 +330,7 @@ if(isset($_GET['popup'])) {
 		<td><!-- REQ2 -->2. CA sur opportunités gagnées</td><td><?=numberFormat(mysqlQuery($req2)->total)?>  €</td><td>CA HT facturé sur les opportunités gagnées ce mois (tout ce qui n est pas récurrent (nouveaux clients ou clients existants))</td>
 	</tr>
 	<tr class="misc1">
-		<td><!-- REQ3 -->3. CA des devis envoyé mais pas transformé</td><td><?=numberFormat(mysqlQuery($req3)->total)?> € - <a href="/prospection/reporting.php?popup=devis_ip&month=<?=$month?>&year=<?=$year?>"><?=numberFormat(mysqlQuery($req3a)->total)?> devis</a></td><td>Indépendant d'une période (donc a un instant T) : CA des devis “Sent” mais pas transformés en Facture</td>
+		<td><!-- REQ3 -->3. CA des devis envoyés mais pas transformés</td><td><?=numberFormat(mysqlQuery($req3)->total)?> € - <a href="/prospection/reporting.php?popup=devis_ip&month=<?=$month?>&year=<?=$year?>"><?=numberFormat(mysqlQuery($req3a)->total)?> devis</a></td><td>Indépendant d'une période (donc a un instant T) : CA des devis “Sent” mais pas transformés en Facture</td>
 	</tr>
 	<tr class="misc2">
 		<td><!-- REQ4 -->4. CA annuel de l'année</td><td><?=numberFormat(mysqlQuery($req4)->total)?> € <br /><?=numberFormat($recu4)?> €, <?=$perc_recu4?>% récurrent <br /> <?=numberFormat($total4_ponctu)?> €, <?=$perc_ponctu4?>% ponctuel</td><td></td>
