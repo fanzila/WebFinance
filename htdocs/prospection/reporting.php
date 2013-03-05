@@ -109,7 +109,7 @@ $req3c = "SELECT f.date_created, f.num_facture, f.id_client, f.id_facture,
 		WHERE f.is_envoye = 1 
 		AND f.is_abandoned = 0 
 		AND f.type_doc = 'devis' 
-		ORDER BY total DESC";
+		ORDER BY f.date_created ASC";
 
 $req4 = $select_sum . "
 		FROM webfinance_invoices AS f 
