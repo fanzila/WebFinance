@@ -183,16 +183,23 @@ for($i=2020; $i>=2009; $i--) {
                   2);
 
 		echo "<tr bgcolor=\"lightblue\"> <td colspan=\"2\"></td> <td align=\"right\"><b>TOTAL <a href=\"$url_webfinance&onglet=billing\">$client_name</a> </b></td> ".
+		"<td align=\"right\">  </td>\n" .
 		"<td align=\"right\"><b>$total_time_client_human_readable</b></td> ".
 		"<td align=\"right\"><b>$total_price&euro;</b></td>\n" .
-		"<td align=\"right\"> <a href=\"report.php?id_client=$ticket[id_client]&year=$year&month=$month\">Rapport</a> </td>\n" .
-		"<td align=\"right\"><b>";
+		"<td align=\"right\"><a href=\"report.php?id_client=$ticket[id_client]&year=$year&month=$month\">Rapport</a> <b>";
 
                 if(isset($_POST['action']) && $_POST['action'] == 'send')
                 {
                   // Send report by email
                   $mantis->sendReportByEmail($year, $month, $webfinance_id)
                     or die("Unable to send report for client ID $webfinance_id");
+
+                  # Temp hack for 'Bayard Presse' and 'Galaxya'
+                  if($ticket['id_client'] == 65 or $ticket['id_client'] == 552)
+                    {
+                      echo "</b></td></tr>\n";
+                      continue;
+                    }
 
                   // Send invoice by email
                     if($mantis->createAndSendInvoice(
