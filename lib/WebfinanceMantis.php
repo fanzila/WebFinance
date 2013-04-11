@@ -109,7 +109,7 @@ class WebfinanceMantis {
 
                 $where_mantis_project_id = '';
                 if(isset($mantis_project_id))
-                  $where_mantis_project_id = "AND bug.project_id = $mantis_project_id ";
+                  $where_mantis_project_id = "AND ( project.id = $mantis_project_id OR parent_project.id = $mantis_project_id)";
 
 		$req = "SELECT
 			  bug.id,
@@ -422,6 +422,10 @@ class WebfinanceMantis {
               $pdf->SetFont('Times','B',12);
               $pdf->Write(5,utf8_decode("\n$ticket[mantis_ticket_summary]\n"));
               $pdf->SetFont('Times','',12);
+
+              if(!empty($ticket['mantis_subproject_name']))
+                $pdf->Write(5,utf8_decode("Sous projet $ticket[mantis_subproject_name]\n"),
+                  $url_ticket);
 
               $pdf->Write(5,utf8_decode("Ticket #$ticket_number\n"),
                 $url_ticket);
