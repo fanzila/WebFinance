@@ -445,7 +445,7 @@ class WebfinanceMantis {
 
           $pdf->Write(5,utf8_decode("\nNotre équipe est à votre disposition pour tout renseignements complémentaires.\n\n"));
 
-          $url = 'https://www.isvtec.com/infogerance/ticket/';
+          $url = 'https://support.isvtec.com/';
           $pdf->Write(5,utf8_decode(
               "Le centre de services en ligne : $url\n\n"), $url);
 
@@ -498,8 +498,7 @@ class WebfinanceMantis {
             $smarty->assign('client_nom', $client->nom);
             $smarty->assign('panel_url', 'https://panel.isvtec.com/');
             $smarty->assign('phone_number', '+33 (0)1 84 16 16 17');
-            $smarty->assign('mantis_url',
-              'https://www.isvtec.com/infogerance/ticket/');
+            $smarty->assign('mantis_url', 'https://support.isvtec.com/');
             $smarty->assign('date_year', strftime('%B %Y',
                 mktime(0, 0, 0, $month, 1, $year)));
 
