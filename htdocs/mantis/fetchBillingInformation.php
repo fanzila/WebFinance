@@ -109,8 +109,7 @@ for($i=2020; $i>=2009; $i--) {
             die("Email address not set for client <a href=\"$url_webfinance\">$client->nom</a>");
 
 		$total = 0;
-		$description = "Veuillez prendre note de l'entrée en vigueur de notre nouveau tarif horaire au 1er mars 2013 : 75€ HT.\n\n";
-		$description .= strftime("Détails des interventions du support professionnel pour le mois de %B %Y : \n", mktime(0, 0, 0, $month, 1, $year));
+		$description = strftime("Détails des interventions du support professionnel pour le mois de %B %Y : \n", mktime(0, 0, 0, $month, 1, $year));
 		
 		foreach($billing as $ticket_number => $ticket) {
 

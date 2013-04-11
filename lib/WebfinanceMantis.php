@@ -404,8 +404,6 @@ class WebfinanceMantis {
 
           $pdf->Write(5,utf8_decode(strftime("Dans le cas d'intervention s'étallant sur plusieurs mois, seul le temps de comptabilisé sur le mois de %B %Y vous  est ici présenté.\n\n", mktime(0, 0, 0, $month, 1, $year))));
 
-          $pdf->Write(5,utf8_decode("Veuillez prendre note de l'entrée en vigueur de notre nouveau tarif horaire au 1er mars 2013 : 75") . chr(128) . utf8_decode(" HT.\n"));
-
           foreach($this->fetchBillingInformation($year, $month,
               $client->id_mantis) as $webfinance_id => $billing) {
 
