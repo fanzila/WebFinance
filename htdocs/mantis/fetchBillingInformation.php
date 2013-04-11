@@ -180,7 +180,7 @@ for($i=2020; $i>=2009; $i--) {
                                                     $total % 60);
 
 		$total_price = round(
-                  round($total / 60, 2) * 55,
+                  round($total / 60, 2) * 75,
                   2);
 
 		echo "<tr bgcolor=\"lightblue\"> <td colspan=\"2\"></td> <td align=\"right\"><b>TOTAL <a href=\"$url_webfinance&onglet=billing\">$client_name</a> </b></td> ".

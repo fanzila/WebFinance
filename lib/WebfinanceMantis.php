@@ -169,7 +169,7 @@ class WebfinanceMantis {
 				$billing[$webfinance_project_id] = array();
 
 			$invoiced = true;
-			$price = 55;
+			$price = 75;
 			$invoiced_time = $row['time'];
                         if(isset(self::$_support_type_not_invoiced[$row['support_type']]))
 			{
