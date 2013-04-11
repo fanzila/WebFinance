@@ -459,7 +459,7 @@ class WebfinanceMantis {
               "Le numéro de téléphone ISVTEC : +33 (0)1 84 16 16 17\n\n"));
 
           $pdf->Write(5,utf8_decode(
-              "   Centre de service : option 3 (avec votre numéro de demande\n\n"));
+              "   Centre de service : option 3 (avec votre numéro de demande)\n\n"));
 
           $pdf->Write(5,utf8_decode(
               "   Question commerciale ou administrative : option 1\n\n"));
