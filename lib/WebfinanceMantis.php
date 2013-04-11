@@ -115,11 +115,12 @@ class WebfinanceMantis {
 			  bug.id,
 			  bug.summary,
 			  user.realname AS client,
-			  project.name AS project_name,
+			  IF(parent_project.name IS NULL, project.name, parent_project.name) AS project_name,
+			  IF(parent_project.name IS NULL, '', project.name) AS subproject_name,
 			  SUM(bugnote.time_tracking) AS time,
 			  bug.date_submitted,
 			  handler.realname AS handler,
-			  project.id AS project_id,
+			  IF(parent_project.id IS NULL, project.id, parent_project.id) AS project_id,
 			  IF(custom_field_string.value IS NULL, 'À définir', custom_field_string.value) AS support_type
 			FROM mantis_bug_table bug
 			JOIN mantis_bugnote_table bugnote ON bug.id = bugnote.bug_id
@@ -128,6 +129,8 @@ class WebfinanceMantis {
 			LEFT JOIN mantis_user_table handler ON handler.id = bug.handler_id
 			LEFT JOIN mantis_custom_field_string_table custom_field_string ON custom_field_string.bug_id = bug.id
 			LEFT JOIN mantis_custom_field_table custom_field ON custom_field.id = custom_field_string.field_id
+			LEFT JOIN mantis_project_hierarchy_table project_hierarchy ON project_hierarchy.child_id = project.id
+			LEFT JOIN mantis_project_table parent_project ON project_hierarchy.parent_id = parent_project.id
 			WHERE bugnote.date_submitted BETWEEN $startDate AND $endDate
 			  AND (custom_field.name = 'Support type' OR custom_field.name IS NULL)
 			  $where_mantis_project_id
@@ -181,18 +184,19 @@ class WebfinanceMantis {
 
 			$billing[$webfinance_project_id][$row['id']] =
 			array(
-				'description'           => $description,
-				'quantity'              => $row['time'] / 60,
-				'price'                 => $price,
-				'mantis_project_name'   => $row['project_name'],
-				'id_client'             => $webfinance_project_id,
-				'time'                  => $row['time'],
-                                'time_human_readable'   => $time_human_readable,
-				'invoiced_time'         => $invoiced_time,
-				'mantis_ticket_summary' => $row['summary'],
-				'mantis_project_id'     => $row['project_id'],
-                                'support_type'          => $row['support_type'],
-                                'invoiced'              => $invoiced,
+				'description'            => $description,
+				'quantity'               => $row['time'] / 60,
+				'price'                  => $price,
+				'mantis_project_name'    => $row['project_name'],
+				'id_client'              => $webfinance_project_id,
+				'time'                   => $row['time'],
+                                'time_human_readable'    => $time_human_readable,
+				'invoiced_time'          => $invoiced_time,
+				'mantis_ticket_summary'  => $row['summary'],
+				'mantis_project_id'      => $row['project_id'],
+                                'support_type'           => $row['support_type'],
+                                'invoiced'               => $invoiced,
+				'mantis_subproject_name' => $row['subproject_name'],
 			);
 			
 			// Process total time

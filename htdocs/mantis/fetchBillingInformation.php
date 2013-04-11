@@ -81,6 +81,7 @@ for($i=2020; $i>=2009; $i--) {
 <table width="100%" border="0" cellspacing="0" cellpadding="5">
 <tr class="row_header">
 		<th>Support type</th>
+		<th>Project / sub project</th>
 		<th>Description</th>
 		<th align="right">Time</th>
 		<th>Invoiced&nbsp;time</th>
@@ -130,6 +131,11 @@ for($i=2020; $i>=2009; $i--) {
                         }
 
                         echo "<tr>\n  <td bgcolor=\"$color\"> $ticket[support_type] </td>\n";
+                        echo "  <td> $ticket[mantis_project_name] ";
+
+                        if(!empty($ticket['mantis_subproject_name']))
+                          echo "/ $ticket[mantis_subproject_name]";
+                        echo "</td>\n";
 
 			if($ticket_number == 0)
 				echo "  <td> $ticket[mantis_ticket_summary] </td>\n";
