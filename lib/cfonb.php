@@ -62,7 +62,7 @@ function GenerateCfonb($debit_id = null) {
     die('Invalid $debit_id');
 
 	/**
-	* On définit les non constantes
+	* On définit les variables
 	*/
 	$nombre_virements = 0;
 	$montant_total = 0;
@@ -228,25 +228,26 @@ function GenerateCfonb($debit_id = null) {
 		<br /><br />
 		<?
             return false;
+        }
 
 
-		$myFile = sys_get_temp_dir() . "/cfonb-$debit_id.txt";
-		$fh = fopen($myFile, 'w')
-                  or die("can't open file");
-		fwrite($fh, $chaine_totale);
-		fclose($fh);
+        $myFile = sys_get_temp_dir() . "/cfonb-$debit_id.txt";
+        $fh = fopen($myFile, 'w')
+          or die("can't open file");
+        fwrite($fh, $chaine_totale);
+        fclose($fh);
 
-		header('Content-Type: application/octet-stream');
+        header('Content-Type: application/octet-stream');
 
-		if (preg_match('/MSIE 5.5/', $_ENV['HTTP_USER_AGENT']) || preg_match('/MSIE 6.0/', $_ENV['HTTP_USER_AGENT'])){ 
-			header('Content-Disposition: filename = "'.$myFile.'"'); 
-		} else { 
-			header('Content-Disposition: attachment; filename = "'.$myFile.'"'); 
-		}
-		header("Content-Transfer-Encoding: binary");
-		header("Content-Length: ".filesize($myFile));
-		readfile($myFile);
-                unlink($myFile);
+        if (preg_match('/MSIE 5.5/', $_ENV['HTTP_USER_AGENT']) || preg_match('/MSIE 6.0/', $_ENV['HTTP_USER_AGENT'])){ 
+          header('Content-Disposition: filename = "'.$myFile.'"'); 
+        } else { 
+          header('Content-Disposition: attachment; filename = "'.$myFile.'"'); 
+        }
+        header("Content-Transfer-Encoding: binary");
+        header("Content-Length: ".filesize($myFile));
+        readfile($myFile);
+        unlink($myFile);
 }
 
 function GetCompanyMaiRIB() {
