@@ -33,11 +33,10 @@ if($cfonb_file === false)
 
 # Send CFONB file to browser
 header('Content-Type: application/octet-stream');
-
-header('Content-Disposition: attachment; filename = "'.$myFile.'"');
+header('Content-Disposition: attachment; filename = "'.$cfonb_file.'"');
 header("Content-Transfer-Encoding: binary");
-header("Content-Length: ".filesize($myFile));
-readfile($myFile);
-unlink($myFile);
+header("Content-Length: ".filesize($cfonb_file));
+readfile($cfonb_file);
+unlink($cfonb_file);
 
 ?>
