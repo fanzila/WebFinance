@@ -237,17 +237,7 @@ function GenerateCfonb($debit_id = null) {
         fwrite($fh, $chaine_totale);
         fclose($fh);
 
-        header('Content-Type: application/octet-stream');
-
-        if (preg_match('/MSIE 5.5/', $_ENV['HTTP_USER_AGENT']) || preg_match('/MSIE 6.0/', $_ENV['HTTP_USER_AGENT'])){ 
-          header('Content-Disposition: filename = "'.$myFile.'"'); 
-        } else { 
-          header('Content-Disposition: attachment; filename = "'.$myFile.'"'); 
-        }
-        header("Content-Transfer-Encoding: binary");
-        header("Content-Length: ".filesize($myFile));
-        readfile($myFile);
-        unlink($myFile);
+        return $myFile;
 }
 
 function GetCompanyMaiRIB() {

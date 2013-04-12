@@ -40,9 +40,21 @@ define('LONGUEUR_CODE_GUICHET','5');
 define('LONGUEUR_NUMERO_COMPTE','11');
 define('LONGUEUR_ENREGISTREMENT','160');
 
-
 if(empty($_GET['debit_id']) or !is_numeric($_GET['debit_id']))
   die('Invalid $_GET[debit_id] ' . $_GET['debit_id'] );
 
-GenerateCfonb($_GET['debit_id']);
+$cfonb_file = GenerateCfonb($_GET['debit_id']);
+
+if($cfonb_file === false)
+  die('Error while building CFONB file');
+
+# Send CFONB file to browser
+header('Content-Type: application/octet-stream');
+
+header('Content-Disposition: attachment; filename = "'.$myFile.'"');
+header("Content-Transfer-Encoding: binary");
+header("Content-Length: ".filesize($myFile));
+readfile($myFile);
+unlink($myFile);
+
 ?>
