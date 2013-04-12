@@ -50,7 +50,14 @@ if ($_POST['action'] == "create") {
 } elseif ($_POST['action'] == "save") {
 
   $q = sprintf("UPDATE webfinance_personne SET nom='%s',prenom='%s',email='%s',tel='%s',mobile='%s',fonction='%s',note='%s' WHERE id_personne=%d",
-               $_POST['nom'], $_POST['prenom'], $_POST['email'], removeSpace($_POST['tel']), removeSpace($_POST['mobile']), $_POST['fonction'], $_POST['note'], $_POST['id_personne']);
+       $_POST['nom'],
+       $_POST['prenom'],
+       $_POST['email'],
+       removeSpace($_POST['tel']),
+       removeSpace($_POST['mobile']),
+       $_POST['fonction'],
+       $_POST['note'],
+       $_POST['id_personne']);
 
   mysql_query($q) or die("QUERY ERROR: $q ".mysql_error());
 
