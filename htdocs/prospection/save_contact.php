@@ -50,16 +50,17 @@ if ($_POST['action'] == "create") {
 } elseif ($_POST['action'] == "save") {
 
   $q = sprintf("UPDATE webfinance_personne SET nom='%s',prenom='%s',email='%s',tel='%s',mobile='%s',fonction='%s',note='%s' WHERE id_personne=%d",
-       $_POST['nom'],
-       $_POST['prenom'],
-       $_POST['email'],
-       removeSpace($_POST['tel']),
-       removeSpace($_POST['mobile']),
-       $_POST['fonction'],
-       $_POST['note'],
-       $_POST['id_personne']);
+       mysql_real_escape_string($_POST['nom']),
+       mysql_real_escape_string($_POST['prenom']),
+       mysql_real_escape_string($_POST['email']),
+       mysql_real_escape_string(removeSpace($_POST['tel'])),
+       mysql_real_escape_string(removeSpace($_POST['mobile'])),
+       mysql_real_escape_string($_POST['fonction']),
+       mysql_real_escape_string($_POST['note']),
+       mysql_real_escape_string($_POST['id_personne']));
 
-  mysql_query($q) or die("QUERY ERROR: $q ".mysql_error());
+  mysql_query($q)
+       or die("QUERY ERROR: $q ".mysql_error());
 
   $_SESSION['message'] = _("Contact updated");
 
