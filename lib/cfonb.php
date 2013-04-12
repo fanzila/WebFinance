@@ -63,9 +63,9 @@ function GenerateCfonb($debit_id = null) {
   if(defined($debit_id) and !is_numeric($debit_id))
     die('Invalid $debit_id');
 
-  $where = "WHERE debit_id = $debit_id";
-  if(!defined($debit_id))
-    $where = "WHERE state='todo'";
+  $where = "WHERE state='todo'";
+  if(!empty($debit_id))
+    $where = "WHERE debit_id = $debit_id";
 
   $company_rib = GetCompanyMaiRIB();
 
