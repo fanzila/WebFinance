@@ -18,7 +18,8 @@
     along with Webfinance; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-include("../inc/main.php");
+require("../inc/main.php");
+require('../../lib/cfonb.php');
 must_login();
 
 $roles = 'manager,employee';
@@ -35,6 +36,10 @@ if($res == 0) {
   echo "No invoice to be debited";
   exit(1);
 }
+
+// Check CFONB format
+if(GenerateCfonb() === false)
+  die('Unable to build CFONB file');
 
 // Create new direct debit
 mysql_query('INSERT INTO direct_debit '.
