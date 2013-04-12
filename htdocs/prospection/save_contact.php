@@ -39,14 +39,14 @@ if ($_POST['action'] == "create") {
   $_SESSION['tmp_message'] = $_SESSION['message'];
 
   $q = sprintf("INSERT INTO webfinance_personne (nom,prenom,email,tel,mobile,client,fonction,date_created,note) VALUES ('%s', '%s', '%s', '%s', '%s', %d, '%s', now(),'%s')",
-       $_POST['nom'],
-       $_POST['prenom'],
-       $_POST['email'],
-       removeSpace($_POST['tel']),
-       removeSpace($_POST['mobile']),
-       $_POST['client'],
-       $_POST['fonction'],
-       $_POST['note'] );
+       mysql_real_escape_string($_POST['nom']),
+       mysql_real_escape_string($_POST['prenom']),
+       mysql_real_escape_string($_POST['email']),
+       mysql_real_escape_string(removeSpace($_POST['tel'])),
+       mysql_real_escape_string(removeSpace($_POST['mobile'])),
+       mysql_real_escape_string($_POST['client']),
+       mysql_real_escape_string($_POST['fonction']),
+       mysql_real_escape_string($_POST['note'] ));
 
   mysql_query($q)
     or die("QUERY ERROR: $q ".mysql_error());
