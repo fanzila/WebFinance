@@ -23,23 +23,6 @@ require("../inc/main.php");
 require('../../lib/cfonb.php');
 must_login();
 
-$company_rib = GetCompanyMaiRIB();
-
-define('NUMERO_EMETTEUR', '484779');
-define('RAISON_SOCIALE', 'SARL ISVTEC'); 
-define('SIRET','44875254300034');
-
-define('CODE_GUICHET_SOCIETE', $company_rib->code_guichet);
-define('NUMERO_COMPTE_SOCIETE', $company_rib->compte);
-define('CODE_BANQUE', $company_rib->code_banque);
-
-define('REF_REMISE',date('dmy')); 
-define('PRELEVEMENT_TYPE','08'); //08 = standard, 85 = rapide 	
-define('LONGUEUR_CODE_BANQUE','5');
-define('LONGUEUR_CODE_GUICHET','5');
-define('LONGUEUR_NUMERO_COMPTE','11');
-define('LONGUEUR_ENREGISTREMENT','160');
-
 if(empty($_GET['debit_id']) or !is_numeric($_GET['debit_id']))
   die('Invalid $_GET[debit_id] ' . $_GET['debit_id'] );
 
