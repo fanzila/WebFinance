@@ -39,9 +39,17 @@ if ($_POST['action'] == "create") {
   $_SESSION['tmp_message'] = $_SESSION['message'];
 
   $q = sprintf("INSERT INTO webfinance_personne (nom,prenom,email,tel,mobile,client,fonction,date_created,note) VALUES ('%s', '%s', '%s', '%s', '%s', %d, '%s', now(),'%s')",
-	       $_POST['nom'], $_POST['prenom'], $_POST['email'], removeSpace($_POST['tel']), removeSpace($_POST['mobile']), $_POST['client'], $_POST['fonction'], $_POST['note'] );
+       $_POST['nom'],
+       $_POST['prenom'],
+       $_POST['email'],
+       removeSpace($_POST['tel']),
+       removeSpace($_POST['mobile']),
+       $_POST['client'],
+       $_POST['fonction'],
+       $_POST['note'] );
 
-  mysql_query($q) or die("QUERY ERROR: $q ".mysql_error());
+  mysql_query($q)
+    or die("QUERY ERROR: $q ".mysql_error());
 
   $_SESSION['message'] = _("Contact added");
 
