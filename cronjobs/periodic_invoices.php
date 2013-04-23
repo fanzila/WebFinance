@@ -100,9 +100,8 @@ while(list($id_invoice) = mysql_fetch_row($result)) {
 
     // Send invoice by email to the client
     case 'email':
-	  if($invoice->payment_method == 'direct_debit')
-            $Invoice->sendByEmail($id_new_invoice)
-              or die("Unable to send email for invoice ID $id_facture");
+      $Invoice->sendByEmail($id_new_invoice)
+        or die("Unable to send email for invoice ID $id_facture");
       break;
 
       // Send the invoice to me in order to print and send it to the client
