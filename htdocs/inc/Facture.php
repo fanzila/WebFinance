@@ -858,6 +858,9 @@ class Facture extends WFO {
 
     $vat = getTVA();
 
+    if(empty($invoice['client_id']))
+      die('Unable to create invoice: $invoice[client_id] not defined');
+
     mysql_query('INSERT INTO webfinance_invoices '.
       'SET date_created = NOW(), '.
       '    date_facture = NOW(), '.
