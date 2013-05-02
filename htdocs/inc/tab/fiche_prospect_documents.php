@@ -25,7 +25,7 @@ $document = new WebfinanceDocument;
   src="/js/ask_confirmation.js"></script>
 
 <br/>
-    <div style="overflow: auto; width: 700px; height: 500px;">
+    <div style="overflow: auto; height: 500px;">
     <table width="100%" border="0" cellspacing="0" cellpadding="1">
 
 <tr>

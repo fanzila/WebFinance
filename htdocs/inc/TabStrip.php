@@ -33,7 +33,6 @@ class TabStrip {
   var $nb_tab = 0;
   var $title = array();
   var $content = array();
-  var $width = 740; // default pixel width of the tabstrip
 
 
   function TabStrip($nb_tabs=0, $title="") {
@@ -66,7 +65,7 @@ class TabStrip {
   function realise() {
     $html = <<<EOF
 <input type="hidden" name="focused_onglet" value="$this->focusedTab" />
-<table width="$this->width" border="0" cellspacing="0" cellpadding="0" class="tabstrip">
+<table border="0" cellspacing="0" cellpadding="0" class="tabstrip">
 <tr class="onglets">
 EOF;
     foreach ($this->title as $id=>$t) {

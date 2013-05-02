@@ -25,7 +25,7 @@ global $Client, $User;
 ?>
 <br/>
 
-    <div style="overflow: auto; width: 700px; height: 500px;">
+    <div>
     <table width=100% border=0 cellspacing=0 cellpadding=1>
       <?php
         // Affichage des factures existantes pour ce client

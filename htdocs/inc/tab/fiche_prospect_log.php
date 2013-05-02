@@ -42,7 +42,7 @@ print <<<EOF
 
 $ts_select<br/>
 
-<textarea name="new_suivi_comment" style="width: 600px; height: 90px; border: solid 1px #ccc;">
+<textarea name="new_suivi_comment" style="height: 90px; border: solid 1px #ccc;">
 </textarea>
 
        <select name="done">

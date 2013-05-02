@@ -168,7 +168,7 @@ if(isset($_SESSION['message']) and !empty($_SESSION['message'])){
 <input type="hidden" name="id_client" value="<?= $Client->id ?>" />
 <input type="hidden" name="id_user" value="<?= $Client->id_user ?>" />
 
-<table width="740" border="0" cellspacing="5" cellpadding="0" class="fiche_prospect">
+<table border="0" cellspacing="5" cellpadding="0" class="fiche_prospect">
 <tr>
   <td width="100%"><input type="text" name="nom" value="<?= preg_replace('/"/', '\\"', $Client->nom) ?>" style="font-size: 18px; font-weight: bold; width: 510px; border-top: none; border-left: none; border-right: none;" /><br/></td>
   <td nowrap>
