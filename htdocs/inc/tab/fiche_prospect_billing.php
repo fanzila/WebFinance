@@ -43,7 +43,7 @@ global $Client, $User;
 
         $Facture = new Facture();
         while ($year = mysql_fetch_object($result)) {
-          printf('<tr><td style="border-bottom: solid 1px #777;" colspan="5"><b style="font-size: 16px;">%s</b> - <b><i>Encours %s&euro; HT</i></b> - <i>%s&euro; HT</i></td></tr>',
+          printf('<tr><td style="border-bottom: solid 1px #777;" colspan="6"><b style="font-size: 16px;">%s</b> - <b><i>Encours %s&euro; HT</i></b> - <i>%s&euro; HT</i></td></tr>',
 		 $year->annee, number_format($year->du_ht_total, 2, ',', ' '), number_format($year->ca_ht_total, 2, ',', ' '));
 
           $q = "SELECT f.id_facture
@@ -90,6 +90,7 @@ global $Client, $User;
              printf('<tr class="facture_line" onMouseOut="UnTip();" onmouseover="Tip(\'%s\');" valign=middle>
                        <td nowrap>%s</td>
                        <td style="text-align:left"><b>%s</b>%s</td>
+                       <td style="text-align:left">%s</td>
                        <td class="euro" nowrap>%s %s HT</td>
                        <td class="euro" nowrap>%s %s TTC</td>
                        <td width="100%%" style="text-align: right;" nowrap>%s<img src="/imgs/icons/%s" alt=""><a href="edit_facture.php?id_facture=%d"><img src="/imgs/icons/edit.png" border="0"></a>%s</td>
@@ -97,6 +98,7 @@ global $Client, $User;
 		    $description,
 		    $facture->nice_date_facture, // FIXME : nice_date = option dans partie admin heritee par tous les objets penser 6 pour 2006
 		    $facture->code_type_doc, $facture->num_facture,
+		    $facture->ref_contrat,
 		    number_format($facture->total_ht, 2, ',', ' '), $currency,
 		    number_format($facture->total_ttc, 2, ',', ' '), // FIXME : Taux de TVA par facture
 		    $currency,
