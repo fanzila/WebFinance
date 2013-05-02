@@ -98,7 +98,7 @@ global $Client, $User;
 		    $description,
 		    $facture->nice_date_facture, // FIXME : nice_date = option dans partie admin heritee par tous les objets penser 6 pour 2006
 		    $facture->code_type_doc, $facture->num_facture,
-		    $facture->ref_contrat,
+		    str_replace(' ', '&nbsp;', $facture->ref_contrat),
 		    number_format($facture->total_ht, 2, ',', ' '), $currency,
 		    number_format($facture->total_ttc, 2, ',', ' '), // FIXME : Taux de TVA par facture
 		    $currency,
