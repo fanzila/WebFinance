@@ -69,8 +69,7 @@ class Client extends WFO
   c.rib_code_cle,
   c.id_mantis,
   c.language,
-  ct.nom as type_name,
-  sub4.emails
+  ct.nom as type_name
 FROM webfinance_clients as c
   JOIN webfinance_company_types as ct USING (id_company_type)
   LEFT JOIN
@@ -103,13 +102,6 @@ FROM webfinance_clients as c
       f.id_facture=fl.id_facture
     GROUP BY f.id_client
   ) as sub3 ON sub3.id_client = c.id_client
-  LEFT JOIN
-  (
-    SELECT GROUP_CONCAT(DISTINCT p.email) AS emails, p.client
-    FROM webfinance_personne p
-    WHERE p.email != ''
-    GROUP BY p.client
-  ) AS sub4 ON sub4.client = c.id_client
   ";
   }
 
@@ -126,17 +118,7 @@ FROM webfinance_clients as c
             foreach ($data as $n=>$v)
                 $this->$n = $v;
 
-            // Convert a MySQL GROUP_CONCAT() to a PHP array()
-            if(empty($this->emails))
-              $this->emails = array();
-            else
-              $this->emails = explode(',', $this->emails);
-
-            // Append 'email' to 'emails'. 'email' might contains several
-            // email addresses as well!!
-            foreach(explode(',', $this->email) as $email)
-              if(!empty($email) and !in_array($email, $this->emails))
-                array_push($this->emails, $email);
+            $this->emails = explode(',', $this->email);
 
             mysql_free_result($result);
         }

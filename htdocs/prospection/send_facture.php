@@ -130,15 +130,6 @@ if(!empty($client['email'])){
   }
  }
 
-$result = mysql_query("SELECT email, nom, prenom FROM webfinance_personne WHERE client=".$client['id_client'])
-  or wf_mysqldie();
-
-while($person=mysql_fetch_assoc($result)){
-  if( !in_array($person['email'],$mails) AND check_email($person['email']) )
-      $mails[$person['prenom']." ".$person['nom']] = $person['email'];
- }
-mysql_free_result($result);
-
 //récupérer les info sur la société
 $result = mysql_query("SELECT value FROM webfinance_pref WHERE type_pref='societe' AND owner=-1")
   or wf_mysqldie();
