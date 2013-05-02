@@ -110,9 +110,11 @@ extract($_GET);
 $mails=array();
 
 //Récupérer les adresses mails:
-$result = mysql_query("SELECT webfinance_invoices.id_client as id_client, email, nom ".
-		      "FROM webfinance_clients LEFT JOIN webfinance_invoices ON (webfinance_clients.id_client = webfinance_invoices.id_client) ".
-		      "WHERE id_facture=$id")
+$result = mysql_query(
+"SELECT i.id_client as id_client, email, nom
+FROM webfinance_clients c
+LEFT JOIN webfinance_invoices i ON (c.id_client = i.id_client)
+WHERE id_facture=$id")
   or wf_mysqldie();
 $client=mysql_fetch_assoc($result);
 mysql_free_result($result);
