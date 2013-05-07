@@ -280,20 +280,13 @@ class WebfinanceMantis {
 		$id_compte = $cpt->id_pref;
 
 		// Input facture paremeters
-		$q = sprintf("UPDATE webfinance_invoices SET ".
-			"is_paye=%d, ".
-			"is_envoye=%d, ".
-			"ref_contrat='%s', ".
-			"payment_method='%s', ".
-			"id_compte='%s' ".
-			"WHERE id_facture=%d",
-		0,
-		0,
-		'INFOGERANCE',
-		$payment_method,
-		$id_compte,
-		$id_facture);
-		mysql_query($q)
+		mysql_query("UPDATE webfinance_invoices SET
+		        is_paye = 0,
+		        is_envoye = 0,
+		        ref_contrat = 'Support professionnel',
+		        payment_method = '$payment_method',
+		        id_compte = $id_compte
+		      WHERE id_facture = $id_facture")
                   or die(mysql_error());
 		
 		// Add service rows to invoice
