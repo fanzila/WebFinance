@@ -279,13 +279,23 @@ class WebfinanceMantis {
 		$cpt = mysql_fetch_object($result);
 		$id_compte = $cpt->id_pref;
 
+		// Get id_type_presta
+		$result = mysql_query(
+                  "SELECT id_type_presta
+                  FROM webfinance_type_presta
+                  WHERE nom = 'Support mensuel'
+                  LIMIT 1")
+                  or die(mysql_error());
+                list($id_type_presta) = mysql_fetch_row($result);
+
 		// Input facture paremeters
 		mysql_query("UPDATE webfinance_invoices SET
 		        is_paye = 0,
 		        is_envoye = 0,
 		        ref_contrat = 'Support professionnel',
 		        payment_method = '$payment_method',
-		        id_compte = $id_compte
+		        id_compte = $id_compte,
+		        id_type_presta = $id_type_presta
 		      WHERE id_facture = $id_facture")
                   or die(mysql_error());
 		
