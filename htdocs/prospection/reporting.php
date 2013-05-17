@@ -315,7 +315,7 @@ if(isset($_GET['popup'])) {
 <form onsubmit="">
 	Period: <select name="month">
 <?php for ($lmonth = 01 ; $lmonth <= 12 ; $lmonth++) { ?>
-	<option value="<?php echo $lmonth ?>" <? if($lmonth == $month) echo 'selected' ?>><?php echo $lmonth; ?></option>
+	<option value="<?php echo $lmonth ?>" <? if($lmonth == $month) echo 'selected' ?>><?=strftime('%B', mktime(0, 0, 0, $lmonth)); ?></option>
 	<?php } ?>	
 </select>
 <select name="year">
