@@ -366,6 +366,37 @@ if(isset($_GET['popup'])) {
 			</table>
 		</td><td></td>	
 	</tr>
+
+	<tr class="misc2">
+		<td>CA facturé en fonction du type de presta sur la periode</td>
+		<td>
+		  <table>
+
+<?
+
+$req = mysql_query("SELECT
+    p.nom AS category_name,
+    ROUND(SUM(ir.qtt*ir.prix_ht)) AS excl_taxes
+FROM webfinance_invoices i
+JOIN webfinance_type_presta p ON p.id_type_presta=i.id_type_presta
+JOIN webfinance_invoice_rows ir ON ir.id_facture = i.id_facture
+WHERE type_doc='facture'
+  AND MONTH(i.date_paiement) = '$month'
+  AND YEAR(i.date_paiement) = '$year'
+GROUP by i.id_type_presta
+ORDER BY excl_taxes DESC")
+  or die(mysql_error());
+
+while($row = mysql_fetch_array($req)) {
+  echo "<tr> <td> $row[category_name] </td>";
+  echo "<td align=\"right\"> $row[excl_taxes] &euro; </td> </tr>";
+}
+
+?>
+
+		  </table>
+		</td>
+	</tr>
 </table>
 <br/>
 <br/>
