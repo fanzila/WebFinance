@@ -348,11 +348,11 @@ if(isset($_GET['popup'])) {
 	<tr class="misc2">
 		<td><!-- REQ6 -->6. Nombre de serveurs en infogérance avec GTR</td><td>
 			<table width="300" border="0" cellspacing="0" cellpadding="0">
-				<tr><td width="150">Total</td><td width="50"><?=$total6?></td><td width="100">100%</td></tr>
-				<tr><td><a href="/prospection/reporting.php?popup=service_client&service=gtr4">GTR +4 HO</a></td><td><?=$total6_gtr?></td><td><?=$total6_gtr_per?>%</td></tr>
-				<tr><td><a href="/prospection/reporting.php?popup=service_client&service=gtr4_gold">GTR +4 HNO Gold</a></td><td><?=$total6_gtr4g?></td><td><?=$total6_gtr4g_per?>%</td></tr>
-				<tr><td><a href="/prospection/reporting.php?popup=service_client&service=gtr4_prems">GTR +2 HNO Premium</a></td><td><?=$total6_gtrprem?></td><td><?=$total6_gtrprem_per?>%</td></tr>
-				<tr><td><a href="/prospection/reporting.php?popup=service_client&service=gtr4_plus1">GTR +1 HNO</a></td><td><?=$total6_plus1?></td><td><?=$total6_plus1_per?>%</td></tr>		
+				<tr><td width="150">Total</td><td width="50"><?=$total6?></td><td width="100" align="right">100%</td></tr>
+				<tr><td><a href="/prospection/reporting.php?popup=service_client&service=gtr4">GTR +4 HO</a></td><td><?=$total6_gtr?></td><td align="right"><?=$total6_gtr_per?>%</td></tr>
+				<tr><td><a href="/prospection/reporting.php?popup=service_client&service=gtr4_gold">GTR +4 HNO Gold</a></td><td><?=$total6_gtr4g?></td><td align="right"><?=$total6_gtr4g_per?>%</td></tr>
+				<tr><td><a href="/prospection/reporting.php?popup=service_client&service=gtr4_prems">GTR +2 HNO Premium</a></td><td><?=$total6_gtrprem?></td><td align="right"><?=$total6_gtrprem_per?>%</td></tr>
+				<tr><td><a href="/prospection/reporting.php?popup=service_client&service=gtr4_plus1">GTR +1 HNO</a></td><td><?=$total6_plus1?></td><td align="right"><?=$total6_plus1_per?>%</td></tr>		
 			</table>
 		</td><td></td>
 	</tr>
