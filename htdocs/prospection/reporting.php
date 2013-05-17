@@ -27,7 +27,8 @@ include("nav.php");
 if(isset($_GET['disp_req'])) $disp_req = true;
 
 function mysqlQuery($q) {
-	$r = mysql_query($q) or die("QUERY ERROR: $q ".mysql_error());
+	$r = mysql_query($q)
+          or die("QUERY ERROR: $q ".mysql_error());
 	return mysql_fetch_object($r);
 }
 
@@ -240,7 +241,8 @@ if(isset($_GET['popup'])) {
 		</tr>
 		<?
 		$Facture = new Facture();
-		$result = mysql_query($req3c) or die("QUERY ERROR: $q ".mysql_error());
+		$result = mysql_query($req3c)
+                   or die("QUERY ERROR: $q ".mysql_error());
 		while ($row = mysql_fetch_object($result)) {
 			$info_facture = $Facture->getInfos($row->id_facture)
 	?>	
@@ -262,7 +264,9 @@ if(isset($_GET['popup'])) {
 			<td>CA HT</td>
 		</tr>
 		<?
-			$result = mysql_query($req5c) or die("QUERY ERROR: $q ".mysql_error());
+			$result = mysql_query($req5c)
+			  or die("QUERY ERROR: $q ".mysql_error());
+
 			while ($row = mysql_fetch_object($result)) {
 		?>		
 		<tr>
@@ -287,7 +291,8 @@ if(isset($_GET['popup'])) {
 		$var	= 'req6_'.$srv.'_clt';
 		$toreq	= $$var;
 		
-		$result = mysql_query($toreq) or die("QUERY ERROR: $q ".mysql_error());
+		$result = mysql_query($toreq)
+                  or die("QUERY ERROR: $q ".mysql_error());
 		while ($row = mysql_fetch_object($result)) {
 	?>	
 		<tr>
@@ -339,6 +344,7 @@ if(isset($_GET['popup'])) {
 		<td><!-- REQ5 -->5. CA des nouveaux clients de l'année</a>
 		</td><td><?=numberFormat(mysqlQuery($req5)->total)?> € - <a href="/prospection/reporting.php?popup=new_client&month=<?=$month?>&year=<?=$year?>"><?=numberFormat(mysqlQuery($req5b)->total)?> nouveaux clients</a> <br /> <?=numberFormat($recu5)?> €, <?=$perc_recu5?>% récurrent <br /> <?=numberFormat($total5_ponctu)?> €, <?=$perc_ponctu5?>% ponctuel</td><td></td>
 	</tr>
+
 	<tr class="misc2">
 		<td><!-- REQ6 -->6. Nombre de serveurs en infogérance avec GTR</td><td>
 			<table width="300" border="0" cellspacing="0" cellpadding="0">
@@ -350,6 +356,7 @@ if(isset($_GET['popup'])) {
 			</table>
 		</td><td></td>
 	</tr>
+
 	<tr class="misc1">
 		<td><!-- REQ6 -->6a. Nombre de serveurs en infogérance avec services</td><td>
 			<table width="300" border="0" cellspacing="0" cellpadding="0">
