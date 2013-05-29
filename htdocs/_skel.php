@@ -23,16 +23,22 @@ USA
 
 $Id: _skel.php 487 2006-09-22 07:28:24Z nico $
 */
-?>
 
-<?php
+require_once("../../inc/main.php");
+$User = new User();
+$document = new WebfinanceDocument;
 
-require("../inc/main.php");
-$roles = 'any';
-$title = _('Skeleton');
+if(!$User->isAuthorized("manager,accounting,employee")){
+  $_SESSION['came_from'] = $_SERVER['REQUEST_URI'];
+  header("Location: /login.php");
+  exit;
+}
+
 require("../top.php");
 
 ?>
+
+HTML content here
 
 <?php
 $Revision = '$Revision: 487 $';
