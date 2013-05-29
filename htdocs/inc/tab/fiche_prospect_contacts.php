@@ -48,7 +48,7 @@ global $Client, $User;
 	<input type="text" name="rcs" value="<?= preg_replace('/"/', '\\"', $Client->rcs) ?>" style="color: #666; width: 100px; text-align: center;" />
 
 <? if(!empty($Client->rcs)) { ?>
-<a href="http://www.societe.com/cgi-bin/recherche?rncs=421576729">
+<a href="http://www.societe.com/cgi-bin/recherche?rncs=<?=substr(preg_replace('/[^\d]/', '', $Client->rcs), 0, 9); ?>">
   <img src="http://www.societe.com/favicon.ico" width="13">
   </a>
 <? } ?>
