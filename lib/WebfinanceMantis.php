@@ -373,6 +373,9 @@ class WebfinanceMantis {
           if(empty($this->_soapclient))
             return true;
 
+          if($project_id == 0)
+            return true;
+
           $this->_soapclient->mc_project_update($this->_login, $this->_password,
             $project_id, $mantis_project);
         }
