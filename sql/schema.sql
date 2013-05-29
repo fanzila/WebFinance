@@ -100,6 +100,7 @@ CREATE TABLE IF NOT EXISTS `webfinance_clients` (
   `capital` varchar(100) NOT NULL,
   `id_mantis` int(11) NOT NULL,
   `language` varchar(3) NOT NULL DEFAULT 'fr',
+  `id_business_entity` int(11),
   PRIMARY KEY (`id_client`),
   UNIQUE KEY `nom` (`nom`),
   KEY `id_user` (`id_user`)
@@ -556,3 +557,19 @@ ALTER TABLE `webfinance_transaction_invoice`
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+CREATE TABLE IF NOT EXISTS `business_entity` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(32) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+INSERT INTO business_entity (name) VALUES
+  ('SARL'),
+  ('EURL'),
+  ('Particulier'),
+  ('Auto Entreprise'),
+  ('SAS'),
+  ('SA')
+  ;

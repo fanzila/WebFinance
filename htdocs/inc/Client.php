@@ -69,8 +69,10 @@ class Client extends WFO
   c.rib_code_cle,
   c.id_mantis,
   c.language,
-  ct.nom as type_name
+  ct.nom as type_name,
+  be.name AS business_entity
 FROM webfinance_clients as c
+  LEFT JOIN business_entity AS be ON be.id = c.id_business_entity
   JOIN webfinance_company_types as ct USING (id_company_type)
   LEFT JOIN
   (
@@ -194,5 +196,21 @@ FROM webfinance_clients as c
       $result = $this->SQL("SELECT count(*) FROM webfinance_clients WHERE id_client=$id");
       list($exists) = mysql_fetch_array($result);
       return $exists;
+  }
+
+  // Return the list of available business entities
+  function GetBusinessEntities()
+  {
+    $business_entities = array();
+    $result = $this->SQL(
+      'SELECT id, name
+      FROM business_entity
+      ORDER BY name'
+    ) or die(mysql_error());
+
+    while ($business_entity = mysql_fetch_array($result))
+      $business_entities[$business_entity['id']] = $business_entity['name'];
+
+    return $business_entities;
   }
 }

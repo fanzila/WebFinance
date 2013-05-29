@@ -175,7 +175,8 @@ $q = sprintf("UPDATE webfinance_clients SET ".
 	      rib_code_compte='%s',
               rib_code_cle='%s',
               id_mantis='%s',
-              language='%s'
+              language='%s',
+              id_business_entity=%d
             WHERE id_client=%d",
 
 			 mysql_real_escape_string($nom),
@@ -204,6 +205,7 @@ $q = sprintf("UPDATE webfinance_clients SET ".
 			 mysql_real_escape_string($rib_code_cle),
 			 mysql_real_escape_string($id_mantis),
 			 mysql_real_escape_string($clt_language),
+			 mysql_real_escape_string($id_business_entity),
              mysql_real_escape_string($id_client)
 	);
 

@@ -41,8 +41,38 @@ global $Client, $User;
   <b><?= _('Address 2:') ?></b> <input type="text" name="addr3" value="<?= preg_replace('/"/', '\\"', $Client->addr3) ?>" style="color: #666; width: 200px" /><br/>
   <input type="text" name="cp" value="<?= preg_replace('/"/', '\\"', $Client->cp) ?>" style="text-align: center; color: #666; width: 48px" /><input type="text" name="ville" value="<?= $Client->ville ?>" style="color: #666; width: 148px" /><br/>
   <input type="text" name="pays" value="<?= preg_replace('/"/', '\\"', $Client->pays) ?>" style="color: #666; width: 80px; text-align: center;" />Lang: <select name="clt_language"><option value='fr_FR' <? if($Client->language == 'fr_FR') { ?>selected <? } ?>>French</option><option value='en_US' <? if($Client->language == 'en_US') { ?>selected <? } ?>>English</option></select><br/>
-  <table border="0"><tr><td><?= _('RCS:') ?></td><td><input type="text" name="rcs" value="<?= preg_replace('/"/', '\\"', $Client->rcs) ?>" style="color: #666; width: 100px; text-align: center;" /></tr></td>
-  <tr><td><?= _('Capital:') ?></td><td><input type="text" name="capital" value="<?= preg_replace('/"/', '\\"', $Client->capital ) ?>" style="color: #666; width: 100px; text-align: center;" /></tr></td></table>
+  <table border="0">
+    <tr>
+      <td><?= _('RCS:') ?></td>
+      <td><input type="text" name="rcs" value="<?= preg_replace('/"/', '\\"', $Client->rcs) ?>" style="color: #666; width: 100px; text-align: center;" /> </td>
+    </tr>
+    <tr>
+      <td><?= _('Capital:') ?></td>
+      <td><input type="text" name="capital" value="<?= preg_replace('/"/', '\\"', $Client->capital ) ?>" style="color: #666; width: 100px; text-align: center;" /></td>
+   </tr>
+
+    <tr>
+      <td><?= _('Business entity:') ?></td>
+      <td>
+<select name="id_business_entity">
+   <option value="0"></option>
+<? foreach($Client->GetBusinessEntities()
+     as $business_entity_id => $business_entity_name)
+   {
+     echo "<option value=\"$business_entity_id\"";
+
+     if($business_entity_name === $Client->business_entity)
+       echo 'selected';
+
+     echo ">$business_entity_name</option>";
+   }
+?>
+
+</select>
+</td>
+   </tr>
+
+  </table>
 
  
  <b><?= _('Login and password:') ?></b><br/>
