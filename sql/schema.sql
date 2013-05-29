@@ -101,6 +101,8 @@ CREATE TABLE IF NOT EXISTS `webfinance_clients` (
   `id_mantis` int(11) NOT NULL,
   `language` varchar(3) NOT NULL DEFAULT 'fr',
   `id_business_entity` int(11),
+  `contract_signer` varchar(100),
+  `id_contract_signer_role` int(11),
   PRIMARY KEY (`id_client`),
   UNIQUE KEY `nom` (`nom`),
   KEY `id_user` (`id_user`)
@@ -574,3 +576,10 @@ INSERT INTO business_entity (name) VALUES
   ('SA'),
   ('Association')
   ;
+
+CREATE TABLE IF NOT EXISTS `contract_signer_role` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `role` varchar(32) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `role` (`role`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

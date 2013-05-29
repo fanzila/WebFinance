@@ -69,10 +69,13 @@ class Client extends WFO
   c.rib_code_cle,
   c.id_mantis,
   c.language,
+  c.contract_signer,
   ct.nom as type_name,
-  be.name AS business_entity
+  be.name AS business_entity,
+  csr.role AS contract_signer_role
 FROM webfinance_clients as c
   LEFT JOIN business_entity AS be ON be.id = c.id_business_entity
+  LEFT JOIN contract_signer_role AS csr ON c.id_contract_signer_role = csr.id
   JOIN webfinance_company_types as ct USING (id_company_type)
   LEFT JOIN
   (
@@ -212,5 +215,22 @@ FROM webfinance_clients as c
       $business_entities[$business_entity['id']] = $business_entity['name'];
 
     return $business_entities;
+  }
+
+  // Return the list of available contract signer roles
+  function GetContractSignerRoles()
+  {
+    $contract_signer_roles = array();
+    $result = $this->SQL(
+      'SELECT id, role
+      FROM contract_signer_role
+      ORDER BY role'
+    ) or die(mysql_error());
+
+    while ($contract_signer_role = mysql_fetch_array($result))
+      $contract_signer_roles[$contract_signer_role['id']] =
+        $contract_signer_role['role'];
+
+    return $contract_signer_roles;
   }
 }

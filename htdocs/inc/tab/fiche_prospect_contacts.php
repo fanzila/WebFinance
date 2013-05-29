@@ -72,6 +72,38 @@ global $Client, $User;
 </td>
    </tr>
 
+    <tr>
+      <td style="white-space: nowrap;"><?= _('Contract signer:') ?></td>
+      <td>
+	<input name="contract_signer"
+	       size="30"
+	       value="<?=$Client->contract_signer?>"
+	       type="text"
+	       />
+      </td>
+    </tr>
+
+    <tr>
+      <td style="white-space: nowrap;"><?= _('Contract signer role:') ?></td>
+      <td>
+<select name="id_contract_signer_role">
+   <option value="0"></option>
+<? foreach($Client->GetContractSignerRoles()
+     as $contract_signer_id => $contract_signer_role)
+   {
+     echo "<option value=\"$contract_signer_id\"";
+
+     if($contract_signer_role === $Client->contract_signer_role)
+       echo 'selected';
+
+     echo ">$contract_signer_role</option>";
+   }
+?>
+
+</select>
+</td>
+   </tr>
+
   </table>
 
  
