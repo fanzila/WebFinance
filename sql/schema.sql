@@ -571,5 +571,6 @@ INSERT INTO business_entity (name) VALUES
   ('Particulier'),
   ('Auto Entreprise'),
   ('SAS'),
-  ('SA')
+  ('SA'),
+  ('Association')
   ;
