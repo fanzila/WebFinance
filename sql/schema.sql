@@ -583,3 +583,9 @@ CREATE TABLE IF NOT EXISTS `contract_signer_role` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `role` (`role`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+INSERT INTO contract_signer_role (name) VALUES
+  ('Gérant'),
+  ('Président'),
+  ('Directeur Général')
+  ;
