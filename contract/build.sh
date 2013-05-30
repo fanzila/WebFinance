@@ -27,14 +27,15 @@ usage() {
     echo "--contract_signer_role=SIGNER_ROLE" >&2
     echo "--contract_signer=SIGNER" >&2
     echo "--capital=CAPITAL" >&2
+    echo "--date=DATE" >&2
     echo "--address=ADDRESS" >&2
 }
 
 # ":" means required
 # "::" means optional
-TEMP=$(getopt -o h: --long template-file:,output:,business_entity: \
+TEMP=$(getopt -o h: --long template-file:,output:,business_entity:,rcs: \
     --long=company:,contract_signer_role:,contract_signer:,capital:,address: \
-    -n "$0" -- "$@")
+    --long=date: -n "$0" -- "$@")
 
 # Check for non-GNU getopt
 if [ $? != 0 ]
@@ -68,6 +69,11 @@ do
 	    shift 2
 	    ;;
 
+	--rcs)
+	    rcs="$2"
+	    shift 2
+	    ;;
+
 	--contract_signer_role)
 	    contract_signer_role="$2"
 	    shift 2
@@ -80,6 +86,11 @@ do
 
 	--capital)
 	    capital="$2"
+	    shift 2
+	    ;;
+
+	--date)
+	    date="$2"
 	    shift 2
 	    ;;
 
@@ -100,9 +111,9 @@ do
     esac
 done
 
-if [ -z "$template_file" -o -z "$output" -o -z "$company" \
+if [ -z "$template_file" -o -z "$output" -o -z "$company" -o -z "$rcs" \
     -o -z "$business_entity" -o -z "$contract_signer_role" -o \
-    -z "$contract_signer" -o -z "$capital" -o -z "$address" ]
+    -z "$contract_signer" -o -z "$capital" -o -z "$address" -o -z "$date" ]
 then
     usage
     exit 1
@@ -116,10 +127,12 @@ cd $(dirname $0)
 sed \
     -e "s/_COMPANY_/$company/g" \
     -e "s/_BUSINESS_ENTITY_/$business_entity/g" \
+    -e "s/_RCS_/$rcs/g" \
     -e "s/_CONTRACT_SIGNER_ROLE_/$contract_signer_role/g" \
     -e "s/_CONTRACT_SIGNER_/$contract_signer/g" \
     -e "s/_CAPITAL_/$capital/g" \
     -e "s/_ADDRESS_/$address/g" \
+    -e "s|_DATE_|$date|g" \
     $template_file \
     | pandoc -V lang=french -V geometry:a4paper --template=contract.latex \
     -o $output.pdf

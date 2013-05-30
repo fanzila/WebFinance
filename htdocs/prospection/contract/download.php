@@ -62,12 +62,19 @@ if(empty($company->contract_signer))
 if(empty($company->capital))
   die("Invalid capital");
 
+if(empty($company->rcs))
+  die("Invalid RCS");
+
+# Generate address
 $address = "$company->addr1";
 if(!empty($company->addr2))
   $address .= ", $company->addr2";
 if(!empty($company->addr3))
   $address .= ", $company->addr3";
 $address .= ", $company->cp, $company->ville, $company->pays";
+
+# Generate date
+$date = strftime('%x');
 
 $stdout = shell_exec("$template_dir/build.sh " .
           "--template-file=$template_file ".
@@ -78,6 +85,8 @@ $stdout = shell_exec("$template_dir/build.sh " .
           "--contract_signer=\"$company->contract_signer\" ".
           "--capital=\"$company->capital\" ".
           "--address=\"$address\" ".
+          "--rcs=\"$company->rcs\" ".
+          "--date=\"$date\" ".
           " 2>&1");
 
 if(!empty($stdout))
