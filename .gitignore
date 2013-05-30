@@ -10,3 +10,4 @@ docs/.*~
 *~
 etc/wf.conf
 document/*
+/htdocs/imgs/logo.jpg

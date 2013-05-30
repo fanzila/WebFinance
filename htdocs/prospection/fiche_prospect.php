@@ -195,6 +195,7 @@ $tab->includeTab(_('Miscellaneous'),"../inc/tab/fiche_prospect_other.php","other
 $tab->includeTab(_('Graphics'),"../inc/tab/fiche_prospect_graph.php","graph");
 $tab->includeTab(_('Events'),"../inc/tab/fiche_prospect_event.php","event");
 $tab->includeTab(_('Documents'),"../inc/tab/fiche_prospect_documents.php","documents");
+$tab->includeTab(_('Contracts'),"../inc/tab/fiche_prospect_contracts.php","contracts");
 
 if (isset($_GET['tab']))
   $tab->setFocusedTab($_GET['tab']);
