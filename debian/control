@@ -17,6 +17,7 @@ Depends: libapache2-mod-php5 | php5-cgi,
     libfpdi-php,
     pandoc,
     texlive-lang-french,
+    pdftk,
     ${misc:Depends}
 Description: Manage invoices
  Web application based on PHP/MySQL to manage invoices, handle clients contacts,

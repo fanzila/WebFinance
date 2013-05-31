@@ -119,6 +119,10 @@ then
     exit 1
 fi
 
+# Create temporary file
+tempfile=$(tempfile -s '.pdf')
+trap "rm -f $tempfile" EXIT HUP INT TRAP TERM
+
 # LANG is required by pandoc
 export LANG='en_US.UTF-8'
 
@@ -135,6 +139,12 @@ sed \
     -e "s|_DATE_|$date|g" \
     $template_file \
     | pandoc -V lang=french -V geometry:a4paper --template=contract.latex \
-    -o $output.pdf
+    -o $tempfile
 
-mv $output.pdf $output
+append_file=${template_file%.md}-append.pdf
+if [ -f "$append_file" ]
+then
+    pdftk $tempfile $append_file cat output $output
+else
+    mv $tempfile $output
+fi
