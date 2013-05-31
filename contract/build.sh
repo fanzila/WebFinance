@@ -141,10 +141,9 @@ sed \
     | pandoc -V lang=french -V geometry:a4paper --template=contract.latex \
     -o $tempfile
 
-append_file=${template_file%.md}-append.pdf
-if [ -f "$append_file" ]
+if ls ${template_file%.md}-append-*.pdf >/dev/null 2>/dev/null
 then
-    pdftk $tempfile $append_file cat output $output
+    pdftk $tempfile ${template_file%.md}-append-*.pdf cat output $output
 else
     mv $tempfile $output
 fi
