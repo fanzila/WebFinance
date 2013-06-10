@@ -250,7 +250,7 @@ if(isset($_GET['popup'])) {
 			<td><a href="/prospection/edit_facture.php?id_facture=<?=$row->id_facture?>">DE<?=$row->num_facture?></a></td>
 			<td><?=$row->date_created?></td>
 			<td><a href="/prospection/fiche_prospect.php?onglet=contacts&id=<?=$row->id_client?>"><?=$info_facture->nom_client?></a></td>
-			<td><?=numberFormat($row->total)?></a></td>
+                        <td align="right"><?=numberFormat($row->total)?>&nbsp;&euro;</a></td>
 		</tr>
 		<?
 		}
