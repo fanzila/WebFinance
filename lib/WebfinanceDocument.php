@@ -60,29 +60,25 @@ class WebfinanceDocument
 
     $directory = $this->GetCompanyDirectory($company_id);
 
-    if (!$dh = opendir($directory))
+    if(!is_readable($directory))
       die("Unable to open directory $directory");
 
+    // Fetch directory listing
+    $file_list = glob("$directory/*");
+
+    // Sort files by date
+    usort($file_list, function($a, $b) {
+        return filemtime($a) < filemtime($b);
+      });
+
+    // Fetch file information
     $files = array();
-
-    while (($file = readdir($dh)) !== false)
-      {
-        if(preg_match('/^\./', $file))
-          continue;
-
-        $fp = fopen("$directory/$file", 'r');
-        $fstat = fstat($fp)
-          or die("Unable to fstat $directory/$file");
-        fclose($fp);
-
-        $files[$file] = array
-          (
-            'size'  => $fstat['size'],
-            'mtime' => $fstat['mtime'],
-          );
-      }
-
-    closedir($dh);
+    foreach($file_list as $file)
+      $files[basename($file)] = array
+        (
+          'size'  => filesize($file),
+          'mtime' => filemtime($file),
+        );
 
     return $files;
   }
