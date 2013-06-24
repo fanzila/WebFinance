@@ -254,7 +254,7 @@ CREATE TABLE IF NOT EXISTS `webfinance_invoice_rows` (
   `id_facture_ligne` int(11) NOT NULL AUTO_INCREMENT,
   `id_facture` int(11) NOT NULL DEFAULT '0',
   `description` blob,
-  `qtt` decimal(5,2) DEFAULT NULL,
+  `qtt` decimal(6,2) DEFAULT NULL,
   `ordre` int(10) unsigned DEFAULT NULL,
   `prix_ht` decimal(20,5) DEFAULT NULL,
   PRIMARY KEY (`id_facture_ligne`),
