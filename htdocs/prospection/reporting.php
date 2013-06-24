@@ -88,27 +88,23 @@ $req2 = $select_sum . "
 $req3 = $select_sum . "
 		FROM webfinance_invoices AS f 
 		LEFT JOIN webfinance_invoice_rows AS r ON f.id_facture = r.id_facture 
-		WHERE f.is_envoye = 1 
-		AND f.is_abandoned = 0 
+		WHERE f.is_abandoned = 0
 		AND f.type_doc = 'devis'";
 
 $req3a = "SELECT COUNT(*) AS total
 		FROM webfinance_invoices AS f  
-		WHERE f.is_envoye = 1 
-		AND f.is_abandoned = 0 
+		WHERE f.is_abandoned = 0
 		AND f.type_doc = 'devis'";
 
 $req3b = "SELECT id_facture 
 		FROM webfinance_invoices AS f  
-		WHERE f.is_envoye = 1 
-		AND f.is_abandoned = 0 
+		WHERE f.is_abandoned = 0
 		AND f.type_doc = 'devis'";
 		
 $req3c = "SELECT f.date_created, f.num_facture, f.id_client, f.id_facture, 
 		(SELECT ROUND(SUM(r.qtt*r.prix_ht)) AS total FROM webfinance_invoice_rows AS r where id_facture = f.id_facture) AS total  
 		FROM webfinance_invoices AS f  
-		WHERE f.is_envoye = 1 
-		AND f.is_abandoned = 0 
+		WHERE f.is_abandoned = 0
 		AND f.type_doc = 'devis' 
 		ORDER BY f.date_created ASC";
 
