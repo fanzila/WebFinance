@@ -194,8 +194,8 @@ for($i=2020; $i>=2009; $i--) {
                   $mantis->sendReportByEmail($year, $month, $webfinance_id)
                     or die("Unable to send report for client ID $webfinance_id");
 
-                  # Temp hack for 'Bayard Presse' and 'Galaxya'
-                  if($ticket['id_client'] == 65 or $ticket['id_client'] == 552)
+                  # Temp hack for 'Bayard Presse'
+                  if($ticket['id_client'] == 552)
                     {
                       echo "</b></td></tr>\n";
                       continue;
