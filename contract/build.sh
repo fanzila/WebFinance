@@ -143,7 +143,7 @@ sed \
 
 if ls append-*.pdf >/dev/null 2>/dev/null
 then
-    pdftk $tempfile ${template_file%.md}-append-*.pdf cat output $output
+    pdftk $tempfile append-*.pdf cat output $output
 else
     mv $tempfile $output
 fi
