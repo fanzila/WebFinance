@@ -118,8 +118,8 @@ while ($invoice = mysql_fetch_assoc($res)) {
 
 <h1>Previous debits</h1>
 
-<table border="1">
-    <tr>
+<table width="100%" border="0" cellspacing="0" cellpadding="5">
+    <tr class="row_header">
     <th>Date</th>
     <th>Invoices</th>
     <th>Excl. taxes</th>

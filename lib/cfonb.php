@@ -17,6 +17,8 @@
    *
    */
 
+require_once('sepa-direct-debit/SEPASDD.php');
+
 function stripAccents($string){
   return iconv('utf-8', 'ascii//TRANSLIT', $string);
 }
@@ -59,34 +61,27 @@ function FormatBancaire ($data, $longueur_donnee, $caractere_defaut = " ", $cadr
 
 function GenerateCfonb($debit_id = null) {
 
-  // Check $debit_id
-  if(defined($debit_id) and !is_numeric($debit_id))
-    die('Invalid $debit_id');
+	// Check $debit_id
+	if(defined($debit_id) and !is_numeric($debit_id))
+		die('Invalid $debit_id');
 
-  $where = "WHERE state='todo'";
-  if(!empty($debit_id))
-    $where = "WHERE debit_id = $debit_id";
+	$where = "WHERE state='todo'";
+	if(!empty($debit_id))
+		$where = "WHERE debit_id = $debit_id";
 
-  $company_rib = GetCompanyMaiRIB();
+	$company_rib = GetCompanyMaiRIB();
 
-  define('NUMERO_EMETTEUR', '484779');
-  define('RAISON_SOCIALE', 'SARL ISVTEC'); 
-  define('SIRET','44875254300034');
+	define('NUMERO_EMETTEUR', '484779');
+	define('RAISON_SOCIALE', 'SARL ISVTEC'); 
+	define('SIRET','44875254300034');
+	define('CODE_BIC', $company_rib->swift);
+	define('CODE_IBAN', $company_rib->iban);
+	define('CODE_ICS', $company_rib->ics);
 
-  define('CODE_GUICHET_SOCIETE', $company_rib->code_guichet);
-  define('NUMERO_COMPTE_SOCIETE', $company_rib->compte);
-  define('CODE_BANQUE', $company_rib->code_banque);
+	define('REF_REMISE',date('dmy')); 
+	define('LONGUEUR_IBAN','34');
+	define('LONGUEUR_BIC','34');
 
-  define('REF_REMISE',date('dmy')); 
-  define('PRELEVEMENT_TYPE','08'); //08 = standard, 85 = rapide 	
-  define('LONGUEUR_CODE_BANQUE','5');
-  define('LONGUEUR_CODE_GUICHET','5');
-  define('LONGUEUR_NUMERO_COMPTE','11');
-  define('LONGUEUR_ENREGISTREMENT','160');
-
-	/**
-	* On définit les variables
-	*/
 	$nombre_virements = 0;
 	$montant_total = 0;
 	$montant_total_centimes = 0;
@@ -94,39 +89,18 @@ function GenerateCfonb($debit_id = null) {
 	$nb_erreurs = 0;
 	$erreurs_details = "";
 
-	/**
-	* Enregistrement et données de la remise d'ordres de virement
-	* Enregistrement "Emetteur"
-	*/
-	$ligne = "";
-	$ligne .= FormatBancaire("03", 2); // Code enregistrement - Constante à "03" (2 caractères)
-	$ligne .= FormatBancaire(PRELEVEMENT_TYPE, 2); // Code opération - Virements ordinaires (2 caractères)
-	$ligne .= FormatBancaire("", 8); // Zone réservée (8 caractères)
-	$ligne .= FormatBancaire(NUMERO_EMETTEUR, 6); // Numéro d'émetteur ou d'identification (6 caractères)
-	$ligne .= FormatBancaire("", 1); // Code CCD : inutile dans notre cas (1 caractères)
-	$ligne .= FormatBancaire("", 6); // Zone réservée (6 caractères)
-	$ligne .= FormatBancaire(date('dm').substr(date('y'), -1), 5); // Date (JJMMA) (5 caractères)
-	$ligne .= FormatBancaire(stripAccents(RAISON_SOCIALE), 24); // Nom ou raison sociale du donneur d'ordre (24 caractères)
-	$ligne .= FormatBancaire(stripAccents(REF_REMISE), 11); // Référence de la remise (7 caractères)
-	$ligne .= FormatBancaire("", 15); // Zone réservée (17 caractères)
-	$ligne .= FormatBancaire("E", 1); // Code monnaie - Constante à "E" (1 caractères)
-	$ligne .= FormatBancaire("", 5); // Zone réservée (5 caractères)
-	$ligne .= FormatBancaire(CODE_GUICHET_SOCIETE, 5); // Code guichet de la banque du conneur d'ordre (5 caractères)
-	$ligne .= FormatBancaire(NUMERO_COMPTE_SOCIETE, 11); // Numéro de compte du donneur d'ordre (11 caractères)
-	$ligne .= FormatBancaire("", 47); // Zone réservée (31 caractères)
-	$ligne .= FormatBancaire(CODE_BANQUE, 5); // Code établissement de la banque du donneur d'ordre (5 caractères)
-	//	$ligne .= FormatBancaire(SIRET, 16); // Identifiant du donneur d'ordre (16 caractères)
-	//	$ligne .= FormatBancaire("", 31); // Zone réservée (31 caractères)
-	$ligne .= FormatBancaire("", 6); // Zone réservée (6 caractères)
-
-	// On vérifie l'intégrité de la chaîne
-	if(strlen($ligne) != LONGUEUR_ENREGISTREMENT) {
-		$nb_erreurs++;
-		$erreurs_details .= " - La première ligne \"Emetteur\" contient ".strlen($ligne)." caractères au lieu de ".LONGUEUR_ENREGISTREMENT.". La remise d'ordres de virement ne peut être poursuivie.<br />";
-	}
-
-	// On complète la chaîne totale
-	$chaine_totale .= $ligne."\n";
+	$config = array("name" => RAISON_SOCIALE,
+	"IBAN" => CODE_IBAN,
+	"BIC" => CODE_BIC,
+	"batch" => "true",
+	"creditor_id" => CODE_ICS,
+	"currency" => "EUR"
+	);
+	try{
+		$SEPASDD = new SEPASDD($config);
+	}catch(Exception $e){
+		echo $e->getMessage();
+	}	
 
 	$Invoice = new Facture();
 
@@ -142,9 +116,6 @@ function GenerateCfonb($debit_id = null) {
 		$info = $Invoice->getInfos($invoice['invoice_id']);
 		$total[$info->nom_client]['TTC'] += $info->total_ttc;
 
-		// On positionne le nombre d'erreurs de cette ligne à zéro
-		$nb_erreurs_ligne = 0;
-
 		// On définit les variables de la remise de virement
 		$ref_paiement = "F:".$info->num_facture;
 
@@ -153,93 +124,47 @@ function GenerateCfonb($debit_id = null) {
 		$montant_centimes = round($info->total_ttc * 100, 0);
 
 		// On enlève les caractères génants
-		$rib_titulaire = str_replace(",", "", $info->rib_titulaire);
-		$rib_banque = str_replace(",", "", $info->rib_banque);
+		$iban = str_replace(",", "", $info->iban);
+		$bic = str_replace(",", "", $info->bic);
 
 		// On recherche les éléments pouvant bloquer la génération du paiement
-		if(strlen($info->rib_code_banque) != LONGUEUR_CODE_BANQUE) {
+		if(strlen($iban) > LONGUEUR_IBAN OR empty($iban) ) {
 			$nb_erreurs++;
 			$nb_erreurs_ligne++;
-			$erreurs_details .= " - Le code banque de \"".$info->nom_client."\" permettant de générer un virement d'un montant de ".$montant." EUR contient ".strlen($info->rib_code_banque)." caractères au lieu de ".LONGUEUR_CODE_BANQUE." (valeur constatée : ".$info->rib_code_banque."). Cette ligne est abandonnée.<br />";
+			$erreurs_details .= " - Le code IBAN de \"".$info->nom_client."\" permettant de générer un virement d'un montant de ".$montant." EUR contient ".strlen($info->iban)." caractères au lieu de ".LONGUEUR_IBAN." max. (valeur constatée : ".$info->iban."). Cette ligne est abandonnée.<br />";
 		}
-		if(strlen($info->rib_code_guichet) != LONGUEUR_CODE_GUICHET) {
+		if(strlen($bic) > LONGUEUR_BIC OR empty($bic) ) {
 			$nb_erreurs++;
 			$nb_erreurs_ligne++;
-			$erreurs_details .= " - Le code guichet de \"".$info->nom_client."\" permettant de générer un virement d'un montant de ".$montant." EUR contient ".strlen($info->rib_code_guichet)." caractères au lieu de ".LONGUEUR_CODE_GUICHET." (valeur constatée : ".$info->rib_code_guichet."). Cette ligne est abandonnée.<br />";
-		}
-		if(strlen($info->rib_code_compte) != LONGUEUR_NUMERO_COMPTE) {
-			$nb_erreurs++;
-			$nb_erreurs_ligne++;
-			$erreurs_details .= " - Le numéro de compte de \"".$info->nom_client."\" permettant de générer un virement d'un montant de ".$montant." EUR contient ".strlen($info->rib_code_compte)." caractères au lieu de ".LONGUEUR_NUMERO_COMPTE." (valeur constatée : ".$info->rib_compte."). Cette ligne est abandonnée.<br />";
+			$erreurs_details .= " - Le code BIC de \"".$info->nom_client."\" permettant de générer un virement d'un montant de ".$montant." EUR contient ".strlen($info->bic)." caractères au lieu de ".LONGUEUR_BIC." max. (valeur constatée : ".$info->bic."). Cette ligne est abandonnée.<br />";
 		}
 
-		/**
-		* Enregistrement et données de la remise d'ordres de virement
-		* Enregistrement "Destinataire"
-		*/
-		
-		$ligne = "";
-		$ligne .= FormatBancaire("06", 2); // Code d'enregistrement - Constante à "06" (2 caractères)
-		$ligne .= FormatBancaire(CODE_OPERATION, 2); // Code opération (2 caractères)
-		$ligne .= FormatBancaire("", 8); // Zone réservée (8 caractères)
-		$ligne .= FormatBancaire(NUMERO_EMETTEUR, 6); // Numéro d'émetteur (6 caractères)
-		$ligne .= FormatBancaire($ref_paiement, 12); // Référence (12 caractères)
-		$ligne .= FormatBancaire(stripAccents($info->nom_client), 24); // Nom/Raison sociale du bénéficaire (24 caractères)
-		$ligne .= FormatBancaire(stripAccents($info->rib_banque), 20); // Domicialiation : facultatif (24 caractères)
-		$ligne .= FormatBancaire("", 12); // Déclaration à la balance des paiements : ??????? (8 caractères)
-		$ligne .= FormatBancaire($info->rib_code_guichet, 5); // Code guichet bénéficiaire (5 caractères)
-		$ligne .= FormatBancaire($info->rib_code_compte, 11); // Numéro de compte bénéficiaire (11 caractères)
-		$ligne .= FormatBancaire($montant_centimes, 16, "0", "right"); // Montant (16 caractères)
-		$ligne .= FormatBancaire($ref_paiement, 31); // Libellé (31 caractères)
-		$ligne .= FormatBancaire($info->rib_code_banque, 5); // Code établissement bénéficiaire (5 caractères)
-		$ligne .= FormatBancaire("", 6); // Zone réservée (6 caractères)
+		$payment = array("name" => $info->nom_client,
+		"IBAN" => $info->iban,
+		"BIC" => $info->bic,
+		"amount" => $montant_centimes,
+		"type" => "FRST",
+		"collection_date" => date('Y-m-d'),
+		"mandate_id" => NUMERO_EMETTEUR,
+		"mandate_date" => date('Y-m-d'),
+		"description" => $ref_paiement
+		);
 
-		// On vérifie l'intégrité de la chaîne
-		if(strlen($ligne) != LONGUEUR_ENREGISTREMENT) {
-			$nb_erreurs++;
-			$nb_erreurs_ligne++;
-			$erreurs_details .= " - La ligne de virement de \"".$info->nom_client."\" d'un montant de ".$montant." EUR contient ".strlen($ligne)." caractères au lieu de ".LONGUEUR_ENREGISTREMENT.". Cette ligne est abandonnée.<br />";
+		try{
+			$SEPASDD->addPayment($payment);
+		}catch(Exception $e){
+			//echo $e->getMessage();
 		}
 
 		if($nb_erreurs_ligne == 0) { // Si cette ligne n'a pas générée d'erreur
 			// On compte le nombre de virements à effectuer
 			$nombre_virements++;
-
 			// On additionne le montant total
 			$montant_total += $montant;
-
-			// On complèté la chaîne totale
-			$chaine_totale .= $ligne."\n";
-
 			$montant_total_centimes += $montant_centimes;
 		} 
 
 	}
-
-	// On calcule le montant total en centimes
-	//$montant_total_centimes = round($total_ttc * 100, 0);
-
-	/**
-	* Enregistrement et données de la remise d'ordres de virement
-	* Enregistrement "Total"
-	*/
-	$ligne = "";
-	$ligne .= FormatBancaire("08", 2); // Code enregistrement - constante à "08" (2 caractères)
-	$ligne .= FormatBancaire(CODE_OPERATION, 2); // Code opération (2 caractères)
-	$ligne .= FormatBancaire("", 8); // Zone réservée (8 caractères)
-	$ligne .= FormatBancaire(NUMERO_EMETTEUR, 6); // Numéro d'émetteur (6 caractères)
-	$ligne .= FormatBancaire("", 84); // Zone réservée (12 caractères)
-	$ligne .= FormatBancaire($montant_total_centimes, 16, "0", "right"); // Montant de la remise (16 caractères)
-	$ligne .= FormatBancaire("", 42); // Zone réservée (31 caractères)
-
-	// On vérifie l'intégrité de la chaîne
-	if(strlen($ligne) != LONGUEUR_ENREGISTREMENT) {
-		$nb_erreurs++;
-		$erreurs_details .= " - La dernière ligne \"Total\" contient ".strlen($ligne)." caractères au lieu de ".LONGUEUR_ENREGISTREMENT.". La remise d'ordres de virement ne peut être poursuivie.<br />";
-	}
-
-	// On complète la chaîne totale
-	$chaine_totale .= $ligne."\n";
 
 	if($nb_erreurs > 0) { // Des erreurs bloquantes ont été detectées
 		?>
@@ -250,17 +175,25 @@ function GenerateCfonb($debit_id = null) {
 		</div>
 		<br /><br />
 		<?
-            return false;
-        }
+		return false;
+	}
 
+	try{
+		$chaine_totale = $SEPASDD->save();
+	}catch(Exception $e){
+		echo $e->getMessage();
+	}
+	
+	$myFile = sys_get_temp_dir() . "/cfonb-$debit_id.txt";
+	$fh = fopen($myFile, 'w')
+		or die("can't open file");
+	fwrite($fh, $chaine_totale);
+	fclose($fh);
 
-        $myFile = sys_get_temp_dir() . "/cfonb-$debit_id.txt";
-        $fh = fopen($myFile, 'w')
-          or die("can't open file");
-        fwrite($fh, $chaine_totale);
-        fclose($fh);
+	return $myFile;
 
-        return $myFile;
+	//header("Content-type: text/xml; charset=utf-8");
+	//echo $chaine_totale;
 }
 
 function GetCompanyMaiRIB() {

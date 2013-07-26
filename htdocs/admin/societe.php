@@ -126,6 +126,7 @@ Changer le logo <input type="file" name="logo" /> <b>(ONLY PNG)</b>
   <td>Clef</td>
   <td>IBAN</td>
   <td>SWIFT/BIC</td>
+  <td>ICS</td>
 </tr>
 <?php
 $result = mysql_query("SELECT id_pref,value FROM webfinance_pref WHERE type_pref='rib' AND owner=-1");
@@ -186,6 +187,7 @@ while (list($id_pref,$value) = mysql_fetch_array($result)) {
   <td><input style="width: 20px; text-align: center;" type="text" name="clef_$id_pref" value="$compte->clef" /></td>
   <td><input style="width: 80px; text-align: center;" type="text" name="iban_$id_pref" value="$compte->iban" /></td>
   <td><input style="width: 50px; text-align: center;" type="text" name="swift_$id_pref" value="$compte->swift" /></td>
+  <td><input style="width: 50px; text-align: center;" type="text" name="ics_$id_pref" value="$compte->ics" /></td>
 </tr>
 EOF;
   $count++;
@@ -203,6 +205,7 @@ EOF;
   <td><input style="width: 20px; text-align: center;" type="text" name="clef_new" value="" /></td>
   <td><input style="width: 80px; text-align: center;" type="text" name="iban_new" value="" /></td>
   <td><input style="width: 50px; text-align: center;" type="text" name="swift_new" value="" /></td>
+  <td><input style="width: 50px; text-align: center;" type="text" name="ics_new" value="" /></td>
 </tr>
 </table>
 <i>Nota : pour supprimer un compte bancaire, positionner le num&eacute;ro de compte &agrave; vide</i><br/>
