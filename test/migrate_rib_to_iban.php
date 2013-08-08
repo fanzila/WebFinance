@@ -66,43 +66,43 @@ function Rib2Iban($codebanque,$codeguichet,$numerocompte,$cle) {
 }
 
 $bank_to_bic = array(
-	'30003' => 'SOGEFRPP', //IBAN: FR7630003000200002007658895
-	'17906' => 'AGRIFRPP879', //IBAN: FR7617906001120007934371707
-	'30004' => 'BNPAFRPP', //IBAN: FR7630004026010001005085224
-	'50140' => '', //IBAN: FR7650140750012013558000413
-	'19106' => 'AGRIFRPP891', //IBAN: FR7619106000084361368334988
-	'43799' => 'SIBLFRPP', //IBAN: FR7643799000010146990001590
-	'10207' => 'CCBPFRPPMTG', //IBAN: FR7610207000840408400543149
-	'10228' => 'LAYDFR2W', //IBAN: FR7610228028182705000020043
-	'10278' => 'CMCIFR2A', //IBAN: FR7610278065170002009690124
-	'30076' => 'NORDFRPP', //IBAN: FR7630076021421462930020073
-	'20041' => '', //IBAN: FR0920041010020676103V02392
-	'15629' => 'CMCIFR2A', //IBAN: FR7615629027010004347550118
-	'10107' => 'BREDFRPP', //IBAN: FR7610107002830012501299162
-	'18706' => 'AGRIFRPP887', //IBAN: FR7618706000000002389062059
-	'20041' => '', //IBAN: FR5420041010124900983W03362
-	'30066' => 'CMCIFRPP', //IBAN: FR7630066109130002002470143
-	'20041' => '', //IBAN: FR4120041000011216530W02075
-	'11306' => 'AGRIFRPP813', //IBAN: FR7611306000391912318300091
-	'10278' => 'CMCIFR2A', //IBAN: FR7610278060020003006324155
-	'42559' => 'CCOPFRPP', //IBAN: FR7642559000012102580950953
-	'13506' => 'AGRIFRPP835', //IBAN: FR7613506100009460890300011
-	'14406' => 'AGRIFRPP844', //IBAN: FR7614406470008333897343628
-	'10096' => 'CMCIFRPP', //IBAN: FR7610096182180005197160133
-	'19106' => 'AGRIFRPP891', //IBAN: FR7619106006514350307480042
-	'30002' => 'CRLYFRPP', //IBAN: FR4430002006770000006445Q15
-	'17806' => 'AGRIFRPP878', //IBAN: FR7617806002136220964078964
-	'15829' => '', //IBAN: FR7615829394090002064560155
-	'30056' => 'CCFRFRPP', //IBAN: FR7630056009490949000417823
-	'42559' => 'CCOPFRPP', //IBAN: FR7642559000734100000111513
-	'14445' => 'CEPAFRPP444', //IBAN: FR7614445004000810050808946
-	'16806' => 'AGRIFRPP868', //IBAN: FR7616806054000468628400141
-	'15607' => 'CCBPFRPPNCE', //IBAN: FR7615607000656032160891263
-	'10107' => 'BREDFRPP', //IBAN: FR7610107001220041022085768
-	'40618' => 'BOUSFRPP', //IBAN: FR7640618802610004034652478
-	'20041' => '', //IBAN: FR2720041010040946888P02556
-	'10268' => 'COURFR2T', //IBAN: FR7610268025793310830020059
-	'13807' => 'CCBPFRPPNAN', //IBAN: FR7613807000553042151240552
+	'30003' => 'SOGEFRPP', 
+	'17906' => 'AGRIFRPP879', 
+	'30004' => 'BNPAFRPP', 
+	'50140' => '', 
+	'19106' => 'AGRIFRPP891', 
+	'43799' => 'SIBLFRPP', 
+	'10207' => 'CCBPFRPPMTG', 
+	'10228' => 'LAYDFR2W', 
+	'10278' => 'CMCIFR2A', 
+	'30076' => 'NORDFRPP', 
+	'20041' => '', 
+	'15629' => 'CMCIFR2A', 
+	'10107' => 'BREDFRPP', 
+	'18706' => 'AGRIFRPP887',
+	'20041' => '', 
+	'30066' => 'CMCIFRPP', 
+	'20041' => '', 
+	'11306' => 'AGRIFRPP813', 
+	'10278' => 'CMCIFR2A', 
+	'42559' => 'CCOPFRPP', 
+	'13506' => 'AGRIFRPP835', 
+	'14406' => 'AGRIFRPP844', 
+	'10096' => 'CMCIFRPP', 
+	'19106' => 'AGRIFRPP891', 
+	'30002' => 'CRLYFRPP', 
+	'17806' => 'AGRIFRPP878', 
+	'15829' => '', 
+	'30056' => 'CCFRFRPP', 
+	'42559' => 'CCOPFRPP', 
+	'14445' => 'CEPAFRPP444', 
+	'16806' => 'AGRIFRPP868', 
+	'15607' => 'CCBPFRPPNCE', 
+	'10107' => 'BREDFRPP', 
+	'40618' => 'BOUSFRPP', 
+	'20041' => '', 
+	'10268' => 'COURFR2T', 
+	'13807' => 'CCBPFRPPNAN', 
 
 );
 
@@ -136,11 +136,19 @@ for( $i = 0; $i < $num; ++$i )
 	
 	$bic = $bank_to_bic[$row['rib_code_banque']];
 
-        if(empty($bic))
-        {
-          echo "Unable to find BIC for client $row[nom] (ID $row[id_client])\n";
-          exit(1);
-        }
+	if($row['id_client'] == 73) $bic = 'CRMPFRP1';
+	if($row['id_client'] == 117) $bic = 'PSSTFRPPCHA';
+	if($row['id_client'] == 134) $bic = 'PSSTFRPPSCE';
+	if($row['id_client'] == 183) $bic = 'PSSTFRPTTOU';
+	if($row['id_client'] == 243) $bic = 'CMCIFR2A';
+	if($row['id_client'] == 394) $bic = 'PSSTFRPPDIJ';
+	if($row['id_client'] == 147) $bic = 'PSSTFRPPPAR';
+	
+    if(empty($bic))
+ 	{
+    	echo "Unable to find BIC for client $row[nom] (ID $row[id_client])\n";
+    	exit(1);
+    }
 
 	$iban = Rib2Iban($row['rib_code_banque'],$row['rib_code_guichet'],$row['rib_code_compte'],$row['rib_code_cle']);
 	mysql_query("UPDATE webfinance_clients SET iban = '".$iban."' WHERE id_client = ".$row['id_client'])  or die('insert error: ' . mysql_error());
@@ -152,12 +160,12 @@ echo "\n All done, RIB error: $error on $num entries";
 echo "\n\n";
 
 mysql_query("DROP PROCEDURE IF EXISTS patch_migrate_rib");
-mysql_query("create procedure patch_migrate_rib() begin 
-ALTER TABLE `webfinance_clients` DROP `rib_code_cle`;
-ALTER TABLE `webfinance_clients` DROP `rib_code_guichet`;
-ALTER TABLE `webfinance_clients` DROP `rib_code_compte`;
-ALTER TABLE `webfinance_clients` DROP `rib_code_banque`;
-end;");
-mysql_query("CALL patch_migrate_rib()");
+#mysql_query("create procedure patch_migrate_rib() begin 
+#ALTER TABLE `webfinance_clients` DROP `rib_code_cle`;
+#ALTER TABLE `webfinance_clients` DROP `rib_code_guichet`;
+#ALTER TABLE `webfinance_clients` DROP `rib_code_compte`;
+#ALTER TABLE `webfinance_clients` DROP `rib_code_banque`;
+#end;");
+#mysql_query("CALL patch_migrate_rib()");
 mysql_query("DROP PROCEDURE IF EXISTS patch_migrate_rib");
 ?>
