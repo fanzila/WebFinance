@@ -117,7 +117,7 @@ mysql_query("CALL patch_migrate_rib()");
 mysql_query("DROP PROCEDURE IF EXISTS patch_migrate_rib");
 
 $error = 0;
-$query = mysql_query("SELECT id_client, rib_code_banque, rib_code_guichet, rib_code_compte, rib_code_cle
+$query = mysql_query("SELECT nom, id_client, rib_code_banque, rib_code_guichet, rib_code_compte, rib_code_cle
   FROM webfinance_clients
 WHERE rib_code_banque != ''");
 $num = mysql_num_rows($query);
@@ -135,6 +135,13 @@ for( $i = 0; $i < $num; ++$i )
 	}
 	
 	$bic = $bank_to_bic[$row['rib_code_banque']];
+
+        if(empty($bic))
+        {
+          echo "Unable to find BIC for client $row[nom] (ID $row[id_client])\n";
+          exit(1);
+        }
+
 	$iban = Rib2Iban($row['rib_code_banque'],$row['rib_code_guichet'],$row['rib_code_compte'],$row['rib_code_cle']);
 	mysql_query("UPDATE webfinance_clients SET iban = '".$iban."' WHERE id_client = ".$row['id_client'])  or die('insert error: ' . mysql_error());
 	mysql_query("UPDATE webfinance_clients SET bic = '".$bic."' WHERE id_client = ".$row['id_client'])  or die('insert error: ' . mysql_error());
