@@ -20,23 +20,23 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 require("../inc/main.php");
-require('../../lib/cfonb.php');
+require('../../lib/sepa.php');
 must_login();
 
 if(empty($_GET['debit_id']) or !is_numeric($_GET['debit_id']))
   die('Invalid $_GET[debit_id] ' . $_GET['debit_id'] );
 
-$cfonb_file = GenerateCfonb($_GET['debit_id']);
+$sepa_file = GenerateSepa($_GET['debit_id']);
 
-if($cfonb_file === false)
-  die('Error while building CFONB file');
+if($sepa_file === false)
+  die('Error while building SEPA file');
 
-# Send CFONB file to browser
+# Send SEPA file to browser
 header('Content-Type: application/octet-stream');
-header('Content-Disposition: attachment; filename = "'.$cfonb_file.'"');
+header('Content-Disposition: attachment; filename = "'.$sepa_file.'"');
 header("Content-Transfer-Encoding: binary");
-header("Content-Length: ".filesize($cfonb_file));
-readfile($cfonb_file);
-unlink($cfonb_file);
+header("Content-Length: ".filesize($sepa_file));
+readfile($sepa_file);
+unlink($sepa_file);
 
 ?>
