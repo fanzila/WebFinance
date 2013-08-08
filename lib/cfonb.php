@@ -17,7 +17,7 @@
    *
    */
 
-require_once('sepa-direct-debit/SEPASDD.php');
+require_once('php-sepa-direct-debit/SEPASDD.php');
 
 function stripAccents($string){
   return iconv('utf-8', 'ascii//TRANSLIT', $string);
