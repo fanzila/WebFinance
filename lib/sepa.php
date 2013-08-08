@@ -59,7 +59,7 @@ function FormatBancaire ($data, $longueur_donnee, $caractere_defaut = " ", $cadr
 	return $data;
 }
 
-function GenerateCfonb($debit_id = null) {
+function GenerateSepa($debit_id = null) {
 
 	// Check $debit_id
 	if(defined($debit_id) and !is_numeric($debit_id))
@@ -184,7 +184,7 @@ function GenerateCfonb($debit_id = null) {
 		echo $e->getMessage();
 	}
 	
-	$myFile = sys_get_temp_dir() . "/cfonb-$debit_id.txt";
+	$myFile = sys_get_temp_dir() . "/sepa-$debit_id.txt";
 	$fh = fopen($myFile, 'w')
 		or die("can't open file");
 	fwrite($fh, $chaine_totale);
