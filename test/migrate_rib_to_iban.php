@@ -117,7 +117,9 @@ mysql_query("CALL patch_migrate_rib()");
 mysql_query("DROP PROCEDURE IF EXISTS patch_migrate_rib");
 
 $error = 0;
-$query = mysql_query("SELECT id_client, rib_code_banque, rib_code_guichet, rib_code_compte, rib_code_cle FROM webfinance_clients WHERE rib_code_banque != ''");
+$query = mysql_query("SELECT id_client, rib_code_banque, rib_code_guichet, rib_code_compte, rib_code_cle
+  FROM webfinance_clients
+WHERE rib_code_banque != ''");
 $num = mysql_num_rows($query);
 
 echo "To migrate : $num\n\n";
