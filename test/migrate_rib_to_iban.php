@@ -132,9 +132,17 @@ for( $i = 0; $i < $num; ++$i )
 	if($ckcrib) {
 		echo "RIB error ID: ".$row['id_client']. "\n"; 
 		$error++;
+                continue;
 	}
-	
-	$bic = $bank_to_bic[$row['rib_code_banque']];
+
+        if(empty($bank_to_bic[$row['rib_code_banque']]))
+        {
+          echo "rib_code_banque not found in bank_to_bic for ID $row[id_client]\n"; 
+          $error++;
+          continue;
+        }
+
+        $bic = $bank_to_bic[$row['rib_code_banque']];
 
 	if($row['id_client'] == 73) $bic = 'CRMPFRP1';
 	if($row['id_client'] == 117) $bic = 'PSSTFRPPCHA';
@@ -147,7 +155,8 @@ for( $i = 0; $i < $num; ++$i )
     if(empty($bic))
  	{
     	echo "Unable to find BIC for client $row[nom] (ID $row[id_client])\n";
-    	exit(1);
+        $error++;
+        continue;
     }
 
 	$iban = Rib2Iban($row['rib_code_banque'],$row['rib_code_guichet'],$row['rib_code_compte'],$row['rib_code_cle']);
