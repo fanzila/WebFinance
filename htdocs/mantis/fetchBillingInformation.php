@@ -114,7 +114,7 @@ for($i=2020; $i>=2009; $i--) {
 		foreach($billing as $ticket_number => $ticket) {
 
 			$url_ticket =
-				"https://www.isvtec.com/infogerance/ticket/view.php?id=$ticket_number";
+				"https://support.isvtec.com/view.php?id=$ticket_number";
 
 			$price = round($ticket['price'] * $ticket['quantity'], 2);
 

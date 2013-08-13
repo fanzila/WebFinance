@@ -419,7 +419,7 @@ class WebfinanceMantis {
                 continue;
 
               $url_ticket =
-                "https://www.isvtec.com/infogerance/ticket/view.php?id=$ticket_number";
+                "https://support.isvtec.com/view.php?id=$ticket_number";
 
               $type = 'Inclus dans le forfait';
               if($ticket['invoiced'])
