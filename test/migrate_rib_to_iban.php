@@ -164,12 +164,12 @@ echo "\n All done, RIB error: $error on $num entries";
 echo "\n\n";
 
 mysql_query("DROP PROCEDURE IF EXISTS patch_migrate_rib");
-#mysql_query("create procedure patch_migrate_rib() begin 
-#ALTER TABLE `webfinance_clients` DROP `rib_code_cle`;
-#ALTER TABLE `webfinance_clients` DROP `rib_code_guichet`;
-#ALTER TABLE `webfinance_clients` DROP `rib_code_compte`;
-#ALTER TABLE `webfinance_clients` DROP `rib_code_banque`;
-#end;");
-#mysql_query("CALL patch_migrate_rib()");
+mysql_query("create procedure patch_migrate_rib() begin 
+ALTER TABLE `webfinance_clients` DROP `rib_code_cle`;
+ALTER TABLE `webfinance_clients` DROP `rib_code_guichet`;
+ALTER TABLE `webfinance_clients` DROP `rib_code_compte`;
+ALTER TABLE `webfinance_clients` DROP `rib_code_banque`;
+end;");
+mysql_query("CALL patch_migrate_rib()");
 mysql_query("DROP PROCEDURE IF EXISTS patch_migrate_rib");
 ?>
