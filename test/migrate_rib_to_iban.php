@@ -135,13 +135,6 @@ for( $i = 0; $i < $num; ++$i )
                 continue;
 	}
 
-        if(empty($bank_to_bic[$row['rib_code_banque']]))
-        {
-          echo "rib_code_banque not found in bank_to_bic for ID $row[id_client]\n"; 
-          $error++;
-          continue;
-        }
-
         $bic = $bank_to_bic[$row['rib_code_banque']];
 
 	if($row['id_client'] == 73) $bic = 'CRMPFRP1';
@@ -151,6 +144,7 @@ for( $i = 0; $i < $num; ++$i )
 	if($row['id_client'] == 243) $bic = 'CMCIFR2A';
 	if($row['id_client'] == 394) $bic = 'PSSTFRPPDIJ';
 	if($row['id_client'] == 147) $bic = 'PSSTFRPPPAR';
+	if($row['id_client'] == 619) $bic = 'CCBPFRPPVER';
 	
     if(empty($bic))
  	{
