@@ -27,6 +27,8 @@ http://fr.iban-bic.com/iban_und_bic.0.html?&L=5
 
 */
 
+error_reporting(E_ALL);
+
 require(dirname(__FILE__) . "/../htdocs/inc/main.php");
 
 function CheckIBAN($iban){
