@@ -118,8 +118,8 @@ while ($invoice = mysql_fetch_assoc($res)) {
 
 <h1>Previous debits</h1>
 
-<table border="1">
-    <tr>
+<table width="100%" border="0" cellspacing="0" cellpadding="5">
+    <tr class="row_header">
     <th>Date</th>
     <th>Invoices</th>
     <th>Excl. taxes</th>
@@ -148,7 +148,7 @@ while ($debit = mysql_fetch_assoc($res)) {
   echo "    <td> $debit[total_invoices] </td>\n";
   echo "    <td align=\"right\"> $debit[HT] &euro;</td>\n";
   echo "    <td align=\"right\"> $debit[TTC] &euro; </td>\n";
-  echo "    <td><a href=\"cfonb.php?debit_id=$debit[id]\">CFONB</a> </td>\n";
+  echo "    <td><a href=\"sepa.php?debit_id=$debit[id]\">SEPA</a> </td>\n";
   echo "</tr>\n";
 }
 

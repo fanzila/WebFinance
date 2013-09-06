@@ -19,7 +19,7 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 require("../inc/main.php");
-require('../../lib/cfonb.php');
+require('../../lib/sepa.php');
 must_login();
 
 $roles = 'manager,employee';
@@ -37,9 +37,9 @@ if($res == 0) {
   exit(1);
 }
 
-// Check CFONB format
-if(GenerateCfonb() === false)
-  die('Unable to build CFONB file');
+// Check SEPA format
+if(GenerateSepa() === false)
+  die('Unable to build SEPA file');
 
 // Create new direct debit
 mysql_query('INSERT INTO direct_debit '.

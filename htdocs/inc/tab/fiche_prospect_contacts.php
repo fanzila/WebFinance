@@ -139,14 +139,11 @@ global $Client, $User;
   <input type="text" name="email[]" class="email" /><br/>
 <input type="text" name="fax" value="<?= $Client->fax ?>" class="fax" />
 <br/>
-  <b><?= _('RIB:') ?></b><br/>
+  <b><?= _('IBAN:') ?></b><br/>
 <table border="0">
-	<!-- <tr><td><?= _('Holder name:') ?></td><td><input type="text" size="10" maxsize="24" name="rib_titulaire" value="<?= addslashes($Client->rib_titulaire) ?>" style="color: #666;" /></td></tr> -->
     <tr><td><?= _('Bank name:') ?></td><td><input type="text" size="10" maxsize="24" name="rib_banque" value="<?= addslashes($Client->rib_banque) ?>" style="color: #666;" /></td></tr>
-    <tr><td><?= _('Bank code:') ?></td><td><input type="text" size="5" maxlength="5" name="rib_code_banque" value="<?= addslashes($Client->rib_code_banque) ?>" style="color: #666;" /></td></tr>
-    <tr><td><?= _('Bank agency:') ?></td><td><input type="text" size="5" maxlength="5" name="rib_code_guichet" value="<?= addslashes($Client->rib_code_guichet) ?>" style="color: #666;" /></td></tr>
-    <tr><td><?= _('Bank account:') ?></td><td><input type="text" size="11" maxlength="11" name="rib_code_compte" value="<?= addslashes($Client->rib_code_compte) ?>" style="color: #666;" /></td></tr>
-    <tr><td><?= _('Bank key:') ?></td><td><input type="text" size="2" maxlength="2" name="rib_code_cle" value="<?= addslashes($Client->rib_code_cle) ?>" style="color: #666;" />
+    <tr><td><?= _('IBAN:') ?></td><td><input type="text" size="30" maxlength="50" name="iban" value="<?= addslashes($Client->iban) ?>" style="color: #666;" /></td></tr>
+	<tr><td><?= _('BIC:') ?></td><td><input type="text" size="30" maxlength="50" name="bic" value="<?= addslashes($Client->bic) ?>" style="color: #666;" /></td></tr>
 </table>
 <br/>
   <?= $Client->link_societe ?>

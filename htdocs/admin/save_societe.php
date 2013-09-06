@@ -84,6 +84,7 @@ foreach ($_POST as $n=>$v) {
     $rib->clef = $_POST['clef_'.$num];
     $rib->iban = $_POST['iban_'.$num];
     $rib->swift = $_POST['swift_'.$num];
+	$rib->ics = $_POST['ics_'.$num];
 
     if(empty($rib->exchange))
       $rib->exchange=1;
@@ -110,6 +111,7 @@ if ($_POST['banque_new'] != "") {
   $rib->clef = $_POST['clef_new'];
   $rib->iban = $_POST['iban_new'];
   $rib->swift = $_POST['swift_new'];
+  $rib->ics = $_POST['ics_new'];
 
   if(empty($rib->exchange))
     $rib->exchange=1;
