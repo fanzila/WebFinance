@@ -91,6 +91,7 @@ class WebfinanceMantis {
 		$list[313] = 0;		//custemail project
 		$list[327] = 0;		//GOM project		
 		$list[295] = 96;	//double project for Apocope (Nespresso)
+                $list[583] = 0;         //ISVTEC project
 
 		return $list;
 	}
