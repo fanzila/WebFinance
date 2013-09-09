@@ -90,7 +90,7 @@ function GenerateSepa($debit_id = null) {
 	$erreurs_details = "";
 
 	$config = array("name" => RAISON_SOCIALE,
-	"IBAN" => CODE_IBAN,
+	"IBAN" => preg_replace('/\s+/', '', CODE_IBAN),
 	"BIC" => CODE_BIC,
 	"batch" => "true",
 	"creditor_id" => CODE_ICS,
