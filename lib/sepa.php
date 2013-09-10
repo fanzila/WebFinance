@@ -91,9 +91,9 @@ function GenerateSepa($debit_id = null) {
 
 	$config = array("name" => RAISON_SOCIALE,
 	"IBAN" => preg_replace('/\s+/', '', CODE_IBAN),
-	"BIC" => CODE_BIC,
+	"BIC" => preg_replace('/\s+/', '', CODE_BIC),
 	"batch" => "true",
-	"creditor_id" => CODE_ICS,
+	"creditor_id" => preg_replace('/\s+/', '', CODE_ICS),
 	"currency" => "EUR"
 	);
 	try{
@@ -126,22 +126,31 @@ function GenerateSepa($debit_id = null) {
 		// On enlève les caractères génants
 		$iban = str_replace(",", "", $info->iban);
 		$bic = str_replace(",", "", $info->bic);
-
+		$client_iban	= preg_replace('/\s+/', '', $iban);
+		$client_bic		= preg_replace('/\s+/', '', $bic);
+		
 		// On recherche les éléments pouvant bloquer la génération du paiement
-		if(strlen($iban) > LONGUEUR_IBAN OR empty($iban) ) {
+		
+		if(empty($config['IBAN']) OR empty($config['BIC']) OR empty($config['creditor_id'])) {
 			$nb_erreurs++;
 			$nb_erreurs_ligne++;
-			$erreurs_details .= " - Le code IBAN de \"".$info->nom_client."\" permettant de générer un virement d'un montant de ".$montant." EUR contient ".strlen($info->iban)." caractères au lieu de ".LONGUEUR_IBAN." max. (valeur constatée : ".$info->iban."). Cette ligne est abandonnée.<br />";
+			$erreurs_details .= " - Aucun IBAN et/ou BIC et/ou ICS enregistré(s) pour la société.<br />";
 		}
-		if(strlen($bic) > LONGUEUR_BIC OR empty($bic) ) {
+		
+		if(strlen($client_iban) > LONGUEUR_IBAN OR empty($client_iban) ) {
 			$nb_erreurs++;
 			$nb_erreurs_ligne++;
-			$erreurs_details .= " - Le code BIC de \"".$info->nom_client."\" permettant de générer un virement d'un montant de ".$montant." EUR contient ".strlen($info->bic)." caractères au lieu de ".LONGUEUR_BIC." max. (valeur constatée : ".$info->bic."). Cette ligne est abandonnée.<br />";
+			$erreurs_details .= " - Le code IBAN de \"".$info->nom_client."\" permettant de générer un virement d'un montant de ".$montant." EUR contient ".strlen($client_iban)." caractères au lieu de ".LONGUEUR_IBAN." max. (valeur constatée : ".$client_iban."). Cette ligne est abandonnée.<br />";
 		}
-
+		if(strlen($client_bic) > LONGUEUR_BIC OR empty($client_bic) ) {
+			$nb_erreurs++;
+			$nb_erreurs_ligne++;
+			$erreurs_details .= " - Le code BIC de \"".$info->nom_client."\" permettant de générer un virement d'un montant de ".$montant." EUR contient ".strlen($client_bic)." caractères au lieu de ".LONGUEUR_BIC." max. (valeur constatée : ".$client_bic."). Cette ligne est abandonnée.<br />";
+		}
+		
 		$payment = array("name" => $info->nom_client,
-		"IBAN" => $info->iban,
-		"BIC" => $info->bic,
+		"IBAN" => $client_iban,
+		"BIC" => $client_bic,
 		"amount" => $montant_centimes,
 		"type" => "FRST",
 		"collection_date" => date('Y-m-d'),
