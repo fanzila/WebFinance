@@ -134,7 +134,7 @@ function GenerateSepa($debit_id = null) {
 		if(empty($config['IBAN']) OR empty($config['BIC']) OR empty($config['creditor_id'])) {
 			$nb_erreurs++;
 			$nb_erreurs_ligne++;
-			$erreurs_details .= " - Aucun IBAN et/ou BIC et/ou ICS enregistré(s) pour la société.<br />";
+			$erreurs_details .= " - Aucun IBAN et/ou BIC et/ou ICS enregistré(s) pour la société <a href=\"/prospection/fiche_prospect.php?id=$info->id_client\">$info->nom_client</a>.<br />";
 		}
 		
 		if(strlen($client_iban) > LONGUEUR_IBAN OR empty($client_iban) ) {
