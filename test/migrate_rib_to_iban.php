@@ -110,19 +110,19 @@ $bank_to_bic = array(
 );
 
 //PATCH SQL 
-mysql_query("DROP PROCEDURE IF EXISTS patch_migrate_rib");
+mysql_query("DROP PROCEDURE IF EXISTS patch_migrate_rib") or die(mysql_error());
 mysql_query("create procedure patch_migrate_rib() begin 
 ALTER TABLE `webfinance_clients` ADD `iban` VARCHAR( 100 ) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL; 
 ALTER TABLE `webfinance_clients` ADD `bic` VARCHAR( 100 ) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL; 
-end;");
+end;") or die(mysql_error());
 
-mysql_query("CALL patch_migrate_rib()");
-mysql_query("DROP PROCEDURE IF EXISTS patch_migrate_rib");
+mysql_query("CALL patch_migrate_rib()") or die(mysql_error());
+mysql_query("DROP PROCEDURE IF EXISTS patch_migrate_rib") or die(mysql_error());
 
 $error = 0;
 $query = mysql_query("SELECT nom, id_client, rib_code_banque, rib_code_guichet, rib_code_compte, rib_code_cle
   FROM webfinance_clients
-WHERE rib_code_banque != ''");
+WHERE rib_code_banque != ''") or die(mysql_error());
 $num = mysql_num_rows($query);
 
 echo "To migrate : $num\n\n";
