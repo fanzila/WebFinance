@@ -51,7 +51,7 @@ while ($c = mysql_fetch_assoc($result)) {
 <tr class="row_even">
   <td><input type="text" name="cat[$id_role][name]" value="$name" style="width: 100px;" /></td>
   <td><input type="text" name="cat[$id_role][description]" value="$description" style="width: 300px;" /></td>
-  <td align="center"><a href="javascript:confirmDeleteRole($id_role,'$txt');"><img src="/imgs/icons/delete.gif" /></a>
+  <td align="center"><a href="javascript:confirmDeleteRole($id_role,'$txt');"><img src="/imgs/icons/delete.gif" /></a></td>
 </tr>
 EOF;
 }
