@@ -587,3 +587,12 @@ INSERT INTO contract_signer_role (name) VALUES
   ('Président'),
   ('Directeur Général')
   ;
+
+CREATE TABLE IF NOT EXISTS `mantis_custom_field2price` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `custom_field_name`  varchar(32) NOT NULL,
+  `custom_field_value` varchar(128) NOT NULL,
+  `price` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name_value` (`custom_field_name`, `custom_field_value`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

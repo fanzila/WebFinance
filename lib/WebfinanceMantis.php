@@ -27,12 +27,7 @@ class WebfinanceMantis {
 	static private $_login = '';
 	static private $_password = '';
         static private $_soapclient = null;
-        static private $_support_type2price = array(
-          "Infogérance - Hors-périmètre" => 75,
-          "Infogérance - Hors-périmètre, Intervention d'urgence - heures de bureaux" => 110,
-          "Infogérance - Hors-périmètre, Intervention d'urgence - soir & WE" => 150,
-          "Consultation spécialisée" => 110,
-        );
+        static private $_support_type2price = array();
 
         function __construct() {
 
@@ -48,6 +43,14 @@ class WebfinanceMantis {
                                      'uri'      => 'ns1',
                                    ));
             }
+
+          $res_custom = mysql_query("SELECT custom_field_value value, price
+                       FROM webfinance.mantis_custom_field2price
+                       WHERE custom_field_name = 'Support type'")
+            or die(mysql_error());
+
+          while ($row = mysql_fetch_assoc($res_custom))
+            $this->_support_type2price[$row['value']] = $row['price'];
         }
 
 	function mantisIdToIdClient() {  
@@ -154,10 +157,10 @@ class WebfinanceMantis {
                         $price = 0;
                         $invoiced_time = 0;
 
-                        if(isset(self::$_support_type2price[$row['support_type']]))
+                        if(isset($this->_support_type2price[$row['support_type']]))
 			{
 				$invoiced = TRUE;
-				$price = self::$_support_type2price[$row['support_type']];
+				$price = $this->_support_type2price[$row['support_type']];
 				$invoiced_time = $row['time'];
 			}
 
@@ -195,7 +198,7 @@ class WebfinanceMantis {
 		foreach($total_price as $webfinance_project_id => $price) {
 
 			# Deduce 15 minutes (0.25 hour) of basic support
-			$price_to_deduce = 0.25 * self::$_support_type2price['Infogérance - Hors-périmètre'];
+			$price_to_deduce = 0.25 * $this->_support_type2price['Infogérance - Hors-périmètre'];
 			if($price < $price_to_deduce)
 				$price_to_deduce = $price;
 
@@ -205,11 +208,11 @@ class WebfinanceMantis {
 			$billing[$webfinance_project_id][0] = array(
 				'description'           => $description,
 				'mantis_ticket_summary' => $description,
-				'quantity'              => - $price_to_deduce / self::$_support_type2price['Infogérance - Hors-périmètre'],
-				'time'                  => - $price_to_deduce / self::$_support_type2price['Infogérance - Hors-périmètre'] * 60,
-				'invoiced_time'         => - $price_to_deduce / self::$_support_type2price['Infogérance - Hors-périmètre'] * 60,
+				'quantity'              => - $price_to_deduce / $this->_support_type2price['Infogérance - Hors-périmètre'],
+				'time'                  => - $price_to_deduce / $this->_support_type2price['Infogérance - Hors-périmètre'] * 60,
+				'invoiced_time'         => - $price_to_deduce / $this->_support_type2price['Infogérance - Hors-périmètre'] * 60,
 				'id_client'             => $webfinance_project_id,
-				'price'                 => self::$_support_type2price['Infogérance - Hors-périmètre'],
+				'price'                 => $this->_support_type2price['Infogérance - Hors-périmètre'],
 				'mantis_project_name'   => '',
 				'mantis_project_id'     => $row['project_id'],
 				'invoiced'              => true,
