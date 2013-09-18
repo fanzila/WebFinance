@@ -58,7 +58,7 @@ foreach ($_POST['cat'] as $id=>$data) {
   } else {
     $q = "UPDATE webfinance_roles SET ";
     foreach ($data as $n=>$v) {
-      $q .= sprintf("%s='%s',", $n, $v);
+      $q .= sprintf("%s='%s',", $n, mysql_real_escape_string($v));
     }
     $q = preg_replace("!,$!", " WHERE id_role=$id", $q);
     $_SESSION['message'] = _('Role updated');
