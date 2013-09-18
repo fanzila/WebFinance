@@ -86,6 +86,7 @@ for($i=2040; $i>=2009; $i--) {
 		<th align="right">Time</th>
 		<th>Invoiced&nbsp;time</th>
 		<th>Price</th>
+		<th>€/h</th>
 		<th>Report</th>
 		<th>Result</th>
 	</tr>
@@ -151,6 +152,8 @@ for($i=2040; $i>=2009; $i--) {
 				$color='red';
 			echo "  <td bgcolor=\"$color\" align=\"right\"> $price&euro; </td>\n";
 
+			echo "  <td align=\"right\"> $ticket[price]&euro;/h </td>\n";
+
 			echo "</tr>\n";
 
 			$type = ' (inclus dans le forfait)';
@@ -178,11 +181,14 @@ for($i=2040; $i>=2009; $i--) {
 
                 $total_price_all_clients += $total_price_client;
 
-		echo "<tr bgcolor=\"lightblue\"> <td colspan=\"2\"></td> <td align=\"right\"><b>TOTAL <a href=\"$url_webfinance&onglet=billing\">$client_name</a> </b></td> ".
-		"<td align=\"right\">  </td>\n" .
-		"<td align=\"right\"><b>$total_time_client_human_readable</b></td> ".
-		"<td align=\"right\"><b>$total_price_client&euro;</b></td>\n" .
-		"<td align=\"right\"><a href=\"report.php?id_client=$ticket[id_client]&year=$year&month=$month\">Rapport</a> <b>";
+		echo "<tr bgcolor=\"lightblue\">" .
+                  "<td colspan=\"2\"></td>" .
+                  "<td align=\"right\"><b>TOTAL <a href=\"$url_webfinance&onglet=billing\">$client_name</a> </b></td> ".
+                  "<td align=\"right\">  </td>\n" .
+                  "<td align=\"right\"><b>$total_time_client_human_readable</b></td> ".
+                  "<td align=\"right\"><b>$total_price_client&euro;</b></td>\n" .
+                  "<td></td>\n" .
+                  "<td align=\"right\"><a href=\"report.php?id_client=$ticket[id_client]&year=$year&month=$month\">Rapport</a> <b>";
 
                 if(isset($_POST['action']) && $_POST['action'] == 'send')
                 {
