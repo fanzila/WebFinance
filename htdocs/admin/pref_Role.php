@@ -40,7 +40,7 @@ $help_rights=addslashes("Les valeurs possible sont: client,manager,accounting,em
   <td><?= _('Actions') ?></td>
 </tr>
 <?php
-    $txt = _('Voulez-vous vraiment supprimer cet role ?');
+    $txt = _('Voulez-vous vraiment supprimer ce role ?');
 $result = mysql_query("SELECT id_role, name, description
                        FROM webfinance_roles
                        ORDER BY name") or wf_mysqldie();
