@@ -33,6 +33,7 @@ require("../inc/main.php");
 must_login();
 
 if ($_GET['action'] == "delete") {
+  $_GET['id'] = mysql_real_escape_string($_GET['id']);
   mysql_query("DELETE FROM webfinance_pref WHERE id_pref=".$_GET['id']);
   $_SESSION['message'] = _('Tax deleted');
   header("Location: preferences.php?tab=Taxes");
