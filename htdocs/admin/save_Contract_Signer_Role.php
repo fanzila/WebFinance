@@ -34,8 +34,8 @@ foreach ($_POST['cat'] as $id=>$data) {
       $f = "(";
       $values = "VALUES(";
       foreach ($data as $n=>$v) {
-        $f .= sprintf("%s,", $n);
-        $values .= sprintf("'%s',", $v);
+        $f .= sprintf("%s,", mysql_real_escape_string($n));
+        $values .= sprintf("'%s',", mysql_real_escape_string($v));
       }
       $f = preg_replace("!,$!", ") ", $f);
       $values = preg_replace("!,$!", ") ", $values);
