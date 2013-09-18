@@ -111,7 +111,7 @@ foreach (glob("pref_*.php") as $pref) {
 foreach (glob("pref_*.php") as $pref) {
   preg_match("/pref_(.*).php$/", $pref, $matches);
   printf('<div id="tab_%s" style="display: none;">',$matches[1]);
-  include($pref);
+  require($pref);
   echo "</div>";
 }
 ?>
