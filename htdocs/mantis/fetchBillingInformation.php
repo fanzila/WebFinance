@@ -63,7 +63,7 @@ mysql_select_db('mantis')
 
 <select name="year">
 	<?
-for($i=2020; $i>=2009; $i--) {
+for($i=2040; $i>=2009; $i--) {
 	$selected='';
 
 	if($i == $year)
@@ -92,6 +92,7 @@ for($i=2020; $i>=2009; $i--) {
 
 	<?
 	$total_price_all_clients = 0;
+	$total_minutes_all_clients = 0;
 	$invoice_description = strftime(
 	  "Support professionnel hors périmètre de contrat\nPériode: %B %Y",
 	  mktime(0, 0, 0, $month, 1, $year));
@@ -108,6 +109,7 @@ for($i=2020; $i>=2009; $i--) {
             die("Email address not set for client <a href=\"$url_webfinance\">$client->nom</a>");
 
 		$total_minutes_client = 0;
+                $total_price_client = 0;
 		$description = strftime("Détails des interventions du support professionnel pour le mois de %B %Y : \n", mktime(0, 0, 0, $month, 1, $year));
 		
 		foreach($billing as $ticket_number => $ticket) {
@@ -164,26 +166,22 @@ for($i=2020; $i>=2009; $i--) {
 
 			if(!empty($ticket['mantis_project_name']))
 				$client_name = $ticket['mantis_project_name'];
+
+                        $total_price_client += $price;
 		}
 
-		$total_time_client_human_readable_end = sprintf('%dh%02d',
-                                                        floor($total_minutes_client / 60),
-                                                        $total_minutes_client % 60);
-
-                $total_price_all_clients += $total_price;
-		
 		$total_time_client_human_readable = sprintf('%dh%02d',
                                                     floor($total_minutes_client / 60),
                                                     $total_minutes_client % 60);
 
-		$total_price = round(
-                  round($total_minutes_client / 60, 2) * 75,
-                  2);
+                $total_minutes_all_clients += $total_minutes_client;
+
+                $total_price_all_clients += $total_price_client;
 
 		echo "<tr bgcolor=\"lightblue\"> <td colspan=\"2\"></td> <td align=\"right\"><b>TOTAL <a href=\"$url_webfinance&onglet=billing\">$client_name</a> </b></td> ".
 		"<td align=\"right\">  </td>\n" .
 		"<td align=\"right\"><b>$total_time_client_human_readable</b></td> ".
-		"<td align=\"right\"><b>$total_price&euro;</b></td>\n" .
+		"<td align=\"right\"><b>$total_price_client&euro;</b></td>\n" .
 		"<td align=\"right\"><a href=\"report.php?id_client=$ticket[id_client]&year=$year&month=$month\">Rapport</a> <b>";
 
                 if(isset($_POST['action']) && $_POST['action'] == 'send')
@@ -202,18 +200,23 @@ for($i=2020; $i>=2009; $i--) {
                   // Send invoice by email
                     if($mantis->createAndSendInvoice(
                         $ticket['id_client'],
-                        $total_price,
+                        $total_price_client,
                         1,
                         $invoice_description))
                       echo 'Sent';
                 }
 		echo "</b></td></tr>\n";
 	}
+$total_time_all_clients_human_readable = sprintf('%dh%02d',
+                                         floor($total_minutes_all_clients / 60),
+                                         $total_minutes_all_clients % 60);
+
+
 
 	?>
 
 <tr style="background:#dddddd;" align="right">
- <td colspan="5" align="right"><b>Total:</b> <?=$total_price_all_clients?>&euro; - <?=$total_time_client_human_readable_end?></td>
+ <td colspan="5" align="right"><b>Total:</b> <?=$total_price_all_clients?>&euro; - <?=$total_time_all_clients_human_readable?></td>
 </tr>
 </table>
 <br />

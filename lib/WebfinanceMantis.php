@@ -27,30 +27,11 @@ class WebfinanceMantis {
 	static private $_login = '';
 	static private $_password = '';
         static private $_soapclient = null;
-        static private $_support_type_not_invoiced = array
-          (
-            'Administratif' => true,
-            'Forfait Prépayé' => true,
-            'Infogérance - Inclus' => true,
-            'ISVTEC - Interne' => true,
-
-            // To be removed on Feb 2013
-            'Kernel: mise à jour de sécurité' => true,
-            'Kernel: crash, reboot et analyse' => true,
-            'OS: mise à jour de sécurité' => true,
-            'MySQL: mise à jour de sécurité' => true,
-            'MySQL: optimisation de base' => true,
-            'MySQL: sauvegardes' => true,
-            'MySQL: restaurations (dans la limite 1/mois)' => true,
-            'Virtualisation: fonctionnalité et mise à jour' => true,
-            'Sauvegarde des fichiers, données et configurations' => true,
-            'Redondance machine virtuelle' => true,
-            'Serveur HTTP, FTP, mail: maintenance et mise à jour' => true,
-            "Analyse des causes d'un piratage" => true,
-            "Réparation suite à piratage d'une brique sous notre responsabilité" => true,
-            'Monitoring' => true,
-	    'Forfait prépayé' => true,
-            'Commercial' => true,
+        static private $_support_type2price = array(
+          "Infogérance - Hors-périmètre" => 75,
+          "Infogérance - Hors-périmètre, Intervention d'urgence - heures de bureaux" => 110,
+          "Infogérance - Hors-périmètre, Intervention d'urgence - soir & WE" => 150,
+          "Consultation spécialisée" => 110,
         );
 
         function __construct() {
@@ -169,14 +150,15 @@ class WebfinanceMantis {
 			if(!isset($billing[$webfinance_project_id]))
 				$billing[$webfinance_project_id] = array();
 
-			$invoiced = true;
-			$price = 75;
-			$invoiced_time = $row['time'];
-                        if(isset(self::$_support_type_not_invoiced[$row['support_type']]))
+			$invoiced = FALSE;
+                        $price = 0;
+                        $invoiced_time = 0;
+
+                        if(isset(self::$_support_type2price[$row['support_type']]))
 			{
-				$invoiced = false;
-				$price = 0;
-				$invoiced_time = 0;
+				$invoiced = TRUE;
+				$price = self::$_support_type2price[$row['support_type']];
+				$invoiced_time = $row['time'];
 			}
 
                         $time_human_readable = sprintf('%dh%02d',
@@ -200,20 +182,22 @@ class WebfinanceMantis {
 				'mantis_subproject_name' => $row['subproject_name'],
 			);
 			
-			// Process total time
-			if(!isset($total_time[$webfinance_project_id]))
-				$total_time[$webfinance_project_id] = 0;
+			// Process total price
+			if(!isset($total_price[$webfinance_project_id]))
+				$total_price[$webfinance_project_id] = 0;
 
 			if($invoiced)
-				$total_time[$webfinance_project_id] += $row['time'];
+				$total_price[$webfinance_project_id] +=
+                                  $row['time'] / 60 * $price;
 		}
 
-		// Process total time
-		foreach($total_time as $webfinance_project_id => $time) {
+		// Process total price
+		foreach($total_price as $webfinance_project_id => $price) {
 
-			$time_to_deduce = 15;
-			if($time < 15)
-				$time_to_deduce = $time;
+			# Deduce 15 minutes (0.25 hour) of basic support
+			$price_to_deduce = 0.25 * self::$_support_type2price['Infogérance - Hors-périmètre'];
+			if($price < $price_to_deduce)
+				$price_to_deduce = $price;
 
 			$description =
 				"Déduction de l'infogérance ponctuelle comprise dans le contrat";
@@ -221,11 +205,11 @@ class WebfinanceMantis {
 			$billing[$webfinance_project_id][0] = array(
 				'description'           => $description,
 				'mantis_ticket_summary' => $description,
-				'quantity'              => - $time_to_deduce / 60,
-				'time'                  => - $time_to_deduce,
-				'invoiced_time'         => - $time_to_deduce,
-				'id_client'			    => $webfinance_project_id,
-				'price'                 => $price,
+				'quantity'              => - $price_to_deduce / self::$_support_type2price['Infogérance - Hors-périmètre'],
+				'time'                  => - $price_to_deduce / self::$_support_type2price['Infogérance - Hors-périmètre'] * 60,
+				'invoiced_time'         => - $price_to_deduce / self::$_support_type2price['Infogérance - Hors-périmètre'] * 60,
+				'id_client'             => $webfinance_project_id,
+				'price'                 => self::$_support_type2price['Infogérance - Hors-périmètre'],
 				'mantis_project_name'   => '',
 				'mantis_project_id'     => $row['project_id'],
 				'invoiced'              => true,
