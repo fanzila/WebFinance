@@ -213,7 +213,10 @@ for($i=2020; $i>=2009; $i--) {
 	}
 
 	?>
-<tr style="background:#dddddd;" align="right"><td colspan="5" align="right"><b>Total:</b> <?=$total_price_end?>&euro; - <?=$total_time_client_human_readable_end?></td></tr>
+
+<tr style="background:#dddddd;" align="right">
+ <td colspan="5" align="right"><b>Total:</b> <?=$total_price_end?>&euro; - <?=$total_time_client_human_readable_end?></td>
+</tr>
 </table>
 <br />
 <font color="red"><blink><b>> A générer UNE seule fois par mois <</b></blink></font><br />
