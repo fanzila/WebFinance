@@ -41,8 +41,8 @@ $res = mysql_query(
 
 <h2>Details</h2>
 
-<table border="1">
- <tr>
+<table width="100%" border="0" cellspacing="0" cellpadding="5">
+<tr class="row_header">
   <th>Company</th>
   <th>Reference</th>
   <th>Date</th>
@@ -78,38 +78,9 @@ while ($invoice = mysql_fetch_assoc($res)) {
   <td align="right"> <?=$total_ttc?> &euro; </td>
 </tr>
 </table>
-
-<br/>
-<h2>Summary</h2>
-
-<table border="1">
- <tr>
-  <th>Company</th>
-  <th>Amount excl. VAT</th>
-  <th>Amount incl. VAT</th>
- </tr>
-
-<?
-  ksort($total);
-  foreach($total as $company => $amount) { ?>
-<tr>
-  <td> <?=$company?> </td>
-  <td align="right"> <?=sprintf("%.2f", $amount['HT']);?> &euro; </td>
-  <td align="right"> <?=sprintf("%.2f", $amount['TTC']);?> &euro; </td>
-</tr>
-<?  } ?>
-
-<tr>
-  <td align="right"> <b>TOTAL</b> </td>
-  <td align="right"> <?=sprintf("%.2f", $total_ht);?> &euro; </td>
-  <td align="right"> <?=sprintf("%.2f", $total_ttc);?> &euro; </td>
-</tr>
-
-</table>
-
-  <a href="sepa.php?debit_id=<?=$_GET[id]?>">SEPA</a> <br/>
-
-<a href="./">Back</a>
+<hr />
+> <a href="sepa.php?debit_id=<?=$_GET[id]?>">SEPA</a> <br/>
+< <a href="./">Back</a>
 
 <?
 include("../bottom.php");
