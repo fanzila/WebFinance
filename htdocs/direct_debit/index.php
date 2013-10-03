@@ -148,7 +148,7 @@ while ($debit = mysql_fetch_assoc($res)) {
   echo "    <td> $debit[total_invoices] </td>\n";
   echo "    <td align=\"right\"> $debit[HT] &euro;</td>\n";
   echo "    <td align=\"right\"> $debit[TTC] &euro; </td>\n";
-  echo "    <td><a href=\"sepa.php?debit_id=$debit[id]\">SEPA</a> </td>\n";
+  echo "    <td><a href=\"sepa.php?debit_id=$debit[id]\">SEPA</a> - <a href=\"cfonb.php?debit_id=$debit[id]\">CFONB</a> </td>\n";
   echo "</tr>\n";
 }
 
