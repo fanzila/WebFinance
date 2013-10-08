@@ -35,6 +35,8 @@ $res = mysql_query(
   "WHERE invoice_id = $_GET[id] AND state='todo'")
   or die(mysql_error());
 
-header('Location: ./');
-exit();
 ?>
+
+Successfully deleted. <br/>
+
+<a href="./">Back</a>
