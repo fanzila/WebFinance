@@ -123,6 +123,7 @@ while ($invoice = mysql_fetch_assoc($res)) {
     <th>Date</th>
     <th>Invoices</th>
     <th>Excl. taxes</th>
+    <th>VAT</th>
     <th>Inc. taxes</th>
     <th>Download</th>
     </tr>
@@ -133,7 +134,8 @@ $res = mysql_query('
     d.date,
     COUNT(DISTINCT(dr.id)) AS total_invoices,
     ROUND(SUM(ir.qtt*ir.prix_ht), 2) AS HT,
-    ROUND(SUM(ir.qtt*ir.prix_ht)*(100+i.tax)/100, 2) AS TTC
+    ROUND(SUM(ir.qtt*ir.prix_ht)*(100+i.tax)/100, 2) AS TTC,
+    ROUND(SUM(ir.qtt*ir.prix_ht)*(i.tax)/100, 2) AS VAT
   FROM direct_debit d
   JOIN direct_debit_row dr ON dr.debit_id = d.id
   JOIN webfinance_invoices i ON i.id_facture = dr.invoice_id
@@ -147,6 +149,7 @@ while ($debit = mysql_fetch_assoc($res)) {
   echo "<tr><td> <a href=\"detail.php?id=$debit[id]\">$debit[date]</a> </td>\n";
   echo "    <td> $debit[total_invoices] </td>\n";
   echo "    <td align=\"right\"> $debit[HT] &euro;</td>\n";
+  echo "    <td align=\"right\"> $debit[VAT] &euro; </td>\n";
   echo "    <td align=\"right\"> $debit[TTC] &euro; </td>\n";
   echo "    <td><a href=\"sepa.php?debit_id=$debit[id]\">SEPA</a> - <a href=\"cfonb.php?debit_id=$debit[id]\">CFONB</a> </td>\n";
   echo "</tr>\n";
