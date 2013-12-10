@@ -70,7 +70,8 @@ class Client extends WFO
   c.contract_signer,
   ct.nom as type_name,
   be.name AS business_entity,
-  csr.role AS contract_signer_role
+  csr.role AS contract_signer_role,
+  CONCAT ('++', c.id_client) AS sepa_mndtid
 FROM webfinance_clients as c
   LEFT JOIN business_entity AS be ON be.id = c.id_business_entity
   LEFT JOIN contract_signer_role AS csr ON c.id_contract_signer_role = csr.id

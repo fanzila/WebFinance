@@ -758,6 +758,7 @@ class Facture extends WFO {
 			  '/%%BANK%%/',
 			  '/%%RIB%%/',
 			  '/%%COMPANY%%/',
+			  '/%%SEPA_MNDTID%%/',
 			  );
 
 		  $replacements=array(
@@ -770,7 +771,8 @@ class Facture extends WFO {
 			  $invoice->nice_total_ttc,
 			  $cpt->banque,
 			  $cpt->code_banque." ".$cpt->code_guichet." ".$cpt->compte." ".$cpt->clef." ",
-			  $societe->raison_sociale
+			  $societe->raison_sociale,
+			  $Client->sepa_mndtid,
 			  );
 
 		  $body = stripslashes(

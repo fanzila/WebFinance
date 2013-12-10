@@ -243,7 +243,9 @@ $patterns=array(
 		'/%%BANK%%/',
 		'/%%RIB%%/',
 		'/%%COMPANY%%/',
+		'/%%SEPA_MNDTID%%/',
 		);
+
 $replacements=array(
 		    $Client->login,
 		    $Client->password,
@@ -254,7 +256,8 @@ $replacements=array(
 		    $invoice->nice_total_ttc,
 		    $cpt->banque,
 		    $cpt->code_banque." ".$cpt->code_guichet." ".$cpt->compte." ".$cpt->clef." ",
-		    $societe->raison_sociale
+		    $societe->raison_sociale,
+		    $Client->sepa_mndtid,
 		    );
 
 if(isset($pref->subject) && !empty($pref->body)){
