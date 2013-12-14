@@ -18,7 +18,8 @@
     along with Webfinance; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-include("../inc/main.php");
+require("../inc/main.php");
+require('../../lib/sepa.php');
 must_login();
 
 $roles = 'manager,employee';
@@ -146,12 +147,17 @@ $res = mysql_query('
   or die(mysql_error());
 
 while ($debit = mysql_fetch_assoc($res)) {
+	
+  $debit_type = GetDebitTypeInADebit($debit['id']);	
   echo "<tr><td> <a href=\"detail.php?id=$debit[id]\">$debit[date]</a> </td>\n";
   echo "    <td> $debit[total_invoices] </td>\n";
   echo "    <td align=\"right\"> $debit[HT] &euro;</td>\n";
   echo "    <td align=\"right\"> $debit[VAT] &euro; </td>\n";
   echo "    <td align=\"right\"> $debit[TTC] &euro; </td>\n";
-  echo "    <td><a href=\"sepa.php?debit_id=$debit[id]\">SEPA</a> - <a href=\"cfonb.php?debit_id=$debit[id]\">CFONB</a> </td>\n";
+  echo "    <td>"; 
+  if($debit_type['rcur'] > 0) echo "<a href=\"sepa.php?debit_id=$debit[id]&type=RCUR\">SEPA RCUR</a> - ";
+  if($debit_type['frst'] > 0) echo "<a href=\"sepa.php?debit_id=$debit[id]&type=FRST\">SEPA FRST</a> - ";
+  echo "<a href=\"cfonb.php?debit_id=$debit[id]\">CFONB</a> </td>\n";
   echo "</tr>\n";
 }
 

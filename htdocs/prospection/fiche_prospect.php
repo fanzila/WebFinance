@@ -44,6 +44,14 @@ if(isset($_GET['ctc'])) {
 	exit; 
 }
 
+$document = new WebfinanceDocument;
+$document_dir = $document->GetCompanyDirectory($_GET['id']);
+
+if (!file_exists($document_dir)) {
+	mkdir($document_dir)
+	  or die("Unable to create directory $document_dir");
+}
+
 if (isset($_GET['action']) && $_GET['action'] == '_new') {
 
   $client_name = 'Nouvelle Entreprise_' . time();
@@ -61,8 +69,6 @@ if (isset($_GET['action']) && $_GET['action'] == '_new') {
   $mantis->createProject($_GET['id'], $mantis_project);
 
   # Create document directory
-  $document = new WebfinanceDocument;
-  $document_dir = $document->GetCompanyDirectory($_GET['id']);
   mkdir($document_dir)
     or die("Unable to create directory $document_dir");
 
